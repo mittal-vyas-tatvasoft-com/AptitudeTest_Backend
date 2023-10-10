@@ -232,7 +232,7 @@ namespace AptitudeTest.Data.Data.UserAuthentication
                         new Claim("Email", user.Email),
                         new Claim("RoleId", user.RoleId.ToString())
                     }),
-                    Expires = DateTime.UtcNow.AddSeconds(tokenExpiry),
+                    Expires = DateTime.UtcNow.AddMinutes(tokenExpiry),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);
