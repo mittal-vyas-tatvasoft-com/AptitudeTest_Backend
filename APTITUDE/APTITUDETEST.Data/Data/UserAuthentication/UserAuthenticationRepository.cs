@@ -53,7 +53,7 @@ namespace AptitudeTest.Data.Data.UserAuthentication
                             {
                                 AccessToken = newAccessToken,
                                 RefreshToken = newRefreshToken,
-                                RefreshTokenExpiryTime = DateTime.Now.AddMinutes(1),
+                                RefreshTokenExpiryTime = DateTime.Now.AddDays(1),
                             };
                             if (RefreshTokens.ContainsKey(user.Email))
                             {
