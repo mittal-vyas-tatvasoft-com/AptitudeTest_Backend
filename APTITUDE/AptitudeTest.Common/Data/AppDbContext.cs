@@ -32,7 +32,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.IsDeleted).HasDefaultValue(false).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
                 entity.Property(e => e.Level).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.Password)
                     .HasMaxLength(255)
@@ -58,7 +58,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Qualification)
                    .HasMaxLength(300)
                    .IsUnicode(false);
-                entity.Property(e => e.IsDeleted).HasDefaultValue(false).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
 
@@ -83,7 +83,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.DurationToMonth)
                    .HasMaxLength(10)
                    .IsUnicode(false);
-                entity.Property(e => e.IsDeleted).HasDefaultValue(false).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
 
@@ -102,7 +102,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.IsDeleted).HasDefaultValue(false).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
 
@@ -117,7 +117,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.IsDeleted).HasDefaultValue(false).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
 
@@ -132,8 +132,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.IsDeleted).HasDefaultValue(false).ValueGeneratedOnAddOrUpdate();
-
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             });
 
             modelBuilder.Entity<MasterDegree>(entity =>
@@ -149,7 +148,7 @@ namespace APTITUDETEST.Common.Data
                     .IsUnicode(false);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.IsDeleted).HasDefaultValue(false).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
             modelBuilder.Entity<MasterStream>(entity =>
@@ -163,7 +162,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.IsDeleted).HasDefaultValue(false).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
             modelBuilder.Entity<MasterTechnology>(entity =>
@@ -177,7 +176,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.IsDeleted).HasDefaultValue(false).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
         }

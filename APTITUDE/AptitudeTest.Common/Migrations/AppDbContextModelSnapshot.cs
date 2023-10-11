@@ -75,7 +75,7 @@ namespace AptitudeTest.Common.Migrations
                         .HasColumnType("integer");
 
                     b.Property<bool?>("IsDeleted")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
@@ -167,7 +167,7 @@ namespace AptitudeTest.Common.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<bool?>("IsDeleted")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
@@ -213,7 +213,7 @@ namespace AptitudeTest.Common.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<bool?>("IsDeleted")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
@@ -269,7 +269,7 @@ namespace AptitudeTest.Common.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<bool?>("IsDeleted")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
@@ -318,7 +318,7 @@ namespace AptitudeTest.Common.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<bool?>("IsDeleted")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
@@ -369,7 +369,7 @@ namespace AptitudeTest.Common.Migrations
                         .HasColumnType("integer");
 
                     b.Property<bool?>("IsDeleted")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
@@ -417,7 +417,7 @@ namespace AptitudeTest.Common.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<bool?>("IsDeleted")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
@@ -487,7 +487,7 @@ namespace AptitudeTest.Common.Migrations
                         .HasColumnType("real");
 
                     b.Property<bool?>("IsDeleted")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
@@ -547,7 +547,7 @@ namespace AptitudeTest.Common.Migrations
                         .HasColumnType("integer");
 
                     b.Property<bool?>("IsDeleted")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
