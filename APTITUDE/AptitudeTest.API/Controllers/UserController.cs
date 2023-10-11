@@ -26,8 +26,14 @@ namespace AptitudeTest.API.Controllers
         /// <param name="id">user will be fetched according to this 'id'</param>
         /// <returns> user </returns> 
 
-        [HttpGet("{id}")]
-        public async Task<User> GetById(int id)
+        [HttpGet("[action]")]
+        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex = 1, int? pageSize = 10)
+        {
+            return await _userService.GetAllUsers(searchQuery, currentPageIndex, pageSize);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<JsonResult> GetUserById(int id)
         {
             return await _userService.GetUserById(id);
         }

@@ -1,5 +1,6 @@
 ﻿using AptitudeTest.Core.Entities.Master;
 using AptitudeTest.Core.Entities.Users;
+using AptitudeTest.Core.ViewModels.User;
 using APTITUDETEST.Core.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -85,7 +86,11 @@ namespace APTITUDETEST.Common.Data
                    .IsUnicode(false);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             });
-
+            
+            modelBuilder.Entity<UserViewModel>(entity =>
+            {
+                entity.HasNoKey();
+            });
 
             modelBuilder.Entity<MasterCollege>(entity =>
             {
@@ -189,5 +194,10 @@ namespace APTITUDETEST.Common.Data
         public DbSet<MasterStream> MasterStream { get; set; }
         public DbSet<MasterTechnology> MasterTechnology { get; set; }
         public DbSet<MasterGroup> MasterGroup { get; set; }
+
+        #region ViewModels
+        public DbSet<UserViewModel> UsersDetails { get; set; }
+
+        #endregion
     }
 }

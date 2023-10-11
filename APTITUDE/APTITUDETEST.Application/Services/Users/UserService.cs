@@ -1,5 +1,6 @@
 ﻿using AptitudeTest.Core.Interfaces.Users;
 using APTITUDETEST.Core.Entities.Users;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services.Users
 {
@@ -17,10 +18,14 @@ namespace AptitudeTest.Application.Services.Users
         #endregion
 
         #region Methods
-        public async Task<User> GetUserById(int id)
+        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex, int? pageSize)
         {
-            return await _userRepository.GetById(id);
+            return await _userRepository.GetAllUsers(searchQuery, currentPageIndex, pageSize);
+        }
 
+        public async Task<JsonResult> GetUserById(int id)
+        {
+            return await _userRepository.GetUserById(id);
         }
         #endregion
     }
