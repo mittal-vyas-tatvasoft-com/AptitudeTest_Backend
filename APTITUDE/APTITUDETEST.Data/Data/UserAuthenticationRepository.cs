@@ -16,7 +16,7 @@ using System.Security.Cryptography;
 using System.Text;
 //using ResponseMessages = AptitudeTest.Data.Common.ResponseMessages;
 
-namespace AptitudeTest.Data.Data.UserAuthentication
+namespace AptitudeTest.Data.Data
 {
     public class UserAuthenticationRepository : RepositoryBase<User>, IUserAuthenticationRepository
     {

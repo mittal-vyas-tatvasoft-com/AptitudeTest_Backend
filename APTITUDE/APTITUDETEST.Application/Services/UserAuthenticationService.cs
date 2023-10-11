@@ -2,7 +2,7 @@
 using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AptitudeTest.Application.Services.UserAuthentication
+namespace AptitudeTest.Application.Services
 {
     public class UserAuthenticationService : IUserAuthenticationService
     {
