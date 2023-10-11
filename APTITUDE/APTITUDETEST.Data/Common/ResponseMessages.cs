@@ -12,6 +12,7 @@
         #region UserAuthentication
         public static string LoginSuccess = "Login done successfully";
         public static string SessionRefresh = "Session has been refressed successfully";
+        public static string PasswordUpdatedSuccess = "Password has been changed successfully";
         public static string InvalidCredetials = "Please enter valid credetials";
         public static string MailSentForForgetPassword = "Your password reset request has been granted and we sent you mail for new password!!";
         public static string TokenExpired = "Token has been expired please login again";

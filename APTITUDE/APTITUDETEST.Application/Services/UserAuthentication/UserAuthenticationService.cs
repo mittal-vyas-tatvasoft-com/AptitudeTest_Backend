@@ -34,6 +34,13 @@ namespace AptitudeTest.Application.Services.UserAuthentication
         }
         #endregion
 
+        #region ResetPassword
+        public async Task<JsonResult> ResetPassword(ResetPasswordVm resetPassword)
+        {
+            return await _userAuthenticationRepository.ResetPassword(resetPassword);
+        }
+        #endregion
+
         #region RefreshToken
 
         public async Task<JsonResult> RefreshToken(TokenVm tokens)

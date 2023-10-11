@@ -9,5 +9,6 @@ namespace AptitudeTest.Core.Interfaces.UserAuthentication
         Task<JsonResult> ForgetPassword(string email);
         Task<JsonResult> RefreshToken(TokenVm tokens);
         Task<JsonResult> GetAllUsers();
+        Task<JsonResult> ResetPassword(ResetPasswordVm resetPassword);
     }
 }
