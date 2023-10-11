@@ -18,7 +18,6 @@ namespace APTITUDETEST.Core.Entities.Users
         [Required]
         public string Email { get; set; }
         public long? PhoneNumber { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string Password { get; set; }
         public int Level { get; set; }
         public DateOnly? DateOfBirth { get; set; }
