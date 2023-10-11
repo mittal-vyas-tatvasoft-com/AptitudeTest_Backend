@@ -30,10 +30,10 @@ namespace APTITUDETEST.Common.Data
                     .IsUnicode(false);
                 entity.Property(e => e.Email).HasMaxLength(500);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.Status).HasDefaultValue(true);
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
-                entity.Property(e => e.Level).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.Level).HasDefaultValue(1);
                 entity.Property(e => e.Password)
                     .HasMaxLength(255)
                     .IsUnicode(false);
@@ -84,7 +84,6 @@ namespace APTITUDETEST.Common.Data
                    .HasMaxLength(10)
                    .IsUnicode(false);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
-
             });
 
 
@@ -99,9 +98,9 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Abbreviation)
                     .HasMaxLength(500)
                     .IsUnicode(false);
-                entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.Status).HasDefaultValue(true);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
@@ -114,9 +113,9 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Name)
                     .HasMaxLength(500)
                     .IsUnicode(false);
-                entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.Status).HasDefaultValue(true);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
@@ -129,9 +128,9 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Location)
                     .HasMaxLength(500)
                     .IsUnicode(false);
-                entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.Status).HasDefaultValue(true);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             });
 
@@ -140,14 +139,14 @@ namespace APTITUDETEST.Common.Data
                 entity.HasKey(e => e.Id).HasName("PK__MASTERDEGREE_ID");
                 entity.ToTable("MasterDegree");
                 entity.Property(e => e.Id).UseIdentityAlwaysColumn();
-                entity.Property(e => e.Level).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.IsEditable).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.Level).HasDefaultValue(1);
+                entity.Property(e => e.Status).HasDefaultValue(true);
+                entity.Property(e => e.IsEditable).HasDefaultValue(true);
                 entity.Property(e => e.Name)
                     .HasMaxLength(500)
                     .IsUnicode(false);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
@@ -159,9 +158,9 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Name)
                 .HasMaxLength(500)
                 .IsUnicode(false);
-                entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.Status).HasDefaultValue(true);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
@@ -173,9 +172,9 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Name)
                 .HasMaxLength(500)
                 .IsUnicode(false);
-                entity.Property(e => e.Status).HasDefaultValue(true).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.Status).HasDefaultValue(true);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.CreatedBy).HasDefaultValue(1).ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
