@@ -35,8 +35,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
                 entity.Property(e => e.Level).HasDefaultValue(1);
                 entity.Property(e => e.Password)
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
+                    .HasMaxLength(255);
                 entity.Property(e => e.PermanentAddress)
                     .HasMaxLength(1000)
                     .IsUnicode(false);

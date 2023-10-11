@@ -3,6 +3,7 @@
     public class ResponseStatusCode
     {
         public static int Success = 200;
+        public static int OK = 200;
         public static int NotFound = 404;
         public static int AlreadyExist = 409;
         public static int BadRequest = 400;

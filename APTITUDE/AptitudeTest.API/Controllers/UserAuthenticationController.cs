@@ -1,5 +1,6 @@
 ﻿using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
+using AptitudeTest.Data.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,14 +28,12 @@ namespace AptitudeTest.Controllers
         /// <param name="loginVm"></param>
         /// <returns>Tokens for authentication</returns>
         [HttpPost("Login")]
-
         public async Task<JsonResult> Login(LoginVm loginVm)
         {
             return await _userAuthenticationService.Login(loginVm);
         }
 
         #endregion
-
 
         #region ForgetPassword
         /// <summary>
@@ -47,6 +46,20 @@ namespace AptitudeTest.Controllers
         public async Task<JsonResult> ForgetPassword(string email)
         {
             return await _userAuthenticationService.ForgetPassword(email);
+        }
+
+        #endregion
+
+        #region ResetPassword
+        /// <summary>
+        /// method for reset the password of user
+        /// </summary>
+        /// <param name="resetPassword">takes encrypted email and new password</param>
+        /// <returns>change the password</returns>
+        [HttpPost("ResetPassword")]
+        public async Task<JsonResult> ResetPassword(ResetPasswordVm resetPassword)
+        {
+            return await _userAuthenticationService.ResetPassword(resetPassword);
         }
 
         #endregion
@@ -65,12 +78,10 @@ namespace AptitudeTest.Controllers
             {
                 return await _userAuthenticationService.RefreshToken(tokens);
             }
-            return new JsonResult(new ApiResponseVm<string> { Data = null, Message = ResponseMessages.InternalServerError, StatusCode = ResponseStatusCodes.InternalServerError, Result = false });
+            return new JsonResult(new ApiResponseVm<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
 
         }
         #endregion
-
-
 
         #region test
         [HttpGet("Test")]
