@@ -83,7 +83,7 @@ namespace AptitudeTest.Data.Data.Master
         {
             try
             {
-                List<MasterDegree> degrees = _context.MasterDegree.Where(d => d.Name == degree.Name).ToList();
+                List<MasterDegree> degrees = _context.MasterDegree.Where(d => d.Name.ToLower() == degree.Name.ToLower() && d.Id != degree.Id && d.IsDeleted != true).ToList();
                 if (degrees.Count > 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -113,7 +113,7 @@ namespace AptitudeTest.Data.Data.Master
                 }
                 else
                 {
-                    MasterDegree masterDegree = await Task.FromResult(_context.MasterDegree.AsNoTracking().Where(l => l.Id == degree.Id).FirstOrDefault());
+                    MasterDegree masterDegree = await Task.FromResult(_context.MasterDegree.AsNoTracking().Where(d => d.Id == degree.Id && d.IsDeleted != true).FirstOrDefault());
                     if (masterDegree != null)
                     {
                         if (!(bool)masterDegree.IsEditable)
@@ -122,7 +122,7 @@ namespace AptitudeTest.Data.Data.Master
                             {
                                 Message = ResponseMessages.DegreeNotEditable,
                                 Result = false,
-                                StatusCode = ResponseStatusCode.InvalidData
+                                StatusCode = ResponseStatusCode.BadRequest
                             });
                         }
 
@@ -170,7 +170,7 @@ namespace AptitudeTest.Data.Data.Master
         {
             try
             {
-                int rowsEffected = CheckUncheck(setters => setters.SetProperty(degree => degree.Status, check));
+                int rowsEffected = CheckUncheck(degree => degree.IsDeleted == false, setters => setters.SetProperty(degree => degree.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
@@ -205,22 +205,23 @@ namespace AptitudeTest.Data.Data.Master
                     });
                 }
 
-                MasterDegree degree = await GetById(id);
+                MasterDegree degree = await Task.FromResult(_context.MasterDegree.Where(d => d.Id == id && d.IsDeleted == false).FirstOrDefault());
                 if (degree != null)
                 {
                     degree.IsDeleted = true;
-                    Update(degree);
+                    _context.MasterDegree.Update(degree);
                     _context.SaveChanges();
+                    /*Update(degree);*/
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeDeleteSuccess,
+                        Message = ResponseMessages.DegreeDeleteSuccess,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.CollegeNotFound,
+                    Message = ResponseMessages.DegreeNotFound,
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });

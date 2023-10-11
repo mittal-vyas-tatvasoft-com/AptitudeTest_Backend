@@ -1,5 +1,7 @@
 ﻿using AptitudeTest.Core.Interfaces.Master;
+using AptitudeTest.Core.ViewModels.Common;
 using AptitudeTest.Core.ViewModels.Master;
+using AptitudeTest.Data.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Controllers
@@ -51,7 +53,12 @@ namespace AptitudeTest.Controllers
         [HttpPost("[action]")]
         public async Task<JsonResult> Upsert(CollegeVM college)
         {
-            return await _service.Upsert(college);
+            if (ModelState.IsValid)
+            {
+                return await _service.Upsert(college);
+            }
+
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
         /// <summary>

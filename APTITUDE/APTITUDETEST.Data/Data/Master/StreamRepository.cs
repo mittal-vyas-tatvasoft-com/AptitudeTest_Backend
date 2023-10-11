@@ -88,7 +88,7 @@ namespace AptitudeTest.Data.Data.Master
         {
             try
             {
-                List<MasterStream> streams = _context.MasterStream.Where(s => s.Name == stream.Name && s.DegreeId == stream.DegreeId).ToList();
+                List<MasterStream> streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.Id != stream.Id && s.IsDeleted != true).ToList();
                 if (streams.Count > 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -98,7 +98,16 @@ namespace AptitudeTest.Data.Data.Master
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-
+                MasterDegree degree = _context.MasterDegree.Where(c => c.Id == stream.DegreeId && c.IsDeleted == false).FirstOrDefault();
+                if (degree == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.DegreeNotFound,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
                 if (stream.Id == 0)
                 {
                     MasterStream masterStream = new MasterStream();
@@ -118,7 +127,7 @@ namespace AptitudeTest.Data.Data.Master
                 }
                 else
                 {
-                    MasterStream masterStream = await Task.FromResult(_context.MasterStream.AsNoTracking().Where(l => l.Id == stream.Id).FirstOrDefault());
+                    MasterStream masterStream = await Task.FromResult(_context.MasterStream.AsNoTracking().Where(l => l.Id == stream.Id && l.IsDeleted != true).FirstOrDefault());
                     if (masterStream != null)
                     {
                         masterStream.Status = stream.Status;
@@ -164,7 +173,7 @@ namespace AptitudeTest.Data.Data.Master
         {
             try
             {
-                int rowsEffected = CheckUncheck(setters => setters.SetProperty(stream => stream.Status, check));
+                int rowsEffected = CheckUncheck(stream => stream.IsDeleted == false, setters => setters.SetProperty(stream => stream.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
@@ -199,7 +208,7 @@ namespace AptitudeTest.Data.Data.Master
                     });
                 }
 
-                MasterStream stream = await GetById(id);
+                MasterStream stream = await Task.FromResult(_context.MasterStream.Where(s => s.Id == id && s.IsDeleted == false).FirstOrDefault());
                 if (stream != null)
                 {
                     stream.IsDeleted = true;
@@ -207,14 +216,14 @@ namespace AptitudeTest.Data.Data.Master
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeDeleteSuccess,
+                        Message = ResponseMessages.StreamDeleteSuccess,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.CollegeNotFound,
+                    Message = ResponseMessages.StreamNotFound,
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });

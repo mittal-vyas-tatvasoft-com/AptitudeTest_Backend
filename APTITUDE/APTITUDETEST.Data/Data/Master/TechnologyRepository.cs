@@ -81,7 +81,7 @@ namespace AptitudeTest.Data.Data.Master
         {
             try
             {
-                List<MasterTechnology> technologies = _context.MasterTechnology.Where(t => t.Name == technology.Name).ToList();
+                List<MasterTechnology> technologies = _context.MasterTechnology.Where(t => t.Name.ToLower() == technology.Name.ToLower() && t.Id != technology.Id && t.IsDeleted != true).ToList();
                 if (technologies.Count > 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -110,7 +110,7 @@ namespace AptitudeTest.Data.Data.Master
                 }
                 else
                 {
-                    MasterTechnology MasterTechnology = await Task.FromResult(_context.MasterTechnology.AsNoTracking().Where(t => t.Id == technology.Id).FirstOrDefault());
+                    MasterTechnology MasterTechnology = await Task.FromResult(_context.MasterTechnology.AsNoTracking().Where(t => t.Id == technology.Id && t.IsDeleted != true).FirstOrDefault());
                     if (MasterTechnology != null)
                     {
 
@@ -156,11 +156,11 @@ namespace AptitudeTest.Data.Data.Master
         {
             try
             {
-                int rowsEffected = CheckUncheck(setters => setters.SetProperty(technology => technology.Status, check));
+                int rowsEffected = CheckUncheck(technology => technology.IsDeleted == false, setters => setters.SetProperty(technology => technology.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
-                    Message = ResponseMessages.CollegeUpdateSuccess,
+                    Message = ResponseMessages.TechnologyUpdateSuccess,
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -191,7 +191,7 @@ namespace AptitudeTest.Data.Data.Master
                     });
                 }
 
-                MasterTechnology technology = await GetById(id);
+                MasterTechnology technology = await Task.FromResult(_context.MasterTechnology.Where(t => t.Id == id && t.IsDeleted == false).FirstOrDefault());
                 if (technology != null)
                 {
                     technology.IsDeleted = true;
@@ -199,14 +199,14 @@ namespace AptitudeTest.Data.Data.Master
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeDeleteSuccess,
+                        Message = ResponseMessages.TechnologyDeleteSuccess,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.CollegeNotFound,
+                    Message = ResponseMessages.TechnologyNotFound,
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });

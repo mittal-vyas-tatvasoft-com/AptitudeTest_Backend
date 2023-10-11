@@ -27,23 +27,23 @@ namespace AptitudeTest.Data.Data.Master
         {
             try
             {
-                List<MasterLocation> locationlist = await Task.FromResult(_context.MasterLocation.Where(x => x.IsDeleted == null).ToList());
+                List<MasterLocation> locationlist = await Task.FromResult(_context.MasterLocation.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList());
 
                 if (searchQuery != null)
                 {
                     string query = searchQuery.ToLower();
-                    locationlist = locationlist.Where(college => college.Location.ToLower().Contains(query)).ToList();
+                    locationlist = locationlist.Where(location => location.Location.ToLower().Contains(query)).ToList();
                 }
 
                 if (filter != null)
                 {
                     if (filter == 1)
                     {
-                        locationlist = locationlist.Where(college => college.Status == true).ToList();
+                        locationlist = locationlist.Where(location => location.Status == true).ToList();
                     }
                     if (filter == 2)
                     {
-                        locationlist = locationlist.Where(college => college.Status == false).ToList();
+                        locationlist = locationlist.Where(location => location.Status == false).ToList();
                     }
                 }
 
@@ -88,7 +88,7 @@ namespace AptitudeTest.Data.Data.Master
         {
             try
             {
-                List<MasterLocation> locations = _context.MasterLocation.Where(l => l.Location == location.Location && l.CollegeId == location.CollegeId).ToList();
+                List<MasterLocation> locations = _context.MasterLocation.Where(l => l.Location.ToLower() == location.Location.ToLower() && l.CollegeId == location.CollegeId && l.Id != location.Id && l.IsDeleted != true).ToList();
                 if (locations.Count > 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -96,6 +96,16 @@ namespace AptitudeTest.Data.Data.Master
                         Message = ResponseMessages.LocationAlreadyExists,
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+                MasterCollege college = _context.MasterCollege.Where(c => c.Id == location.CollegeId && c.IsDeleted != true).FirstOrDefault();
+                if (college == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.CollegeNotFound,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
 
@@ -164,7 +174,7 @@ namespace AptitudeTest.Data.Data.Master
         {
             try
             {
-                int rowsEffected = CheckUncheck(setters => setters.SetProperty(location => location.Status, check));
+                int rowsEffected = CheckUncheck(location => location.IsDeleted == false, setters => setters.SetProperty(location => location.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
@@ -199,7 +209,7 @@ namespace AptitudeTest.Data.Data.Master
                     });
                 }
 
-                MasterLocation location = await GetById(id);
+                MasterLocation location = await Task.FromResult(_context.MasterLocation.Where(l => l.Id == id && l.IsDeleted == false).FirstOrDefault());
                 if (location != null)
                 {
                     location.IsDeleted = true;
@@ -207,14 +217,14 @@ namespace AptitudeTest.Data.Data.Master
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeDeleteSuccess,
+                        Message = ResponseMessages.LocationDeleteSuccess,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.CollegeNotFound,
+                    Message = ResponseMessages.LocationNotFound,
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });

@@ -75,7 +75,7 @@ namespace AptitudeTest.Data.Data.Master
             try
             {
                 MasterCollege college = new MasterCollege();
-                List<MasterCollege> colleges = _context.MasterCollege.Where(c => c.Name == collegeToUpsert.Name || c.Abbreviation == collegeToUpsert.Abbreviation).ToList();
+                List<MasterCollege> colleges = _context.MasterCollege.Where(c => (c.Name.ToLower() == collegeToUpsert.Name.ToLower() || c.Abbreviation.ToLower() == collegeToUpsert.Abbreviation.ToLower()) && c.Id != collegeToUpsert.Id && c.IsDeleted != true).ToList();
                 if (colleges.Count > 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -85,7 +85,6 @@ namespace AptitudeTest.Data.Data.Master
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-
                 if (collegeToUpsert.Id == 0)
                 {
                     college.Status = collegeToUpsert.Status;
@@ -103,7 +102,7 @@ namespace AptitudeTest.Data.Data.Master
                 }
                 else
                 {
-                    MasterCollege masterCollege = await Task.FromResult(_context.MasterCollege.AsNoTracking().Where(college => college.Id == collegeToUpsert.Id).FirstOrDefault());
+                    MasterCollege masterCollege = await Task.FromResult(_context.MasterCollege.AsNoTracking().Where(college => college.Id == collegeToUpsert.Id && college.IsDeleted != true).FirstOrDefault());
                     if (masterCollege != null)
                     {
                         masterCollege.Status = collegeToUpsert.Status;
@@ -161,7 +160,7 @@ namespace AptitudeTest.Data.Data.Master
                     });
                 }
 
-                MasterCollege college = await GetById(id);
+                MasterCollege college = await Task.FromResult(_context.MasterCollege.Where(c => c.Id == id && c.IsDeleted == false).FirstOrDefault());
                 if (college != null)
                 {
                     college.IsDeleted = true;
@@ -198,7 +197,7 @@ namespace AptitudeTest.Data.Data.Master
         {
             try
             {
-                int rowsEffected = CheckUncheck(setters => setters.SetProperty(college => college.Status, check));
+                int rowsEffected = CheckUncheck(college => college.IsDeleted == false, setters => setters.SetProperty(college => college.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,

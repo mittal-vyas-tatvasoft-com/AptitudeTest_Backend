@@ -14,9 +14,9 @@ namespace AptitudeTest.Data.Data.Master
             _context = context;
             _dbSet = _context.Set<T>();
         }
-        public int CheckUncheck(Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> expression)
+        public int CheckUncheck(Expression<Func<T, bool>> filter, Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> expression)
         {
-            return _dbSet.ExecuteUpdate(expression);
+            return _dbSet.Where(filter).ExecuteUpdate(expression);
         }
     }
 }

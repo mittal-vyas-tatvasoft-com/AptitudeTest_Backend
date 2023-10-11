@@ -1,8 +1,11 @@
-﻿namespace AptitudeTest.Core.ViewModels.Master
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AptitudeTest.Core.ViewModels.Master
 {
     public class LocationVM
     {
         public int? Id { get; set; } = 0;
+        [StringLength(500)]
         public string Location { get; set; }
         public bool? Status { get; set; } = true;
         public int CollegeId { get; set; }
