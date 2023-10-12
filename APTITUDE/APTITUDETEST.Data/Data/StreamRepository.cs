@@ -83,7 +83,60 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> Upsert(StreamVM stream)
+        public async Task<JsonResult> Create(StreamVM stream)
+        {
+            try
+            {
+                List<MasterStream> streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.IsDeleted != true).ToList();
+                if (streams.Count > 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.StreamAlreadyExists,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+                MasterDegree degree = _context.MasterDegree.Where(c => c.Id == stream.DegreeId && c.IsDeleted == false).FirstOrDefault();
+                if (degree == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.DegreeNotFound,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                MasterStream masterStream = new MasterStream();
+                masterStream.Status = stream.Status;
+                masterStream.Name = stream.Name;
+                masterStream.DegreeId = stream.DegreeId;
+                masterStream.CreatedBy = stream.CreatedBy;
+                Create(masterStream);
+                _context.SaveChanges();
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.StreamAddSuccess,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+
+
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> Update(StreamVM stream)
         {
             try
             {
@@ -107,54 +160,32 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                if (stream.Id == 0)
+
+                MasterStream masterStream = await Task.FromResult(_context.MasterStream.AsNoTracking().Where(l => l.Id == stream.Id && l.IsDeleted != true).FirstOrDefault());
+                if (masterStream != null)
                 {
-                    MasterStream masterStream = new MasterStream();
                     masterStream.Status = stream.Status;
                     masterStream.Name = stream.Name;
                     masterStream.DegreeId = stream.DegreeId;
-                    masterStream.CreatedBy = stream.CreatedBy;
-                    Create(masterStream);
+                    masterStream.UpdatedBy = stream.UpdatedBy;
+                    masterStream.UpdatedDate = DateTime.UtcNow;
+                    Update(masterStream);
                     _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.StreamAddSuccess,
+                        Message = ResponseMessages.StreamUpdateSuccess,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
-                else
+
+                return new JsonResult(new ApiResponse<string>
                 {
-                    MasterStream masterStream = await Task.FromResult(_context.MasterStream.AsNoTracking().Where(l => l.Id == stream.Id && l.IsDeleted != true).FirstOrDefault());
-                    if (masterStream != null)
-                    {
-                        masterStream.Status = stream.Status;
-                        masterStream.Name = stream.Name;
-                        masterStream.DegreeId = stream.DegreeId;
-                        masterStream.UpdatedBy = stream.UpdatedBy;
-                        masterStream.UpdatedDate = DateTime.UtcNow;
-                        Update(masterStream);
-                        _context.SaveChanges();
-
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = ResponseMessages.StreamUpdateSuccess,
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                        });
-                    }
-
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.StreamNotFound,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.NotFound
-                    });
-
-                }
-
-
+                    Message = ResponseMessages.StreamNotFound,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
             }
 
             catch (Exception ex)

@@ -1,10 +1,8 @@
 using AptitudeTest.Application.Services;
-using AptitudeTest.Application.Services;
 using AptitudeTest.Application.Services.Users;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.Interfaces.Users;
-using AptitudeTest.Data.Data;
 using AptitudeTest.Data.Data;
 using AptitudeTest.Data.Data.Users;
 using APTITUDETEST.Common.Data;

@@ -24,11 +24,15 @@ namespace AptitudeTest.Application.Services
             return await _repository.GetLocations(searchQuery, filter, collegeList, currentPageIndex, pageSize);
         }
 
-        public async Task<JsonResult> Upsert(LocationVM location)
+        public async Task<JsonResult> Create(LocationVM location)
         {
-            return await _repository.Upsert(location);
+            return await _repository.Create(location);
         }
 
+        public async Task<JsonResult> Update(LocationVM location)
+        {
+            return await _repository.Update(location);
+        }
         public async Task<JsonResult> CheckUncheckAll(bool check)
         {
             return await _repository.CheckUncheckAll(check);

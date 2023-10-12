@@ -14,3 +14,5 @@ namespace AptitudeTest.Core.ViewModels
         public int? UpdatedBy { get; set; }
     }
 }
+
+

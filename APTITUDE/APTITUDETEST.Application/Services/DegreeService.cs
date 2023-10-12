@@ -24,11 +24,15 @@ namespace AptitudeTest.Application.Services
             return await _repository.GetDegrees(searchQuery, filter, currentPageIndex, pageSize);
         }
 
-        public async Task<JsonResult> Upsert(DegreeVM degree)
+        public async Task<JsonResult> Create(DegreeVM degree)
         {
-            return await _repository.Upsert(degree);
+            return await _repository.Create(degree);
         }
 
+        public async Task<JsonResult> Update(DegreeVM degree)
+        {
+            return await _repository.Update(degree);
+        }
         public async Task<JsonResult> CheckUncheckAll(bool check)
         {
             return await _repository.CheckUncheckAll(check);

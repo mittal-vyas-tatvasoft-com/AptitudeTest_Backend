@@ -10,14 +10,14 @@ namespace AptitudeTest.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CollegeController : ControllerBase
+    public class CollegesController : ControllerBase
     {
         #region Properties
         private readonly ICollegeService _service;
         #endregion
 
         #region Constructor
-        public CollegeController(ICollegeService service)
+        public CollegesController(ICollegeService service)
         {
             _service = service;
         }
@@ -48,16 +48,32 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
-        /// This method Inserts And Updates College
+        /// This method Creates College
         /// </summary>
         /// <param name="college"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<JsonResult> Upsert(CollegeVM college)
+        public async Task<JsonResult> Create(CollegeVM college)
         {
             if (ModelState.IsValid)
             {
-                return await _service.Upsert(college);
+                return await _service.Create(college);
+            }
+
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+
+        /// <summary>
+        /// This method Updates College
+        /// </summary>
+        /// <param name="college"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> Update(CollegeVM college)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _service.Update(college);
             }
 
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });

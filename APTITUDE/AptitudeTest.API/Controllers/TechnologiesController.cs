@@ -10,14 +10,14 @@ namespace AptitudeTest.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class StreamController : ControllerBase
+    public class TechnologiesController : ControllerBase
     {
         #region Properties
-        private readonly IStreamService _service;
+        private readonly ITechnologyService _service;
         #endregion
 
         #region Constructor
-        public StreamController(IStreamService service)
+        public TechnologiesController(ITechnologyService service)
         {
             _service = service;
         }
@@ -30,28 +30,27 @@ namespace AptitudeTest.Controllers
         /// </summary>
         /// <param name="searchQuery">Word that we want to search</param>
         /// <param name="filter">Filter list on status 1 for Active  2 for Inactive </param>
-        /// <param name="degreelist">List of degree ids whose stream we want </param>
         /// <param name="currentPageIndex">Page index which is page number-1</param>
         /// <param name="pageSize">Length of records in 1 page</param>
-        /// <returns>filtered list of streams</returns>
-        [HttpPost]
+        /// <returns>filtered list of technologies</returns>
+        [HttpGet]
 
-        public async Task<JsonResult> Getstreams(string? searchQuery, int? filter, List<int>? degreelist, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetTechnologies(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
         {
-            return await _service.Getstreams(searchQuery, filter, degreelist, currentPageIndex, pageSize);
+            return await _service.GetTechnologies(searchQuery, filter, currentPageIndex, pageSize);
         }
 
         /// <summary>
-        /// This method Inserts And Updates stream
+        /// This method Create technology
         /// </summary>
-        /// <param name="stream"></param>
+        /// <param name="technology"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<JsonResult> Upsert(StreamVM stream)
+        public async Task<JsonResult> Create(TechnologyVM technology)
         {
             if (ModelState.IsValid)
             {
-                return await _service.Upsert(stream);
+                return await _service.Create(technology);
 
             }
 
@@ -59,7 +58,24 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
-        /// This method Checks Or unchecks all streams
+        /// This method  Updates technology
+        /// </summary>
+        /// <param name="technology"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> Update(TechnologyVM technology)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _service.Update(technology);
+
+            }
+
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+
+        /// <summary>
+        /// This method Checks Or unchecks All technology
         /// </summary>
         /// <param name="check"></param>
         /// <returns></returns>
@@ -70,7 +86,7 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
-        /// This method soft deletes stream
+        /// This method soft deletes technology
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

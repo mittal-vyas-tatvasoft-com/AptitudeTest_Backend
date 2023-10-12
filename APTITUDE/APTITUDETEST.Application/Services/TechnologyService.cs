@@ -24,11 +24,15 @@ namespace AptitudeTest.Application.Services
             return await _repository.GetTechnologies(searchQuery, filter, currentPageIndex, pageSize);
         }
 
-        public async Task<JsonResult> Upsert(TechnologyVM technology)
+        public async Task<JsonResult> Create(TechnologyVM technology)
         {
-            return await _repository.Upsert(technology);
+            return await _repository.Create(technology);
         }
 
+        public async Task<JsonResult> Update(TechnologyVM technology)
+        {
+            return await _repository.Update(technology);
+        }
         public async Task<JsonResult> CheckUncheckAll(bool check)
         {
             return await _repository.CheckUncheckAll(check);

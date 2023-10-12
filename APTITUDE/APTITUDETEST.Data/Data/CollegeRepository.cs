@@ -68,7 +68,50 @@ namespace AptitudeTest.Data.Data
 
         }
 
-        public async Task<JsonResult> Upsert(CollegeVM collegeToUpsert)
+        public async Task<JsonResult> Create(CollegeVM collegeToUpsert)
+        {
+
+            try
+            {
+                MasterCollege college = new MasterCollege();
+                List<MasterCollege> colleges = _context.MasterCollege.Where(c => (c.Name.ToLower() == collegeToUpsert.Name.ToLower() || c.Abbreviation.ToLower() == collegeToUpsert.Abbreviation.ToLower()) && c.IsDeleted != true).ToList();
+                if (colleges.Count > 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.CollegeAlreadyExists,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+
+                college.Status = collegeToUpsert.Status;
+                college.Name = collegeToUpsert.Name;
+                college.Abbreviation = collegeToUpsert.Abbreviation;
+                college.CreatedBy = collegeToUpsert.CreatedBy;
+                Create(college);
+                _context.SaveChanges();
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.CollegeAddSuccess,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
+
+        public async Task<JsonResult> Update(CollegeVM collegeToUpsert)
         {
 
             try
@@ -84,53 +127,33 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-                if (collegeToUpsert.Id == 0)
+
+                MasterCollege masterCollege = await Task.FromResult(_context.MasterCollege.AsNoTracking().Where(college => college.Id == collegeToUpsert.Id && college.IsDeleted != true).FirstOrDefault());
+                if (masterCollege != null)
                 {
-                    college.Status = collegeToUpsert.Status;
-                    college.Name = collegeToUpsert.Name;
-                    college.Abbreviation = collegeToUpsert.Abbreviation;
-                    college.CreatedBy = collegeToUpsert.CreatedBy;
-                    Create(college);
+                    masterCollege.Status = collegeToUpsert.Status;
+                    masterCollege.Name = collegeToUpsert.Name;
+                    masterCollege.Abbreviation = collegeToUpsert.Abbreviation;
+                    masterCollege.UpdatedBy = collegeToUpsert.UpdatedBy;
+                    masterCollege.UpdatedDate = DateTime.UtcNow;
+                    Update(masterCollege);
                     _context.SaveChanges();
+
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeAddSuccess,
+                        Message = ResponseMessages.CollegeUpdateSuccess,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
-                else
+
+
+                return new JsonResult(new ApiResponse<string>
                 {
-                    MasterCollege masterCollege = await Task.FromResult(_context.MasterCollege.AsNoTracking().Where(college => college.Id == collegeToUpsert.Id && college.IsDeleted != true).FirstOrDefault());
-                    if (masterCollege != null)
-                    {
-                        masterCollege.Status = collegeToUpsert.Status;
-                        masterCollege.Name = collegeToUpsert.Name;
-                        masterCollege.Abbreviation = collegeToUpsert.Abbreviation;
-                        masterCollege.UpdatedBy = collegeToUpsert.UpdatedBy;
-                        masterCollege.UpdatedDate = DateTime.UtcNow;
-                        Update(masterCollege);
-                        _context.SaveChanges();
-
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = ResponseMessages.CollegeUpdateSuccess,
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                        });
-                    }
-
-
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.CollegeNotFound,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.NotFound
-                    });
-
-                }
-
-
+                    Message = ResponseMessages.CollegeNotFound,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
             }
 
             catch (Exception ex)
@@ -144,7 +167,6 @@ namespace AptitudeTest.Data.Data
             }
 
         }
-
         public async Task<JsonResult> Delete(int id)
         {
             try

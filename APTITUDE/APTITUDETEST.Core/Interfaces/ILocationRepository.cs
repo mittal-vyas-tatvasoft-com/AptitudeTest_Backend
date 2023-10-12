@@ -9,7 +9,8 @@ namespace AptitudeTest.Core.Interfaces
 
         public Task<JsonResult> GetLocations(string? searchQuery, int? filter, List<int>? collegeList, int? currentPageIndex, int? pageSize);
 
-        public Task<JsonResult> Upsert(LocationVM location);
+        public Task<JsonResult> Create(LocationVM location);
+        public Task<JsonResult> Update(LocationVM location);
 
         public Task<JsonResult> CheckUncheckAll(bool check);
 
