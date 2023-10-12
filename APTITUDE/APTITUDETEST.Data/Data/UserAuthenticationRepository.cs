@@ -1,9 +1,5 @@
 ﻿using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
-<<<<<<< Updated upstream:APTITUDE/APTITUDETEST.Data/Data/UserAuthenticationRepository.cs
-=======
-
->>>>>>> Stashed changes:APTITUDE/APTITUDETEST.Data/Data/UserAuthentication/UserAuthenticationRepository.cs
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using APTITUDETEST.Core.Entities.Users;
