@@ -1,8 +1,7 @@
-﻿using AptitudeTest.Core.Interfaces.Users;
-using APTITUDETEST.Core.Entities.Users;
+﻿using AptitudeTest.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AptitudeTest.Application.Services.Users
+namespace AptitudeTest.Application.Services
 {
     public class UserService : IUserService
     {

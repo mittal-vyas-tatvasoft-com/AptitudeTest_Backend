@@ -1,7 +1,7 @@
 ﻿using APTITUDETEST.Core.Entities.Users;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AptitudeTest.Core.Interfaces.Users
+namespace AptitudeTest.Core.Interfaces
 {
 
     public interface IUsersRepository : IRepositoryBase<User>

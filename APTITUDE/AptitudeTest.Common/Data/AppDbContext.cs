@@ -1,6 +1,6 @@
 ﻿using AptitudeTest.Core.Entities.Master;
 using AptitudeTest.Core.Entities.Users;
-using AptitudeTest.Core.ViewModels.User;
+using AptitudeTest.Core.ViewModels;
 using APTITUDETEST.Core.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -85,7 +85,7 @@ namespace APTITUDETEST.Common.Data
                    .IsUnicode(false);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             });
-            
+
             modelBuilder.Entity<UserViewModel>(entity =>
             {
                 entity.HasNoKey();

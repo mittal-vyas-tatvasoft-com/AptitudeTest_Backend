@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AptitudeTest.Core.Entities.Master;
+using AptitudeTest.Core.Entities.Users;
 
-namespace AptitudeTest.Core.ViewModels.User
+namespace AptitudeTest.Core.ViewModels
 {
     public class UserViewModel
     {
@@ -17,9 +14,9 @@ namespace AptitudeTest.Core.ViewModels.User
         public int? Level { get; set; }
         public DateOnly? DateOfBirth { get; set; }
         public string? PermanentAddress { get; set; }
-        public string? GroupName { get; set; }
+        public MasterGroup? Group { get; set; }
         public int? AppliedThrough { get; set; }
-        public string? TechnologyInterestedIn { get; set; }
+        public int? TechnologyInterestedIn { get; set; }
         public int? ACPCMeritRank { get; set; }
         public int? GUJCETScore { get; set; }
         public int? JEEScore { get; set; }
@@ -41,5 +38,7 @@ namespace AptitudeTest.Core.ViewModels.User
         public int? FamilyPerson { get; set; }
         public string? Qualification { get; set; }
         public string? Occupation { get; set; }
+        public UserFamily? UserFamilyData { get; set; }
+        public UserAcademics? UserAcademics { get; set; }
     }
 }
