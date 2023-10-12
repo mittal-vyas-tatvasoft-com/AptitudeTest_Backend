@@ -2,7 +2,7 @@
 using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AptitudeTest.Application.Services.UserAuthentication
+namespace AptitudeTest.Application.Services
 {
     public class UserAuthenticationService : IUserAuthenticationService
     {
@@ -31,6 +31,13 @@ namespace AptitudeTest.Application.Services.UserAuthentication
         public async Task<JsonResult> ForgetPassword(string email)
         {
             return await _userAuthenticationRepository.ForgetPassword(email);
+        }
+        #endregion
+
+        #region ResetPassword
+        public async Task<JsonResult> ResetPassword(ResetPasswordVm resetPassword)
+        {
+            return await _userAuthenticationRepository.ResetPassword(resetPassword);
         }
         #endregion
 

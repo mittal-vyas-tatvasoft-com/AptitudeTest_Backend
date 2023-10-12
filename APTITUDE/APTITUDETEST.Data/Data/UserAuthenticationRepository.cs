@@ -1,5 +1,7 @@
 ﻿using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
+using AptitudeTest.Core.ViewModels.Common;
+using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using APTITUDETEST.Core.Entities.Users;
 using Microsoft.AspNetCore.Mvc;
@@ -12,8 +14,9 @@ using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+//using ResponseMessages = AptitudeTest.Data.Common.ResponseMessages;
 
-namespace AptitudeTest.Data.Data.UserAuthentication
+namespace AptitudeTest.Data.Data
 {
     public class UserAuthenticationRepository : RepositoryBase<User>, IUserAuthenticationRepository
     {
@@ -63,26 +66,26 @@ namespace AptitudeTest.Data.Data.UserAuthentication
                             {
                                 RefreshTokens.Add(user.Email, tokenPayload);
                             }
-                            return new JsonResult(new ApiResponseVm<TokenVm> { Data = tokenPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCodes.OK, Result = true });
+                            return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
                         }
                         else
                         {
-                            return new JsonResult(new ApiResponseVm<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCodes.BadRequest, Result = false });
+                            return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                         }
                     }
                     else
                     {
-                        return new JsonResult(new ApiResponseVm<User> { Message = ResponseMessages.InvalidCredetials, StatusCode = ResponseStatusCodes.Unauthorized, Result = false });
+                        return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredetials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
                     }
                 }
                 else
                 {
-                    return new JsonResult(new ApiResponseVm<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCodes.BadRequest, Result = false });
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
             }
             catch
             {
-                return new JsonResult(new ApiResponseVm<string> { Message = ResponseMessages.InternalServerError, StatusCode = ResponseStatusCodes.InternalServerError, Result = false });
+                return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
         #endregion
@@ -121,15 +124,52 @@ namespace AptitudeTest.Data.Data.UserAuthentication
                     SendEmailForForgetPassword(emailData);
 
                 }
-                return new JsonResult(new ApiResponseVm<string> { Message = ResponseMessages.MailSentForForgetPassword, StatusCode = ResponseStatusCodes.OK, Result = true });
+                return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.MailSentForForgetPassword, StatusCode = ResponseStatusCode.OK, Result = true });
             }
             catch
             {
-                return new JsonResult(new ApiResponseVm<string> { Data = null, Message = ResponseMessages.InternalServerError, StatusCode = ResponseStatusCodes.InternalServerError, Result = false });
+                return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
 
             }
         }
 
+        #endregion
+
+        #region ResetPassword
+        public async Task<JsonResult> ResetPassword(ResetPasswordVm resetPassword)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(resetPassword.EncryptedEmail) && !string.IsNullOrEmpty(resetPassword.NewPassword))
+                {
+                    byte[] byteForEmail = Convert.FromBase64String(resetPassword.EncryptedEmail);
+                    string decryptedEmail = Encoding.ASCII.GetString(byteForEmail);
+
+                    User? user = _context.Users.Where(u => u.Email == decryptedEmail).FirstOrDefault();
+                    if (user != null)
+                    {
+                        user.Password = resetPassword.NewPassword;
+                        user.UpdatedBy = user.Id;
+                        user.UpdatedDate = DateTime.Now.ToUniversalTime();
+                        _context.Update(user);
+                        _context.SaveChanges();
+                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.PasswordUpdatedSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
+                }
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
+            }
+        }
         #endregion
 
         #region RefreshToken
@@ -140,7 +180,7 @@ namespace AptitudeTest.Data.Data.UserAuthentication
 
                 if (tokens is null)
                 {
-                    return new JsonResult(new ApiResponseVm<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCodes.BadRequest, Result = false });
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
                 else
                 {
@@ -153,7 +193,7 @@ namespace AptitudeTest.Data.Data.UserAuthentication
                     var user = await _context.Users.FirstOrDefaultAsync(U => U.Email == email);
                     if (user == null || RefreshTokens[email].RefreshToken != refreshToken || RefreshTokens[email].RefreshTokenExpiryTime <= DateTime.Now)
                     {
-                        return new JsonResult(new ApiResponseVm<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCodes.BadRequest, Result = false });
+                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                     }
                     else
                     {
@@ -167,18 +207,18 @@ namespace AptitudeTest.Data.Data.UserAuthentication
                                 AccessToken = newAccessToken,
                                 RefreshToken = newRefreshToken,
                             };
-                            return new JsonResult(new ApiResponseVm<TokenVm> { Data = tokenPayload, Message = ResponseMessages.SessionRefresh, StatusCode = ResponseStatusCodes.OK, Result = true });
+                            return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.SessionRefresh, StatusCode = ResponseStatusCode.OK, Result = true });
                         }
                         else
                         {
-                            return new JsonResult(new ApiResponseVm<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCodes.BadRequest, Result = false });
+                            return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                         }
                     }
                 }
             }
             catch
             {
-                return new JsonResult(new ApiResponseVm<string> { Data = null, Message = ResponseMessages.InternalServerError, StatusCode = ResponseStatusCodes.InternalServerError, Result = false });
+                return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
         #endregion
@@ -318,7 +358,7 @@ namespace AptitudeTest.Data.Data.UserAuthentication
         public async Task<JsonResult> GetAllUsers()
         {
             var users = _context.Users.ToList();
-            return new JsonResult(new ApiResponseVm<List<User>> { Data = users, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCodes.OK, Result = true });
+            return new JsonResult(new ApiResponse<List<User>> { Data = users, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
         }
         #endregion
 
