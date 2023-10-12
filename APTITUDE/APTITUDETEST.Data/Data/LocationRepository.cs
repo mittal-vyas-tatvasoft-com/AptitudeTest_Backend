@@ -92,7 +92,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.LocationAlreadyExists,
+                        Message = string.Format(ResponseMessages.AlreadyExists, "Location"),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -102,7 +102,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeNotFound,
+                        Message = string.Format(ResponseMessages.NotFound, "College"),
                         Result = false,
                         StatusCode = ResponseStatusCode.BadRequest
                     });
@@ -117,7 +117,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.LocationAddSuccess,
+                    Message = string.Format(ResponseMessages.AddSuccess, "Location"),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -144,7 +144,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.LocationAlreadyExists,
+                        Message = string.Format(ResponseMessages.AlreadyExists, "Location"),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -154,7 +154,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeNotFound,
+                        Message = string.Format(ResponseMessages.NotFound, "College"),
                         Result = false,
                         StatusCode = ResponseStatusCode.BadRequest
                     });
@@ -173,7 +173,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.LocationUpdateSuccess,
+                        Message = string.Format(ResponseMessages.UpdateSuccess, "Location"),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -181,7 +181,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.LocationNotFound,
+                    Message = string.Format(ResponseMessages.NotFound, "Location"),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
@@ -206,7 +206,7 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
-                    Message = ResponseMessages.LocationUpdateSuccess,
+                    Message = string.Format(ResponseMessages.UpdateSuccess, "Location"),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -245,14 +245,14 @@ namespace AptitudeTest.Data.Data
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.LocationDeleteSuccess,
+                        Message = string.Format(ResponseMessages.DeleteSuccess, "Location"),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.LocationNotFound,
+                    Message = string.Format(ResponseMessages.NotFound, "Location"),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });

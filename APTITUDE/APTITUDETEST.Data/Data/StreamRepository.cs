@@ -92,7 +92,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.StreamAlreadyExists,
+                        Message = string.Format(ResponseMessages.AlreadyExists, "Stream"),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -102,7 +102,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.DegreeNotFound,
+                        Message = string.Format(ResponseMessages.NotFound, "Degree"),
                         Result = false,
                         StatusCode = ResponseStatusCode.BadRequest
                     });
@@ -117,7 +117,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.StreamAddSuccess,
+                    Message = string.Format(ResponseMessages.AddSuccess, "Stream"),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -145,7 +145,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.StreamAlreadyExists,
+                        Message = string.Format(ResponseMessages.AlreadyExists, "Stream"),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -155,7 +155,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.DegreeNotFound,
+                        Message = string.Format(ResponseMessages.NotFound, "Degree"),
                         Result = false,
                         StatusCode = ResponseStatusCode.BadRequest
                     });
@@ -174,7 +174,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.StreamUpdateSuccess,
+                        Message = string.Format(ResponseMessages.UpdateSuccess, "Stream"),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -182,7 +182,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.StreamNotFound,
+                    Message = string.Format(ResponseMessages.NotFound, "Stream"),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
@@ -207,7 +207,7 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
-                    Message = ResponseMessages.StreamUpdateSuccess,
+                    Message = string.Format(ResponseMessages.UpdateSuccess, "Stream"),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -246,14 +246,14 @@ namespace AptitudeTest.Data.Data
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.StreamDeleteSuccess,
+                        Message = string.Format(ResponseMessages.DeleteSuccess, "Stream"),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.StreamNotFound,
+                    Message = string.Format(ResponseMessages.NotFound, "Stream"),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });

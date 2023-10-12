@@ -79,7 +79,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeAlreadyExists,
+                        Message = string.Format(ResponseMessages.AlreadyExists, "College"),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -93,10 +93,10 @@ namespace AptitudeTest.Data.Data
                 _context.SaveChanges();
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.CollegeAddSuccess,
+                    Message = string.Format(ResponseMessages.AddSuccess, "College"),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
-                });
+                }); ;
             }
 
             catch (Exception ex)
@@ -122,7 +122,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeAlreadyExists,
+                        Message = string.Format(ResponseMessages.AlreadyExists, "College"),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -141,7 +141,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeUpdateSuccess,
+                        Message = string.Format(ResponseMessages.UpdateSuccess, "College"),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -150,7 +150,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.CollegeNotFound,
+                    Message = string.Format(ResponseMessages.NotFound, "College"),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
@@ -189,14 +189,15 @@ namespace AptitudeTest.Data.Data
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeDeleteSuccess,
+                        Message = string.Format(ResponseMessages.DeleteSuccess, "College"),
+
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.CollegeNotFound,
+                    Message = string.Format(ResponseMessages.NotFound, "College"),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
@@ -222,7 +223,7 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
-                    Message = ResponseMessages.CollegeUpdateSuccess,
+                    Message = string.Format(ResponseMessages.UpdateSuccess, "College"),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
