@@ -7,8 +7,8 @@ namespace AptitudeTest.Core.Interfaces
     {
         public Task<JsonResult> GetTechnologies(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize);
 
-        public Task<JsonResult> Upsert(TechnologyVM technology);
-
+        public Task<JsonResult> Create(TechnologyVM technology);
+        public Task<JsonResult> Update(TechnologyVM technology);
         public Task<JsonResult> CheckUncheckAll(bool check);
 
         public Task<JsonResult> Delete(int id);

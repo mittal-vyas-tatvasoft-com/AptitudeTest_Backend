@@ -10,14 +10,14 @@ namespace AptitudeTest.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class LocationController : ControllerBase
+    public class DegreesController : ControllerBase
     {
         #region Properties
-        private readonly ILocationService _service;
+        private readonly IDegreeService _service;
         #endregion
 
         #region Constructor
-        public LocationController(ILocationService service)
+        public DegreesController(IDegreeService service)
         {
             _service = service;
         }
@@ -26,40 +26,54 @@ namespace AptitudeTest.Controllers
         #region Methods
 
         /// <summary>
-        /// This gives List of colleges with searching,filtering and pagination
+        /// This gives List of degrees with searching,filtering and pagination
         /// </summary>
         /// <param name="searchQuery">Word that we want to search</param>
         /// <param name="filter">Filter list on status 1 for Active  2 for Inactive </param>
-        /// <param name="collegeList">List of college ids whose locations we want </param>
         /// <param name="currentPageIndex">Page index which is page number-1</param>
         /// <param name="pageSize">Length of records in 1 page</param>
-        /// <returns>filtered list of locations</returns>
-        [HttpPost]
+        /// <returns>filtered list of degrees</returns>
+        [HttpGet]
 
-        public async Task<JsonResult> GetLocations(string? searchQuery, int? filter, List<int>? collegeList, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetDegrees(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
         {
-            return await _service.GetLocations(searchQuery, filter, collegeList, currentPageIndex, pageSize);
+            return await _service.GetDegrees(searchQuery, filter, currentPageIndex, pageSize);
         }
 
         /// <summary>
-        /// This method Inserts And Updates Location
+        /// This method Creates Degree
         /// </summary>
-        /// <param name="location"></param>
+        /// <param name="degree"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<JsonResult> Upsert(LocationVM location)
+        public async Task<JsonResult> Create(DegreeVM degree)
         {
             if (ModelState.IsValid)
             {
-                return await _service.Upsert(location);
+                return await _service.Create(degree);
             }
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
-
 
         }
 
         /// <summary>
-        /// This method Checks Or unchecks All Locations
+        /// This method  Updates Degree
+        /// </summary>
+        /// <param name="degree"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> Update(DegreeVM degree)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _service.Update(degree);
+            }
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+
+        }
+
+        /// <summary>
+        /// This method Checks Or unchecks All Degrees
         /// </summary>
         /// <param name="check"></param>
         /// <returns></returns>
@@ -70,7 +84,7 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
-        /// This method soft deletes location
+        /// This method soft deletes Degree
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -81,5 +95,4 @@ namespace AptitudeTest.Controllers
         }
         #endregion
     }
-
 }

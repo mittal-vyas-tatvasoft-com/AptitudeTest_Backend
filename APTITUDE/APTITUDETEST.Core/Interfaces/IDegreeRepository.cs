@@ -7,7 +7,8 @@ namespace AptitudeTest.Core.Interfaces
     {
         public Task<JsonResult> GetDegrees(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize);
 
-        public Task<JsonResult> Upsert(DegreeVM degree);
+        public Task<JsonResult> Create(DegreeVM degree);
+        public Task<JsonResult> Update(DegreeVM degree);
 
         public Task<JsonResult> CheckUncheckAll(bool check);
 

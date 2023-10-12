@@ -78,11 +78,11 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> Upsert(DegreeVM degree)
+        public async Task<JsonResult> Create(DegreeVM degree)
         {
             try
             {
-                List<MasterDegree> degrees = _context.MasterDegree.Where(d => d.Name.ToLower() == degree.Name.ToLower() && d.Id != degree.Id && d.IsDeleted != true).ToList();
+                List<MasterDegree> degrees = _context.MasterDegree.Where(d => d.Name.ToLower() == degree.Name.ToLower() && d.IsDeleted != true).ToList();
                 if (degrees.Count > 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -93,8 +93,6 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                if (degree.Id == 0)
-                {
                     MasterDegree masterDegree = new MasterDegree();
                     masterDegree.Status = degree.Status;
                     masterDegree.Name = degree.Name;
@@ -109,9 +107,35 @@ namespace AptitudeTest.Data.Data
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
-                }
-                else
+                
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
                 {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> Update(DegreeVM degree)
+        {
+            try
+            {
+                List<MasterDegree> degrees = _context.MasterDegree.Where(d => d.Name.ToLower() == degree.Name.ToLower() && d.Id != degree.Id && d.IsDeleted != true).ToList();
+                if (degrees.Count > 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.DegreeAlreadyExists,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+
                     MasterDegree masterDegree = await Task.FromResult(_context.MasterDegree.AsNoTracking().Where(d => d.Id == degree.Id && d.IsDeleted != true).FirstOrDefault());
                     if (masterDegree != null)
                     {
@@ -148,10 +172,6 @@ namespace AptitudeTest.Data.Data
                         Result = false,
                         StatusCode = ResponseStatusCode.NotFound
                     });
-
-                }
-
-
             }
 
             catch (Exception ex)

@@ -24,9 +24,14 @@ namespace AptitudeTest.Application.Services
             return await _repository.GetColleges(collegeQuery);
         }
 
-        public async Task<JsonResult> Upsert(CollegeVM college)
+        public async Task<JsonResult> Create(CollegeVM college)
         {
-            return await _repository.Upsert(college);
+            return await _repository.Create(college);
+        }
+
+        public async Task<JsonResult> Update(CollegeVM college)
+        {
+            return await _repository.Update(college);
         }
 
         public async Task<JsonResult> CheckUncheckAll(bool check)

@@ -8,7 +8,8 @@ namespace AptitudeTest.Core.Interfaces
         #region College
         public Task<JsonResult> GetColleges(CollegeQueryVM collegeQuery);
 
-        public Task<JsonResult> Upsert(CollegeVM college);
+        public Task<JsonResult> Create(CollegeVM college);
+        public Task<JsonResult> Update(CollegeVM college);
 
         public Task<JsonResult> CheckUncheckAll(bool check);
 

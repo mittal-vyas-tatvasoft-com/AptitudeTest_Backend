@@ -83,7 +83,59 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> Upsert(LocationVM location)
+        public async Task<JsonResult> Create(LocationVM location)
+        {
+            try
+            {
+                List<MasterLocation> locations = _context.MasterLocation.Where(l => l.Location.ToLower() == location.Location.ToLower() && l.CollegeId == location.CollegeId && l.IsDeleted != true).ToList();
+                if (locations.Count > 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.LocationAlreadyExists,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+                MasterCollege college = _context.MasterCollege.Where(c => c.Id == location.CollegeId && c.IsDeleted != true).FirstOrDefault();
+                if (college == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.CollegeNotFound,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                    MasterLocation masterLocation = new MasterLocation();
+                    masterLocation.Status = location.Status;
+                    masterLocation.Location = location.Location;
+                    masterLocation.CollegeId = location.CollegeId;
+                    masterLocation.CreatedBy = location.CreatedBy;
+                    Create(masterLocation);
+                    _context.SaveChanges();
+
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.LocationAddSuccess,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> Update(LocationVM location)
         {
             try
             {
@@ -108,25 +160,6 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                if (location.Id == 0)
-                {
-                    MasterLocation masterLocation = new MasterLocation();
-                    masterLocation.Status = location.Status;
-                    masterLocation.Location = location.Location;
-                    masterLocation.CollegeId = location.CollegeId;
-                    masterLocation.CreatedBy = location.CreatedBy;
-                    Create(masterLocation);
-                    _context.SaveChanges();
-
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.LocationAddSuccess,
-                        Result = true,
-                        StatusCode = ResponseStatusCode.Success
-                    });
-                }
-                else
-                {
                     MasterLocation masterLocation = await Task.FromResult(_context.MasterLocation.AsNoTracking().Where(l => l.Id == location.Id).FirstOrDefault());
                     if (masterLocation != null)
                     {
@@ -152,10 +185,6 @@ namespace AptitudeTest.Data.Data
                         Result = false,
                         StatusCode = ResponseStatusCode.NotFound
                     });
-
-                }
-
-
             }
 
             catch (Exception ex)

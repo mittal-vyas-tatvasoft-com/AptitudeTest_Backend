@@ -68,7 +68,50 @@ namespace AptitudeTest.Data.Data
 
         }
 
-        public async Task<JsonResult> Upsert(CollegeVM collegeToUpsert)
+        public async Task<JsonResult> Create(CollegeVM collegeToUpsert)
+        {
+
+            try
+            {
+                MasterCollege college = new MasterCollege();
+                List<MasterCollege> colleges = _context.MasterCollege.Where(c => (c.Name.ToLower() == collegeToUpsert.Name.ToLower() || c.Abbreviation.ToLower() == collegeToUpsert.Abbreviation.ToLower()) && c.IsDeleted != true).ToList();
+                if (colleges.Count > 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.CollegeAlreadyExists,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+
+                    college.Status = collegeToUpsert.Status;
+                    college.Name = collegeToUpsert.Name;
+                    college.Abbreviation = collegeToUpsert.Abbreviation;
+                    college.CreatedBy = collegeToUpsert.CreatedBy;
+                    Create(college);
+                    _context.SaveChanges();
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.CollegeAddSuccess,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
+
+        public async Task<JsonResult> Update(CollegeVM collegeToUpsert)
         {
 
             try
@@ -84,23 +127,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-                if (collegeToUpsert.Id == 0)
-                {
-                    college.Status = collegeToUpsert.Status;
-                    college.Name = collegeToUpsert.Name;
-                    college.Abbreviation = collegeToUpsert.Abbreviation;
-                    college.CreatedBy = collegeToUpsert.CreatedBy;
-                    Create(college);
-                    _context.SaveChanges();
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.CollegeAddSuccess,
-                        Result = true,
-                        StatusCode = ResponseStatusCode.Success
-                    });
-                }
-                else
-                {
+
                     MasterCollege masterCollege = await Task.FromResult(_context.MasterCollege.AsNoTracking().Where(college => college.Id == collegeToUpsert.Id && college.IsDeleted != true).FirstOrDefault());
                     if (masterCollege != null)
                     {
@@ -127,10 +154,6 @@ namespace AptitudeTest.Data.Data
                         Result = false,
                         StatusCode = ResponseStatusCode.NotFound
                     });
-
-                }
-
-
             }
 
             catch (Exception ex)
@@ -144,7 +167,6 @@ namespace AptitudeTest.Data.Data
             }
 
         }
-
         public async Task<JsonResult> Delete(int id)
         {
             try

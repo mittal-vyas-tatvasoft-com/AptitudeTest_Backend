@@ -76,7 +76,7 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> Upsert(TechnologyVM technology)
+        public async Task<JsonResult> Create(TechnologyVM technology)
         {
             try
             {
@@ -91,8 +91,6 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                if (technology.Id == 0)
-                {
                     MasterTechnology MasterTechnology = new MasterTechnology();
                     MasterTechnology.Status = technology.Status;
                     MasterTechnology.Name = technology.Name;
@@ -106,13 +104,37 @@ namespace AptitudeTest.Data.Data
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
-                }
-                else
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
                 {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> Update(TechnologyVM technology)
+        {
+            try
+            {
+                List<MasterTechnology> technologies = _context.MasterTechnology.Where(t => t.Name.ToLower() == technology.Name.ToLower() && t.Id != technology.Id && t.IsDeleted != true).ToList();
+                if (technologies.Count > 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.TechnologyAlreadyExists,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+
                     MasterTechnology MasterTechnology = await Task.FromResult(_context.MasterTechnology.AsNoTracking().Where(t => t.Id == technology.Id && t.IsDeleted != true).FirstOrDefault());
                     if (MasterTechnology != null)
                     {
-
                         MasterTechnology.Status = technology.Status;
                         MasterTechnology.Name = technology.Name;
                         MasterTechnology.UpdatedBy = technology.UpdatedBy;
@@ -134,9 +156,6 @@ namespace AptitudeTest.Data.Data
                         Result = false,
                         StatusCode = ResponseStatusCode.NotFound
                     });
-
-                }
-
 
             }
 
