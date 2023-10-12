@@ -114,6 +114,8 @@ namespace AptitudeTest.Data.Data
                                                            from masterStream in masterStreamGroup.DefaultIfEmpty()
                                                            join masterGroup in _appDbContext.MasterGroup on users.Group equals masterGroup.Id into masterGroups
                                                            from masterGroup in masterGroups.DefaultIfEmpty()
+                                                           join masterTechnology in _appDbContext.MasterTechnology on users.Group equals masterTechnology.Id into masterTechnologies
+                                                           from masterTechnology in masterTechnologies.DefaultIfEmpty()
                                                            select new UserViewModel
                                                            {
                                                                UserId = users.Id,
@@ -135,7 +137,7 @@ namespace AptitudeTest.Data.Data
                                                                RelationshipWithExistingEmployee = users.RelationshipWithExistingEmployee,
                                                                Status = users.Status,
                                                                PermanentAddress = users.PermanentAddress,
-                                                               TechnologyInterestedIn = users.TechnologyInterestedIn,
+                                                               TechnologyInterestedIn = masterTechnology,
                                                                UserAcademics = new UserAcademics
                                                                {
                                                                    MasterDegrees = masterDegree,
@@ -156,7 +158,7 @@ namespace AptitudeTest.Data.Data
         #region SearchUsersInFullData
         private async Task<List<UserViewModel>> SearchedUsers(IEnumerable<UserViewModel> AllUserData, string? searchQuery)
         {
-            return AllUserData.Where(u => u.UserFamilyData.Qualification.Contains(searchQuery) || u.UserFamilyData.Occupation.Contains(searchQuery) || u.UserAcademics.MasterDegrees.Name.Contains(searchQuery) || u.UserAcademics.MasterStreams.Name.Contains(searchQuery) || u.FirstName.Contains(searchQuery) || u.LastName.Contains(searchQuery) || u.FatherName.Contains(searchQuery) || u.Email.Contains(searchQuery) || u.RelationshipWithExistingEmployee.Contains(searchQuery) || u.JEEScore.ToString().Contains(searchQuery) || u.GUJCETScore.ToString().Contains(searchQuery) || u.ACPCMeritRank.ToString().Contains(searchQuery) || u.Group.Name.Contains(searchQuery)).ToList();
+            return AllUserData.Where(u => u.UserFamilyData.Qualification.Contains(searchQuery) || u.UserFamilyData.Occupation.Contains(searchQuery) || u.UserAcademics.MasterDegrees.Name.Contains(searchQuery) || u.UserAcademics.MasterStreams.Name.Contains(searchQuery) || u.FirstName.Contains(searchQuery) || u.LastName.Contains(searchQuery) || u.FatherName.Contains(searchQuery) || u.Email.Contains(searchQuery) || u.RelationshipWithExistingEmployee.Contains(searchQuery) || u.JEEScore.ToString().Contains(searchQuery) || u.GUJCETScore.ToString().Contains(searchQuery) || u.ACPCMeritRank.ToString().Contains(searchQuery) || u.Group.Name.Contains(searchQuery) || u.TechnologyInterestedIn.Name.Contains(searchQuery)).ToList();
         }
         #endregion
 

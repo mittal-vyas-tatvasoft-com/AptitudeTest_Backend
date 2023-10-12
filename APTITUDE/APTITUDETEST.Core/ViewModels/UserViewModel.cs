@@ -16,7 +16,7 @@ namespace AptitudeTest.Core.ViewModels
         public string? PermanentAddress { get; set; }
         public MasterGroup? Group { get; set; }
         public int? AppliedThrough { get; set; }
-        public int? TechnologyInterestedIn { get; set; }
+        public MasterTechnology? TechnologyInterestedIn { get; set; }
         public int? ACPCMeritRank { get; set; }
         public int? GUJCETScore { get; set; }
         public int? JEEScore { get; set; }
