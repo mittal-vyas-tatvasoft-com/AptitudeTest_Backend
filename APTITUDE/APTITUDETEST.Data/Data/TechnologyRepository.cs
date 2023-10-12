@@ -85,7 +85,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.TechnologyAlreadyExists,
+                        Message = string.Format(ResponseMessages.AlreadyExists, "Technology"),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -100,7 +100,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.TechnologyAddSuccess,
+                    Message = string.Format(ResponseMessages.AddSuccess, "Technology"),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -126,7 +126,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.TechnologyAlreadyExists,
+                        Message = string.Format(ResponseMessages.AlreadyExists, "Technology"),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -144,7 +144,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.TechnologyUpdateSuccess,
+                        Message = string.Format(ResponseMessages.UpdateSuccess, "Technology"),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -152,7 +152,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.TechnologyNotFound,
+                    Message = string.Format(ResponseMessages.NotFound, "Technology"),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
@@ -178,7 +178,7 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
-                    Message = ResponseMessages.TechnologyUpdateSuccess,
+                    Message = string.Format(ResponseMessages.UpdateSuccess, "Technology"),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -217,14 +217,14 @@ namespace AptitudeTest.Data.Data
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.TechnologyDeleteSuccess,
+                        Message = string.Format(ResponseMessages.DeleteSuccess, "Technology"),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.TechnologyNotFound,
+                    Message = string.Format(ResponseMessages.NotFound, "Technology"),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
