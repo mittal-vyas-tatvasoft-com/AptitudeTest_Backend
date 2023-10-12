@@ -91,19 +91,19 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                    MasterTechnology MasterTechnology = new MasterTechnology();
-                    MasterTechnology.Status = technology.Status;
-                    MasterTechnology.Name = technology.Name;
-                    MasterTechnology.CreatedBy = technology.CreatedBy;
-                    Create(MasterTechnology);
-                    _context.SaveChanges();
+                MasterTechnology MasterTechnology = new MasterTechnology();
+                MasterTechnology.Status = technology.Status;
+                MasterTechnology.Name = technology.Name;
+                MasterTechnology.CreatedBy = technology.CreatedBy;
+                Create(MasterTechnology);
+                _context.SaveChanges();
 
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.TechnologyAddSuccess,
-                        Result = true,
-                        StatusCode = ResponseStatusCode.Success
-                    });
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.TechnologyAddSuccess,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
             }
 
             catch (Exception ex)
@@ -132,30 +132,30 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                    MasterTechnology MasterTechnology = await Task.FromResult(_context.MasterTechnology.AsNoTracking().Where(t => t.Id == technology.Id && t.IsDeleted != true).FirstOrDefault());
-                    if (MasterTechnology != null)
-                    {
-                        MasterTechnology.Status = technology.Status;
-                        MasterTechnology.Name = technology.Name;
-                        MasterTechnology.UpdatedBy = technology.UpdatedBy;
-                        MasterTechnology.UpdatedDate = DateTime.UtcNow;
-                        Update(MasterTechnology);
-                        _context.SaveChanges();
-
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = ResponseMessages.TechnologyUpdateSuccess,
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                        });
-                    }
+                MasterTechnology MasterTechnology = await Task.FromResult(_context.MasterTechnology.AsNoTracking().Where(t => t.Id == technology.Id && t.IsDeleted != true).FirstOrDefault());
+                if (MasterTechnology != null)
+                {
+                    MasterTechnology.Status = technology.Status;
+                    MasterTechnology.Name = technology.Name;
+                    MasterTechnology.UpdatedBy = technology.UpdatedBy;
+                    MasterTechnology.UpdatedDate = DateTime.UtcNow;
+                    Update(MasterTechnology);
+                    _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.TechnologyNotFound,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.NotFound
+                        Message = ResponseMessages.TechnologyUpdateSuccess,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
                     });
+                }
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.TechnologyNotFound,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
 
             }
 

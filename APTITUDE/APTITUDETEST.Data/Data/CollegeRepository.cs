@@ -85,18 +85,18 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                    college.Status = collegeToUpsert.Status;
-                    college.Name = collegeToUpsert.Name;
-                    college.Abbreviation = collegeToUpsert.Abbreviation;
-                    college.CreatedBy = collegeToUpsert.CreatedBy;
-                    Create(college);
-                    _context.SaveChanges();
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.CollegeAddSuccess,
-                        Result = true,
-                        StatusCode = ResponseStatusCode.Success
-                    });
+                college.Status = collegeToUpsert.Status;
+                college.Name = collegeToUpsert.Name;
+                college.Abbreviation = collegeToUpsert.Abbreviation;
+                college.CreatedBy = collegeToUpsert.CreatedBy;
+                Create(college);
+                _context.SaveChanges();
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.CollegeAddSuccess,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
             }
 
             catch (Exception ex)
@@ -128,32 +128,32 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                    MasterCollege masterCollege = await Task.FromResult(_context.MasterCollege.AsNoTracking().Where(college => college.Id == collegeToUpsert.Id && college.IsDeleted != true).FirstOrDefault());
-                    if (masterCollege != null)
-                    {
-                        masterCollege.Status = collegeToUpsert.Status;
-                        masterCollege.Name = collegeToUpsert.Name;
-                        masterCollege.Abbreviation = collegeToUpsert.Abbreviation;
-                        masterCollege.UpdatedBy = collegeToUpsert.UpdatedBy;
-                        masterCollege.UpdatedDate = DateTime.UtcNow;
-                        Update(masterCollege);
-                        _context.SaveChanges();
-
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = ResponseMessages.CollegeUpdateSuccess,
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                        });
-                    }
-
+                MasterCollege masterCollege = await Task.FromResult(_context.MasterCollege.AsNoTracking().Where(college => college.Id == collegeToUpsert.Id && college.IsDeleted != true).FirstOrDefault());
+                if (masterCollege != null)
+                {
+                    masterCollege.Status = collegeToUpsert.Status;
+                    masterCollege.Name = collegeToUpsert.Name;
+                    masterCollege.Abbreviation = collegeToUpsert.Abbreviation;
+                    masterCollege.UpdatedBy = collegeToUpsert.UpdatedBy;
+                    masterCollege.UpdatedDate = DateTime.UtcNow;
+                    Update(masterCollege);
+                    _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.CollegeNotFound,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.NotFound
+                        Message = ResponseMessages.CollegeUpdateSuccess,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
                     });
+                }
+
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.CollegeNotFound,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
             }
 
             catch (Exception ex)

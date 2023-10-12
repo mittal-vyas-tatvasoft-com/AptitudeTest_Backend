@@ -93,21 +93,21 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                    MasterDegree masterDegree = new MasterDegree();
-                    masterDegree.Status = degree.Status;
-                    masterDegree.Name = degree.Name;
-                    masterDegree.CreatedBy = degree.CreatedBy;
-                    masterDegree.Level = degree.Level;
-                    Create(masterDegree);
-                    _context.SaveChanges();
+                MasterDegree masterDegree = new MasterDegree();
+                masterDegree.Status = degree.Status;
+                masterDegree.Name = degree.Name;
+                masterDegree.CreatedBy = degree.CreatedBy;
+                masterDegree.Level = degree.Level;
+                Create(masterDegree);
+                _context.SaveChanges();
 
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.DegreeAddSuccess,
-                        Result = true,
-                        StatusCode = ResponseStatusCode.Success
-                    });
-                
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.DegreeAddSuccess,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+
             }
 
             catch (Exception ex)
@@ -136,42 +136,42 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                    MasterDegree masterDegree = await Task.FromResult(_context.MasterDegree.AsNoTracking().Where(d => d.Id == degree.Id && d.IsDeleted != true).FirstOrDefault());
-                    if (masterDegree != null)
+                MasterDegree masterDegree = await Task.FromResult(_context.MasterDegree.AsNoTracking().Where(d => d.Id == degree.Id && d.IsDeleted != true).FirstOrDefault());
+                if (masterDegree != null)
+                {
+                    if (!(bool)masterDegree.IsEditable)
                     {
-                        if (!(bool)masterDegree.IsEditable)
-                        {
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = ResponseMessages.DegreeNotEditable,
-                                Result = false,
-                                StatusCode = ResponseStatusCode.BadRequest
-                            });
-                        }
-
-                        masterDegree.Status = degree.Status;
-                        masterDegree.Name = degree.Name;
-                        masterDegree.CreatedBy = degree.CreatedBy;
-                        masterDegree.Level = degree.Level;
-                        masterDegree.UpdatedBy = degree.UpdatedBy;
-                        masterDegree.UpdatedDate = DateTime.UtcNow;
-                        Update(masterDegree);
-                        _context.SaveChanges();
-
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = ResponseMessages.DegreeUpdateSuccess,
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
+                            Message = ResponseMessages.DegreeNotEditable,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
 
+                    masterDegree.Status = degree.Status;
+                    masterDegree.Name = degree.Name;
+                    masterDegree.CreatedBy = degree.CreatedBy;
+                    masterDegree.Level = degree.Level;
+                    masterDegree.UpdatedBy = degree.UpdatedBy;
+                    masterDegree.UpdatedDate = DateTime.UtcNow;
+                    Update(masterDegree);
+                    _context.SaveChanges();
+
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.DegreeNotFound,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.NotFound
+                        Message = ResponseMessages.DegreeUpdateSuccess,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
                     });
+                }
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.DegreeNotFound,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
             }
 
             catch (Exception ex)

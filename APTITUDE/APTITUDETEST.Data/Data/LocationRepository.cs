@@ -107,21 +107,21 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                    MasterLocation masterLocation = new MasterLocation();
-                    masterLocation.Status = location.Status;
-                    masterLocation.Location = location.Location;
-                    masterLocation.CollegeId = location.CollegeId;
-                    masterLocation.CreatedBy = location.CreatedBy;
-                    Create(masterLocation);
-                    _context.SaveChanges();
+                MasterLocation masterLocation = new MasterLocation();
+                masterLocation.Status = location.Status;
+                masterLocation.Location = location.Location;
+                masterLocation.CollegeId = location.CollegeId;
+                masterLocation.CreatedBy = location.CreatedBy;
+                Create(masterLocation);
+                _context.SaveChanges();
 
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.LocationAddSuccess,
-                        Result = true,
-                        StatusCode = ResponseStatusCode.Success
-                    });
-                
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.LocationAddSuccess,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+
             }
 
             catch (Exception ex)
@@ -160,31 +160,31 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                    MasterLocation masterLocation = await Task.FromResult(_context.MasterLocation.AsNoTracking().Where(l => l.Id == location.Id).FirstOrDefault());
-                    if (masterLocation != null)
-                    {
-                        masterLocation.Status = location.Status;
-                        masterLocation.CollegeId = location.CollegeId;
-                        masterLocation.Location = location.Location;
-                        masterLocation.UpdatedBy = location.UpdatedBy;
-                        masterLocation.UpdatedDate = DateTime.UtcNow;
-                        Update(masterLocation);
-                        _context.SaveChanges();
-
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = ResponseMessages.LocationUpdateSuccess,
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                        });
-                    }
+                MasterLocation masterLocation = await Task.FromResult(_context.MasterLocation.AsNoTracking().Where(l => l.Id == location.Id).FirstOrDefault());
+                if (masterLocation != null)
+                {
+                    masterLocation.Status = location.Status;
+                    masterLocation.CollegeId = location.CollegeId;
+                    masterLocation.Location = location.Location;
+                    masterLocation.UpdatedBy = location.UpdatedBy;
+                    masterLocation.UpdatedDate = DateTime.UtcNow;
+                    Update(masterLocation);
+                    _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.LocationNotFound,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.NotFound
+                        Message = ResponseMessages.LocationUpdateSuccess,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
                     });
+                }
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.LocationNotFound,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
             }
 
             catch (Exception ex)

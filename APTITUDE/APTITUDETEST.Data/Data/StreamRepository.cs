@@ -107,21 +107,21 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                    MasterStream masterStream = new MasterStream();
-                    masterStream.Status = stream.Status;
-                    masterStream.Name = stream.Name;
-                    masterStream.DegreeId = stream.DegreeId;
-                    masterStream.CreatedBy = stream.CreatedBy;
-                    Create(masterStream);
-                    _context.SaveChanges();
+                MasterStream masterStream = new MasterStream();
+                masterStream.Status = stream.Status;
+                masterStream.Name = stream.Name;
+                masterStream.DegreeId = stream.DegreeId;
+                masterStream.CreatedBy = stream.CreatedBy;
+                Create(masterStream);
+                _context.SaveChanges();
 
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.StreamAddSuccess,
-                        Result = true,
-                        StatusCode = ResponseStatusCode.Success
-                    });
-                
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.StreamAddSuccess,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+
 
             }
 
@@ -161,31 +161,31 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                    MasterStream masterStream = await Task.FromResult(_context.MasterStream.AsNoTracking().Where(l => l.Id == stream.Id && l.IsDeleted != true).FirstOrDefault());
-                    if (masterStream != null)
-                    {
-                        masterStream.Status = stream.Status;
-                        masterStream.Name = stream.Name;
-                        masterStream.DegreeId = stream.DegreeId;
-                        masterStream.UpdatedBy = stream.UpdatedBy;
-                        masterStream.UpdatedDate = DateTime.UtcNow;
-                        Update(masterStream);
-                        _context.SaveChanges();
-
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = ResponseMessages.StreamUpdateSuccess,
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                        });
-                    }
+                MasterStream masterStream = await Task.FromResult(_context.MasterStream.AsNoTracking().Where(l => l.Id == stream.Id && l.IsDeleted != true).FirstOrDefault());
+                if (masterStream != null)
+                {
+                    masterStream.Status = stream.Status;
+                    masterStream.Name = stream.Name;
+                    masterStream.DegreeId = stream.DegreeId;
+                    masterStream.UpdatedBy = stream.UpdatedBy;
+                    masterStream.UpdatedDate = DateTime.UtcNow;
+                    Update(masterStream);
+                    _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.StreamNotFound,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.NotFound
+                        Message = ResponseMessages.StreamUpdateSuccess,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
                     });
+                }
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.StreamNotFound,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
             }
 
             catch (Exception ex)
