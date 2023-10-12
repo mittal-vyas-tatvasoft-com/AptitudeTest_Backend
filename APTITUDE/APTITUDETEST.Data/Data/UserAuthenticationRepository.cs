@@ -1,6 +1,6 @@
 ﻿using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
-using AptitudeTest.Core.ViewModels.Common;
+
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using APTITUDETEST.Core.Entities.Users;

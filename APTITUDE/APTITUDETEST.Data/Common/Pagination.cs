@@ -1,4 +1,4 @@
-﻿using AptitudeTest.Core.ViewModels.Common;
+﻿using AptitudeTest.Core.ViewModels;
 
 namespace AptitudeTest.Data.Common
 {

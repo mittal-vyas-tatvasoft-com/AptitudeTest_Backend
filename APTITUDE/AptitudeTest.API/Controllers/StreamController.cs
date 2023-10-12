@@ -1,6 +1,6 @@
-﻿using AptitudeTest.Core.Interfaces.Master;
-using AptitudeTest.Core.ViewModels.Common;
-using AptitudeTest.Core.ViewModels.Master;
+﻿using AptitudeTest.Core.Interfaces;
+using AptitudeTest.Core.ViewModels;
+
 using AptitudeTest.Data.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
