@@ -34,6 +34,11 @@ namespace AptitudeTest.Application.Services.Users
         {
             return await _userRepository.Update(userVm);
         }
+
+        public async Task<JsonResult> Delete(int id)
+        {
+            return await _userRepository.Delete(id);
+        }
         #endregion
     }
 }

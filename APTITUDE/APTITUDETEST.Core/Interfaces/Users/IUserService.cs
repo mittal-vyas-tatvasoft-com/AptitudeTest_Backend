@@ -10,6 +10,7 @@ namespace AptitudeTest.Core.Interfaces.Users
         Task<User> GetUserById(int id);
         Task<JsonResult> Create(UserVm userVm);
         Task<JsonResult> Update(UserVm userVm);
+        Task<JsonResult> Delete(int id);
         #endregion
 
     }

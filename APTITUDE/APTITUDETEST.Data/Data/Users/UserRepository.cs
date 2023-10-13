@@ -238,5 +238,56 @@ namespace AptitudeTest.Data.Data.Users
                 });
             }
         }
+
+        public async Task<JsonResult> Delete(int id)
+        {
+            try
+            {
+                if (id == 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
+                User user = await Task.FromResult(_context.Users.Include(x => x.UserAcademics).Include(x => x.UserFamily).Where(u => u.Id == id && u.IsDeleted == false).FirstOrDefault());
+                if (user != null)
+                {
+                    user.IsDeleted = true;
+                    user.UserAcademics.ForEach(x => x.IsDeleted = true);
+                    user.UserFamily.ForEach(x => x.IsDeleted = true);
+
+                    Update(user);
+                    _context.SaveChanges();
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.DeleteSuccess, "User"),
+
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.NotFound, "User"),
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
     }
 }

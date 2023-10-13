@@ -54,7 +54,7 @@ namespace AptitudeTest.API.Controllers
         /// <summary>
         /// This method Updates User
         /// </summary>
-        /// <param name="college"></param>
+        /// <param name="user"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
         public async Task<JsonResult> Update(UserVm user)
@@ -65,6 +65,17 @@ namespace AptitudeTest.API.Controllers
             }
 
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+
+        /// <summary>
+        /// This method soft deletes user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("[action]")]
+        public async Task<JsonResult> Delete(int id)
+        {
+            return await _userService.Delete(id);
         }
         #endregion
     }
