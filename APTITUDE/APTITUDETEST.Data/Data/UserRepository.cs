@@ -31,7 +31,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region methods
-        
+
         #region GetAllUsers
         public async Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex, int? pageSize)
         {
@@ -264,6 +264,7 @@ namespace AptitudeTest.Data.Data
             }
         }
         #endregion
+
         #endregion
 
     }

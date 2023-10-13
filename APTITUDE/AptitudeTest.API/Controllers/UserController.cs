@@ -56,7 +56,7 @@ namespace AptitudeTest.API.Controllers
         /// </summary>
         /// <param name="id">user will be fetched according to this 'id'</param>
         /// <returns> user </returns> 
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{id:int}")]
         public async Task<JsonResult> GetUserByIdUsingDapper(int id)
         {
             return await _userService.GetUserByIdUsingDapper(id);
