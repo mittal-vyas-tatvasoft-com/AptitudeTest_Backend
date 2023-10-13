@@ -1,5 +1,6 @@
 ﻿
 using AptitudeTest.Core.Entities.Master;
+using AptitudeTest.Core.Entities.Users;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -25,6 +26,8 @@ namespace APTITUDETEST.Core.Entities.Users
         [ForeignKey("MasterGroups")]
         public int? Group { get; set; }
         public int? AppliedThrough { get; set; }
+        //public int? CollegeOrInstitute { get; set; }
+
         [ForeignKey("MasterTechnologies")]
         public int? TechnologyInterestedIn { get; set; }
         public int? ACPCMeritRank { get; set; }
@@ -43,6 +46,10 @@ namespace APTITUDETEST.Core.Entities.Users
         public bool? IsDeleted { get; set; } = false;
         public virtual MasterGroup MasterGroups { get; set; }
         public virtual MasterTechnology MasterTechnologies { get; set; }
+
+        public virtual List<UserAcademics> UserAcademics { get; set; }
+        public virtual List<UserFamily> UserFamily { get; set; }
+
 
     }
 }

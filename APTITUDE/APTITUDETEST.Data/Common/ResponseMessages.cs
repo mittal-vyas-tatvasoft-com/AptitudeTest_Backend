@@ -14,6 +14,7 @@
         public static string UpdateSuccess = "{0} updated successfully";
         public static string DeleteSuccess = "{0} deleted successfully";
         public static string NotEditable = "{0}  not editable";
+        public static string Addfailed = "{0}  add failed";
         #endregion
 
         #region UserAuthentication

@@ -43,7 +43,12 @@ namespace APTITUDETEST.Common.Data
                    .HasMaxLength(300)
                    .IsUnicode(false);
 
+
             });
+
+            modelBuilder.Entity<User>().HasMany(e => e.UserAcademics).WithOne(e => e.Users).HasForeignKey(e => e.UserId).IsRequired();
+            modelBuilder.Entity<User>().HasMany(e => e.UserFamily).WithOne(e => e.Users).HasForeignKey(e => e.UserId).IsRequired();
+
 
             modelBuilder.Entity<UserFamily>(entity =>
             {
