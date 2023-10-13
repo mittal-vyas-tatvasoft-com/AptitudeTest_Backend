@@ -7,7 +7,7 @@ namespace AptitudeTest.Core.Interfaces
     public interface IUsersRepository : IRepositoryBase<User>
     {
         public Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex, int? pageSize);
-
+        public Task<JsonResult> GetUserByIdUsingDapper(int id);
         public Task<JsonResult> GetUserById(int id);
     }
 }

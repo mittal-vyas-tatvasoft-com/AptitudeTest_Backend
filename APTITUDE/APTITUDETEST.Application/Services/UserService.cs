@@ -26,6 +26,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _userRepository.GetUserById(id);
         }
+
+        public async Task<JsonResult> GetUserByIdUsingDapper(int id)
+        {
+            return await _userRepository.GetUserByIdUsingDapper(id);
+        }
         #endregion
     }
 }
