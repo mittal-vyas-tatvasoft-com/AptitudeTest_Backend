@@ -75,8 +75,8 @@ namespace AptitudeTest.Data.Data
             try
             {
                 var UserDataFromId = await Users(_appDbContext.Users.Where(u => u.Id == id));
-                UserViewModel? user = UserDataFromId.FirstOrDefault();
-                return new JsonResult(new ApiResponse<UserViewModel>
+                List<UserViewModel>? user = UserDataFromId.ToList();
+                return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Data = user,
                     Message = ResponseMessages.Success,
