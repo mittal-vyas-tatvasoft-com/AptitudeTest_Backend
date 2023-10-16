@@ -80,8 +80,8 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterTechnology> technologies = _context.MasterTechnology.Where(t => t.Name.ToLower() == technology.Name.ToLower() && t.Id != technology.Id && t.IsDeleted != true).ToList();
-                if (technologies.Count > 0)
+                MasterTechnology technologies = _context.MasterTechnology.Where(t => t.Name.ToLower() == technology.Name.ToLower() && t.Id != technology.Id && t.IsDeleted != true).FirstOrDefault();
+                if (technologies !=null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -121,8 +121,8 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterTechnology> technologies = _context.MasterTechnology.Where(t => t.Name.ToLower() == technology.Name.ToLower() && t.Id != technology.Id && t.IsDeleted != true).ToList();
-                if (technologies.Count > 0)
+                MasterTechnology technologies = _context.MasterTechnology.Where(t => t.Name.ToLower() == technology.Name.ToLower() && t.Id != technology.Id && t.IsDeleted != true).FirstOrDefault();
+                if (technologies != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
