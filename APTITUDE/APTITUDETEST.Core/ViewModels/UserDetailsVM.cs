@@ -9,7 +9,7 @@
         public string Email { get; set; }
         public long? PhoneNumber { get; set; }
         public int Level { get; set; }
-        public DateOnly? DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         public string? PermanentAddress { get; set; }
         public int? UserGroup { get; set; }
         public string? GroupName { get; set; }

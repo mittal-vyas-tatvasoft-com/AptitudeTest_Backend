@@ -112,47 +112,47 @@ namespace AptitudeTest.Data.Data
             try
             {
                 var UserData = await Task.FromResult(from users in user
-                                                           join userAcademics in _appDbContext.UserAcademics on users.Id equals userAcademics.UserId into userAcademicsGroup
-                                                           from userAcademics in userAcademicsGroup.DefaultIfEmpty()
-                                                           join userFamilyData in _appDbContext.UserFamily on users.Id equals userFamilyData.UserId into userFamilyDataGroup
-                                                           from userFamilyData in userFamilyDataGroup.DefaultIfEmpty()
-                                                           join masterDegree in _appDbContext.MasterDegree on userAcademics.DegreeId equals masterDegree.Id into masterDegreeGroup
-                                                           from masterDegree in masterDegreeGroup.DefaultIfEmpty()
-                                                           join masterStream in _appDbContext.MasterStream on userAcademics.DegreeId equals masterStream.Id into masterStreamGroup
-                                                           from masterStream in masterStreamGroup.DefaultIfEmpty()
-                                                           join masterGroup in _appDbContext.MasterGroup on users.Group equals masterGroup.Id into masterGroups
-                                                           from masterGroup in masterGroups.DefaultIfEmpty()
-                                                           join masterTechnology in _appDbContext.MasterTechnology on users.Group equals masterTechnology.Id into masterTechnologies
-                                                           from masterTechnology in masterTechnologies.DefaultIfEmpty()
-                                                           select new UserViewModel
-                                                           {
-                                                               UserId = users.Id,
-                                                               FirstName = users.FirstName,
-                                                               LastName = users.LastName,
-                                                               FatherName = users.FatherName,
-                                                               Email = users.Email,
-                                                               PhoneNumber = users.PhoneNumber,
-                                                               Level = users.Level,
-                                                               Group = masterGroup,
-                                                               PreferedLocation = users.PreferedLocation,
-                                                               RoleId = users.RoleId,
-                                                               ACPCMeritRank = users.ACPCMeritRank,
-                                                               AppliedThrough = users.AppliedThrough,
-                                                               DateOfBirth = users.DateOfBirth,
-                                                               Gender = users.Gender,
-                                                               JEEScore = users.JEEScore,
-                                                               GUJCETScore = users.GUJCETScore,
-                                                               RelationshipWithExistingEmployee = users.RelationshipWithExistingEmployee,
-                                                               Status = users.Status,
-                                                               PermanentAddress = users.PermanentAddress,
-                                                               TechnologyInterestedIn = masterTechnology,
-                                                               UserAcademics = new UserAcademics
-                                                               {
-                                                                   MasterDegrees = masterDegree,
-                                                                   MasterStreams = masterStream
-                                                               },
-                                                               UserFamilyData = userFamilyData
-                                                           });
+                                                     join userAcademics in _appDbContext.UserAcademics on users.Id equals userAcademics.UserId into userAcademicsGroup
+                                                     from userAcademics in userAcademicsGroup.DefaultIfEmpty()
+                                                     join userFamilyData in _appDbContext.UserFamily on users.Id equals userFamilyData.UserId into userFamilyDataGroup
+                                                     from userFamilyData in userFamilyDataGroup.DefaultIfEmpty()
+                                                     join masterDegree in _appDbContext.MasterDegree on userAcademics.DegreeId equals masterDegree.Id into masterDegreeGroup
+                                                     from masterDegree in masterDegreeGroup.DefaultIfEmpty()
+                                                     join masterStream in _appDbContext.MasterStream on userAcademics.DegreeId equals masterStream.Id into masterStreamGroup
+                                                     from masterStream in masterStreamGroup.DefaultIfEmpty()
+                                                     join masterGroup in _appDbContext.MasterGroup on users.Group equals masterGroup.Id into masterGroups
+                                                     from masterGroup in masterGroups.DefaultIfEmpty()
+                                                     join masterTechnology in _appDbContext.MasterTechnology on users.Group equals masterTechnology.Id into masterTechnologies
+                                                     from masterTechnology in masterTechnologies.DefaultIfEmpty()
+                                                     select new UserViewModel
+                                                     {
+                                                         UserId = users.Id,
+                                                         FirstName = users.FirstName,
+                                                         LastName = users.LastName,
+                                                         FatherName = users.FatherName,
+                                                         Email = users.Email,
+                                                         PhoneNumber = users.PhoneNumber,
+                                                         Level = users.Level,
+                                                         Group = masterGroup,
+                                                         PreferedLocation = users.PreferedLocation,
+                                                         RoleId = users.RoleId,
+                                                         ACPCMeritRank = users.ACPCMeritRank,
+                                                         AppliedThrough = users.AppliedThrough,
+                                                         DateOfBirth = users.DateOfBirth,
+                                                         Gender = users.Gender,
+                                                         JEEScore = users.JEEScore,
+                                                         GUJCETScore = users.GUJCETScore,
+                                                         RelationshipWithExistingEmployee = users.RelationshipWithExistingEmployee,
+                                                         Status = users.Status,
+                                                         PermanentAddress = users.PermanentAddress,
+                                                         TechnologyInterestedIn = masterTechnology,
+                                                         UserAcademics = new UserAcademics
+                                                         {
+                                                             MasterDegrees = masterDegree,
+                                                             MasterStreams = masterStream
+                                                         },
+                                                         UserFamilyData = userFamilyData
+                                                     });
 
                 return UserData;
             }
@@ -181,6 +181,16 @@ namespace AptitudeTest.Data.Data
                     connection.Open();
                     var data = connection.Query("Select * from GetUserbyId(@user_id)", new { user_id = id }).ToList();
 
+                    if (data.Count == 0)
+                    {
+                        return new JsonResult(new ApiResponse<UserDetailsVM>
+                        {
+                            Data = null,
+                            Message = string.Format(ResponseMessages.NotFound, "User"),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
                     userDetails.AcademicsDetails = new List<UserAcademicsVM>();
                     userDetails.FamilyDetails = new List<UserFamilyVM>();
                     List<int> FamilyIds = new List<int>();
@@ -193,7 +203,7 @@ namespace AptitudeTest.Data.Data
                     userDetails.PhoneNumber = data[0].phonenumber ?? 0;
                     userDetails.FatherName = data[0].fathername ?? "";
                     userDetails.Level = data[0].level ?? 0;
-                    userDetails.DateOfBirth = data[0].dateofbirth ?? new DateOnly();
+                    userDetails.DateOfBirth = data[0].dateofbirth ?? new DateTime();
                     userDetails.PermanentAddress = data[0].permanentaddress ?? "";
                     userDetails.UserGroup = data[0].usergroup ?? 0;
                     userDetails.GroupName = data[0].groupname ?? "";
@@ -210,37 +220,43 @@ namespace AptitudeTest.Data.Data
                     userDetails.RoleId = data[0].roleid ?? 0;
                     foreach (var entity in data)
                     {
+                        if (entity.AcademicId != null)
+                        {
+                            if (!AcadamicIds.Contains(entity.AcademicId))
+                            {
+                                UserAcademicsVM userAcademics = new UserAcademicsVM();
+                                userAcademics.AcademicId = entity.AcademicId;
+                                userAcademics.DegreeId = entity.DegreeId;
+                                userAcademics.StreamId = entity.StreamId;
+                                userAcademics.Physics = entity.Physics;
+                                userAcademics.Maths = entity.Maths;
+                                userAcademics.Grade = entity.Grade;
+                                userAcademics.University = entity.University;
+                                userAcademics.DurationFromYear = entity.DurationFromYear;
+                                userAcademics.DurationFromMonth = entity.DurationFromMonth;
+                                userAcademics.DurationToYear = entity.DurationToYear;
+                                userAcademics.DurationToMonth = entity.DurationToMonth;
+                                userAcademics.DegreeName = entity.degreename;
+                                userAcademics.DegreeLevel = entity.degreelevel;
+                                userAcademics.StreamName = entity.streamname;
+                                userDetails.AcademicsDetails.Add(userAcademics);
+                            }
+                            AcadamicIds.Add(entity.AcademicId);
+                        }
 
-                        if (!AcadamicIds.Contains(entity.AcademicId))
+                        if (entity.familyid != null)
                         {
-                            UserAcademicsVM userAcademics = new UserAcademicsVM();
-                            userAcademics.AcademicId = entity.AcademicId;
-                            userAcademics.DegreeId = entity.DegreeId;
-                            userAcademics.StreamId = entity.StreamId;
-                            userAcademics.Physics = entity.Physics;
-                            userAcademics.Maths = entity.Maths;
-                            userAcademics.Grade = entity.Grade;
-                            userAcademics.University = entity.University;
-                            userAcademics.DurationFromYear = entity.DurationFromYear;
-                            userAcademics.DurationFromMonth = entity.DurationFromMonth;
-                            userAcademics.DurationToYear = entity.DurationToYear;
-                            userAcademics.DurationToMonth = entity.DurationToMonth;
-                            userAcademics.DegreeName = entity.degreename;
-                            userAcademics.DegreeLevel = entity.degreelevel;
-                            userAcademics.StreamName = entity.streamname;
-                            userDetails.AcademicsDetails.Add(userAcademics);
+                            if (!FamilyIds.Contains(entity.familyid))
+                            {
+                                UserFamilyVM family = new UserFamilyVM();
+                                family.FamilyId = entity.familyid;
+                                family.FamilyPerson = entity.FamilyPerson;
+                                family.Qualification = entity.Qualification;
+                                family.Occupation = entity.Occupation;
+                                userDetails.FamilyDetails.Add(family);
+                            }
+                            FamilyIds.Add(entity.familyid);
                         }
-                        AcadamicIds.Add(entity.AcademicId);
-                        if (!FamilyIds.Contains(entity.familyid))
-                        {
-                            UserFamilyVM family = new UserFamilyVM();
-                            family.FamilyId = entity.familyid;
-                            family.FamilyPerson = entity.FamilyPerson;
-                            family.Qualification = entity.Qualification;
-                            family.Occupation = entity.Occupation;
-                            userDetails.FamilyDetails.Add(family);
-                        }
-                        FamilyIds.Add(entity.familyid);
                     }
                 }
 
