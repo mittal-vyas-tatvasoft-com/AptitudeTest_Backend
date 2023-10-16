@@ -87,8 +87,8 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterStream> streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.IsDeleted != true).ToList();
-                if (streams.Count > 0)
+                MasterStream streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.IsDeleted != true).FirstOrDefault();
+                if (streams != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -140,8 +140,8 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterStream> streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.Id != stream.Id && s.IsDeleted != true).ToList();
-                if (streams.Count > 0)
+                MasterStream streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.Id != stream.Id && s.IsDeleted != true).FirstOrDefault();
+                if (streams !=null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {

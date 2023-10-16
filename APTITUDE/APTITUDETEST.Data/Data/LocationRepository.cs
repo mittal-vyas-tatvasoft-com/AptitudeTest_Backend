@@ -87,8 +87,8 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterLocation> locations = _context.MasterLocation.Where(l => l.Location.ToLower() == location.Location.ToLower() && l.CollegeId == location.CollegeId && l.IsDeleted != true).ToList();
-                if (locations.Count > 0)
+                MasterLocation locations = _context.MasterLocation.Where(l => l.Location.ToLower() == location.Location.ToLower() && l.CollegeId == location.CollegeId && l.IsDeleted != true).FirstOrDefault();
+                if (locations != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -139,8 +139,8 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterLocation> locations = _context.MasterLocation.Where(l => l.Location.ToLower() == location.Location.ToLower() && l.CollegeId == location.CollegeId && l.Id != location.Id && l.IsDeleted != true).ToList();
-                if (locations.Count > 0)
+                MasterLocation locations = _context.MasterLocation.Where(l => l.Location.ToLower() == location.Location.ToLower() && l.CollegeId == location.CollegeId && l.Id != location.Id && l.IsDeleted != true).FirstOrDefault();
+                if (locations != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
