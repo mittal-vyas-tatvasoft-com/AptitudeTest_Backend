@@ -111,7 +111,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                var UserDataFromId = await Task.FromResult(from users in user
+                var UserData = await Task.FromResult(from users in user
                                                            join userAcademics in _appDbContext.UserAcademics on users.Id equals userAcademics.UserId into userAcademicsGroup
                                                            from userAcademics in userAcademicsGroup.DefaultIfEmpty()
                                                            join userFamilyData in _appDbContext.UserFamily on users.Id equals userFamilyData.UserId into userFamilyDataGroup
@@ -154,7 +154,7 @@ namespace AptitudeTest.Data.Data
                                                                UserFamilyData = userFamilyData
                                                            });
 
-                return UserDataFromId;
+                return UserData;
             }
             catch
             {
