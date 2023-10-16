@@ -4,7 +4,6 @@ namespace AptitudeTest.Core.Interfaces
 {
     public interface IUserService
     {
-        Task<JsonResult> GetUserById(int id);
         Task<JsonResult> GetUserByIdUsingDapper(int id);
         Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex, int? pageSize);
 

@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewModels\User\**" />
     <Compile Remove="ViewModel\**" />
+    <EmbeddedResource Remove="ViewModels\User\**" />
     <EmbeddedResource Remove="ViewModel\**" />
+    <None Remove="ViewModels\User\**" />
     <None Remove="ViewModel\**" />
   </ItemGroup>
 
@@ -19,10 +22,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.11" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
     <PackageReference Include="RandomStringCreator" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModels\User\" />
   </ItemGroup>
 
 </Project>

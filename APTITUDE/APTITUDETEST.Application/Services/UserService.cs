@@ -22,11 +22,6 @@ namespace AptitudeTest.Application.Services
             return await _userRepository.GetAllUsers(searchQuery, currentPageIndex, pageSize);
         }
 
-        public async Task<JsonResult> GetUserById(int id)
-        {
-            return await _userRepository.GetUserById(id);
-        }
-
         public async Task<JsonResult> GetUserByIdUsingDapper(int id)
         {
             return await _userRepository.GetUserByIdUsingDapper(id);

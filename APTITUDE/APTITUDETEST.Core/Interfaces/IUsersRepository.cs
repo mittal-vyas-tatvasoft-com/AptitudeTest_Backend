@@ -8,6 +8,5 @@ namespace AptitudeTest.Core.Interfaces
     {
         public Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex, int? pageSize);
         public Task<JsonResult> GetUserByIdUsingDapper(int id);
-        public Task<JsonResult> GetUserById(int id);
     }
 }
