@@ -74,8 +74,8 @@ namespace AptitudeTest.Data.Data
             try
             {
                 MasterCollege college = new MasterCollege();
-                List<MasterCollege> colleges = _context.MasterCollege.Where(c => (c.Name.ToLower() == collegeToUpsert.Name.ToLower() || c.Abbreviation.ToLower() == collegeToUpsert.Abbreviation.ToLower()) && c.IsDeleted != true).ToList();
-                if (colleges.Count > 0)
+                MasterCollege masterCollege = _context.MasterCollege.Where(c => (c.Name.ToLower() == collegeToUpsert.Name.ToLower() || c.Abbreviation.ToLower() == collegeToUpsert.Abbreviation.ToLower()) && c.IsDeleted != true).FirstOrDefault();
+                if (masterCollege != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -117,8 +117,8 @@ namespace AptitudeTest.Data.Data
             try
             {
                 MasterCollege college = new MasterCollege();
-                List<MasterCollege> colleges = _context.MasterCollege.Where(c => (c.Name.ToLower() == collegeToUpsert.Name.ToLower() || c.Abbreviation.ToLower() == collegeToUpsert.Abbreviation.ToLower()) && c.Id != collegeToUpsert.Id && c.IsDeleted != true).ToList();
-                if (colleges.Count > 0)
+                MasterCollege cplleges = _context.MasterCollege.Where(c => (c.Name.ToLower() == collegeToUpsert.Name.ToLower() || c.Abbreviation.ToLower() == collegeToUpsert.Abbreviation.ToLower()) && c.Id != collegeToUpsert.Id && c.IsDeleted != true).FirstOrDefault();
+                if (cplleges != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
