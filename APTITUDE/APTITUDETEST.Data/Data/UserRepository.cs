@@ -90,8 +90,8 @@ namespace AptitudeTest.Data.Data
         #endregion
 
 
-        #region Dapper
-        public async Task<JsonResult> GetUserByIdUsingDapper(int id)
+        #region GetUserById
+        public async Task<JsonResult> GetUserById(int id)
         {
             try
             {

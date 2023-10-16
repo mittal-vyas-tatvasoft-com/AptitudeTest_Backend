@@ -38,16 +38,16 @@ namespace AptitudeTest.API.Controllers
         #endregion
 
 
-        #region GetUserByIdUsingDapper
+        #region GetUserById
         /// <summary>
         /// This method fetches single user data using user's Id
         /// </summary>
         /// <param name="id">user will be fetched according to this 'id'</param>
         /// <returns> user </returns> 
         [HttpGet("[action]/{id:int}")]
-        public async Task<JsonResult> GetUserByIdUsingDapper(int id)
+        public async Task<JsonResult> GetUserById(int id)
         {
-            return await _userService.GetUserByIdUsingDapper(id);
+            return await _userService.GetUserById(id);
         }
         #endregion
         #endregion
