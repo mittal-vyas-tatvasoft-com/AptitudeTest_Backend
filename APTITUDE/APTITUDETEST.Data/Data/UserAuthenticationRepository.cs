@@ -26,7 +26,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Constructor
-        public UserAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration) 
+        public UserAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration)
         {
             _context = context;
             _appSettingConfiguration = appSettingConfiguration;

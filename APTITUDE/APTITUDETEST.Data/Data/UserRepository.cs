@@ -2,7 +2,6 @@
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
-using APTITUDETEST.Core.Entities.Users;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +21,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Constructor
-        public UserRepository(AppDbContext appDbContext, IConfiguration config) 
+        public UserRepository(AppDbContext appDbContext, IConfiguration config)
         {
             _appDbContext = appDbContext;
             _config = config;
@@ -113,68 +112,9 @@ namespace AptitudeTest.Data.Data
                     List<int> FamilyIds = new List<int>();
                     List<int> AcadamicIds = new List<int>();
 
-                    userDetails.UserId = data[0].userid ?? 0;
-                    userDetails.FirstName = data[0].firstname ?? "";
-                    userDetails.LastName = data[0].lastname ?? "";
-                    userDetails.Email = data[0].email ?? "";
-                    userDetails.PhoneNumber = data[0].phonenumber ?? 0;
-                    userDetails.FatherName = data[0].fathername ?? "";
-                    userDetails.Level = data[0].level ?? 0;
-                    userDetails.DateOfBirth = data[0].dateofbirth ?? new DateTime();
-                    userDetails.PermanentAddress = data[0].permanentaddress ?? "";
-                    userDetails.UserGroup = data[0].usergroup ?? 0;
-                    userDetails.GroupName = data[0].groupname ?? "";
-                    userDetails.AppliedThrough = data[0].appliedthrough ?? 0;
-                    userDetails.TechnologyInterestedIn = data[0].technologyinterestedIn ?? 0;
-                    userDetails.TechnologyName = data[0].technologyname ?? "";
-                    userDetails.ACPCMeritRank = data[0].acpcmeritrank ?? 0;
-                    userDetails.GUJCETScore = data[0].gujcetscore ?? 0;
-                    userDetails.JEEScore = data[0].jeescore ?? 0;
-                    userDetails.Gender = data[0].gender ?? 0;
-                    userDetails.PreferedLocation = data[0].preferedlocation ?? 0;
-                    userDetails.RelationshipWithExistingEmployee = data[0].relationshipwithexistingemployee ?? "";
-                    userDetails.Status = data[0].status ?? 0;
-                    userDetails.RoleId = data[0].roleid ?? 0;
-                    foreach (var entity in data)
-                    {
-                        if (entity.AcademicId != null)
-                        {
-                            if (!AcadamicIds.Contains(entity.AcademicId))
-                            {
-                                UserAcademicsVM userAcademics = new UserAcademicsVM();
-                                userAcademics.AcademicId = entity.AcademicId;
-                                userAcademics.DegreeId = entity.DegreeId;
-                                userAcademics.StreamId = entity.StreamId;
-                                userAcademics.Physics = entity.Physics;
-                                userAcademics.Maths = entity.Maths;
-                                userAcademics.Grade = entity.Grade;
-                                userAcademics.University = entity.University;
-                                userAcademics.DurationFromYear = entity.DurationFromYear;
-                                userAcademics.DurationFromMonth = entity.DurationFromMonth;
-                                userAcademics.DurationToYear = entity.DurationToYear;
-                                userAcademics.DurationToMonth = entity.DurationToMonth;
-                                userAcademics.DegreeName = entity.degreename;
-                                userAcademics.DegreeLevel = entity.degreelevel;
-                                userAcademics.StreamName = entity.streamname;
-                                userDetails.AcademicsDetails.Add(userAcademics);
-                            }
-                            AcadamicIds.Add(entity.AcademicId);
-                        }
+                    FillUserData(userDetails, data);
+                    FillAcademicAndFamilyData(data, userDetails, AcadamicIds, FamilyIds);
 
-                        if (entity.familyid != null)
-                        {
-                            if (!FamilyIds.Contains(entity.familyid))
-                            {
-                                UserFamilyVM family = new UserFamilyVM();
-                                family.FamilyId = entity.familyid;
-                                family.FamilyPerson = entity.FamilyPerson;
-                                family.Qualification = entity.Qualification;
-                                family.Occupation = entity.Occupation;
-                                userDetails.FamilyDetails.Add(family);
-                            }
-                            FamilyIds.Add(entity.familyid);
-                        }
-                    }
                 }
 
                 return new JsonResult(new ApiResponse<UserDetailsVM>
@@ -194,6 +134,79 @@ namespace AptitudeTest.Data.Data
                     Result = false,
                     StatusCode = ResponseStatusCode.InternalServerError
                 });
+            }
+        }
+        #endregion
+
+        #region HelpingMethods
+
+        private void FillUserData(UserDetailsVM userDetails, dynamic data)
+        {
+            userDetails.UserId = data[0].userid ?? 0;
+            userDetails.FirstName = data[0].firstname ?? "";
+            userDetails.LastName = data[0].lastname ?? "";
+            userDetails.Email = data[0].email ?? "";
+            userDetails.PhoneNumber = data[0].phonenumber ?? 0;
+            userDetails.FatherName = data[0].fathername ?? "";
+            userDetails.Level = data[0].level ?? 0;
+            userDetails.DateOfBirth = data[0].dateofbirth ?? new DateTime();
+            userDetails.PermanentAddress = data[0].permanentaddress ?? "";
+            userDetails.UserGroup = data[0].usergroup ?? 0;
+            userDetails.GroupName = data[0].groupname ?? "";
+            userDetails.AppliedThrough = data[0].appliedthrough ?? 0;
+            userDetails.TechnologyInterestedIn = data[0].technologyinterestedIn ?? 0;
+            userDetails.TechnologyName = data[0].technologyname ?? "";
+            userDetails.ACPCMeritRank = data[0].acpcmeritrank ?? 0;
+            userDetails.GUJCETScore = data[0].gujcetscore ?? 0;
+            userDetails.JEEScore = data[0].jeescore ?? 0;
+            userDetails.Gender = data[0].gender ?? 0;
+            userDetails.PreferedLocation = data[0].preferedlocation ?? 0;
+            userDetails.RelationshipWithExistingEmployee = data[0].relationshipwithexistingemployee ?? "";
+            userDetails.Status = data[0].status ?? 0;
+            userDetails.RoleId = data[0].roleid ?? 0;
+        }
+
+        private void FillAcademicAndFamilyData(dynamic data, UserDetailsVM userDetails, List<int> acadamicIds, List<int> familyIds)
+        {
+            foreach (var entity in data)
+            {
+                if (entity.AcademicId != null)
+                {
+                    if (!acadamicIds.Contains(entity.AcademicId))
+                    {
+                        UserAcademicsVM userAcademics = new UserAcademicsVM();
+                        userAcademics.AcademicId = entity.AcademicId;
+                        userAcademics.DegreeId = entity.DegreeId;
+                        userAcademics.StreamId = entity.StreamId;
+                        userAcademics.Physics = entity.Physics;
+                        userAcademics.Maths = entity.Maths;
+                        userAcademics.Grade = entity.Grade;
+                        userAcademics.University = entity.University;
+                        userAcademics.DurationFromYear = entity.DurationFromYear;
+                        userAcademics.DurationFromMonth = entity.DurationFromMonth;
+                        userAcademics.DurationToYear = entity.DurationToYear;
+                        userAcademics.DurationToMonth = entity.DurationToMonth;
+                        userAcademics.DegreeName = entity.degreename;
+                        userAcademics.DegreeLevel = entity.degreelevel;
+                        userAcademics.StreamName = entity.streamname;
+                        userDetails.AcademicsDetails.Add(userAcademics);
+                    }
+                    acadamicIds.Add(entity.AcademicId);
+                }
+
+                if (entity.familyid != null)
+                {
+                    if (!familyIds.Contains(entity.familyid))
+                    {
+                        UserFamilyVM family = new UserFamilyVM();
+                        family.FamilyId = entity.familyid;
+                        family.FamilyPerson = entity.FamilyPerson;
+                        family.Qualification = entity.Qualification;
+                        family.Occupation = entity.Occupation;
+                        userDetails.FamilyDetails.Add(family);
+                    }
+                    familyIds.Add(entity.familyid);
+                }
             }
         }
         #endregion
