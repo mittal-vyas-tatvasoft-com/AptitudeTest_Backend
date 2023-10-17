@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.Entities.Master;
+using AptitudeTest.Core.Entities.Questions;
 using AptitudeTest.Core.Entities.Users;
 using APTITUDETEST.Core.Entities.Users;
 using Microsoft.EntityFrameworkCore;
@@ -177,6 +178,30 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
+
+            modelBuilder.Entity<QuestionModule>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__QUESTIONMODULE_ID");
+                entity.ToTable("QuestionModule");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.Name)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+                entity.Property(e => e.Status).HasDefaultValue(true);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            });
+            modelBuilder.Entity<QuestionMarks>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__QUESTIONMARKS_ID");
+                entity.ToTable("QuestionMarks");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.Status).HasDefaultValue(true);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            });
         }
 
         public DbSet<User> Users { get; set; }
@@ -188,5 +213,7 @@ namespace APTITUDETEST.Common.Data
         public DbSet<MasterStream> MasterStream { get; set; }
         public DbSet<MasterTechnology> MasterTechnology { get; set; }
         public DbSet<MasterGroup> MasterGroup { get; set; }
+        public DbSet<QuestionModule> QuestionModule { get; set; }
+        public DbSet<QuestionMarks> QuestionMarks { get; set; }
     }
 }
