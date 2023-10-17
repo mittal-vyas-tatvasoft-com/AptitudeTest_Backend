@@ -7,13 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewModels\User\**" />
     <Compile Remove="ViewModel\**" />
+    <EmbeddedResource Remove="ViewModels\User\**" />
     <EmbeddedResource Remove="ViewModel\**" />
+    <None Remove="ViewModels\User\**" />
     <None Remove="ViewModel\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="Dapper" Version="2.1.11" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.11" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />

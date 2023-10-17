@@ -17,16 +17,16 @@ using System.Text;
 
 namespace AptitudeTest.Data.Data
 {
-    public class UserAuthenticationRepository : RepositoryBase<User>, IUserAuthenticationRepository
+    public class UserAuthenticationRepository : IUserAuthenticationRepository
     {
-        #region prperties
+        #region Properies
         private readonly AppDbContext _context;
         static IConfiguration _appSettingConfiguration;
         public static Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
         #endregion
 
         #region Constructor
-        public UserAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration) : base(context)
+        public UserAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration)
         {
             _context = context;
             _appSettingConfiguration = appSettingConfiguration;
