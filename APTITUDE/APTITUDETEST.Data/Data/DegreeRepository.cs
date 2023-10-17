@@ -8,14 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AptitudeTest.Data.Data
 {
-    public class DegreeRepository : MasterRepositoryBase<MasterDegree>, IDegreeRepository
+    public class DegreeRepository : IDegreeRepository
     {
         #region Properties
         AppDbContext _context;
         #endregion
 
         #region Constructor
-        public DegreeRepository(AppDbContext context) : base(context)
+        public DegreeRepository(AppDbContext context)
         {
             _context = context;
         }
@@ -83,7 +83,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 MasterDegree degrees = _context.MasterDegree.Where(d => d.Name.ToLower() == degree.Name.ToLower() && d.IsDeleted != true).FirstOrDefault();
-                if (degrees !=null)
+                if (degrees != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -98,7 +98,7 @@ namespace AptitudeTest.Data.Data
                 masterDegree.Name = degree.Name;
                 masterDegree.CreatedBy = degree.CreatedBy;
                 masterDegree.Level = degree.Level;
-                Create(masterDegree);
+                _context.Add(masterDegree);
                 _context.SaveChanges();
 
                 return new JsonResult(new ApiResponse<string>
@@ -126,7 +126,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 MasterDegree degrees = _context.MasterDegree.Where(d => d.Name.ToLower() == degree.Name.ToLower() && d.Id != degree.Id && d.IsDeleted != true).FirstOrDefault();
-                if (degrees !=null)
+                if (degrees != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -155,7 +155,7 @@ namespace AptitudeTest.Data.Data
                     masterDegree.Level = degree.Level;
                     masterDegree.UpdatedBy = degree.UpdatedBy;
                     masterDegree.UpdatedDate = DateTime.UtcNow;
-                    Update(masterDegree);
+                    _context.Update(masterDegree);
                     _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>
@@ -189,7 +189,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                int rowsEffected = CheckUncheck(degree => degree.IsDeleted == false, setters => setters.SetProperty(degree => degree.Status, check));
+                int rowsEffected = _context.MasterStream.Where(degree => degree.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(degree => degree.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
@@ -230,7 +230,6 @@ namespace AptitudeTest.Data.Data
                     degree.IsDeleted = true;
                     _context.MasterDegree.Update(degree);
                     _context.SaveChanges();
-                    /*Update(degree);*/
                     return new JsonResult(new ApiResponse<string>
                     {
                         Message = string.Format(ResponseMessages.DeleteSuccess, "Degree"),

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Core.Interfaces
 {
-    public interface ITechnologyRepository
+    public interface IProfileRepository
     {
         public Task<JsonResult> GetTechnologies(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize);
 

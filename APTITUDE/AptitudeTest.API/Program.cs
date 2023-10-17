@@ -29,14 +29,12 @@ builder.Services.AddScoped<IUsersRepository, UserRepository>();
 builder.Services.AddScoped<IUserAuthenticationRepository, UserAuthenticationRepository>();
 builder.Services.AddTransient<ICollegeService, CollegeService>();
 builder.Services.AddScoped<ICollegeRepository, CollegeRepository>();
-builder.Services.AddTransient<ILocationService, LocationService>();
-builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddTransient<IDegreeService, DegreeService>();
 builder.Services.AddScoped<IDegreeRepository, DegreeRepository>();
 builder.Services.AddTransient<IStreamService, StreamService>();
 builder.Services.AddScoped<IStreamRepository, StreamRepository>();
-builder.Services.AddTransient<ITechnologyService, TechnologyService>();
-builder.Services.AddScoped<ITechnologyRepository, TechnologyRepository>();
+builder.Services.AddTransient<IProfileService, TechnologyService>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
