@@ -2,7 +2,7 @@
 
 namespace AptitudeTest.Core.ViewModels
 {
-    public class TechnologyVM
+    public class ProfileVM
     {
         public int Id { get; set; }
         [StringLength(500)]

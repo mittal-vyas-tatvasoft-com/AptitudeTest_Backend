@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
 {
-    public class TechnologyService : IProfileService
+    public class ProfileService : IProfileService
     {
         #region Properties
         private readonly IProfileRepository _repository;
         #endregion
 
         #region Constructor
-        public TechnologyService(IProfileRepository repository)
+        public ProfileService(IProfileRepository repository)
         {
             _repository = repository;
         }
@@ -19,19 +19,19 @@ namespace AptitudeTest.Application.Services
 
         #region Methods
 
-        public async Task<JsonResult> GetTechnologies(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetProfiles(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
         {
-            return await _repository.GetTechnologies(searchQuery, filter, currentPageIndex, pageSize);
+            return await _repository.GetProfiles(searchQuery, filter, currentPageIndex, pageSize);
         }
 
-        public async Task<JsonResult> Create(TechnologyVM technology)
+        public async Task<JsonResult> Create(ProfileVM profile)
         {
-            return await _repository.Create(technology);
+            return await _repository.Create(profile);
         }
 
-        public async Task<JsonResult> Update(TechnologyVM technology)
+        public async Task<JsonResult> Update(ProfileVM profile)
         {
-            return await _repository.Update(technology);
+            return await _repository.Update(profile);
         }
         public async Task<JsonResult> CheckUncheckAll(bool check)
         {
