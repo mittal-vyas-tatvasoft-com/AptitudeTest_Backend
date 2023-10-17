@@ -92,10 +92,9 @@ namespace AptitudeTest.Data.Data
             try
             {
                 UserDetailsVM userDetails = new UserDetailsVM();
-                using (var connection = new NpgsqlConnection(connectionString))
+                using (var dbConnection = new DbConnection())
                 {
-                    connection.Open();
-                    var data = connection.Query("Select * from GetUserbyId(@user_id)", new { user_id = id }).ToList();
+                    var data = dbConnection.Connection.Query("Select * from GetUserbyId(@user_id)", new { user_id = id }).ToList();
 
                     if (data.Count == 0)
                     {
@@ -111,7 +110,6 @@ namespace AptitudeTest.Data.Data
                     userDetails.FamilyDetails = new List<UserFamilyVM>();
                     List<int> FamilyIds = new List<int>();
                     List<int> AcadamicIds = new List<int>();
-
                     FillUserData(userDetails, data);
                     FillAcademicAndFamilyData(data, userDetails, AcadamicIds, FamilyIds);
 

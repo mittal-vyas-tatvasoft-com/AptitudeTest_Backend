@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.11" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
   </ItemGroup>
 
 </Project>
