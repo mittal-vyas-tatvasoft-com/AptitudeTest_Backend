@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
 {
-    public class TechnologyService : ITechnologyService
+    public class TechnologyService : IProfileService
     {
         #region Properties
-        private readonly ITechnologyRepository _repository;
+        private readonly IProfileRepository _repository;
         #endregion
 
         #region Constructor
-        public TechnologyService(ITechnologyRepository repository)
+        public TechnologyService(IProfileRepository repository)
         {
             _repository = repository;
         }

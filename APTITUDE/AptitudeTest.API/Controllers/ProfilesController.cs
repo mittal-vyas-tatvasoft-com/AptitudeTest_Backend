@@ -10,14 +10,14 @@ namespace AptitudeTest.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class TechnologiesController : ControllerBase
+    public class ProfilesController : ControllerBase
     {
         #region Properties
-        private readonly ITechnologyService _service;
+        private readonly IProfileService _service;
         #endregion
 
         #region Constructor
-        public TechnologiesController(ITechnologyService service)
+        public ProfilesController(IProfileService service)
         {
             _service = service;
         }
