@@ -1,10 +1,9 @@
-﻿using AptitudeTest.Core.Entities.Master;
-using AptitudeTest.Core.ViewModels;
+﻿using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Core.Interfaces
 {
-    public interface ICollegeRepository : IRepositoryBase<MasterCollege>
+    public interface ICollegeRepository
     {
         #region College
 

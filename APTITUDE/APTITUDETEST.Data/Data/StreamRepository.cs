@@ -8,14 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AptitudeTest.Data.Data
 {
-    public class StreamRepository : MasterRepositoryBase<MasterStream>, IStreamRepository
+    public class StreamRepository : IStreamRepository
     {
         #region Properties
         AppDbContext _context;
         #endregion
 
         #region Constructor
-        public StreamRepository(AppDbContext context) : base(context)
+        public StreamRepository(AppDbContext context)
         {
             _context = context;
         }
@@ -112,7 +112,7 @@ namespace AptitudeTest.Data.Data
                 masterStream.Name = stream.Name;
                 masterStream.DegreeId = stream.DegreeId;
                 masterStream.CreatedBy = stream.CreatedBy;
-                Create(masterStream);
+                _context.Add(masterStream);
                 _context.SaveChanges();
 
                 return new JsonResult(new ApiResponse<string>
@@ -169,7 +169,7 @@ namespace AptitudeTest.Data.Data
                     masterStream.DegreeId = stream.DegreeId;
                     masterStream.UpdatedBy = stream.UpdatedBy;
                     masterStream.UpdatedDate = DateTime.UtcNow;
-                    Update(masterStream);
+                    _context.Update(masterStream);
                     _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>
@@ -203,7 +203,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                int rowsEffected = CheckUncheck(stream => stream.IsDeleted == false, setters => setters.SetProperty(stream => stream.Status, check));
+                int rowsEffected = _context.MasterStream.Where(stream => stream.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(stream => stream.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
@@ -242,7 +242,7 @@ namespace AptitudeTest.Data.Data
                 if (stream != null)
                 {
                     stream.IsDeleted = true;
-                    Update(stream);
+                    _context.Update(stream);
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {

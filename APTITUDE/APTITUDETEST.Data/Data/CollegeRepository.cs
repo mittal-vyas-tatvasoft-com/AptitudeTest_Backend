@@ -8,13 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AptitudeTest.Data.Data
 {
-    public class CollegeRepository : MasterRepositoryBase<MasterCollege>, ICollegeRepository
+    public class CollegeRepository : ICollegeRepository
     {
 
         private readonly AppDbContext _context;
 
 
-        public CollegeRepository(AppDbContext context) : base(context)
+        public CollegeRepository(AppDbContext context)
         {
             _context = context;
         }
@@ -89,7 +89,7 @@ namespace AptitudeTest.Data.Data
                 college.Name = collegeToUpsert.Name;
                 college.Abbreviation = collegeToUpsert.Abbreviation;
                 college.CreatedBy = collegeToUpsert.CreatedBy;
-                Create(college);
+                _context.Add(college);
                 _context.SaveChanges();
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -136,7 +136,7 @@ namespace AptitudeTest.Data.Data
                     masterCollege.Abbreviation = collegeToUpsert.Abbreviation;
                     masterCollege.UpdatedBy = collegeToUpsert.UpdatedBy;
                     masterCollege.UpdatedDate = DateTime.UtcNow;
-                    Update(masterCollege);
+                    _context.Update(masterCollege);
                     _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>
@@ -185,7 +185,7 @@ namespace AptitudeTest.Data.Data
                 if (college != null)
                 {
                     college.IsDeleted = true;
-                    Update(college);
+                    _context.Update(college);
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -219,7 +219,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                int rowsEffected = CheckUncheck(college => college.IsDeleted == false, setters => setters.SetProperty(college => college.Status, check));
+                int rowsEffected = _context.MasterStream.Where(college => college.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(college => college.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,

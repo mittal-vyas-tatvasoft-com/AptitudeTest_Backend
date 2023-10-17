@@ -8,14 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AptitudeTest.Data.Data
 {
-    public class TechnologyRepository : MasterRepositoryBase<MasterTechnology>, ITechnologyRepository
+    public class ProfileRepository : IProfileRepository
     {
         #region Properties
         AppDbContext _context;
         #endregion
 
         #region Constructor
-        public TechnologyRepository(AppDbContext context) : base(context)
+        public ProfileRepository(AppDbContext context)
         {
             _context = context;
         }
@@ -95,7 +95,7 @@ namespace AptitudeTest.Data.Data
                 MasterTechnology.Status = technology.Status;
                 MasterTechnology.Name = technology.Name;
                 MasterTechnology.CreatedBy = technology.CreatedBy;
-                Create(MasterTechnology);
+                _context.Add(MasterTechnology);
                 _context.SaveChanges();
 
                 return new JsonResult(new ApiResponse<string>
@@ -139,7 +139,7 @@ namespace AptitudeTest.Data.Data
                     MasterTechnology.Name = technology.Name;
                     MasterTechnology.UpdatedBy = technology.UpdatedBy;
                     MasterTechnology.UpdatedDate = DateTime.UtcNow;
-                    Update(MasterTechnology);
+                    _context.Update(MasterTechnology);
                     _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>
@@ -174,7 +174,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                int rowsEffected = CheckUncheck(technology => technology.IsDeleted == false, setters => setters.SetProperty(technology => technology.Status, check));
+                int rowsEffected = _context.MasterStream.Where(technology => technology.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(technology => technology.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
@@ -213,7 +213,7 @@ namespace AptitudeTest.Data.Data
                 if (technology != null)
                 {
                     technology.IsDeleted = true;
-                    Update(technology);
+                    _context.Update(technology);
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
