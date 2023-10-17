@@ -30,7 +30,7 @@ namespace AptitudeTest.API.Controllers
         /// <param name="currentPageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{currentPageIndex:int}/{pageSize:int}")]
+        [HttpGet("{currentPageIndex:int}/{pageSize:int}")]
         public async Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex = 0, int? pageSize = 10)
         {
             return await _userService.GetAllUsers(searchQuery, currentPageIndex, pageSize);
@@ -45,7 +45,7 @@ namespace AptitudeTest.API.Controllers
         /// <param name="id">user will be fetched according to this 'id'</param>
         /// <returns> user </returns> 
         [HttpGet("[action]/{id:int}")]
-        public async Task<JsonResult> GetUserById(int id)
+        public async Task<JsonResult> Get(int id)
         {
             return await _userService.GetUserById(id);
         }
