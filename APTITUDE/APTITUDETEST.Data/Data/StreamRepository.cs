@@ -141,7 +141,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 MasterStream streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.Id != stream.Id && s.IsDeleted != true).FirstOrDefault();
-                if (streams !=null)
+                if (streams != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {

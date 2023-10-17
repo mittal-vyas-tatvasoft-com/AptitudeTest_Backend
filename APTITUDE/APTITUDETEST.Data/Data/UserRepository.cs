@@ -79,9 +79,9 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
-                    Message = ResponseMessages.BadRequest,
+                    Message = ResponseMessages.InternalError,
                     Result = false,
-                    StatusCode = ResponseStatusCode.RequestFailed
+                    StatusCode = ResponseStatusCode.InternalServerError
                 });
             }
         }

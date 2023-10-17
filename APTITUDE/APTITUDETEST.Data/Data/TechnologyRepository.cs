@@ -81,7 +81,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 MasterTechnology technologies = _context.MasterTechnology.Where(t => t.Name.ToLower() == technology.Name.ToLower() && t.Id != technology.Id && t.IsDeleted != true).FirstOrDefault();
-                if (technologies !=null)
+                if (technologies != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
