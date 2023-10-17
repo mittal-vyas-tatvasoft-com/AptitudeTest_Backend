@@ -11,7 +11,7 @@ using Npgsql;
 
 namespace AptitudeTest.Data.Data
 {
-    public class UserRepository : RepositoryBase<User>, IUsersRepository
+    public class UserRepository : IUsersRepository
     {
 
         #region Properies
@@ -21,8 +21,8 @@ namespace AptitudeTest.Data.Data
 
         #endregion
 
-        #region Dependacy
-        public UserRepository(AppDbContext appDbContext, IConfiguration config) : base(appDbContext)
+        #region Constructor
+        public UserRepository(AppDbContext appDbContext, IConfiguration config) 
         {
             _appDbContext = appDbContext;
             _config = config;
@@ -37,7 +37,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<User> AllUserData = await Task.FromResult(_appDbContext.Users.Include(user => user.MasterGroups).Include(user => user.MasterTechnologies).ToList());
                 if (!string.IsNullOrEmpty(searchQuery))
                 {
                     using (var connection = new NpgsqlConnection(connectionString))
@@ -87,7 +86,6 @@ namespace AptitudeTest.Data.Data
         }
 
         #endregion
-
 
         #region GetUserById
         public async Task<JsonResult> GetUserById(int id)

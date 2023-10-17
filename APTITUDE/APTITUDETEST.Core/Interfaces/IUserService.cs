@@ -6,6 +6,5 @@ namespace AptitudeTest.Core.Interfaces
     {
         Task<JsonResult> GetUserById(int id);
         Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex, int? pageSize);
-
     }
 }

@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Core.Interfaces.UserAuthentication
 {
-    public interface IUserAuthenticationRepository : IRepositoryBase<User>
-    {
+    public interface IUserAuthenticationRepository 
+    { 
         Task<JsonResult> Login(LoginVm loginVm);
         Task<JsonResult> ForgetPassword(string email);
         Task<JsonResult> RefreshToken(TokenVm tokens);

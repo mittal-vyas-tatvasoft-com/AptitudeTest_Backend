@@ -10,9 +10,9 @@ namespace AptitudeTest.Application.Services
         #endregion
 
         #region Constructor
-        public UserService(IUsersRepository userepo)
+        public UserService(IUsersRepository userrepo)
         {
-            _userRepository = userepo;
+            _userRepository = userrepo;
         }
         #endregion
 
