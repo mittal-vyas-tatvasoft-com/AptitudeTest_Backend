@@ -1,24 +1,14 @@
-﻿using APTITUDETEST.Common.Data;
-using AptitudeTest.Core.Entities.Master;
+﻿using AptitudeTest.Core.Entities.Questions;
+using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
+using APTITUDETEST.Common.Data;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using AptitudeTest.Core.Entities.Questions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.IO;
-using static System.Net.WebRequestMethods;
-using System.Drawing.Printing;
-using AptitudeTest.Core.Interfaces;
 
 namespace AptitudeTest.Data.Data
 {
-    public class QuestionModuleRepository: IQuestionModuleRepository
+    public class QuestionModuleRepository : IQuestionModuleRepository
     {
         #region Properties
         AppDbContext _context;
@@ -58,9 +48,9 @@ namespace AptitudeTest.Data.Data
 
                 List<QuestionModuleVM> questionModuleData = questionModuleslist.Select(questionModule => new QuestionModuleVM()
                 {
-                    Id= questionModule.Id,
-                    Name=questionModule.Name,
-                    Status=questionModule.Status,
+                    Id = questionModule.Id,
+                    Name = questionModule.Name,
+                    Status = questionModule.Status,
 
                 }).ToList();
 
@@ -89,7 +79,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                QuestionModule questionModules = _context.QuestionModule.Where(m => m.Name.ToLower() == questionModuleVM.Name.ToLower()  && m.IsDeleted != true).FirstOrDefault();
+                QuestionModule questionModules = _context.QuestionModule.Where(m => m.Name.ToLower() == questionModuleVM.Name.ToLower() && m.IsDeleted != true).FirstOrDefault();
                 if (questionModules != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -100,12 +90,13 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                QuestionModule questionModule = new QuestionModule() {
+                QuestionModule questionModule = new QuestionModule()
+                {
                     Status = questionModuleVM.Status,
-                Name = questionModuleVM.Name,
-                CreatedBy= questionModuleVM.CreatedBy
-            };
-                
+                    Name = questionModuleVM.Name,
+                    CreatedBy = questionModuleVM.CreatedBy
+                };
+
                 _context.Add(questionModule);
                 _context.SaveChanges();
 
@@ -144,7 +135,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                 questionModule = await Task.FromResult(_context.QuestionModule.AsNoTracking().Where(l => l.Id == questionModuleVM.Id && l.IsDeleted != true).FirstOrDefault());
+                questionModule = await Task.FromResult(_context.QuestionModule.AsNoTracking().Where(l => l.Id == questionModuleVM.Id && l.IsDeleted != true).FirstOrDefault());
                 if (questionModule != null)
                 {
                     questionModule.Status = questionModuleVM.Status;
@@ -185,7 +176,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                QuestionModule? questionModule = await Task.FromResult(_context.QuestionModule.Where(s => s.IsDeleted !=true && s.Id==id).FirstOrDefault());
+                QuestionModule? questionModule = await Task.FromResult(_context.QuestionModule.Where(s => s.IsDeleted != true && s.Id == id).FirstOrDefault());
 
                 if (questionModule == null)
                 {
@@ -196,7 +187,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.NotFound
                     });
                 }
-                QuestionModuleVM questionModuleVM = new QuestionModuleVM() { Id= questionModule.Id,Name= questionModule.Name,Status= questionModule .Status};
+                QuestionModuleVM questionModuleVM = new QuestionModuleVM() { Id = questionModule.Id, Name = questionModule.Name, Status = questionModule.Status };
 
                 return new JsonResult(new ApiResponse<QuestionModuleVM>
                 {

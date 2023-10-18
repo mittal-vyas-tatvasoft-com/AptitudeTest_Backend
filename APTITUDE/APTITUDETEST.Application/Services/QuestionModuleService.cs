@@ -1,16 +1,10 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AptitudeTest.Application.Services
 {
-    public class QuestionModuleService :IQuestionModuleService
+    public class QuestionModuleService : IQuestionModuleService
     {
         #region Properties
         IQuestionModuleRepository _repository;

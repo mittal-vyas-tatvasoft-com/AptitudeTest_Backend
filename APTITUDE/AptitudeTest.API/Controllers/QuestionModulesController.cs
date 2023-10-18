@@ -1,13 +1,14 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class QuestionModulesController : ControllerBase
     {
         #region Properties
@@ -41,7 +42,7 @@ namespace AptitudeTest.Controllers
         /// <summary>
         /// This method Creates QuestionModule
         /// </summary>
-        /// <param name="college"></param>
+        /// <param name="questionModule"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<JsonResult> Create(QuestionModuleVM questionModule)
