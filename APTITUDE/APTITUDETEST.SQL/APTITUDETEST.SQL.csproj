@@ -10,4 +10,8 @@
     <Folder Include="Scripts\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.11" />
+  </ItemGroup>
+
 </Project>

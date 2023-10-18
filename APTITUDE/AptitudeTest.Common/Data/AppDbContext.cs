@@ -1,6 +1,7 @@
 ﻿using AptitudeTest.Core.Entities.Master;
 using AptitudeTest.Core.Entities.Questions;
 using AptitudeTest.Core.Entities.Users;
+using AptitudeTest.Core.ViewModels;
 using APTITUDETEST.Core.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -86,6 +87,10 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             });
 
+            modelBuilder.Entity<UserViewModel>(entity =>
+            {
+                entity.HasNoKey();
+            });
 
             modelBuilder.Entity<MasterCollege>(entity =>
             {
