@@ -30,7 +30,7 @@ builder.Services.AddTransient<IDegreeService, DegreeService>();
 builder.Services.AddScoped<IDegreeRepository, DegreeRepository>();
 builder.Services.AddTransient<IStreamService, StreamService>();
 builder.Services.AddScoped<IStreamRepository, StreamRepository>();
-builder.Services.AddTransient<IProfileService, TechnologyService>();
+builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 
 builder.Services.AddTransient<IQuestionModuleService, QuestionModuleService>();
