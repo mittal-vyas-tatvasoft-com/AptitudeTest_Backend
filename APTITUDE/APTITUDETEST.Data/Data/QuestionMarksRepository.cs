@@ -23,8 +23,6 @@ namespace AptitudeTest.Data.Data
         #region Methods
         public async Task<JsonResult> GetAllQuestionMarks(string? searchQuery, int? currentPageIndex, int? pageSize)
         {
-            try
-            {
                 try
                 {
                     List<QuestionMarks> questionMarks;
@@ -54,19 +52,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.InternalServerError
                     });
                 }
-
-
-            }
-
-            catch (Exception ex)
-            {
-                return new JsonResult(new ApiResponse<string>
-                {
-                    Message = ResponseMessages.InternalError,
-                    Result = false,
-                    StatusCode = ResponseStatusCode.InternalServerError
-                });
-            }
         }
 
         public async Task<JsonResult> Create(QuestionMarks newMark)
