@@ -9,8 +9,8 @@ namespace AptitudeTest.Core.Entities.Questions
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
+        public int Marks { get; set; }
         public bool? Status { get; set; }
-
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? CreatedDate { get; set; }
         public int? CreatedBy { get; set; }

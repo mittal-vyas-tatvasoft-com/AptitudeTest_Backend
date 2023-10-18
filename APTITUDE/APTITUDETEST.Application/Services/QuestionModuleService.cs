@@ -41,7 +41,6 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.Delete(id);
         }
-
         #endregion
     }
 }

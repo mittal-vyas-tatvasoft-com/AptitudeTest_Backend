@@ -120,6 +120,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
         public async Task<JsonResult> Update(QuestionModuleVM questionModuleVM)
         {
             try
@@ -245,6 +246,89 @@ namespace AptitudeTest.Data.Data
             }
 
             catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> GetAllQuestionMarks(string? searchQuery, int? currentPageIndex, int? pageSize)
+        {
+            try
+            {
+                List<QuestionMarks> questionMarks;
+                if (!string.IsNullOrEmpty(searchQuery))
+                {
+                    questionMarks = _context.QuestionMarks.Where(QM => QM.Marks.Equals(searchQuery)).ToList();
+                }
+                else
+                {
+                    questionMarks = _context.QuestionMarks.ToList();
+                }
+                return new JsonResult(new ApiResponse<List<QuestionMarks>>
+                {
+                    Data = questionMarks,
+                    Message = ResponseMessages.Success,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> AddQuestionMarks(QuestionMarks newMark)
+        {
+            try
+            {
+                if (newMark != null)
+                {
+                    QuestionMarks? markAlreadyExist = await Task.FromResult(_context.QuestionMarks.Where(qm => qm.Marks == newMark.Marks).FirstOrDefault());
+                    if (markAlreadyExist == null)
+                    {
+                        _context.Add(newMark);
+                        _context.SaveChanges();
+
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.AddSuccess, "Mark"),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.AlreadyExists, "Marks"),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.AlreadyExist
+                        });
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+            }
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {

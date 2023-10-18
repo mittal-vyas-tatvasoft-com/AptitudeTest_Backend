@@ -1,4 +1,5 @@
-﻿using AptitudeTest.Core.Interfaces;
+﻿using AptitudeTest.Core.Entities.Questions;
+using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using Microsoft.AspNetCore.Authorization;
@@ -9,15 +10,14 @@ namespace AptitudeTest.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    public class QuestionModulesController : ControllerBase
+    public class QuestionMarksController : ControllerBase
     {
         #region Properties
-        private readonly IQuestionModuleService _service;
+        private readonly IQuestionMarksService _service;
         #endregion
 
         #region Constructor
-        public QuestionModulesController(IQuestionModuleService service)
+        public QuestionMarksController(IQuestionMarksService service)
         {
             _service = service;
         }
@@ -26,64 +26,52 @@ namespace AptitudeTest.Controllers
         #region Methods
 
         /// <summary>
-        /// This gives List of QuestionModules with searching,filtering and pagination
+        /// This gives List of QuestionMarks with searching,filtering and pagination
         /// </summary>
         /// <param name="searchQuery">Word that we want to search</param>
-        /// <param name="filter">Filter QuestionModules on status 1 for Active  2 for Inactive </param>
         /// <param name="currentPageIndex">Page index which is page number-1</param>
         /// <param name="pageSize">Length of records in 1 page</param>
         /// <param name="searchQuery">word that we want to search</param>
-        /// <returns>filtered list of QuestionModules</returns>
-        [HttpGet]
-        public async Task<JsonResult> GetQuestionModules(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
+        /// <returns>filtered list of QuestionMarks</returns>
+        [HttpGet("{currentPageIndex:int}/{pageSize:int}")]
+        public async Task<JsonResult> GetAllQuestionMarks(string? searchQuery, int? currentPageIndex = 0, int? pageSize = 10)
         {
-            return await _service.GetQuestionModules(searchQuery, filter, currentPageIndex, pageSize);
+            return await _service.GetAllQuestionMarks(searchQuery, currentPageIndex, pageSize);
         }
 
         /// <summary>
-        /// This method Creates QuestionModule
+        /// This method Creates QuestionMarks
         /// </summary>
-        /// <param name="questionModule"></param>
+        /// <param name="newMark"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<JsonResult> Create(QuestionModuleVM questionModule)
+        public async Task<JsonResult> Create(QuestionMarks newMark)
         {
             if (ModelState.IsValid)
             {
-                return await _service.Create(questionModule);
+                return await _service.Create(newMark);
             }
 
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
         /// <summary>
-        /// This method Updates QuestionModule
+        /// This method Updates QuestionMarks
         /// </summary>
-        /// <param name="QuestionModule"></param>
+        /// <param name="updatedMark"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<JsonResult> Update(QuestionModuleVM questionModule)
+        public async Task<JsonResult> Update(QuestionMarks updatedMark)
         {
             if (ModelState.IsValid)
             {
-                return await _service.Update(questionModule);
+                return await _service.Update(updatedMark);
             }
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
         /// <summary>
-        /// This method gives QuestionModule by id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{id:int}")]
-        public async Task<JsonResult> Get(int id)
-        {
-            return await _service.Get(id);
-        }
-
-        /// <summary>
-        /// This method soft deletes QuestionModule
+        /// This method soft deletes QuestionMarks
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -96,6 +84,4 @@ namespace AptitudeTest.Controllers
 
         #endregion
     }
-
 }
-

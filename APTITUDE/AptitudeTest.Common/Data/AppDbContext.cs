@@ -202,6 +202,7 @@ namespace APTITUDETEST.Common.Data
                 entity.HasKey(e => e.Id).HasName("PK__QUESTIONMARKS_ID");
                 entity.ToTable("QuestionMarks");
                 entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.HasIndex(e => e.Marks).IsUnique();
                 entity.Property(e => e.Status).HasDefaultValue(true);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1);
