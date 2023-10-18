@@ -140,28 +140,29 @@ namespace AptitudeTest.Data.Data
 
         private void FillUserData(UserDetailsVM userDetails, dynamic data)
         {
-            userDetails.UserId = data[0].userid ?? 0;
-            userDetails.FirstName = data[0].firstname ?? "";
-            userDetails.LastName = data[0].lastname ?? "";
-            userDetails.Email = data[0].email ?? "";
-            userDetails.PhoneNumber = data[0].phonenumber ?? 0;
-            userDetails.FatherName = data[0].fathername ?? "";
-            userDetails.Level = data[0].level ?? 0;
-            userDetails.DateOfBirth = data[0].dateofbirth ?? new DateTime();
-            userDetails.PermanentAddress = data[0].permanentaddress ?? "";
-            userDetails.UserGroup = data[0].usergroup ?? 0;
-            userDetails.GroupName = data[0].groupname ?? "";
-            userDetails.AppliedThrough = data[0].appliedthrough ?? 0;
-            userDetails.TechnologyInterestedIn = data[0].technologyinterestedIn ?? 0;
-            userDetails.TechnologyName = data[0].technologyname ?? "";
-            userDetails.ACPCMeritRank = data[0].acpcmeritrank ?? 0;
-            userDetails.GUJCETScore = data[0].gujcetscore ?? 0;
-            userDetails.JEEScore = data[0].jeescore ?? 0;
-            userDetails.Gender = data[0].gender ?? 0;
-            userDetails.PreferedLocation = data[0].preferedlocation ?? 0;
-            userDetails.RelationshipWithExistingEmployee = data[0].relationshipwithexistingemployee ?? "";
-            userDetails.Status = data[0].status ?? 0;
-            userDetails.RoleId = data[0].roleid ?? 0;
+            var userData = data[0];
+            userDetails.UserId = userData.userid ?? 0;
+            userDetails.FirstName = userData.firstname ?? "";
+            userDetails.LastName = userData.lastname ?? "";
+            userDetails.Email = userData.email ?? "";
+            userDetails.PhoneNumber = userData.phonenumber ?? 0;
+            userDetails.FatherName = userData.fathername ?? "";
+            userDetails.Level = userData.level ?? 0;
+            userDetails.DateOfBirth = userData.dateofbirth ?? new DateTime();
+            userDetails.PermanentAddress = userData.permanentaddress ?? "";
+            userDetails.UserGroup = userData.usergroup ?? 0;
+            userDetails.GroupName = userData.groupname ?? "";
+            userDetails.AppliedThrough = userData.appliedthrough ?? 0;
+            userDetails.TechnologyInterestedIn = userData.technologyinterestedIn ?? 0;
+            userDetails.TechnologyName = userData.technologyname ?? "";
+            userDetails.ACPCMeritRank = userData.acpcmeritrank ?? 0;
+            userDetails.GUJCETScore = userData.gujcetscore ?? 0;
+            userDetails.JEEScore = userData.jeescore ?? 0;
+            userDetails.Gender = userData.gender ?? 0;
+            userDetails.PreferedLocation = userData.preferedlocation ?? 0;
+            userDetails.RelationshipWithExistingEmployee = userData.relationshipwithexistingemployee ?? "";
+            userDetails.Status = userData.status ?? 0;
+            userDetails.RoleId = userData.roleid ?? 0;
         }
 
         private void FillAcademicAndFamilyData(dynamic data, UserDetailsVM userDetails, List<int> acadamicIds, List<int> familyIds)
