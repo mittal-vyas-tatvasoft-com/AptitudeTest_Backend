@@ -22,41 +22,41 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Methods
-        public async Task<JsonResult> GetTechnologies(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetProfiles(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
         {
             try
             {
-                List<MasterTechnology> technologylist = await Task.FromResult(_context.MasterTechnology.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList());
+                List<MasterTechnology> profilelist = await Task.FromResult(_context.MasterTechnology.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList());
 
                 if (searchQuery != null)
                 {
                     string query = searchQuery.ToLower();
-                    technologylist = technologylist.Where(technology => technology.Name.ToLower().Contains(query)).ToList();
+                    profilelist = profilelist.Where(profile => profile.Name.ToLower().Contains(query)).ToList();
                 }
 
                 if (filter != null)
                 {
                     if (filter == 1)
                     {
-                        technologylist = technologylist.Where(technology => technology.Status == true).ToList();
+                        profilelist = profilelist.Where(profile => profile.Status == true).ToList();
                     }
                     if (filter == 2)
                     {
-                        technologylist = technologylist.Where(technology => technology.Status == false).ToList();
+                        profilelist = profilelist.Where(profile => profile.Status == false).ToList();
                     }
                 }
 
-                List<TechnologyVM> technologyData = technologylist.Select(technology => new TechnologyVM()
+                List<ProfileVM> profileData = profilelist.Select(profile => new ProfileVM()
                 {
-                    Id = technology.Id,
+                    Id = profile.Id,
                     CreatedBy = null,
-                    Name = technology.Name,
-                    Status = technology.Status,
+                    Name = profile.Name,
+                    Status = profile.Status,
                     UpdatedBy = null
                 }).ToList();
 
-                PaginationVM<TechnologyVM> paginatedData = Pagination<TechnologyVM>.Paginate(technologyData, pageSize, currentPageIndex);
-                return new JsonResult(new ApiResponse<PaginationVM<TechnologyVM>>
+                PaginationVM<ProfileVM> paginatedData = Pagination<ProfileVM>.Paginate(profileData, pageSize, currentPageIndex);
+                return new JsonResult(new ApiResponse<PaginationVM<ProfileVM>>
                 {
                     Data = paginatedData,
                     Message = ResponseMessages.Success,
@@ -76,31 +76,31 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> Create(TechnologyVM technology)
+        public async Task<JsonResult> Create(ProfileVM profile)
         {
             try
             {
-                MasterTechnology technologies = _context.MasterTechnology.Where(t => t.Name.ToLower() == technology.Name.ToLower() && t.Id != technology.Id && t.IsDeleted != true).FirstOrDefault();
-                if (technologies != null)
+                MasterTechnology profiles = _context.MasterTechnology.Where(t => t.Name.ToLower() == profile.Name.ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
+                if (profiles != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, "Technology"),
+                        Message = string.Format(ResponseMessages.AlreadyExists, "Profile"),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
 
-                MasterTechnology MasterTechnology = new MasterTechnology();
-                MasterTechnology.Status = technology.Status;
-                MasterTechnology.Name = technology.Name;
-                MasterTechnology.CreatedBy = technology.CreatedBy;
-                _context.Add(MasterTechnology);
+                MasterTechnology masterProfile = new MasterTechnology();
+                masterProfile.Status = profile.Status;
+                masterProfile.Name = profile.Name;
+                masterProfile.CreatedBy = profile.CreatedBy;
+                _context.Add(masterProfile);
                 _context.SaveChanges();
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.AddSuccess, "Technology"),
+                    Message = string.Format(ResponseMessages.AddSuccess, "Profile"),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -117,34 +117,34 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> Update(TechnologyVM technology)
+        public async Task<JsonResult> Update(ProfileVM profile)
         {
             try
             {
-                MasterTechnology technologies = _context.MasterTechnology.Where(t => t.Name.ToLower() == technology.Name.ToLower() && t.Id != technology.Id && t.IsDeleted != true).FirstOrDefault();
-                if (technologies != null)
+                MasterTechnology profiles = _context.MasterTechnology.Where(t => t.Name.ToLower() == profile.Name.ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
+                if (profiles != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, "Technology"),
+                        Message = string.Format(ResponseMessages.AlreadyExists, "Profile"),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
 
-                MasterTechnology MasterTechnology = await Task.FromResult(_context.MasterTechnology.AsNoTracking().Where(t => t.Id == technology.Id && t.IsDeleted != true).FirstOrDefault());
-                if (MasterTechnology != null)
+                MasterTechnology MasterProfile = await Task.FromResult(_context.MasterTechnology.AsNoTracking().Where(t => t.Id == profile.Id && t.IsDeleted != true).FirstOrDefault());
+                if (MasterProfile != null)
                 {
-                    MasterTechnology.Status = technology.Status;
-                    MasterTechnology.Name = technology.Name;
-                    MasterTechnology.UpdatedBy = technology.UpdatedBy;
-                    MasterTechnology.UpdatedDate = DateTime.UtcNow;
-                    _context.Update(MasterTechnology);
+                    MasterProfile.Status = profile.Status;
+                    MasterProfile.Name = profile.Name;
+                    MasterProfile.UpdatedBy = profile.UpdatedBy;
+                    MasterProfile.UpdatedDate = DateTime.UtcNow;
+                    _context.Update(MasterProfile);
                     _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.UpdateSuccess, "Technology"),
+                        Message = string.Format(ResponseMessages.UpdateSuccess, "Profile"),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -152,7 +152,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.NotFound, "Technology"),
+                    Message = string.Format(ResponseMessages.NotFound, "Profile"),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
@@ -174,11 +174,11 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                int rowsEffected = _context.MasterStream.Where(technology => technology.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(technology => technology.Status, check));
+                int rowsEffected = _context.MasterStream.Where(profile => profile.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(profile => profile.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
-                    Message = string.Format(ResponseMessages.UpdateSuccess, "Technology"),
+                    Message = string.Format(ResponseMessages.UpdateSuccess, "Profile"),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -209,22 +209,22 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                MasterTechnology technology = await Task.FromResult(_context.MasterTechnology.Where(t => t.Id == id && t.IsDeleted == false).FirstOrDefault());
-                if (technology != null)
+                MasterTechnology profile = await Task.FromResult(_context.MasterTechnology.Where(t => t.Id == id && t.IsDeleted == false).FirstOrDefault());
+                if (profile != null)
                 {
-                    technology.IsDeleted = true;
-                    _context.Update(technology);
+                    profile.IsDeleted = true;
+                    _context.Update(profile);
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.DeleteSuccess, "Technology"),
+                        Message = string.Format(ResponseMessages.DeleteSuccess, "Profile"),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.NotFound, "Technology"),
+                    Message = string.Format(ResponseMessages.NotFound, "Profile"),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });

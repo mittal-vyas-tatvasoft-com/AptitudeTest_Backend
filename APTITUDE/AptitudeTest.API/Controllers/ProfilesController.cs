@@ -26,7 +26,7 @@ namespace AptitudeTest.Controllers
         #region Methods
 
         /// <summary>
-        /// This gives List of colleges with searching,filtering and pagination
+        /// This gives List of profiles with searching,filtering and pagination
         /// </summary>
         /// <param name="searchQuery">Word that we want to search</param>
         /// <param name="filter">Filter list on status 1 for Active  2 for Inactive </param>
@@ -35,22 +35,22 @@ namespace AptitudeTest.Controllers
         /// <returns>filtered list of technologies</returns>
         [HttpGet]
 
-        public async Task<JsonResult> GetTechnologies(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetProfiles(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
         {
-            return await _service.GetTechnologies(searchQuery, filter, currentPageIndex, pageSize);
+            return await _service.GetProfiles(searchQuery, filter, currentPageIndex, pageSize);
         }
 
         /// <summary>
-        /// This method Create technology
+        /// This method Create profile
         /// </summary>
-        /// <param name="technology"></param>
+        /// <param name="profile"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<JsonResult> Create(TechnologyVM technology)
+        public async Task<JsonResult> Create(ProfileVM profile)
         {
             if (ModelState.IsValid)
             {
-                return await _service.Create(technology);
+                return await _service.Create(profile);
 
             }
 
@@ -58,16 +58,16 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
-        /// This method  Updates technology
+        /// This method  Updates profile
         /// </summary>
-        /// <param name="technology"></param>
+        /// <param name="profile"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<JsonResult> Update(TechnologyVM technology)
+        public async Task<JsonResult> Update(ProfileVM profile)
         {
             if (ModelState.IsValid)
             {
-                return await _service.Update(technology);
+                return await _service.Update(profile);
 
             }
 
@@ -75,7 +75,7 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
-        /// This method Checks Or unchecks All technology
+        /// This method Checks Or unchecks All profile
         /// </summary>
         /// <param name="check"></param>
         /// <returns></returns>
@@ -86,7 +86,7 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
-        /// This method soft deletes technology
+        /// This method soft deletes profile
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
