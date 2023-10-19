@@ -1,5 +1,8 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using AptitudeTest.Core.ViewModels;
+using AptitudeTest.Data.Common;
+using APTITUDETEST.Core.Entities.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.API.Controllers
@@ -50,6 +53,20 @@ namespace AptitudeTest.API.Controllers
             return await _userService.GetUserById(id);
         }
         #endregion
+
+        #region Create
+        [HttpPost("[action]")]
+        public async Task<JsonResult> Create(UserVM user)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _userService.Create(user);
+            }
+
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+        #endregion
         #endregion
     }
 }
+

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AptitudeTest.Core.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Core.Interfaces
 {
@@ -6,5 +7,7 @@ namespace AptitudeTest.Core.Interfaces
     {
         Task<JsonResult> GetUserById(int id);
         Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex, int? pageSize);
+        Task<JsonResult> Create(UserVM user);
+
     }
 }

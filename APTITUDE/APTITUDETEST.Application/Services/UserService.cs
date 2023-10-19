@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.Interfaces;
+using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
@@ -25,6 +26,11 @@ namespace AptitudeTest.Application.Services
         public async Task<JsonResult> GetUserById(int id)
         {
             return await _userRepository.GetUserById(id);
+        }
+
+        public async Task<JsonResult> Create(UserVM user)
+        {
+            return await _userRepository.Create(user);
         }
         #endregion
     }
