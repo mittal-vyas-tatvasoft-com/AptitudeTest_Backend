@@ -2,6 +2,7 @@
 using AptitudeTest.Core.ViewModels;
 
 using AptitudeTest.Data.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Controllers
