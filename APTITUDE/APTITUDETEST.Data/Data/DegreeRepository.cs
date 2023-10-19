@@ -26,7 +26,8 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterDegree> degreelist = await Task.FromResult(_context.MasterDegree.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList());
+                List<MasterDegree> degreelist = await Task.FromResult(_context.MasterDegree.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderBy(degree => degree.Id).ToList());
+                List<MasterStream> masterStreams = await Task.FromResult(_context.MasterStream.ToList());
 
                 if (searchQuery != null)
                 {
@@ -54,7 +55,8 @@ namespace AptitudeTest.Data.Data
                     Name = degree.Name,
                     Status = degree.Status,
                     Level = degree.Level,
-                    UpdatedBy = null
+                    UpdatedBy = null,
+                    Streams = masterStreams.Where(stream => stream.DegreeId == degree.Id).Select(stream => stream.Name).ToList()
                 }).ToList();
 
                 PaginationVM<DegreeVM> paginatedData = Pagination<DegreeVM>.Paginate(degreeData, pageSize, currentPageIndex);
@@ -78,6 +80,62 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> Get(int id)
+        {
+            try
+            {
+                if (id == 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                MasterDegree masterDegree = await Task.FromResult(_context.MasterDegree.Where(x => x.IsDeleted != true && x.Id == id).FirstOrDefault());
+                if (masterDegree == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, "Degree"),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                List<MasterStream> masterStreams = await Task.FromResult(_context.MasterStream.Where(stream => stream.DegreeId == id).ToList());
+
+                DegreeVM degreeData = new DegreeVM()
+                {
+                    Id = masterDegree.Id,
+                    CreatedBy = null,
+                    IsEditable = masterDegree.IsEditable,
+                    Name = masterDegree.Name,
+                    Status = masterDegree.Status,
+                    Level = masterDegree.Level,
+                    UpdatedBy = null,
+                    Streams = masterStreams.Select(stream => stream.Name).ToList()
+                };
+
+                return new JsonResult(new ApiResponse<DegreeVM>
+                {
+                    Data = degreeData,
+                    Message = ResponseMessages.Success,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
         public async Task<JsonResult> Create(DegreeVM degree)
         {
             try
@@ -99,6 +157,11 @@ namespace AptitudeTest.Data.Data
                 masterDegree.CreatedBy = degree.CreatedBy;
                 masterDegree.Level = degree.Level;
                 _context.Add(masterDegree);
+                _context.SaveChanges();
+                int id = _context.MasterDegree.OrderBy(degree => degree.CreatedDate).LastOrDefault().Id;
+                _context.MasterStream.RemoveRange(_context.MasterStream.Where(stream => stream.DegreeId == id));
+                IEnumerable<MasterStream> streams = degree.Streams.Select(stream => new MasterStream { Name = stream, DegreeId = id });
+                _context.MasterStream.AddRange(streams);
                 _context.SaveChanges();
 
                 return new JsonResult(new ApiResponse<string>
@@ -156,6 +219,9 @@ namespace AptitudeTest.Data.Data
                     masterDegree.UpdatedBy = degree.UpdatedBy;
                     masterDegree.UpdatedDate = DateTime.UtcNow;
                     _context.Update(masterDegree);
+                    _context.MasterStream.RemoveRange(_context.MasterStream.Where(stream => stream.DegreeId == degree.Id));
+                    IEnumerable<MasterStream> streams = degree.Streams.Select(stream => new MasterStream { Name = stream, DegreeId = degree.Id });
+                    _context.MasterStream.AddRange(streams);
                     _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>
@@ -185,11 +251,49 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> UpdateStatus(StatusVM status)
+        {
+            try
+            {
+                MasterDegree degree = await Task.FromResult(_context.MasterDegree.Where(degree => degree.IsDeleted == false && degree.Id == status.Id).FirstOrDefault());
+                if (degree == null)
+                {
+                    return new JsonResult(new ApiResponse<int>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, "Degree"),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+                degree.Status = status.Status;
+                _context.Update(degree);
+                _context.SaveChanges();
+
+                return new JsonResult(new ApiResponse<int>
+                {
+                    Message = string.Format(ResponseMessages.UpdateSuccess, "Degree"),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
         public async Task<JsonResult> CheckUncheckAll(bool check)
         {
             try
             {
-                int rowsEffected = _context.MasterStream.Where(degree => degree.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(degree => degree.Status, check));
+                int rowsEffected = _context.MasterDegree.Where(degree => degree.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(degree => degree.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,

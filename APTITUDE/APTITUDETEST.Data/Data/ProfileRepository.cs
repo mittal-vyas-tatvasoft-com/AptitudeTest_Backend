@@ -239,7 +239,6 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.InternalServerError
                 });
             }
-
         }
         #endregion
     }

@@ -32,7 +32,7 @@ namespace AptitudeTest.Controllers
         /// <param name="filter">Filter list on status 1 for Active  2 for Inactive </param>
         /// <param name="currentPageIndex">Page index which is page number-1</param>
         /// <param name="pageSize">Length of records in 1 page</param>
-        /// <returns>filtered list of technologies</returns>
+        /// <returns>filtered list of profiles</returns>
         [HttpGet]
 
         public async Task<JsonResult> GetProfiles(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
