@@ -159,7 +159,6 @@ namespace AptitudeTest.Data.Data
                 _context.Add(masterDegree);
                 _context.SaveChanges();
                 int id = _context.MasterDegree.OrderBy(degree => degree.CreatedDate).LastOrDefault().Id;
-                _context.MasterStream.RemoveRange(_context.MasterStream.Where(stream => stream.DegreeId == id));
                 IEnumerable<MasterStream> streams = degree.Streams.Select(stream => new MasterStream { Name = stream, DegreeId = id });
                 _context.MasterStream.AddRange(streams);
                 _context.SaveChanges();
@@ -268,6 +267,7 @@ namespace AptitudeTest.Data.Data
 
                 degree.Status = status.Status;
                 _context.Update(degree);
+                _context.MasterStream.RemoveRange(_context.MasterStream.Where(stream => stream.DegreeId == degree.Id));
                 _context.SaveChanges();
 
                 return new JsonResult(new ApiResponse<int>

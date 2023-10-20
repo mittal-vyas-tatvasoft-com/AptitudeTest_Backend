@@ -8,6 +8,7 @@ namespace AptitudeTest.Core.ViewModels
         [StringLength(500)]
         public string Name { get; set; }
         public List<string> Streams { get; set; }
+        [Range(0, 5)]
         public int Level { get; set; }
         public bool? Status { get; set; }
         public bool? IsEditable { get; set; }
