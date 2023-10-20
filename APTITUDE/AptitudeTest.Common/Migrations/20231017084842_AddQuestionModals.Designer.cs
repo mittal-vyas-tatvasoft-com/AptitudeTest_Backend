@@ -3,6 +3,7 @@ using System;
 using APTITUDETEST.Common.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AptitudeTest.Common.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231017084842_AddQuestionModals")]
+    partial class AddQuestionModals
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -465,10 +468,8 @@ namespace AptitudeTest.Common.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
-                    b.Property<int>("Marks")
-                        .HasColumnType("integer");
-
                     b.Property<bool?>("Status")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(true);
@@ -481,9 +482,6 @@ namespace AptitudeTest.Common.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK__QUESTIONMARKS_ID");
-
-                    b.HasIndex("Marks")
-                        .IsUnique();
 
                     b.ToTable("QuestionMarks", (string)null);
                 });
@@ -667,71 +665,6 @@ namespace AptitudeTest.Common.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserFamily", (string)null);
-                });
-
-            modelBuilder.Entity("AptitudeTest.Core.ViewModels.UserViewModel", b =>
-                {
-                    b.Property<int?>("ACPCMeritRank")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("AppliedThrough")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FatherName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("GUJCETScore")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("Gender")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("Group")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("JEEScore")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("Level")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("PermanentAddress")
-                        .HasColumnType("text");
-
-                    b.Property<long?>("PhoneNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("PreferedLocation")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("RelationshipWithExistingEmployee")
-                        .HasColumnType("text");
-
-                    b.Property<bool?>("Status")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("TechnologyInterestedIn")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TechnologyName")
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.ToTable("UserViewModel");
                 });
 
             modelBuilder.Entity("APTITUDETEST.Core.Entities.Users.User", b =>
