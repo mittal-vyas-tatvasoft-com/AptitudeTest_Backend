@@ -42,6 +42,16 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.Delete(id);
         }
+
+        public async Task<JsonResult> GetProfileById(int? id)
+        {
+            return await _repository.GetProfileById(id);
+        }
+
+        public async Task<JsonResult> UpdateStatus(StatusVM status)
+        {
+            return await _repository.UpdateStatus(status);
+        }
         #endregion
     }
 }
