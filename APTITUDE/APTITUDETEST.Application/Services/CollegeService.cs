@@ -24,6 +24,11 @@ namespace AptitudeTest.Application.Services
             return await _repository.GetColleges(collegeQuery);
         }
 
+        public async Task<JsonResult> Get(int id)
+        {
+            return await _repository.Get(id);
+
+        }
         public async Task<JsonResult> Create(CollegeVM college)
         {
             return await _repository.Create(college);
@@ -32,6 +37,11 @@ namespace AptitudeTest.Application.Services
         public async Task<JsonResult> Update(CollegeVM college)
         {
             return await _repository.Update(college);
+        }
+
+        public async Task<JsonResult> UpdateStatus(StatusVM status)
+        {
+            return await _repository.UpdateStatus(status);
         }
 
         public async Task<JsonResult> CheckUncheckAll(bool check)
