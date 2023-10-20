@@ -1,12 +1,15 @@
 using AptitudeTest.Application.Services;
+using AptitudeTest.Common.Data;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.Interfaces.UserAuthentication;
+using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Data;
 using APTITUDETEST.Common.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +22,20 @@ var configuration = builder.Configuration.
 .AddEnvironmentVariables().Build();
 var connectionString = configuration.GetConnectionString("AptitudeTest");
 
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+dataSourceBuilder.MapComposite<DapperUserFamilyVM>();
+dataSourceBuilder.MapComposite<DapperUserFamilyVM>();
+var dataSource = dataSourceBuilder.Build();
+
+
 builder.Services.AddDbContext<AppDbContext>(item => item.UseNpgsql(connectionString));
+builder.Services.AddDbContext<DapperAppDbContext>(item =>
+{
+    item.UseNpgsql(dataSource);
+    
+});
+
+
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUserAuthenticationService, UserAuthenticationService>();
 builder.Services.AddScoped<IUsersRepository, UserRepository>();

@@ -25,4 +25,8 @@
     <ProjectReference Include="..\APTITUDETEST.Core\AptitudeTest.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Users\" />
+  </ItemGroup>
+
 </Project>
