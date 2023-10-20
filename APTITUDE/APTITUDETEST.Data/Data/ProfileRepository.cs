@@ -26,7 +26,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterTechnology> profilelist = await Task.FromResult(_context.MasterTechnology.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList());
+                List<MasterTechnology> profilelist = await Task.FromResult(_context.MasterTechnology.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderBy(x => x.Id).ToList());
 
                 if (searchQuery != null)
                 {
@@ -227,6 +227,70 @@ namespace AptitudeTest.Data.Data
                     Message = string.Format(ResponseMessages.NotFound, "Profile"),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> GetProfileById(int? id)
+        {
+            try
+            {
+                MasterTechnology? Technology = _context.MasterTechnology.Where(mt => mt.Id == id).FirstOrDefault();
+
+                if (Technology != null)
+                {
+                    return new JsonResult(new ApiResponse<MasterTechnology> { Data = Technology, Message = ResponseMessages.Success, StatusCode = ResponseStatusCode.Success, Result = true });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<MasterTechnology> { Message = string.Format(ResponseMessages.NotFound, "Technology"), StatusCode = ResponseStatusCode.NotFound, Result = false });
+                }
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> UpdateStatus(StatusVM status)
+        {
+            try
+            {
+                MasterTechnology? profile = await Task.FromResult(_context.MasterTechnology.Where(mt => mt.IsDeleted == false && mt.Id == status.Id).FirstOrDefault());
+                if (profile == null)
+                {
+                    return new JsonResult(new ApiResponse<int>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, "Profile"),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+                profile.Status = status.Status;
+                _context.Update(profile);
+                _context.SaveChanges();
+
+                return new JsonResult(new ApiResponse<int>
+                {
+                    Message = string.Format(ResponseMessages.UpdateSuccess, "Profile"),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
                 });
             }
 

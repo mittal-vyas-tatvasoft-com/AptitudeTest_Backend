@@ -2,12 +2,11 @@
 using AptitudeTest.Core.ViewModels;
 
 using AptitudeTest.Data.Common;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProfilesController : ControllerBase
@@ -95,6 +94,36 @@ namespace AptitudeTest.Controllers
         {
             return await _service.Delete(id);
         }
+
+        /// <summary>
+        /// this method get the profile data by it's id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{id:int}")]
+
+        public async Task<JsonResult> Get(int? id)
+        {
+            return await _service.GetProfileById(id);
+        }
+
+        /// <summary>
+        /// this api update the status of single profile
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> UpdateStatus(StatusVM status)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _service.UpdateStatus(status);
+            }
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+
+        }
         #endregion
+
+
     }
 }
