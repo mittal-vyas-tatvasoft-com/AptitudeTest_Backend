@@ -23,6 +23,10 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.GetDegrees(searchQuery, filter, currentPageIndex, pageSize);
         }
+        public async Task<JsonResult> Get(int id)
+        {
+            return await _repository.Get(id);
+        }
 
         public async Task<JsonResult> Create(DegreeVM degree)
         {
@@ -32,6 +36,11 @@ namespace AptitudeTest.Application.Services
         public async Task<JsonResult> Update(DegreeVM degree)
         {
             return await _repository.Update(degree);
+        }
+
+        public async Task<JsonResult> UpdateStatus(StatusVM status)
+        {
+            return await _repository.UpdateStatus(status);
         }
         public async Task<JsonResult> CheckUncheckAll(bool check)
         {

@@ -26,6 +26,17 @@ namespace AptitudeTest.Controllers
         #region Methods
 
         /// <summary>
+        /// gives degree by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>degree</returns>
+        [HttpGet("[action]")]
+        public async Task<JsonResult> Get(int id)
+        {
+            return await _service.Get(id);
+        }
+
+        /// <summary>
         /// This gives List of degrees with searching,filtering and pagination
         /// </summary>
         /// <param name="searchQuery">Word that we want to search</param>
@@ -67,6 +78,22 @@ namespace AptitudeTest.Controllers
             if (ModelState.IsValid)
             {
                 return await _service.Update(degree);
+            }
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+
+        }
+
+        /// <summary>
+        /// This method  Updates Degree Status
+        /// </summary>
+        /// <param name="degree"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> UpdateStatus(StatusVM status)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _service.UpdateStatus(status);
             }
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
 

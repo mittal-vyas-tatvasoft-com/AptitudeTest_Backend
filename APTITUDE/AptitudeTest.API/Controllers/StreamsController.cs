@@ -26,7 +26,7 @@ namespace AptitudeTest.Controllers
         #region Methods
 
         /// <summary>
-        /// This gives List of colleges with searching,filtering and pagination
+        /// This gives List of streams with searching,filtering and pagination
         /// </summary>
         /// <param name="searchQuery">Word that we want to search</param>
         /// <param name="filter">Filter list on status 1 for Active  2 for Inactive </param>

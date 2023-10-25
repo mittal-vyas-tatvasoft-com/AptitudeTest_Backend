@@ -68,6 +68,59 @@ namespace AptitudeTest.Data.Data
 
         }
 
+        public async Task<JsonResult> Get(int id)
+        {
+            try
+            {
+                if (id == 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                MasterCollege masterCollege = await Task.FromResult(_context.MasterCollege.Where(x => x.IsDeleted != true && x.Id == id).FirstOrDefault());
+                if (masterCollege == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, "College"),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+                CollegeVM collegeData = new CollegeVM()
+                {
+                    Id = masterCollege.Id,
+                    Name = masterCollege.Name,
+                    Abbreviation = masterCollege.Abbreviation,
+                    Status = masterCollege.Status,
+                };
+
+                return new JsonResult(new ApiResponse<CollegeVM>
+                {
+                    Data = collegeData,
+                    Message = ResponseMessages.Success,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+
         public async Task<JsonResult> Create(CollegeVM collegeToUpsert)
         {
 
@@ -167,6 +220,45 @@ namespace AptitudeTest.Data.Data
             }
 
         }
+
+        public async Task<JsonResult> UpdateStatus(StatusVM status)
+        {
+            try
+            {
+                MasterCollege college = await Task.FromResult(_context.MasterCollege.Where(college => college.IsDeleted != true && college.Id == status.Id).FirstOrDefault());
+                if (college == null)
+                {
+                    return new JsonResult(new ApiResponse<int>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, "College"),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+                college.Status = status.Status;
+                _context.Update(college);
+                _context.SaveChanges();
+
+                return new JsonResult(new ApiResponse<int>
+                {
+                    Message = string.Format(ResponseMessages.UpdateSuccess, "College"),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
         public async Task<JsonResult> Delete(int id)
         {
             try

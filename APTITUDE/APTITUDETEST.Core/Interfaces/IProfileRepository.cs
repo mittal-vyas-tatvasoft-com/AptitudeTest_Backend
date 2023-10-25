@@ -10,5 +10,9 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> Update(ProfileVM profile);
         public Task<JsonResult> CheckUncheckAll(bool check);
         public Task<JsonResult> Delete(int id);
+
+        public Task<JsonResult> GetProfileById(int? id);
+
+        public Task<JsonResult> UpdateStatus(StatusVM status);
     }
 }
