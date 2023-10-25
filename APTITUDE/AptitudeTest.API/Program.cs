@@ -37,6 +37,8 @@ builder.Services.AddTransient<IQuestionModuleService, QuestionModuleService>();
 builder.Services.AddScoped<IQuestionModuleRepository, QuestionModuleRepository>();
 builder.Services.AddTransient<IQuestionMarksService, QuestionMarksService>();
 builder.Services.AddScoped<IQuestionMarksRepository, QuestionMarksRepository>();
+builder.Services.AddTransient<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -23,35 +23,35 @@ namespace AptitudeTest.Data.Data
         #region Methods
         public async Task<JsonResult> GetAllQuestionMarks(string? searchQuery, int? currentPageIndex, int? pageSize)
         {
-                try
+            try
+            {
+                List<QuestionMarks> questionMarks;
+                if (!string.IsNullOrEmpty(searchQuery))
                 {
-                    List<QuestionMarks> questionMarks;
-                    if (!string.IsNullOrEmpty(searchQuery))
-                    {
-                        questionMarks = _context.QuestionMarks.Where(QM => QM.Marks.Equals(searchQuery)).ToList();
-                    }
-                    else
-                    {
-                        questionMarks = _context.QuestionMarks.ToList();
-                    }
-                    PaginationVM<QuestionMarks> paginatedData = Pagination<QuestionMarks>.Paginate(questionMarks, pageSize, currentPageIndex);
-                    return new JsonResult(new ApiResponse<PaginationVM<QuestionMarks>>
-                    {
-                        Data = paginatedData,
-                        Message = ResponseMessages.Success,
-                        Result = true,
-                        StatusCode = ResponseStatusCode.Success
-                    });
+                    questionMarks = _context.QuestionMarks.Where(QM => QM.Marks.Equals(searchQuery)).ToList();
                 }
-                catch
+                else
                 {
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.InternalError,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.InternalServerError
-                    });
+                    questionMarks = _context.QuestionMarks.ToList();
                 }
+                PaginationVM<QuestionMarks> paginatedData = Pagination<QuestionMarks>.Paginate(questionMarks, pageSize, currentPageIndex);
+                return new JsonResult(new ApiResponse<PaginationVM<QuestionMarks>>
+                {
+                    Data = paginatedData,
+                    Message = ResponseMessages.Success,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
         }
 
         public async Task<JsonResult> Create(QuestionMarks newMark)
