@@ -9,5 +9,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex, int? pageSize);
         public Task<JsonResult> GetUserById(int id);
         public Task<JsonResult> Create(UserVM user);
+        public Task<JsonResult> Update(UserVM user);
     }
 }

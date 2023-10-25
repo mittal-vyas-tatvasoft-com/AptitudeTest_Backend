@@ -19,6 +19,6 @@ namespace AptitudeTest.Core.ViewModels
         public int durationfrommonth { get; set; }
         public int durationtoyear { get; set; }
         public int durationtomonth { get; set; }
-        public int createdby { get; set; }
+        public int createdby { get; set; }        
     }
 }
