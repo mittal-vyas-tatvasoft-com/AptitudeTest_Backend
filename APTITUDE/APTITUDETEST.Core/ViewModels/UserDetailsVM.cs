@@ -1,6 +1,4 @@
-﻿using AptitudeTest.Core.Entities.Users;
-
-namespace AptitudeTest.Core.ViewModels
+﻿namespace AptitudeTest.Core.ViewModels
 {
     public class UserDetailsVM
     {

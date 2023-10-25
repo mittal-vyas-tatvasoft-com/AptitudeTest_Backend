@@ -26,6 +26,17 @@ namespace AptitudeTest.Controllers
         #region Methods
 
         /// <summary>
+        /// gives college by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>college</returns>
+        [HttpGet("[action]")]
+        public async Task<JsonResult> Get(int id)
+        {
+            return await _service.Get(id);
+        }
+
+        /// <summary>
         /// This gives List of colleges with searching,filtering and pagination
         /// </summary>
         /// <param name="searchQuery">Word that we want to search</param>
@@ -78,6 +89,24 @@ namespace AptitudeTest.Controllers
 
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
+
+        /// <summary>
+        /// This method  Updates College Status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> UpdateStatus(StatusVM status)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _service.UpdateStatus(status);
+            }
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+
+        }
+
+
 
         /// <summary>
         /// This method Checks Or unchecks All Colleges

@@ -254,7 +254,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterDegree degree = await Task.FromResult(_context.MasterDegree.Where(degree => degree.IsDeleted == false && degree.Id == status.Id).FirstOrDefault());
+                MasterDegree degree = await Task.FromResult(_context.MasterDegree.Where(degree => degree.IsDeleted != true && degree.Id == status.Id).FirstOrDefault());
                 if (degree == null)
                 {
                     return new JsonResult(new ApiResponse<int>

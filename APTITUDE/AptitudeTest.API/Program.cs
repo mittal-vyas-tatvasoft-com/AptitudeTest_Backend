@@ -32,7 +32,7 @@ builder.Services.AddDbContext<AppDbContext>(item => item.UseNpgsql(connectionStr
 builder.Services.AddDbContext<DapperAppDbContext>(item =>
 {
     item.UseNpgsql(dataSource);
-    
+
 });
 
 

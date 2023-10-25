@@ -1,11 +1,5 @@
-﻿using AptitudeTest.Core.Entities.Users;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AptitudeTest.Core.ViewModels
 {
@@ -43,6 +37,6 @@ namespace AptitudeTest.Core.ViewModels
         public List<DapperUserAcademicsVM> UserAcademicsVM { get; set; }
         [Required]
         public List<DapperUserFamilyVM> UserFamilyVM { get; set; }
-        
+
     }
 }

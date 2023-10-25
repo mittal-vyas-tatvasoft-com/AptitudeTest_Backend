@@ -1,8 +1,7 @@
 ﻿using AptitudeTest.Core.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
-using APTITUDETEST.Core.Entities.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.API.Controllers
