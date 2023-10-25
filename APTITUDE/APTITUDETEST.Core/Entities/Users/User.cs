@@ -35,7 +35,7 @@ namespace APTITUDETEST.Core.Entities.Users
         [ForeignKey("MasterGroups")]
         public int? GroupId { get; set; }
         [ForeignKey("mastercolleges")]
-        public int? collegeid { get; set; }
+        public int? CollegeId { get; set; }
         public int? AppliedThrough { get; set; }
         [ForeignKey("MasterTechnologies")]
         public int? TechnologyInterestedIn { get; set; }
