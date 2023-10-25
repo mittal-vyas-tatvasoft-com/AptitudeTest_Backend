@@ -32,6 +32,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _userRepository.Create(user);
         }
+
+        public async Task<JsonResult> Update(UserVM user)
+        {
+            return await _userRepository.Update(user);
+        }
         #endregion
     }
 }
