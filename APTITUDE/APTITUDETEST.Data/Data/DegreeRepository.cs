@@ -267,7 +267,6 @@ namespace AptitudeTest.Data.Data
 
                 degree.Status = status.Status;
                 _context.Update(degree);
-                _context.MasterStream.RemoveRange(_context.MasterStream.Where(stream => stream.DegreeId == degree.Id));
                 _context.SaveChanges();
 
                 return new JsonResult(new ApiResponse<int>
