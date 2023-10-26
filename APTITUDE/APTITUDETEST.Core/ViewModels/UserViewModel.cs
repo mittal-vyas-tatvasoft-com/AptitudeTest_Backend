@@ -11,7 +11,7 @@
         public int? Level { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? PermanentAddress { get; set; }
-        public int? Group { get; set; }
+        public int? GroupId { get; set; }
         public int? TechnologyInterestedIn { get; set; }
         public int? AppliedThrough { get; set; }
         public int? Gender { get; set; }

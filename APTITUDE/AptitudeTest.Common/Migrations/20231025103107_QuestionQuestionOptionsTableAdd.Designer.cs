@@ -3,6 +3,7 @@ using System;
 using APTITUDETEST.Common.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AptitudeTest.Common.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231025103107_QuestionQuestionOptionsTableAdd")]
+    partial class QuestionQuestionOptionsTableAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +58,6 @@ namespace AptitudeTest.Common.Migrations
                         .HasColumnType("character varying(500)");
 
                     b.Property<string>("FatherName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("character varying(50)");
@@ -69,10 +71,10 @@ namespace AptitudeTest.Common.Migrations
                     b.Property<int?>("GUJCETScore")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Gender")
+                    b.Property<int?>("Gender")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("GroupId")
+                    b.Property<int?>("Group")
                         .HasColumnType("integer");
 
                     b.Property<bool?>("IsDeleted")
@@ -84,35 +86,27 @@ namespace AptitudeTest.Common.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int?>("Level")
+                    b.Property<int>("Level")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasDefaultValue(1);
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<string>("PermanentAddress1")
+                    b.Property<string>("PermanentAddress")
                         .HasMaxLength(1000)
                         .IsUnicode(false)
                         .HasColumnType("character varying(1000)");
 
-                    b.Property<string>("PermanentAddress2")
-                        .HasMaxLength(1000)
-                        .IsUnicode(false)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<long>("PhoneNumber")
+                    b.Property<long?>("PhoneNumber")
                         .HasColumnType("bigint");
-
-                    b.Property<int?>("Pincode")
-                        .HasColumnType("integer");
 
                     b.Property<int?>("PreferedLocation")
                         .HasColumnType("integer");
@@ -142,7 +136,7 @@ namespace AptitudeTest.Common.Migrations
                     b.HasKey("Id")
                         .HasName("PK__USER_ID");
 
-                    b.HasIndex("GroupId");
+                    b.HasIndex("Group");
 
                     b.HasIndex("TechnologyInterestedIn");
 
@@ -649,89 +643,6 @@ namespace AptitudeTest.Common.Migrations
                     b.ToTable("QuestionOptions", (string)null);
                 });
 
-            modelBuilder.Entity("AptitudeTest.Core.Entities.Users.City", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedBy")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1);
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<bool?>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<int>("StateId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id")
-                        .HasName("PK__CITY_ID");
-
-                    b.HasIndex("StateId");
-
-                    b.ToTable("City", (string)null);
-                });
-
-            modelBuilder.Entity("AptitudeTest.Core.Entities.Users.State", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedBy")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1);
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<bool?>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id")
-                        .HasName("PK__STATE_ID");
-
-                    b.ToTable("State", (string)null);
-                });
-
             modelBuilder.Entity("AptitudeTest.Core.Entities.Users.UserAcademics", b =>
                 {
                     b.Property<int>("Id")
@@ -936,7 +847,7 @@ namespace AptitudeTest.Common.Migrations
                 {
                     b.HasOne("AptitudeTest.Core.Entities.Master.MasterGroup", "MasterGroups")
                         .WithMany()
-                        .HasForeignKey("GroupId");
+                        .HasForeignKey("Group");
 
                     b.HasOne("AptitudeTest.Core.Entities.Master.MasterTechnology", "MasterTechnologies")
                         .WithMany()
@@ -978,17 +889,6 @@ namespace AptitudeTest.Common.Migrations
                         .IsRequired();
 
                     b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("AptitudeTest.Core.Entities.Users.City", b =>
-                {
-                    b.HasOne("AptitudeTest.Core.Entities.Users.State", "States")
-                        .WithMany()
-                        .HasForeignKey("StateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("States");
                 });
 
             modelBuilder.Entity("AptitudeTest.Core.Entities.Users.UserAcademics", b =>

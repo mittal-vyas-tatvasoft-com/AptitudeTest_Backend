@@ -38,9 +38,12 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Level).HasDefaultValue(1);
                 entity.Property(e => e.Password)
                     .HasMaxLength(255);
-                entity.Property(e => e.PermanentAddress)
+                entity.Property(e => e.PermanentAddress1)
                     .HasMaxLength(1000)
-                    .IsUnicode(false);
+                    .IsUnicode(false); 
+                entity.Property(e => e.PermanentAddress2)
+                    .HasMaxLength(1000)
+                    .IsUnicode(false); 
                 entity.Property(e => e.RelationshipWithExistingEmployee)
                    .HasMaxLength(300)
                    .IsUnicode(false);
@@ -125,20 +128,6 @@ namespace APTITUDETEST.Common.Data
 
             });
 
-            modelBuilder.Entity<MasterLocation>(entity =>
-            {
-                entity.HasKey(e => e.Id).HasName("PK__MASTERLOCATION_ID");
-                entity.ToTable("MasterLocation");
-                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
-                entity.Property(e => e.Location)
-                    .HasMaxLength(500)
-                    .IsUnicode(false);
-                entity.Property(e => e.Status).HasDefaultValue(true);
-                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
-                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
-                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
-            });
-
             modelBuilder.Entity<MasterDegree>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("PK__MASTERDEGREE_ID");
@@ -208,6 +197,49 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             });
+            modelBuilder.Entity<Question>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__QUESTION_ID");
+                entity.ToTable("Question");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.Status).HasDefaultValue(true);
+                entity.Property(e => e.QuestionText)
+                .HasMaxLength(2000)
+                .IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            });
+            modelBuilder.Entity<QuestionOptions>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__QUESTIONOPTIONS_ID");
+                entity.ToTable("QuestionOptions");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.OptionData)
+                .HasColumnType("text")
+                .IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            });
+            modelBuilder.Entity<State>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__STATE_ID");
+                entity.ToTable("State");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            });
+            modelBuilder.Entity<City>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__CITY_ID");
+                entity.ToTable("City");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            });
         }
 
         public DbSet<User> Users { get; set; }
@@ -215,11 +247,14 @@ namespace APTITUDETEST.Common.Data
         public DbSet<UserAcademics> UserAcademics { get; set; }
         public DbSet<MasterCollege> MasterCollege { get; set; }
         public DbSet<MasterDegree> MasterDegree { get; set; }
-        public DbSet<MasterLocation> MasterLocation { get; set; }
         public DbSet<MasterStream> MasterStream { get; set; }
         public DbSet<MasterTechnology> MasterTechnology { get; set; }
         public DbSet<MasterGroup> MasterGroup { get; set; }
         public DbSet<QuestionModule> QuestionModule { get; set; }
         public DbSet<QuestionMarks> QuestionMarks { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<QuestionOptions> QuestionOptions { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<State> States { get; set; }
     }
 }
