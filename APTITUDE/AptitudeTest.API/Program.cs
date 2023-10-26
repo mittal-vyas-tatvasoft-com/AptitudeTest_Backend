@@ -90,7 +90,7 @@ builder.Services.AddCors(option =>
 {
     option.AddPolicy("MyPolicy", builder =>
     {
-        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
 
@@ -124,10 +124,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI();
 }
 
-app.UseCors(options => options.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            );
+app.UseCors("MyPolicy");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
