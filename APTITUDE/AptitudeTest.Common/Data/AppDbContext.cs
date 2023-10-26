@@ -122,6 +122,7 @@ namespace APTITUDETEST.Common.Data
                     .HasMaxLength(500)
                     .IsUnicode(false);
                 entity.Property(e => e.Status).HasDefaultValue(true);
+                entity.Property(e => e.IsDefault).HasDefaultValue(false);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
