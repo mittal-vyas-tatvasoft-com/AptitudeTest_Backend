@@ -88,6 +88,32 @@ namespace AptitudeTest.API.Controllers
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
         #endregion
+
+        #region InActive
+        /// <summary>
+        /// This method InActive Users
+        /// </summary>
+        /// <param name="check"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> InActiveUsers(List<int> userIds)
+        {
+            return await _userService.InActiveUsers(userIds);
+        }
+        #endregion
+
+        #region Delete
+        /// <summary>
+        /// This method InActive Users
+        /// </summary>
+        /// <param name="check"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> DeleteUsers(List<int> userIds)
+        {
+            return await _userService.DeleteUsers(userIds);
+        }
+        #endregion
         #endregion
     }
 }

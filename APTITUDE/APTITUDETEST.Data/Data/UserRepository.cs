@@ -3,6 +3,7 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
+using APTITUDETEST.Core.Entities.Users;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -300,6 +301,78 @@ namespace AptitudeTest.Data.Data
         }
 
 
+        #endregion
+
+        #region InActiveUsers
+        public async Task<JsonResult> InActiveUsers(List<int> userIds)
+        {
+            try
+            {
+                using (var connection = _dapperContext.CreateConnection())
+                {
+                    var procedure = "inactive_users";
+                    var parameters = new DynamicParameters(
+                    new
+                    {
+                        p_userids = userIds.ToArray()
+                    });
+
+                    connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.Success),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.InternalError, "User"),
+                    Result = false,
+                    StatusCode = ResponseStatusCode.RequestFailed
+                });
+            }
+        }
+        #endregion
+
+        #region DeleteUsers
+        public async Task<JsonResult> DeleteUsers(List<int> userIds)
+        {
+            try
+            {
+                using (var connection = _dapperContext.CreateConnection())
+                {
+                    var procedure = "delete_users";
+                    var parameters = new DynamicParameters(
+                    new
+                    {
+                        p_userids = userIds.ToArray()
+                    });
+
+                    connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.Success),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.InternalError, "User"),
+                    Result = false,
+                    StatusCode = ResponseStatusCode.RequestFailed
+                });
+            }
+        }
         #endregion
 
         #region HelpingMethods
