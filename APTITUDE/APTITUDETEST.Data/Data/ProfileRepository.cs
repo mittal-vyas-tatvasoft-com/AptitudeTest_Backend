@@ -80,7 +80,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterTechnology profiles = _context.MasterTechnology.Where(t => t.Name.ToLower() == profile.Name.ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
+                MasterTechnology profiles = _context.MasterTechnology.Where(t => t.Name.Trim().ToLower() == profile.Name.Trim().ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
                 if (profiles != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -93,7 +93,7 @@ namespace AptitudeTest.Data.Data
 
                 MasterTechnology masterProfile = new MasterTechnology();
                 masterProfile.Status = profile.Status;
-                masterProfile.Name = profile.Name;
+                masterProfile.Name = profile.Name.Trim();       
                 masterProfile.CreatedBy = profile.CreatedBy;
                 _context.Add(masterProfile);
                 _context.SaveChanges();
@@ -121,7 +121,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterTechnology profiles = _context.MasterTechnology.Where(t => t.Name.ToLower() == profile.Name.ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
+                MasterTechnology profiles = _context.MasterTechnology.Where(t => t.Name.Trim().ToLower() == profile.Name.Trim().ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
                 if (profiles != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -136,7 +136,7 @@ namespace AptitudeTest.Data.Data
                 if (MasterProfile != null)
                 {
                     MasterProfile.Status = profile.Status;
-                    MasterProfile.Name = profile.Name;
+                    MasterProfile.Name = profile.Name.Trim();
                     MasterProfile.UpdatedBy = profile.UpdatedBy;
                     MasterProfile.UpdatedDate = DateTime.UtcNow;
                     _context.Update(MasterProfile);
