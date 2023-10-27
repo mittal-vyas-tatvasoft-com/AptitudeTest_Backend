@@ -127,7 +127,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 MasterCollege college = new MasterCollege();
-                MasterCollege masterCollege = _context.MasterCollege.Where(c => (c.Name.ToLower() == collegeToUpsert.Name.ToLower() || c.Abbreviation.ToLower() == collegeToUpsert.Abbreviation.ToLower()) && c.IsDeleted != true).FirstOrDefault();
+                MasterCollege masterCollege = _context.MasterCollege.Where(c => (c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() || c.Abbreviation.Trim().ToLower() == collegeToUpsert.Abbreviation.Trim().ToLower()) && c.IsDeleted != true).FirstOrDefault();
                 if (masterCollege != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -139,8 +139,8 @@ namespace AptitudeTest.Data.Data
                 }
 
                 college.Status = collegeToUpsert.Status;
-                college.Name = collegeToUpsert.Name;
-                college.Abbreviation = collegeToUpsert.Abbreviation;
+                college.Name = collegeToUpsert.Name.Trim();
+                college.Abbreviation = collegeToUpsert.Abbreviation.Trim();
                 college.CreatedBy = collegeToUpsert.CreatedBy;
                 _context.Add(college);
                 _context.SaveChanges();
@@ -170,8 +170,8 @@ namespace AptitudeTest.Data.Data
             try
             {
                 MasterCollege college = new MasterCollege();
-                MasterCollege cplleges = _context.MasterCollege.Where(c => (c.Name.ToLower() == collegeToUpsert.Name.ToLower() || c.Abbreviation.ToLower() == collegeToUpsert.Abbreviation.ToLower()) && c.Id != collegeToUpsert.Id && c.IsDeleted != true).FirstOrDefault();
-                if (cplleges != null)
+                MasterCollege colleges = _context.MasterCollege.Where(c => (c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() || c.Abbreviation.Trim().ToLower() == collegeToUpsert.Abbreviation.Trim().ToLower()) && c.Id != collegeToUpsert.Id && c.IsDeleted != true).FirstOrDefault();
+                if (colleges != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -185,8 +185,8 @@ namespace AptitudeTest.Data.Data
                 if (masterCollege != null)
                 {
                     masterCollege.Status = collegeToUpsert.Status;
-                    masterCollege.Name = collegeToUpsert.Name;
-                    masterCollege.Abbreviation = collegeToUpsert.Abbreviation;
+                    masterCollege.Name = collegeToUpsert.Name.Trim();
+                    masterCollege.Abbreviation = collegeToUpsert.Abbreviation.Trim();
                     masterCollege.UpdatedBy = collegeToUpsert.UpdatedBy;
                     masterCollege.UpdatedDate = DateTime.UtcNow;
                     _context.Update(masterCollege);
