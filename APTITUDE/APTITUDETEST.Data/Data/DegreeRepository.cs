@@ -22,31 +22,12 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Methods
-        public async Task<JsonResult> GetDegrees(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetDegrees()
         {
             try
             {
                 List<MasterDegree> degreelist = await Task.FromResult(_context.MasterDegree.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(degree => degree.CreatedDate).ToList());
                 List<MasterStream> masterStreams = await Task.FromResult(_context.MasterStream.ToList());
-
-                if (searchQuery != null)
-                {
-                    string query = searchQuery.ToLower();
-                    degreelist = degreelist.Where(degree => degree.Name.ToLower().Contains(query)).ToList();
-                }
-
-                if (filter != null)
-                {
-                    if (filter == 1)
-                    {
-                        degreelist = degreelist.Where(degree => degree.Status == true).ToList();
-                    }
-                    if (filter == 2)
-                    {
-                        degreelist = degreelist.Where(degree => degree.Status == false).ToList();
-                    }
-                }
-
                 List<DegreeVM> degreeData = degreelist.Select(degree => new DegreeVM()
                 {
                     Id = degree.Id,
@@ -59,10 +40,9 @@ namespace AptitudeTest.Data.Data
                     Streams = masterStreams.Where(stream => stream.DegreeId == degree.Id).Select(stream => stream.Name).ToList()
                 }).ToList();
 
-                PaginationVM<DegreeVM> paginatedData = Pagination<DegreeVM>.Paginate(degreeData, pageSize, currentPageIndex);
-                return new JsonResult(new ApiResponse<PaginationVM<DegreeVM>>
+                return new JsonResult(new ApiResponse<List<DegreeVM>>
                 {
-                    Data = paginatedData,
+                    Data = degreeData,
                     Message = ResponseMessages.Success,
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
