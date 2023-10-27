@@ -22,6 +22,12 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.Create(question);
         }
+
+        public async Task<JsonResult> Get(int id)
+        {
+            return await _repository.Get(id);
+        }
+
         #endregion
     }
 }
