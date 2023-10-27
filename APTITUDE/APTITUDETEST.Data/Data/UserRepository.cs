@@ -245,13 +245,13 @@ namespace AptitudeTest.Data.Data
                     }); ;
 
                     connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
-                  
+
                     return new JsonResult(new ApiResponse<string>
                     {
-                            Message = string.Format(ResponseMessages.AddSuccess, "User"),
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                    }); 
+                        Message = string.Format(ResponseMessages.AddSuccess, "User"),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
                 }
             }
             catch (Exception ex)

@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AptitudeTest.Core.Entities.Master;
 
 namespace AptitudeTest.Core.Entities.Users
 {
@@ -24,7 +18,7 @@ namespace AptitudeTest.Core.Entities.Users
         public DateTime? UpdatedDate { get; set; }
         public int? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; } = false;
-        public virtual State States{ get; set; }
+        public virtual State States { get; set; }
 
     }
 }

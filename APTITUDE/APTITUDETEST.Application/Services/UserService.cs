@@ -42,7 +42,7 @@ namespace AptitudeTest.Application.Services
         {
             return await _userRepository.ActiveInActiveUsers(userStatusVM);
         }
-        
+
         public async Task<JsonResult> DeleteUsers(List<int> userIds)
         {
             return await _userRepository.DeleteUsers(userIds);
