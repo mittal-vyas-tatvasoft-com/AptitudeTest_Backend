@@ -60,7 +60,7 @@ namespace AptitudeTest.API.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<JsonResult> Create(UserVM user)
+        public async Task<JsonResult> Create(CreateUserVM user)
         {
             if (ModelState.IsValid)
             {
@@ -89,24 +89,24 @@ namespace AptitudeTest.API.Controllers
         }
         #endregion
 
-        #region InActive
+        #region ActiveInActive
         /// <summary>
-        /// This method InActive Users
+        /// This method ActiveOrInActive Users
         /// </summary>
         /// <param name="check"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<JsonResult> InActiveUsers(List<int> userIds)
+        public async Task<JsonResult> ActiveInActiveUsers(UserStatusVM userStatusVM)
         {
-            return await _userService.InActiveUsers(userIds);
+            return await _userService.ActiveInActiveUsers(userStatusVM);
         }
         #endregion
 
         #region Delete
         /// <summary>
-        /// This method InActive Users
+        /// This method Delete Users
         /// </summary>
-        /// <param name="check"></param>
+        /// <param name="userIds"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
         public async Task<JsonResult> DeleteUsers(List<int> userIds)
