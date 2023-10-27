@@ -162,13 +162,14 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
         #endregion
 
         #region Helper Method
 
         private bool ValidateQuestion(QuestionVM questionVM)
         {
-            if (questionVM.Options.Count() == 2)
+            if (questionVM.Options.Count() == 4)
             {
                 int answerCount = questionVM.Options.Where(option => option.IsAnswer == true).Count();
                 if (questionVM.QuestionType == 1 && answerCount == 1)
