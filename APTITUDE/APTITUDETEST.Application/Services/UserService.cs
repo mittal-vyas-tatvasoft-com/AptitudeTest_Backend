@@ -28,7 +28,7 @@ namespace AptitudeTest.Application.Services
             return await _userRepository.GetUserById(id);
         }
 
-        public async Task<JsonResult> Create(UserVM user)
+        public async Task<JsonResult> Create(CreateUserVM user)
         {
             return await _userRepository.Create(user);
         }
@@ -38,9 +38,9 @@ namespace AptitudeTest.Application.Services
             return await _userRepository.Update(user);
         }
 
-        public async Task<JsonResult> InActiveUsers(List<int> userIds)
+        public async Task<JsonResult> ActiveInActiveUsers(UserStatusVM userStatusVM)
         {
-            return await _userRepository.InActiveUsers(userIds);
+            return await _userRepository.ActiveInActiveUsers(userStatusVM);
         }
 
         public async Task<JsonResult> DeleteUsers(List<int> userIds)

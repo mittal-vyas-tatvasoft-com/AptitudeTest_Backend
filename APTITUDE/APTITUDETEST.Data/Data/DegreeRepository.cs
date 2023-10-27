@@ -26,7 +26,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterDegree> degreelist = await Task.FromResult(_context.MasterDegree.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderBy(degree => degree.Id).ToList());
+                List<MasterDegree> degreelist = await Task.FromResult(_context.MasterDegree.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(degree => degree.CreatedDate).ToList());
                 List<MasterStream> masterStreams = await Task.FromResult(_context.MasterStream.ToList());
 
                 if (searchQuery != null)

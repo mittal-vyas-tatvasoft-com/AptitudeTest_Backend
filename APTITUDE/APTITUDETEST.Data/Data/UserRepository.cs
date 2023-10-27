@@ -3,6 +3,8 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
+using AptitudeTest.Common.Helpers;
+using APTITUDETEST.Core.Entities.Users;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
 using System.Data;
+using System.Text;
+
 
 namespace AptitudeTest.Data.Data
 {
@@ -142,15 +146,14 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Create
-        public async Task<JsonResult> Create(UserVM user)
+        public async Task<JsonResult> Create(CreateUserVM user)
         {
+            var pass = RandomPasswordGenerator.GenerateRandomPassword(8);
             try
             {
                 using (var connection = _dapperContext.CreateConnection())
                 {
-                    var procedure = "insert_user_with_validations";
-                    var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
-                    dateParameter.Value = user.DateOfBirth;
+                    var procedure = "insert_user";
                     var parameters = new DynamicParameters(
                         new
                         {
@@ -158,60 +161,19 @@ namespace AptitudeTest.Data.Data
                             p_lastname = user.LastName,
                             p_fathername = user.FatherName,
                             p_email = user.Email,
-                            p_password = user.Password,
+                            p_password = pass,
                             p_phonenumber = user.PhoneNumber,
-                            p_level = user.Level,
-                            p_dateofbirth = dateParameter.Value,
-                            p_permanentaddress = user.PermanentAddress,
-                            p_group = user.Group,
-                            p_appliedthrough = user.AppliedThrough,
-                            p_technologyinterestedin = user.TechnologyInterestedIn,
-                            p_acpcmeritrank = user.ACPCMeritRank,
-                            p_gujcetscore = user.GUJCETScore,
-                            p_jeescore = user.JEEScore,
-                            p_preferedlocation = user.PreferedLocation,
-                            p_relationshipwithexistingemployee = user.RelationshipWithExistingEmployee,
+                            p_groupid = user.GroupId,
+                            p_collegeid = user.CollegeId,
+                            p_gender = user.Gender,
+                            p_status = user.Status,
                             p_createdby = user.CreatedBy,
                             next_id = 0
                         });
 
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
-                    if (userId > 0)
-                    {
-                        user.UserFamilyVM.ForEach(x => x.userid = userId);
-
-                        using (IDbCommand cmd = connection.CreateCommand())
-                        {
-                            cmd.CommandText = "insert_user_family";
-                            cmd.CommandType = CommandType.StoredProcedure;
-
-                            IDbDataParameter parameter = cmd.CreateParameter();
-                            parameter.ParameterName = "p_userfamilydata";
-                            parameter.Value = user.UserFamilyVM.ToArray();
-                            parameter.DbType = DbType.Object;
-
-                            cmd.Parameters.Add(parameter);
-
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        user.UserAcademicsVM.ForEach(x => x.userid = userId);
-
-                        using (IDbCommand cmd = connection.CreateCommand())
-                        {
-                            cmd.CommandText = "insert_user_academics";
-                            cmd.CommandType = CommandType.StoredProcedure;
-
-                            IDbDataParameter parameter = cmd.CreateParameter();
-                            parameter.ParameterName = "p_useracademicsdata";
-                            parameter.Value = user.UserAcademicsVM.ToArray();
-                            parameter.DbType = DbType.Object;
-
-                            cmd.Parameters.Add(parameter);
-
-                            cmd.ExecuteNonQuery();
-                        }
-
+                    if(userId > 0)
+                    { 
                         return new JsonResult(new ApiResponse<string>
                         {
                             Message = string.Format(ResponseMessages.AddSuccess, "User"),
@@ -256,27 +218,31 @@ namespace AptitudeTest.Data.Data
                     new
                     {
                         p_userid = user.Id,
+                        p_groupid = user.GroupId,
+                        p_collegeid = user.CollegeId,
+                        p_status = user.Status,
                         p_firstname = user.FirstName,
                         p_lastname = user.LastName,
                         p_fathername = user.FatherName,
+                        p_gender = user.Gender,
+                        p_dateofbirth = dateParameter.Value,
                         p_email = user.Email,
-                        p_password = user.Password,
                         p_phonenumber = user.PhoneNumber,
                         p_level = user.Level,
-                        p_dateofbirth = dateParameter.Value,
-                        p_permanentaddress = user.PermanentAddress,
-                        p_group = user.Group,
                         p_appliedthrough = user.AppliedThrough,
                         p_technologyinterestedin = user.TechnologyInterestedIn,
+                        p_permanentaddress1 = user.PermanentAddress1,
+                        p_permanentaddress2 = user.PermanentAddress2,
+                        p_pincode = user.Pincode,
+                        p_cityid = user.CityId,
+                        p_stateid= user.StateId,                       
                         p_acpcmeritrank = user.ACPCMeritRank,
                         p_gujcetscore = user.GUJCETScore,
                         p_jeescore = user.JEEScore,
-                        p_preferedlocation = user.PreferedLocation,
-                        p_relationshipwithexistingemployee = user.RelationshipWithExistingEmployee,
                         p_updatedby = user.UpdatedBy,
                         p_userfamilydata = user.UserFamilyVM.ToArray(),
                         p_useracademicsdata = user.UserAcademicsVM.ToArray()
-                    });
+                    }); ;
 
                     connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
 
@@ -303,17 +269,18 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region InActiveUsers
-        public async Task<JsonResult> InActiveUsers(List<int> userIds)
+        public async Task<JsonResult> ActiveInActiveUsers(UserStatusVM userStatusVM)
         {
             try
             {
                 using (var connection = _dapperContext.CreateConnection())
                 {
-                    var procedure = "inactive_users";
+                    var procedure = "activeinactive_users";
                     var parameters = new DynamicParameters(
                     new
                     {
-                        p_userids = userIds.ToArray()
+                        p_userids = userStatusVM.UserIds.ToArray(),
+                        p_status = userStatusVM.status
                     });
 
                     connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
@@ -446,9 +413,15 @@ namespace AptitudeTest.Data.Data
                 }
             }
         }
-        #endregion
+       
 
-        #endregion
 
-    }
+       
+
+
+    #endregion
+
+    #endregion
+
+}
 }
