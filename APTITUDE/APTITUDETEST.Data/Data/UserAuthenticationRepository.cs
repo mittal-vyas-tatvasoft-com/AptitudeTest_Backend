@@ -42,7 +42,7 @@ namespace AptitudeTest.Data.Data
             {
                 if (!string.IsNullOrEmpty(loginVm.Email) && !string.IsNullOrEmpty(loginVm.Email))
                 {
-                    User? user = _context.Users.Where(u => u.Email == loginVm.Email && u.Password == loginVm.Password).FirstOrDefault();
+                    User? user = _context.Users.Where(u => u.Email == loginVm.Email && u.Password == loginVm.Password)?.FirstOrDefault();
                     if (user != null)
                     {
                         string newAccessToken = GenerateJwtToken(user);

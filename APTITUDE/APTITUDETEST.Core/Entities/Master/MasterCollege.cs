@@ -13,7 +13,7 @@ namespace AptitudeTest.Core.Entities.Master
         [Required]
         public string Abbreviation { get; set; }
         [ForeignKey("MasterGroups")]
-        public int? GroupId{ get; set; }
+        public int? GroupId { get; set; }
         public bool? Status { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? CreatedDate { get; set; }

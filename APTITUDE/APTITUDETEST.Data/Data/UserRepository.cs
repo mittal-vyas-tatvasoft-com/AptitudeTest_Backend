@@ -3,7 +3,6 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
-using APTITUDETEST.Core.Entities.Users;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -280,13 +279,13 @@ namespace AptitudeTest.Data.Data
                     });
 
                     connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
-                  
+
                     return new JsonResult(new ApiResponse<string>
                     {
-                            Message = string.Format(ResponseMessages.AddSuccess, "User"),
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                    }); 
+                        Message = string.Format(ResponseMessages.AddSuccess, "User"),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
                 }
             }
             catch (Exception ex)

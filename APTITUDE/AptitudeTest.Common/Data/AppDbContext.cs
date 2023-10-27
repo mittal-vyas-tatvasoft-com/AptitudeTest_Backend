@@ -40,10 +40,10 @@ namespace APTITUDETEST.Common.Data
                     .HasMaxLength(255);
                 entity.Property(e => e.PermanentAddress1)
                     .HasMaxLength(1000)
-                    .IsUnicode(false); 
+                    .IsUnicode(false);
                 entity.Property(e => e.PermanentAddress2)
                     .HasMaxLength(1000)
-                    .IsUnicode(false); 
+                    .IsUnicode(false);
                 entity.Property(e => e.RelationshipWithExistingEmployee)
                    .HasMaxLength(300)
                    .IsUnicode(false);
