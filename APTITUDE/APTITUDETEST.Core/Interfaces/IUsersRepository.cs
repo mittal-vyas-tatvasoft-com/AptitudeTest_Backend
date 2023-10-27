@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Core.Interfaces
@@ -12,5 +13,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> Update(UserVM user);
         public Task<JsonResult> ActiveInActiveUsers(UserStatusVM userStatusVM);
         public Task<JsonResult> DeleteUsers(List<int> userIds);
+        public Task<JsonResult> ImportUsers(IFormFile file);
     }
 }
