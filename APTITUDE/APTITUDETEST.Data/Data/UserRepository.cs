@@ -412,10 +412,11 @@ namespace AptitudeTest.Data.Data
             userDetails.UserCollege = userData.usercollege ?? 0;
             userDetails.CollegeName = userData.collegename ?? "";
             userDetails.FirstName = userData.firstname ?? "";
-            userDetails.LastName = userData.lastname ?? "";
-            userDetails.Email = userData.email ?? "";
-            userDetails.PhoneNumber = userData.phonenumber ?? 0;
             userDetails.FatherName = userData.fathername ?? "";
+            userDetails.LastName = userData.lastname ?? "";
+            userDetails.Gender = userData.gender ?? 0;
+            userDetails.Email = userData.email ?? "";
+            userDetails.PhoneNumber = userData.phonenumber ?? 0;            
             userDetails.DateOfBirth = userData.dateofbirth ?? new DateTime();
             userDetails.PermanentAddress1 = userData.permanentaddress ?? "";
             userDetails.PermanentAddress2 = userData.permanentaddress ?? "";
