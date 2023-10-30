@@ -2,11 +2,12 @@
 using AptitudeTest.Core.ViewModels;
 
 using AptitudeTest.Data.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProfilesController : ControllerBase
@@ -34,9 +35,9 @@ namespace AptitudeTest.Controllers
         /// <returns>filtered list of profiles</returns>
         [HttpGet]
 
-        public async Task<JsonResult> GetProfiles(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetProfiles()
         {
-            return await _service.GetProfiles(searchQuery, filter, currentPageIndex, pageSize);
+            return await _service.GetProfiles();
         }
 
         /// <summary>

@@ -6,21 +6,12 @@
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Email { get; set; }
-        public string? FatherName { get; set; }
         public long? PhoneNumber { get; set; }
-        public int? Level { get; set; }
-        public DateTime? DateOfBirth { get; set; }
-        public string? PermanentAddress { get; set; }
-        public int? GroupId { get; set; }
-        public int? TechnologyInterestedIn { get; set; }
-        public int? AppliedThrough { get; set; }
-        public int? Gender { get; set; }
-        public string? TechnologyName { get; set; }
-        public string? RelationshipWithExistingEmployee { get; set; }
-        public int? ACPCMeritRank { get; set; }
-        public int? GUJCETScore { get; set; }
-        public int? JEEScore { get; set; }
-        public int? PreferedLocation { get; set; }
+        public string? GroupName { get; set; }
+        public string? CollegeName { get; set; }
         public bool? Status { get; set; }
+        public int? TotalRecords { get; set; }
+        public int? TotalPages { get; set; }
+        public int? NextPage { get; set; }
     }
 }
