@@ -159,7 +159,7 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)OptionType.ImageType && !ValidateImageExtension(questionVM.Options, true)) || !ValidateOptionText(questionVM))
+                if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)Common.Enum.OptionType.ImageType && !ValidateImageExtension(questionVM.Options, true)) || !ValidateOptionText(questionVM))
                 {
                     return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
                 }
@@ -193,7 +193,7 @@ namespace AptitudeTest.Data.Data
                     options.QuestionId = questionId;
                     options.IsAnswer = option.IsAnswer;
                     // OptionType 1 refers to string option value and 2 refers to image option value
-                    if (questionVM.OptionType == (int)OptionType.TextType)
+                    if (questionVM.OptionType == (int)Common.Enum.OptionType.TextType)
                     {
                         options.OptionData = option.OptionValue;
                     }
@@ -332,11 +332,11 @@ namespace AptitudeTest.Data.Data
             if (questionVM.Options.Count() == 4)
             {
                 int answerCount = questionVM.Options.Where(option => option.IsAnswer == true).Count();
-                if (questionVM.QuestionType == (int)QuestionType.SingleAnswer && answerCount == 1)
+                if (questionVM.QuestionType == (int)Common.Enum.QuestionType.SingleAnswer && answerCount == 1)
                 {
                     return true;
                 }
-                else if (questionVM.QuestionType == (int)QuestionType.MultiAnswer && answerCount > 1)
+                else if (questionVM.QuestionType == (int)Common.Enum.QuestionType.MultiAnswer && answerCount > 1)
                 {
                     return true;
                 }
@@ -348,7 +348,7 @@ namespace AptitudeTest.Data.Data
         private bool ValidateOptionText(QuestionVM questionVM)
         {
             bool result = true;
-            if (questionVM.OptionType == (int)OptionType.TextType)
+            if (questionVM.OptionType == (int)Common.Enum.OptionType.TextType)
             {
                 questionVM.Options.ForEach(option =>
                 {
@@ -376,7 +376,7 @@ namespace AptitudeTest.Data.Data
             Question question = _context.Questions.Where(question => question.Topic == questionVM.TopicId && question.Difficulty == questionVM.Difficulty && question.QuestionText.Trim().ToLower() == questionVM.QuestionText.Trim().ToLower() && question.QuestionType == questionVM.QuestionType && question.OptionType == questionVM.OptionType && question.IsDeleted != true).FirstOrDefault();
             if (question != null)
             {
-                if (questionVM.OptionType == (long)QuestionType.MultiAnswer)
+                if (questionVM.OptionType == (long)Common.Enum.QuestionType.MultiAnswer)
                 {
                     if (questionVM.DuplicateFromQuestionId != 0 && questionVM.Options.Where(option => option.OptionImage != null).Count() == 0)
                     {
