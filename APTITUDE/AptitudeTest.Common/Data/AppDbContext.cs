@@ -34,7 +34,6 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Status).HasDefaultValue(true);
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
-                entity.Property(e => e.Level).HasDefaultValue(1);
                 entity.Property(e => e.Password)
                     .HasMaxLength(255);
                 entity.Property(e => e.PermanentAddress1)
@@ -46,8 +45,10 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.RelationshipWithExistingEmployee)
                    .HasMaxLength(300)
                    .IsUnicode(false);
-                entity.Property(e => e.CityId).IsRequired(false);
                 entity.Property(e => e.StateId).IsRequired(false);
+                entity.Property(e => e.TechnologyInterestedIn).IsRequired(false);
+                entity.Property(e => e.CityName).IsRequired(false).HasMaxLength(255).IsUnicode(false);
+                entity.Property(e => e.Gender).IsRequired(false);
 
             });
 

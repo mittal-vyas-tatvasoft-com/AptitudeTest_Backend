@@ -269,7 +269,7 @@ namespace AptitudeTest.Data.Data
                         new Claim("FirstName", user.FirstName),
                         new Claim("Name", user.Email),
                         new Claim("Email", user.Email),
-                        new Claim("RoleId", user.RoleId.ToString())
+                        new Claim("LastName", user.LastName)
                     }),
                     Expires = DateTime.UtcNow.AddMinutes(tokenExpiry),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
