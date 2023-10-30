@@ -1,10 +1,9 @@
 ﻿using AptitudeTest.Common.Data;
+using AptitudeTest.Common.Helpers;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
-using AptitudeTest.Common.Helpers;
-using APTITUDETEST.Core.Entities.Users;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
 using System.Data;
-using System.Text;
 
 
 namespace AptitudeTest.Data.Data
@@ -41,7 +39,7 @@ namespace AptitudeTest.Data.Data
         #region methods
 
         #region GetAllUsers
-        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? currentPageIndex, int? pageSize)
         {
             try
             {
@@ -50,12 +48,11 @@ namespace AptitudeTest.Data.Data
                     using (var connection = new NpgsqlConnection(connectionString))
                     {
                         connection.Open();
-                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getAllUsers(@SearchQuery)", new { SearchQuery = searchQuery }).ToList();
-                        PaginationVM<UserViewModel> paginatedData = Pagination<UserViewModel>.Paginate(data, pageSize, currentPageIndex);
+                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getAllUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@PageNumber,@PageSize)", new { SearchQuery = searchQuery, CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
                         connection.Close();
-                        return new JsonResult(new ApiResponse<PaginationVM<UserViewModel>>
+                        return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
-                            Data = paginatedData,
+                            Data = data.OrderByDescending(x => x.UserId).ToList(),
                             Message = ResponseMessages.Success,
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
@@ -67,12 +64,11 @@ namespace AptitudeTest.Data.Data
                     using (var connection = new NpgsqlConnection(connectionString))
                     {
                         connection.Open();
-                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getAllUsers(@SearchQuery)", new { SearchQuery = "" }).ToList();
-                        PaginationVM<UserViewModel> paginatedData = Pagination<UserViewModel>.Paginate(data, pageSize, currentPageIndex);
+                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getAllUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@PageNumber,@PageSize)", new { SearchQuery = "", CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
                         connection.Close();
-                        return new JsonResult(new ApiResponse<PaginationVM<UserViewModel>>
+                        return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
-                            Data = paginatedData,
+                            Data = data.OrderByDescending(x => x.UserId).ToList(),
                             Message = ResponseMessages.Success,
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
@@ -172,8 +168,8 @@ namespace AptitudeTest.Data.Data
                         });
 
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
-                    if(userId > 0)
-                    { 
+                    if (userId > 0)
+                    {
                         return new JsonResult(new ApiResponse<string>
                         {
                             Message = string.Format(ResponseMessages.AddSuccess, "User"),
@@ -235,7 +231,7 @@ namespace AptitudeTest.Data.Data
                         p_permanentaddress2 = user.PermanentAddress2,
                         p_pincode = user.Pincode,
                         p_cityid = user.CityId,
-                        p_stateid= user.StateId,                       
+                        p_stateid = user.StateId,
                         p_acpcmeritrank = user.ACPCMeritRank,
                         p_gujcetscore = user.GUJCETScore,
                         p_jeescore = user.JEEScore,
@@ -413,15 +409,15 @@ namespace AptitudeTest.Data.Data
                 }
             }
         }
-       
 
 
-       
 
 
-    #endregion
 
-    #endregion
 
-}
+        #endregion
+
+        #endregion
+
+    }
 }

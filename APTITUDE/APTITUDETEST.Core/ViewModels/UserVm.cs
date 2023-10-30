@@ -16,7 +16,7 @@ namespace AptitudeTest.Core.ViewModels
         public string Email { get; set; }
         [Required]
         public long? PhoneNumber { get; set; }
-        
+
         public string Password { get; set; }
         [Required]
         public int GroupId { get; set; }
