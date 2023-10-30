@@ -22,30 +22,11 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Methods
-        public async Task<JsonResult> GetProfiles(string? searchQuery, int? filter, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetProfiles()
         {
             try
             {
-                List<MasterTechnology> profilelist = await Task.FromResult(_context.MasterTechnology.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderBy(x => x.Id).ToList());
-
-                if (searchQuery != null)
-                {
-                    string query = searchQuery.ToLower();
-                    profilelist = profilelist.Where(profile => profile.Name.ToLower().Contains(query)).ToList();
-                }
-
-                if (filter != null)
-                {
-                    if (filter == 1)
-                    {
-                        profilelist = profilelist.Where(profile => profile.Status == true).ToList();
-                    }
-                    if (filter == 2)
-                    {
-                        profilelist = profilelist.Where(profile => profile.Status == false).ToList();
-                    }
-                }
-
+                List<MasterTechnology> profilelist = await Task.FromResult(_context.MasterTechnology.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(x => x.CreatedDate).ToList());
                 List<ProfileVM> profileData = profilelist.Select(profile => new ProfileVM()
                 {
                     Id = profile.Id,
@@ -55,10 +36,9 @@ namespace AptitudeTest.Data.Data
                     UpdatedBy = null
                 }).ToList();
 
-                PaginationVM<ProfileVM> paginatedData = Pagination<ProfileVM>.Paginate(profileData, pageSize, currentPageIndex);
-                return new JsonResult(new ApiResponse<PaginationVM<ProfileVM>>
+                return new JsonResult(new ApiResponse<List<ProfileVM>>
                 {
-                    Data = paginatedData,
+                    Data = profileData,
                     Message = ResponseMessages.Success,
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
@@ -93,7 +73,7 @@ namespace AptitudeTest.Data.Data
 
                 MasterTechnology masterProfile = new MasterTechnology();
                 masterProfile.Status = profile.Status;
-                masterProfile.Name = profile.Name.Trim();       
+                masterProfile.Name = profile.Name.Trim();
                 masterProfile.CreatedBy = profile.CreatedBy;
                 _context.Add(masterProfile);
                 _context.SaveChanges();

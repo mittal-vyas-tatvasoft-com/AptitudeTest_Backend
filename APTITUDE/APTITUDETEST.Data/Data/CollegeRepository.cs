@@ -25,7 +25,7 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                List<MasterCollege> collegeList = await Task.FromResult(_context.MasterCollege.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList());
+                List<MasterCollege> collegeList = await Task.FromResult(_context.MasterCollege.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(x => x.CreatedDate).ToList());
 
                 if (collegeQuery.SearchQuery != null)
                 {
