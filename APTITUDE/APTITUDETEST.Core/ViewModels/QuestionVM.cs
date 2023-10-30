@@ -6,7 +6,6 @@ namespace AptitudeTest.Core.ViewModels
     {
 
         public int Id { get; set; }
-        public int? Number { get; set; }
         public int DuplicateFromQuestionId { get; set; }
         [Range(1, 5)]
         public int TopicId { get; set; }

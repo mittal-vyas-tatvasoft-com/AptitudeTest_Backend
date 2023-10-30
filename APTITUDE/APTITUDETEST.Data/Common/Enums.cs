@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AptitudeTest.Data.Common
 {
-    public class Enum
+    public class Enums
     {
         public enum QuestionTopic
         {
