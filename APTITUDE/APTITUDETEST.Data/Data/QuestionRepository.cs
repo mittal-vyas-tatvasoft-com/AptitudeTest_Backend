@@ -94,12 +94,72 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> GetQuestions(int? topic, bool? status)
+        {
+            try
+            {
+                using (DbConnection connection = new DbConnection())
+                {
+                    var parameter = new
+                    {
+                        filter_topic = topic,
+                        filter_status = status
+                    };
+                    var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getAllQuestions(@filter_topic,@filter_status)", parameter);
+                    List<QuestionVM> questionVMList = new List<QuestionVM>();
+                    questionVMList = data.GroupBy(question => question.QuestionId).Select(
+                        x =>
+                        {
+                            var q = x.FirstOrDefault();
+                            return new QuestionVM()
+                            {
+                                Id = q.QuestionId,
+                                Difficulty = q.Difficulty,
+                                OptionType = q.OptionType,
+                                QuestionText = q.QuestionText,
+                                QuestionType = q.QuestionType,
+                                Status = q.Status,
+                                TopicId = q.Topic,
+                                Options = x.Select(x =>
+                                {
+                                    return new OptionVM()
+                                    {
+                                        IsAnswer = x.IsAnswer,
+                                        OptionId = x.OptionId,
+                                        OptionValue = x.OptionData
+                                    };
+                                }).ToList()
+                            };
+                        }
+                        ).ToList();
+
+                    return new JsonResult(new ApiResponse<List<QuestionVM>>
+                    {
+                        Data = questionVMList,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
         public async Task<JsonResult> Create(QuestionVM questionVM)
         {
 
             try
             {
-                if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || (questionVM.OptionType == 2 && !ValidateImageExtension(questionVM.Options, true)) || !ValidateOptionText(questionVM))
+                if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)OptionType.ImageType && !ValidateImageExtension(questionVM.Options, true)) || !ValidateOptionText(questionVM))
                 {
                     return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
                 }
@@ -133,7 +193,7 @@ namespace AptitudeTest.Data.Data
                     options.QuestionId = questionId;
                     options.IsAnswer = option.IsAnswer;
                     // OptionType 1 refers to string option value and 2 refers to image option value
-                    if (questionVM.OptionType == 1)
+                    if (questionVM.OptionType == (int)OptionType.TextType)
                     {
                         options.OptionData = option.OptionValue;
                     }
@@ -272,11 +332,11 @@ namespace AptitudeTest.Data.Data
             if (questionVM.Options.Count() == 4)
             {
                 int answerCount = questionVM.Options.Where(option => option.IsAnswer == true).Count();
-                if (questionVM.QuestionType == 1 && answerCount == 1)
+                if (questionVM.QuestionType == (int)QuestionType.SingleAnswer && answerCount == 1)
                 {
                     return true;
                 }
-                else if (questionVM.QuestionType == 2 && answerCount > 1)
+                else if (questionVM.QuestionType == (int)QuestionType.MultiAnswer && answerCount > 1)
                 {
                     return true;
                 }
@@ -288,7 +348,7 @@ namespace AptitudeTest.Data.Data
         private bool ValidateOptionText(QuestionVM questionVM)
         {
             bool result = true;
-            if (questionVM.OptionType == 1)
+            if (questionVM.OptionType == (int)OptionType.TextType)
             {
                 questionVM.Options.ForEach(option =>
                 {
@@ -316,7 +376,7 @@ namespace AptitudeTest.Data.Data
             Question question = _context.Questions.Where(question => question.Topic == questionVM.TopicId && question.Difficulty == questionVM.Difficulty && question.QuestionText.Trim().ToLower() == questionVM.QuestionText.Trim().ToLower() && question.QuestionType == questionVM.QuestionType && question.OptionType == questionVM.OptionType && question.IsDeleted != true).FirstOrDefault();
             if (question != null)
             {
-                if (questionVM.OptionType == 2)
+                if (questionVM.OptionType == (long)QuestionType.MultiAnswer)
                 {
                     if (questionVM.DuplicateFromQuestionId != 0 && questionVM.Options.Where(option => option.OptionImage != null).Count() == 0)
                     {

@@ -36,6 +36,17 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
+        /// This method gives all questions with filter of topic and status
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        [HttpGet()]
+        public async Task<JsonResult> GetQuestions(int? topic, bool? status)
+        {
+            return await _service.GetQuestions(topic, status);
+        }
+        /// <summary>
         /// This method Adds new College
         /// </summary>
         /// <param name="question"></param>

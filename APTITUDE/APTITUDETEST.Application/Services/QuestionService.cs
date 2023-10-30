@@ -28,6 +28,11 @@ namespace AptitudeTest.Application.Services
             return await _repository.Get(id);
         }
 
+        public async Task<JsonResult> GetQuestions(int? topic, bool? status)
+        {
+            return await _repository.GetQuestions(topic, status);
+        }
+
         public async Task<JsonResult> UpdateStatus(StatusVM status)
         {
             return await _repository.UpdateStatus(status);
