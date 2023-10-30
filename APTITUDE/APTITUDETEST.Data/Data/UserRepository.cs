@@ -11,7 +11,10 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
 using System.Data;
-
+using System.Text;
+using Microsoft.AspNetCore.Http;
+using CsvHelper;
+using System.Globalization;
 
 namespace AptitudeTest.Data.Data
 {
@@ -337,6 +340,61 @@ namespace AptitudeTest.Data.Data
         }
         #endregion
 
+        #region ImportUsers
+        public async Task<JsonResult> ImportUsers(IFormFile file)
+        {
+            try
+            {
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    var records = csv.GetRecords<UserImportVM>().ToList();
+                    if (records != null)
+                    {
+                        using (var connection = _dapperContext.CreateConnection())
+                        {
+                            var procedure = "import_users";
+                            var parameters = new DynamicParameters(
+                            new
+                            {
+                                p_import_user_data = records.ToArray()
+                            });
+
+                            connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                        }
+
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.Success),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.InternalError, "Import Users"),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.RequestFailed
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.InternalError, "User"),
+                    Result = false,
+                    StatusCode = ResponseStatusCode.RequestFailed
+                });
+            }
+
+        }
+        #endregion
+
         #region HelpingMethods
 
         private void FillUserData(UserDetailsVM userDetails, dynamic data)
@@ -409,11 +467,6 @@ namespace AptitudeTest.Data.Data
                 }
             }
         }
-
-
-
-
-
 
         #endregion
 
