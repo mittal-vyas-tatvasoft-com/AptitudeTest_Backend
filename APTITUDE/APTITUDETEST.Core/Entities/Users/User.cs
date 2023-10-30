@@ -23,15 +23,13 @@ namespace APTITUDETEST.Core.Entities.Users
         [Required]
         public long PhoneNumber { get; set; }
         public string? Password { get; set; }
-        public int? Level { get; set; }
         public DateOnly? DateOfBirth { get; set; }
         public string? PermanentAddress1 { get; set; }
         public string? PermanentAddress2 { get; set; }
         public int? Pincode { get; set; }
         [ForeignKey("States")]
         public int? StateId { get; set; }
-        [ForeignKey("Cities")]
-        public int? CityId { get; set; }
+        public string? CityName { get; set; }
         [ForeignKey("MasterGroups")]
         public int? GroupId { get; set; }
         [ForeignKey("MasterColleges")]
@@ -46,7 +44,6 @@ namespace APTITUDETEST.Core.Entities.Users
         public int? PreferedLocation { get; set; }
         public string? RelationshipWithExistingEmployee { get; set; }
         public bool? Status { get; set; }
-        public int? RoleId { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? CreatedDate { get; set; }
         public int? CreatedBy { get; set; }
@@ -56,7 +53,6 @@ namespace APTITUDETEST.Core.Entities.Users
         public virtual MasterGroup MasterGroups { get; set; }
         public virtual MasterTechnology MasterTechnologies { get; set; }
         public virtual MasterCollege MasterColleges { get; set; }
-        public virtual City Cities { get; set; }
         public virtual State States { get; set; }
 
     }

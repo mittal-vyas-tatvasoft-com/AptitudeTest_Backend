@@ -1,8 +1,13 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
+using APTITUDETEST.Core.Entities.Users;
+using CsvHelper.Configuration;
+using CsvHelper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace AptitudeTest.API.Controllers
 {
@@ -33,12 +38,11 @@ namespace AptitudeTest.API.Controllers
         /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet("{currentPageIndex:int}/{pageSize:int}")]
-        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex = 0, int? pageSize = 10)
+        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, int? currentPageIndex = 0, int? pageSize = 10)
         {
-            return await _userService.GetAllUsers(searchQuery, currentPageIndex, pageSize);
+            return await _userService.GetAllUsers(searchQuery, CollegeId, GroupId, Status, Year, currentPageIndex, pageSize);
         }
         #endregion
-
 
         #region GetUserById
         /// <summary>
@@ -114,6 +118,23 @@ namespace AptitudeTest.API.Controllers
             return await _userService.DeleteUsers(userIds);
         }
         #endregion
+
+        #region ImportUsers
+        /// <summary>
+        /// This method Import Users
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+
+        [HttpPost("[action]")]
+        public async Task<JsonResult> ImportUsers(IFormFile file)
+        {
+            return await _userService.ImportUsers(file);
+        }
+        #endregion
+
+
+
         #endregion
     }
 }

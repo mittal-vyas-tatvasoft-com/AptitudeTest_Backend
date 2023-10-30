@@ -1,5 +1,6 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
@@ -18,9 +19,9 @@ namespace AptitudeTest.Application.Services
         #endregion
 
         #region Methods
-        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, int? currentPageIndex, int? pageSize)
         {
-            return await _userRepository.GetAllUsers(searchQuery, currentPageIndex, pageSize);
+            return await _userRepository.GetAllUsers(searchQuery, CollegeId, GroupId, Status, Year, currentPageIndex, pageSize);
         }
 
         public async Task<JsonResult> GetUserById(int id)
@@ -46,6 +47,11 @@ namespace AptitudeTest.Application.Services
         public async Task<JsonResult> DeleteUsers(List<int> userIds)
         {
             return await _userRepository.DeleteUsers(userIds);
+        }
+
+        public async Task<JsonResult> ImportUsers(IFormFile file)
+        {
+            return await _userRepository.ImportUsers(file);
         }
         #endregion
     }
