@@ -1,13 +1,8 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
-using APTITUDETEST.Core.Entities.Users;
-using CsvHelper.Configuration;
-using CsvHelper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 
 namespace AptitudeTest.API.Controllers
 {

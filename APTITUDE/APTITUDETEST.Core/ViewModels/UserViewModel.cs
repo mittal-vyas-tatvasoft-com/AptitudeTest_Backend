@@ -10,6 +10,7 @@
         public string? GroupName { get; set; }
         public string? CollegeName { get; set; }
         public bool? Status { get; set; }
+        public int? CreatedYear { get; set; }
         public int? TotalRecords { get; set; }
         public int? TotalPages { get; set; }
         public int? NextPage { get; set; }
