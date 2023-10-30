@@ -4,16 +4,15 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
+using CsvHelper;
 using Dapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
 using System.Data;
-using System.Text;
-using Microsoft.AspNetCore.Http;
-using CsvHelper;
 using System.Globalization;
 
 namespace AptitudeTest.Data.Data
@@ -42,7 +41,7 @@ namespace AptitudeTest.Data.Data
         #region methods
 
         #region GetAllUsers
-        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year,int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, int? currentPageIndex, int? pageSize)
         {
             try
             {
@@ -51,7 +50,7 @@ namespace AptitudeTest.Data.Data
                     using (var connection = new NpgsqlConnection(connectionString))
                     {
                         connection.Open();
-                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getAllUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize)", new { SearchQuery = searchQuery, CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, YearFilter= Year, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
+                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getAllUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize)", new { SearchQuery = searchQuery, CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, YearFilter = Year, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
@@ -67,7 +66,7 @@ namespace AptitudeTest.Data.Data
                     using (var connection = new NpgsqlConnection(connectionString))
                     {
                         connection.Open();
-                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getAllUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize)", new { SearchQuery = "", CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status,YearFilter=Year, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
+                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getAllUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize)", new { SearchQuery = "", CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, YearFilter = Year, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
@@ -102,7 +101,7 @@ namespace AptitudeTest.Data.Data
                 UserDetailsVM userDetails = new UserDetailsVM();
                 using (var dbConnection = new DbConnection())
                 {
-                    var data = dbConnection.Connection.Query("Select * from GetUserbyId(@user_id)", new { user_id = id }).ToList();
+                    var data = dbConnection.Connection.Query("Select * from GetUserbyUserId(@user_id)", new { user_id = id }).ToList();
 
                     if (data.Count == 0)
                     {
@@ -208,6 +207,14 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                if (user.UserAcademicsVM == null)
+                {
+                    user.UserAcademicsVM = new List<DapperUserAcademicsVM>();
+                }
+                if (user.UserFamilyVM == null)
+                {
+                    user.UserFamilyVM = new List<DapperUserFamilyVM>();
+                }
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     var procedure = "udpate_user_transaction";
@@ -227,14 +234,13 @@ namespace AptitudeTest.Data.Data
                         p_dateofbirth = dateParameter.Value,
                         p_email = user.Email,
                         p_phonenumber = user.PhoneNumber,
-                        p_level = user.Level,
                         p_appliedthrough = user.AppliedThrough,
                         p_technologyinterestedin = user.TechnologyInterestedIn,
                         p_permanentaddress1 = user.PermanentAddress1,
                         p_permanentaddress2 = user.PermanentAddress2,
                         p_pincode = user.Pincode,
-                        p_cityid = user.CityId,
-                        p_stateid = user.StateId,
+                        p_city = user.City,
+                        p_state = user.State,
                         p_acpcmeritrank = user.ACPCMeritRank,
                         p_gujcetscore = user.GUJCETScore,
                         p_jeescore = user.JEEScore,
@@ -401,27 +407,30 @@ namespace AptitudeTest.Data.Data
         {
             var userData = data[0];
             userDetails.UserId = userData.userid ?? 0;
+            userDetails.UserGroup = userData.usergroup ?? 0;
+            userDetails.GroupName = userData.groupname ?? "";
+            userDetails.UserCollege = userData.usercollege ?? 0;
+            userDetails.CollegeName = userData.collegename ?? "";
             userDetails.FirstName = userData.firstname ?? "";
             userDetails.LastName = userData.lastname ?? "";
             userDetails.Email = userData.email ?? "";
             userDetails.PhoneNumber = userData.phonenumber ?? 0;
             userDetails.FatherName = userData.fathername ?? "";
-            userDetails.Level = userData.level ?? 0;
             userDetails.DateOfBirth = userData.dateofbirth ?? new DateTime();
-            userDetails.PermanentAddress = userData.permanentaddress ?? "";
-            userDetails.UserGroup = userData.usergroup ?? 0;
-            userDetails.GroupName = userData.groupname ?? "";
+            userDetails.PermanentAddress1 = userData.permanentaddress ?? "";
+            userDetails.PermanentAddress2 = userData.permanentaddress ?? "";
+            userDetails.Pincode = userData.pincode ?? 0;
+            userDetails.City = userData.cityname ?? 0;
+            userDetails.CityName = userData.cityname ?? "";
+            userDetails.State = userData.stateid ?? 0;
+            userDetails.StateName = userData.statename ?? "";
             userDetails.AppliedThrough = userData.appliedthrough ?? 0;
             userDetails.TechnologyInterestedIn = userData.technologyinterestedIn ?? 0;
             userDetails.TechnologyName = userData.technologyname ?? "";
             userDetails.ACPCMeritRank = userData.acpcmeritrank ?? 0;
             userDetails.GUJCETScore = userData.gujcetscore ?? 0;
             userDetails.JEEScore = userData.jeescore ?? 0;
-            userDetails.Gender = userData.gender ?? 0;
-            userDetails.PreferedLocation = userData.preferedlocation ?? 0;
-            userDetails.RelationshipWithExistingEmployee = userData.relationshipwithexistingemployee ?? "";
-            userDetails.Status = userData.status ?? 0;
-            userDetails.RoleId = userData.roleid ?? 0;
+
         }
 
         private void FillAcademicAndFamilyData(dynamic data, UserDetailsVM userDetails, List<int> acadamicIds, List<int> familyIds)
