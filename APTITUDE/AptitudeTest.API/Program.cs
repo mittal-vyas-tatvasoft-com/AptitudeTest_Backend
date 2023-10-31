@@ -49,6 +49,9 @@ builder.Services.AddScoped<IStreamRepository, StreamRepository>();
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 
+builder.Services.AddTransient<IGroupService, GroupService>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+
 builder.Services.AddTransient<IQuestionModuleService, QuestionModuleService>();
 builder.Services.AddScoped<IQuestionModuleRepository, QuestionModuleRepository>();
 builder.Services.AddTransient<IQuestionMarksService, QuestionMarksService>();

@@ -68,6 +68,48 @@ namespace AptitudeTest.Data.Data
 
         }
 
+        public async Task<JsonResult> GetCollegesForDropDown()
+        {
+
+            try
+            {
+                var collegeList = await Task.FromResult(_context.MasterCollege
+            .Where(x => x.IsDeleted == null || x.IsDeleted == false)
+            .Select(x => new { Id = x.Id, Name = x.Name }) 
+            .ToList());
+
+                if (collegeList != null)
+                {
+                    return new JsonResult(new ApiResponse<IEnumerable<object>>
+                    {
+                        Data = collegeList,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Data = "No College found",
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
         public async Task<JsonResult> Get(int id)
         {
             try
