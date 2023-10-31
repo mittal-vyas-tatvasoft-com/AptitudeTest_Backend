@@ -34,8 +34,8 @@ namespace AptitudeTest.Core.ViewModels
         public string? PermanentAddress2 { get; set; }
         public long? Pincode { get; set; }
         public int? Level { get; set; }
-        public int? CityId { get; set; }
-        public int? StateId { get; set; }
+        public string? City { get; set; }
+        public int? State { get; set; }
         public int? AppliedThrough { get; set; }
         public int? TechnologyInterestedIn { get; set; }
         public string? RelationshipWithExistingEmployee { get; set; }

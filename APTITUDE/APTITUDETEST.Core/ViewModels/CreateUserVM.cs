@@ -6,9 +6,7 @@ namespace AptitudeTest.Core.ViewModels
     {
         [Required]
         public string? FirstName { get; set; }
-        [Required]
         public string? LastName { get; set; }
-        [Required]
         public string? FatherName { get; set; }
         [Required]
         public string Email { get; set; }
@@ -18,9 +16,7 @@ namespace AptitudeTest.Core.ViewModels
         public int GroupId { get; set; }
         [Required]
         public int CollegeId { get; set; }
-        [Required]
         public int Gender { get; set; }
-        [Required]
         public bool Status { get; set; }
         [Required]
         public int? CreatedBy { get; set; }
