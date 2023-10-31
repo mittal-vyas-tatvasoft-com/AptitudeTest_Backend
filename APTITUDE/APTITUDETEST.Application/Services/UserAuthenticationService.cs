@@ -41,6 +41,13 @@ namespace AptitudeTest.Application.Services
         }
         #endregion
 
+        #region ChangePassword
+        public async Task<JsonResult> ChangePassword(ChangePasswordVM changePassword)
+        {
+            return await _userAuthenticationRepository.ChangePassword(changePassword);
+        }
+        #endregion
+
         #region RefreshToken
 
         public async Task<JsonResult> RefreshToken(TokenVm tokens)

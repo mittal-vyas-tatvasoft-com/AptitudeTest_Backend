@@ -64,6 +64,20 @@ namespace AptitudeTest.Controllers
 
         #endregion
 
+        #region ChangePassword
+        /// <summary>
+        /// method for change the password of user
+        /// </summary>
+        /// <param name="changePassword">takes encrypted email and new password</param>
+        /// <returns>change the password</returns>
+        [HttpPost("ChangePassword")]
+        public async Task<JsonResult> ChangePassword(ChangePasswordVM changePassword)
+        {
+            return await _userAuthenticationService.ChangePassword(changePassword);
+        }
+
+        #endregion
+
         #region RefreshToken
         /// <summary>
         /// generate refresh token
