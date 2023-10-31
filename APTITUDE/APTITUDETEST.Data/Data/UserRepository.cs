@@ -181,8 +181,8 @@ namespace AptitudeTest.Data.Data
                         string encryptedEmail = Convert.ToBase64String(byteForEmail);
                         UriBuilder builder = new();
                         builder.Scheme = "http";
-                        builder.Host = "localhost";
-                        builder.Port = 4200;
+                        builder.Host = Convert.ToString(_config["EmailGeneration:FrontEndUrl"]);
+                        builder.Port = Convert.ToInt16(_config["EmailGeneration:FrontEndPort"]);
                         builder.Path = "/ResetPassword";
                         builder.Query = "&email=" + encryptedEmail;
                         var resetLink = builder.ToString();
@@ -406,8 +406,8 @@ namespace AptitudeTest.Data.Data
                                 string encryptedEmail = Convert.ToBase64String(byteForEmail);
                                 UriBuilder builder = new();
                                 builder.Scheme = "http";
-                                builder.Host = "localhost";
-                                builder.Port = 4200;
+                                builder.Host = Convert.ToString(_config["EmailGeneration:FrontEndUrl"]);
+                                builder.Port = Convert.ToInt16(_config["EmailGeneration:FrontEndPort"]);
                                 builder.Path = "/ResetPassword";
                                 builder.Query = "&email=" + encryptedEmail;
                                 var resetLink = builder.ToString();
