@@ -27,7 +27,7 @@ namespace AptitudeTest.Data.Data
         #region Properies
         private readonly AppDbContext _appDbContext;
         private readonly DapperAppDbContext _dapperContext;
-        static IConfiguration _config;
+        private readonly IConfiguration _config;
         private readonly string connectionString;
 
         #endregion
@@ -539,7 +539,7 @@ namespace AptitudeTest.Data.Data
         }
 
         #region SendEmail
-        private static bool SendEmailForResetPassword(EmailDataVm EmailData)
+        private bool SendEmailForResetPassword(EmailDataVm EmailData)
         {
             var message = new MailMessage(EmailData.FromAddress, EmailData.ToAddress)
             {
