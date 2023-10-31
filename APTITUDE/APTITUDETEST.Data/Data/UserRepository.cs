@@ -420,8 +420,7 @@ namespace AptitudeTest.Data.Data
             userDetails.DateOfBirth = userData.dateofbirth ?? new DateTime();
             userDetails.PermanentAddress1 = userData.permanentaddress ?? "";
             userDetails.PermanentAddress2 = userData.permanentaddress ?? "";
-            userDetails.Pincode = userData.pincode ?? 0;
-            userDetails.City = userData.cityname ?? 0;
+            userDetails.Pincode = userData.pincode ?? 0;            
             userDetails.CityName = userData.cityname ?? "";
             userDetails.State = userData.stateid ?? 0;
             userDetails.StateName = userData.statename ?? "";

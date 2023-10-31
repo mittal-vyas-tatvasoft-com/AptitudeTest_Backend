@@ -8,12 +8,10 @@
         public string? FatherName { get; set; }
         public string Email { get; set; }
         public long? PhoneNumber { get; set; }
-
         public DateTime? DateOfBirth { get; set; }
         public string? PermanentAddress1 { get; set; }
         public string? PermanentAddress2 { get; set; }
-        public int? Pincode { get; set; }
-        public int? City { get; set; }
+        public int? Pincode { get; set; }        
         public string? CityName { get; set; }
         public int? State { get; set; }
         public string? StateName { get; set; }
