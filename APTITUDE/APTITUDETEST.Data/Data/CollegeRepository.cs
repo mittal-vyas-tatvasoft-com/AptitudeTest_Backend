@@ -26,25 +26,6 @@ namespace AptitudeTest.Data.Data
             try
             {
                 List<MasterCollege> collegeList = await Task.FromResult(_context.MasterCollege.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(x => x.CreatedDate).ToList());
-
-                if (collegeQuery.SearchQuery != null)
-                {
-                    string query = collegeQuery.SearchQuery.ToLower();
-                    collegeList = collegeList.Where(college => college.Name.ToLower().Contains(query) || college.Abbreviation.ToLower().Contains(query)).ToList();
-                }
-
-                if (collegeQuery.Filter != null)
-                {
-                    if (collegeQuery.Filter == 1)
-                    {
-                        collegeList = collegeList.Where(college => college.Status == true).ToList();
-                    }
-                    if (collegeQuery.Filter == 2)
-                    {
-                        collegeList = collegeList.Where(college => college.Status == false).ToList();
-                    }
-                }
-
                 PaginationVM<MasterCollege> paginatedData = Pagination<MasterCollege>.Paginate(collegeList, collegeQuery.PageSize, collegeQuery.CurrentPageIndex);
 
                 return new JsonResult(new ApiResponse<PaginationVM<MasterCollege>>

@@ -167,7 +167,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterDegree degrees = _context.MasterDegree.Where(d => d.Name.ToLower() == degree.Name.ToLower() && d.Id != degree.Id && d.IsDeleted != true).FirstOrDefault();
+                MasterDegree degrees = _context.MasterDegree.Where(d => d.Name.ToLower().Trim() == degree.Name.ToLower().Trim() && d.Id != degree.Id && d.IsDeleted != true).FirstOrDefault();
                 if (degrees != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -192,7 +192,7 @@ namespace AptitudeTest.Data.Data
                     }
 
                     masterDegree.Status = degree.Status;
-                    masterDegree.Name = degree.Name;
+                    masterDegree.Name = degree.Name.Trim();
                     masterDegree.CreatedBy = degree.CreatedBy;
                     masterDegree.Level = degree.Level;
                     masterDegree.UpdatedBy = degree.UpdatedBy;
