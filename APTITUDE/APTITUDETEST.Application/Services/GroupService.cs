@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
 {
-    public class GroupService :IGroupService
+    public class GroupService : IGroupService
     {
         #region Properties
         private readonly IGroupRepository _repository;
