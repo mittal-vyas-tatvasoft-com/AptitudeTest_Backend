@@ -17,9 +17,9 @@ namespace AptitudeTest.Application.Services
         #endregion
 
         #region Methods
-        public async Task<JsonResult> GetGroupsForDropDown()
+        public async Task<JsonResult> GetActiveGroups()
         {
-            return await _repository.GetGroupsForDropDown();
+            return await _repository.GetActiveGroups();
         }
         #endregion
     }

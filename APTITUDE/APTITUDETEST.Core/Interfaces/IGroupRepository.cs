@@ -9,6 +9,6 @@ namespace AptitudeTest.Core.Interfaces
 {
     public interface IGroupRepository
     {
-        public Task<JsonResult> GetGroupsForDropDown();
+        public Task<JsonResult> GetActiveGroups();
     }
 }

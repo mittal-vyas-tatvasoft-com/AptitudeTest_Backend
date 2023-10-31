@@ -68,15 +68,15 @@ namespace AptitudeTest.Data.Data
 
         }
 
-        public async Task<JsonResult> GetCollegesForDropDown()
+        public async Task<JsonResult> GetActiveColleges()
         {
 
             try
             {
                 var collegeList = await Task.FromResult(_context.MasterCollege
-            .Where(x => x.IsDeleted == null || x.IsDeleted == false)
-            .Select(x => new { Id = x.Id, Name = x.Name }) 
-            .ToList());
+                .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
+                .Select(x => new { Id = x.Id, Name = x.Name })
+                .ToList());
 
                 if (collegeList != null)
                 {
@@ -92,7 +92,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Data = "No College found",
+                        Data = string.Format(ResponseMessages.NotFound, "College"),
                         Message = ResponseMessages.Success,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success

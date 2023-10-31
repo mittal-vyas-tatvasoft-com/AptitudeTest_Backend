@@ -26,9 +26,9 @@ namespace AptitudeTest.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetGroupsForDropDown")]
-        public async Task<JsonResult> GetGroupsForDropDown()
+        public async Task<JsonResult> GetActiveGroups()
         {
-            return await _service.GetGroupsForDropDown();
+            return await _service.GetActiveGroups();
         }
         #endregion
     }

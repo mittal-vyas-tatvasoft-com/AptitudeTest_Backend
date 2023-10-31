@@ -21,12 +21,12 @@ namespace AptitudeTest.Data.Data
             _context = context;
         }
         #region Methods
-        public async Task<JsonResult> GetGroupsForDropDown()
+        public async Task<JsonResult> GetActiveGroups()
         {
             try
             {
                 var collegeList = await Task.FromResult(_context.MasterGroup
-            .Where(x => x.IsDeleted == null || x.IsDeleted == false)
+            .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
             .Select(x => new { Id = x.Id, Name = x.Name })
             .ToList());
 
@@ -44,7 +44,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Data = "No College found",
+                        Data = string.Format(ResponseMessages.NotFound, "Group"),
                         Message = ResponseMessages.Success,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success

@@ -24,9 +24,9 @@ namespace AptitudeTest.Application.Services
             return await _repository.GetColleges(collegeQuery);
         }
 
-        public async Task<JsonResult> GetCollegesForDropDown()
+        public async Task<JsonResult> GetActiveColleges()
         {
-            return await _repository.GetCollegesForDropDown();
+            return await _repository.GetActiveColleges();
         }
 
         public async Task<JsonResult> Get(int id)

@@ -62,10 +62,10 @@ namespace AptitudeTest.Controllers
         /// Get Colleges For DropDown
         /// </summary>
         /// <returns></returns>
-        [HttpGet("GetCollegesForDropDown")]
-        public async Task<JsonResult> GetCollegesForDropDown()
+        [HttpGet("GetActiveColleges")]
+        public async Task<JsonResult> GetActiveColleges()
         {
-            return await _service.GetCollegesForDropDown();
+            return await _service.GetActiveColleges();
         }
 
         /// <summary>
