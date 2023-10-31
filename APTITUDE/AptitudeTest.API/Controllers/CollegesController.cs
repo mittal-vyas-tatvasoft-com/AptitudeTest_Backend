@@ -57,6 +57,16 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
+        /// Get Colleges For DropDown
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetActiveColleges")]
+        public async Task<JsonResult> GetActiveColleges()
+        {
+            return await _service.GetActiveColleges();
+        }
+
+        /// <summary>
         /// This method Creates College
         /// </summary>
         /// <param name="college"></param>
