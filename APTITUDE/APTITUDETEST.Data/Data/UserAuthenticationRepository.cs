@@ -199,7 +199,7 @@ namespace AptitudeTest.Data.Data
                 }
                 else
                 {
-                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
+                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.NotFound, "User"), StatusCode = ResponseStatusCode.NotFound, Result = false });
                 }
             }
             catch

@@ -3,15 +3,10 @@ using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AptitudeTest.Data.Data
 {
-    public class GroupRepository :IGroupRepository
+    public class GroupRepository : IGroupRepository
     {
         private readonly AppDbContext _context;
 

@@ -70,6 +70,7 @@ namespace AptitudeTest.Controllers
         /// </summary>
         /// <param name="changePassword">takes encrypted email and new password</param>
         /// <returns>change the password</returns>
+        [Authorize]
         [HttpPost("ChangePassword")]
         public async Task<JsonResult> ChangePassword(ChangePasswordVM changePassword)
         {
