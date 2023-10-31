@@ -180,7 +180,6 @@ namespace AptitudeTest.Data.Data
                         byte[] byteForEmail = Encoding.ASCII.GetBytes(user.Email);
                         string encryptedEmail = Convert.ToBase64String(byteForEmail);
                         UriBuilder builder = new();
-                        builder.Scheme = "http";
                         builder.Host = Convert.ToString(_config["EmailGeneration:FrontEndUrl"]);
                         builder.Port = Convert.ToInt16(_config["EmailGeneration:FrontEndPort"]);
                         builder.Path = "/ResetPassword";
@@ -405,7 +404,6 @@ namespace AptitudeTest.Data.Data
                                 byte[] byteForEmail = Encoding.ASCII.GetBytes(record.email);
                                 string encryptedEmail = Convert.ToBase64String(byteForEmail);
                                 UriBuilder builder = new();
-                                builder.Scheme = "http";
                                 builder.Host = Convert.ToString(_config["EmailGeneration:FrontEndUrl"]);
                                 builder.Port = Convert.ToInt16(_config["EmailGeneration:FrontEndPort"]);
                                 builder.Path = "/ResetPassword";
