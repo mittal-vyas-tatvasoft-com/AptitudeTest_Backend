@@ -183,6 +183,32 @@ namespace AptitudeTest.Data.Data
         }
         #endregion
 
+        #region ChangePassword
+        public async Task<JsonResult> ChangePassword(ChangePasswordVM changePassword)
+        {
+            try
+            {
+                User? user = await Task.FromResult(_context.Users.Where(x => x.Email.Equals(changePassword.Email) && x.Password.Equals(changePassword.CurrentPassword)).FirstOrDefault());
+                if (user != null)
+                {
+                    user.Password = changePassword.NewPassword;
+                    user.UpdatedDate = DateTime.Now.ToUniversalTime();
+                    _context.Update(user);
+                    _context.SaveChanges();
+                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.UpdateSuccess, "Password"), StatusCode = ResponseStatusCode.OK, Result = true });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
+                }
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
+            }
+        }
+        #endregion
+
         #region RefreshToken
         public async Task<JsonResult> RefreshToken(TokenVm tokens)
         {
