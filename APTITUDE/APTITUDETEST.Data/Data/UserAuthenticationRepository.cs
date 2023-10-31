@@ -120,10 +120,22 @@ namespace AptitudeTest.Data.Data
                         Subject = subject,
                         Body = body
                     };
-                    SendEmailForForgetPassword(emailData);
+                    var sent = SendEmailForForgetPassword(emailData);
+                    if (sent)
+                    {
+                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.MailSentForForgetPassword, StatusCode = ResponseStatusCode.OK, Result = true });
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
+                    }
 
                 }
-                return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.MailSentForForgetPassword, StatusCode = ResponseStatusCode.OK, Result = true });
+                else
+                {
+                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.NotFound, "User"), StatusCode = ResponseStatusCode.NotFound, Result = false });
+                }
+
             }
             catch
             {
