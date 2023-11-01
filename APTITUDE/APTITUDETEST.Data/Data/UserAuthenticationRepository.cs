@@ -197,7 +197,7 @@ namespace AptitudeTest.Data.Data
                     }
                     else
                     {
-                        if (changePassword.NewPassword.Equals(changePassword.confirmPassword))
+                        if (!changePassword.NewPassword.Equals(changePassword.confirmPassword))
                         {
                             return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.passwordNotMatched, StatusCode = ResponseStatusCode.Forbidden, Result = false });
                         }
