@@ -176,32 +176,8 @@ namespace AptitudeTest.Data.Data
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
                     if (userId > 0)
                     {
-                        #region Send Mail
-                        byte[] byteForEmail = Encoding.ASCII.GetBytes(user.Email);
-                        string encryptedEmail = Convert.ToBase64String(byteForEmail);
-                        UriBuilder builder = new();
-                        builder.Host = Convert.ToString(_config["EmailGeneration:FrontEndUrl"]);
-                        builder.Port = Convert.ToInt16(_config["EmailGeneration:FrontEndPort"]);
-                        builder.Path = "/ResetPassword";
-                        builder.Query = "&email=" + encryptedEmail;
-                        var resetLink = builder.ToString();
-                        // Send email to user with reset password link
-                        // ...
-                        var fromAddress = new MailAddress(_config["EmailGeneration:FromEmail"], _config["EmailGeneration:DisplayName"]);
-                        var toAddress = new MailAddress(user.Email);
-                        var subject = "Password reset request";
-                        var body = $"<h3>Hello {user.FirstName}</h3>,<br />Please click on the following link to reset your password <br /><a href='{resetLink}'><h3>Click here</h3></a>";
-
-                        EmailDataVm emailData = new EmailDataVm()
-                        {
-                            FromAddress = fromAddress,
-                            ToAddress = toAddress,
-                            Subject = subject,
-                            Body = body
-                        };
-
-                        SendEmailForResetPassword(emailData);
-                        #endregion
+                        bool isMailSent = SendMailForResetPassword(user.FirstName, user.Email);
+                        
                         return new JsonResult(new ApiResponse<string>
                         {
                             Message = string.Format(ResponseMessages.AddSuccess, "User"),
@@ -400,32 +376,7 @@ namespace AptitudeTest.Data.Data
 
                             foreach(var record in records)
                             {
-                                #region Send Mail
-                                byte[] byteForEmail = Encoding.ASCII.GetBytes(record.email);
-                                string encryptedEmail = Convert.ToBase64String(byteForEmail);
-                                UriBuilder builder = new();
-                                builder.Host = Convert.ToString(_config["EmailGeneration:FrontEndUrl"]);
-                                builder.Port = Convert.ToInt16(_config["EmailGeneration:FrontEndPort"]);
-                                builder.Path = "/ResetPassword";
-                                builder.Query = "&email=" + encryptedEmail;
-                                var resetLink = builder.ToString();
-                                // Send email to user with reset password link
-                                // ...
-                                var fromAddress = new MailAddress(_config["EmailGeneration:FromEmail"], _config["EmailGeneration:DisplayName"]);
-                                var toAddress = new MailAddress(record.email);
-                                var subject = "Password reset request";
-                                var body = $"<h3>Hello {record.firstname}</h3>,<br />Please click on the following link to reset your password <br /><a href='{resetLink}'><h3>Click here</h3></a>";
-
-                                EmailDataVm emailData = new EmailDataVm()
-                                {
-                                    FromAddress = fromAddress,
-                                    ToAddress = toAddress,
-                                    Subject = subject,
-                                    Body = body
-                                };
-
-                                SendEmailForResetPassword(emailData);
-                                #endregion
+                                bool isMailSent = SendMailForResetPassword(record.firstname,record.email);                                
                             }
                         }
 
@@ -537,25 +488,26 @@ namespace AptitudeTest.Data.Data
         }
 
         #region SendEmail
-        private bool SendEmailForResetPassword(EmailDataVm EmailData)
+        private bool SendMailForResetPassword(string firstName, string email)
         {
-            var message = new MailMessage(EmailData.FromAddress, EmailData.ToAddress)
-            {
-                Subject = EmailData.Subject,
-                Body = EmailData.Body,
-                IsBodyHtml = true
-            };
-            message.Priority = MailPriority.High;
             try
             {
-                var smtpClient = new SmtpClient(_config["EmailGeneration:Host"], 587)
-                {
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(_config["EmailGeneration:FromEmail"], _config["EmailGeneration:Key"]),
-                    EnableSsl = true,
-                };
-                smtpClient.Send(message);
-                return true;
+                byte[] byteForEmail = Encoding.ASCII.GetBytes(email);
+                string encryptedEmail = Convert.ToBase64String(byteForEmail);
+                UriBuilder builder = new();
+                builder.Host = Convert.ToString(_config["EmailGeneration:FrontEndUrl"]);
+                builder.Port = Convert.ToInt16(_config["EmailGeneration:FrontEndPort"]);
+                builder.Path = "/ResetPassword";
+                builder.Query = "&email=" + encryptedEmail;
+                var resetLink = builder.ToString();
+
+                var toAddress = new MailAddress(email);
+                var subject = "Password reset request";
+                var body = $"<h3>Hello {firstName}</h3>,<br />Please click on the following link to reset your password <br /><a href='{resetLink}'><h3>Click here</h3></a>";
+
+                var emailHelper = new EmailHelper(_config);
+                var isEmailSent = emailHelper.SendEmail(email, subject, body);
+                return isEmailSent;
             }
             catch
             {
