@@ -65,7 +65,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, "Profile"),
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Profile),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -80,7 +80,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.AddSuccess, "Profile"),
+                    Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Profile),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -106,7 +106,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, "Profile"),
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Profile),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -124,7 +124,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.UpdateSuccess, "Profile"),
+                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Profile),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -132,7 +132,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.NotFound, "Profile"),
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Profile),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
@@ -158,7 +158,7 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
-                    Message = string.Format(ResponseMessages.UpdateSuccess, "Profile"),
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Profile),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -197,14 +197,14 @@ namespace AptitudeTest.Data.Data
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.DeleteSuccess, "Profile"),
+                        Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.Profile),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.NotFound, "Profile"),
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Profile),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
@@ -256,7 +256,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<int>
                     {
-                        Message = string.Format(ResponseMessages.NotFound, "Profile"),
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Profile),
                         Result = true,
                         StatusCode = ResponseStatusCode.NotFound
                     });
@@ -268,7 +268,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<int>
                 {
-                    Message = string.Format(ResponseMessages.UpdateSuccess, "Profile"),
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Profile),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
