@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.API.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase

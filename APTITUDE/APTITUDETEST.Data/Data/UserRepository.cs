@@ -4,6 +4,7 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
+using APTITUDETEST.Core.Entities.Users;
 using CsvHelper;
 using Dapper;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +15,9 @@ using Npgsql;
 using NpgsqlTypes;
 using System.Data;
 using System.Globalization;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 
 namespace AptitudeTest.Data.Data
 {
@@ -172,6 +176,8 @@ namespace AptitudeTest.Data.Data
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
                     if (userId > 0)
                     {
+                        bool isMailSent = SendMailForResetPassword(user.FirstName, user.Email);
+                        
                         return new JsonResult(new ApiResponse<string>
                         {
                             Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.User),
@@ -368,6 +374,10 @@ namespace AptitudeTest.Data.Data
 
                             connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
 
+                            foreach(var record in records)
+                            {
+                                bool isMailSent = SendMailForResetPassword(record.firstname,record.email);                                
+                            }
                         }
 
                         return new JsonResult(new ApiResponse<string>
@@ -477,6 +487,35 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        #region SendEmail
+        private bool SendMailForResetPassword(string firstName, string email)
+        {
+            try
+            {
+                byte[] byteForEmail = Encoding.ASCII.GetBytes(email);
+                string encryptedEmail = Convert.ToBase64String(byteForEmail);
+                UriBuilder builder = new();
+                builder.Host = Convert.ToString(_config["EmailGeneration:FrontEndUrl"]);
+                builder.Port = Convert.ToInt16(_config["EmailGeneration:FrontEndPort"]);
+                builder.Path = "/ResetPassword";
+                builder.Query = "&email=" + encryptedEmail;
+                var resetLink = builder.ToString();
+
+                var toAddress = new MailAddress(email);
+                var subject = "Password reset request";
+                var body = $"<h3>Hello {firstName}</h3>,<br />Please click on the following link to reset your password <br /><a href='{resetLink}'><h3>Click here</h3></a>";
+
+                var emailHelper = new EmailHelper(_config);
+                var isEmailSent = emailHelper.SendEmail(email, subject, body);
+                return isEmailSent;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        #endregion
         #endregion
 
         #endregion
