@@ -45,7 +45,7 @@ namespace AptitudeTest.Data.Data
                         return new JsonResult(new ApiResponse<UserDetailsVM>
                         {
                             Data = null,
-                            Message = string.Format(ResponseMessages.NotFound, "Question"),
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
                             Result = false,
                             StatusCode = ResponseStatusCode.NotFound
                         });
@@ -168,7 +168,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, "Question"),
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Question),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -214,7 +214,7 @@ namespace AptitudeTest.Data.Data
                 _context.SaveChanges();
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.AddSuccess, "Question"),
+                    Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Question),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -233,7 +233,97 @@ namespace AptitudeTest.Data.Data
 
         public async Task<JsonResult> Update(QuestionVM questionVM)
         {
-            return null;
+            try
+            {
+                if (questionVM.Id < 1 || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateImageExtension(questionVM.Options, false)) || !ValidateOptionText(questionVM))
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
+                if (DoesQuestionExists(questionVM))
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Question),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+
+                Question question = await Task.FromResult(_context.Questions.Where(question => question.Id == questionVM.Id).FirstOrDefault());
+                if (question == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+                question.QuestionText = questionVM.QuestionText.Trim();
+                question.Status = questionVM.Status;
+                question.Difficulty = questionVM.Difficulty;
+                question.Topic = questionVM.TopicId;
+                question.QuestionType = questionVM.QuestionType;
+                question.OptionType = questionVM.OptionType;
+                question.UpdatedBy = questionVM.UpdatedBy;
+                question.UpdatedDate = DateTime.UtcNow;
+                _context.Update(question);
+
+                List<QuestionOptions> optionsList = await Task.FromResult(_context.QuestionOptions.Where(option => option.QuestionId == question.Id).OrderBy(option => option.Id).ToList());
+                List<OptionVM> optionVMList = questionVM.Options.OrderBy(option => option.OptionId).ToList();
+                for (int i = 0; i < 4; i++)
+                {
+                    QuestionOptions questionOptions = optionsList[i];
+                    OptionVM optionVM = optionVMList[i];
+                    questionOptions.IsAnswer = optionVM.IsAnswer;
+                    // OptionType 1 refers to string option value and 2 refers to image option value
+                    if (questionVM.OptionType == (int)Enums.OptionType.TextType)
+                    {
+                        questionOptions.OptionData = optionVM.OptionValue;
+                    }
+                    else
+                    {
+                        if (optionVM.OptionImage != null)
+                        {
+                            string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files");
+                            string fileName = Guid.NewGuid().ToString() + "_" + optionVM.OptionImage.FileName;
+                            string filePath = Path.Combine(uploadFolder, fileName);
+                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                            {
+                                optionVM.OptionImage.CopyTo(fileStream);
+                            }
+                            questionOptions.OptionData = fileName;
+                        }
+
+                    }
+                }
+                _context.QuestionOptions.UpdateRange(optionsList);
+                _context.SaveChanges();
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Question),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
         }
 
         public async Task<JsonResult> UpdateStatus(StatusVM status)
@@ -245,7 +335,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<int>
                     {
-                        Message = string.Format(ResponseMessages.NotFound, "Question"),
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
                         Result = true,
                         StatusCode = ResponseStatusCode.NotFound
                     });
@@ -257,7 +347,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<int>
                 {
-                    Message = string.Format(ResponseMessages.UpdateSuccess, "Question"),
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Question),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -299,14 +389,14 @@ namespace AptitudeTest.Data.Data
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.DeleteSuccess, "Question"),
+                        Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.Question),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.NotFound, "Question"),
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
