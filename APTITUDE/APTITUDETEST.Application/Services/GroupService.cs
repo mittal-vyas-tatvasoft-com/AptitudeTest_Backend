@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.Interfaces;
+using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
@@ -20,6 +21,26 @@ namespace AptitudeTest.Application.Services
         public async Task<JsonResult> GetActiveGroups()
         {
             return await _repository.GetActiveGroups();
+        }
+
+        public async Task<JsonResult> Create(GroupsQueryVM groupToBeAdded)
+        {
+            return await _repository.Create(groupToBeAdded);
+        }
+
+        public async Task<JsonResult> Delete(int id)
+        {
+            return await _repository.Delete(id);
+        }
+
+        public async Task<JsonResult> GetGroups(string? searchGroup)
+        {
+            return await _repository.GetGroups(searchGroup);
+        }
+
+        public async Task<JsonResult> Rename(GroupsQueryVM groupToBeRenamed)
+        {
+            return await _repository.Rename(groupToBeRenamed);
         }
         #endregion
     }

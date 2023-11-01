@@ -15,5 +15,7 @@
         public static string User = "User";
 
         public static string Password = "Password";
+
+        public static string Group = "Group";
     }
 }
