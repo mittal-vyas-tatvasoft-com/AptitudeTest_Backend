@@ -108,7 +108,7 @@ namespace AptitudeTest.Data.Data
                         return new JsonResult(new ApiResponse<UserDetailsVM>
                         {
                             Data = null,
-                            Message = string.Format(ResponseMessages.NotFound, "User"),
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.User),
                             Result = false,
                             StatusCode = ResponseStatusCode.NotFound
                         });
@@ -174,7 +174,7 @@ namespace AptitudeTest.Data.Data
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = string.Format(ResponseMessages.AddSuccess, "User"),
+                            Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.User),
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
                         }); ;
@@ -183,7 +183,7 @@ namespace AptitudeTest.Data.Data
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = string.Format(ResponseMessages.InternalError, "User"),
+                            Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
                             Result = false,
                             StatusCode = ResponseStatusCode.RequestFailed
                         }); ;
@@ -194,7 +194,7 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.InternalError, "User"),
+                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
                     Result = false,
                     StatusCode = ResponseStatusCode.RequestFailed
                 });
@@ -253,7 +253,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AddSuccess, "User"),
+                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.User),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -263,7 +263,7 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.InternalError, "User"),
+                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
                     Result = false,
                     StatusCode = ResponseStatusCode.RequestFailed
                 });
@@ -302,7 +302,7 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.InternalError, "User"),
+                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
                     Result = false,
                     StatusCode = ResponseStatusCode.RequestFailed
                 });
@@ -338,7 +338,7 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.InternalError, "User"),
+                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
                     Result = false,
                     StatusCode = ResponseStatusCode.RequestFailed
                 });
@@ -392,7 +392,7 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.InternalError, "User"),
+                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
                     Result = false,
                     StatusCode = ResponseStatusCode.RequestFailed
                 });

@@ -45,7 +45,7 @@ namespace AptitudeTest.Data.Data
                         return new JsonResult(new ApiResponse<UserDetailsVM>
                         {
                             Data = null,
-                            Message = string.Format(ResponseMessages.NotFound, "Question"),
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
                             Result = false,
                             StatusCode = ResponseStatusCode.NotFound
                         });
@@ -168,7 +168,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, "Question"),
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Question),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -214,7 +214,7 @@ namespace AptitudeTest.Data.Data
                 _context.SaveChanges();
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.AddSuccess, "Question"),
+                    Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Question),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -245,7 +245,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<int>
                     {
-                        Message = string.Format(ResponseMessages.NotFound, "Question"),
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
                         Result = true,
                         StatusCode = ResponseStatusCode.NotFound
                     });
@@ -257,7 +257,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<int>
                 {
-                    Message = string.Format(ResponseMessages.UpdateSuccess, "Question"),
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Question),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -299,14 +299,14 @@ namespace AptitudeTest.Data.Data
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.DeleteSuccess, "Question"),
+                        Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.Question),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.NotFound, "Question"),
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });

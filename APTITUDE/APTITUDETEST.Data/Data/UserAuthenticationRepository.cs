@@ -133,7 +133,7 @@ namespace AptitudeTest.Data.Data
                 }
                 else
                 {
-                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.NotFound, "User"), StatusCode = ResponseStatusCode.NotFound, Result = false });
+                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.NotFound, ModuleNames.User), StatusCode = ResponseStatusCode.NotFound, Result = false });
                 }
 
             }
@@ -195,11 +195,11 @@ namespace AptitudeTest.Data.Data
                     user.UpdatedDate = DateTime.Now.ToUniversalTime();
                     _context.Update(user);
                     _context.SaveChanges();
-                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.UpdateSuccess, "Password"), StatusCode = ResponseStatusCode.OK, Result = true });
+                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Password), StatusCode = ResponseStatusCode.OK, Result = true });
                 }
                 else
                 {
-                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.NotFound, "User"), StatusCode = ResponseStatusCode.NotFound, Result = false });
+                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.NotFound, ModuleNames.User), StatusCode = ResponseStatusCode.NotFound, Result = false });
                 }
             }
             catch
