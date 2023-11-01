@@ -74,7 +74,14 @@ namespace AptitudeTest.Controllers
         [HttpPost("ChangePassword")]
         public async Task<JsonResult> ChangePassword(ChangePasswordVM changePassword)
         {
-            return await _userAuthenticationService.ChangePassword(changePassword);
+            if (ModelState.IsValid)
+            {
+                return await _userAuthenticationService.ChangePassword(changePassword);
+            }
+            else
+            {
+                return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
+            }
         }
 
         #endregion

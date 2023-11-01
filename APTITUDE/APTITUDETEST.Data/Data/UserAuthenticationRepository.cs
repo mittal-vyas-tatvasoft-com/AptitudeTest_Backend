@@ -191,11 +191,22 @@ namespace AptitudeTest.Data.Data
                 User? user = await Task.FromResult(_context.Users.Where(x => x.Email.Equals(changePassword.Email) && x.Password.Equals(changePassword.CurrentPassword)).FirstOrDefault());
                 if (user != null)
                 {
-                    user.Password = changePassword.NewPassword;
-                    user.UpdatedDate = DateTime.Now.ToUniversalTime();
-                    _context.Update(user);
-                    _context.SaveChanges();
-                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Password), StatusCode = ResponseStatusCode.OK, Result = true });
+                    if (user.Password.Equals(changePassword.NewPassword))
+                    {
+                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.currentAndNewSame, StatusCode = ResponseStatusCode.Forbidden, Result = false });
+                    }
+                    else
+                    {
+                        if (changePassword.NewPassword.Equals(changePassword.confirmPassword))
+                        {
+                            return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.passwordNotMatched, StatusCode = ResponseStatusCode.Forbidden, Result = false });
+                        }
+                        user.Password = changePassword.NewPassword;
+                        user.UpdatedDate = DateTime.Now.ToUniversalTime();
+                        _context.Update(user);
+                        _context.SaveChanges();
+                        return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Password), StatusCode = ResponseStatusCode.OK, Result = true });
+                    }
                 }
                 else
                 {
