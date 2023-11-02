@@ -1,4 +1,5 @@
-﻿using AptitudeTest.Core.Interfaces.UserAuthentication;
+﻿using AptitudeTest.Common.Helpers;
+using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
@@ -97,30 +98,7 @@ namespace AptitudeTest.Data.Data
                 User? user = _context.Users.Where(u => u.Email == email).FirstOrDefault();
                 if (user != null)
                 {
-                    byte[] byteForEmail = Encoding.ASCII.GetBytes(user.Email);
-                    string encryptedEmail = Convert.ToBase64String(byteForEmail);
-                    UriBuilder builder = new();
-                    builder.Scheme = "http";
-                    builder.Host = "localhost";
-                    builder.Port = 4200;
-                    builder.Path = "/ResetPassword";
-                    builder.Query = "&email=" + encryptedEmail;
-                    var resetLink = builder.ToString();
-                    // Send email to user with reset password link
-                    // ...
-                    var fromAddress = new MailAddress(_appSettingConfiguration["EmailGeneration:FromEmail"], _appSettingConfiguration["EmailGeneration:DisplayName"]);
-                    var toAddress = new MailAddress(user.Email);
-                    var subject = "Password reset request";
-                    var body = $"<h3>Hello {user.FirstName}</h3>,<br />we received password reset request from your side,<br /><br />Please click on the following link to reset your password <br /><br /><a href='{resetLink}'><h3>Click here</h3></a>";
-
-                    EmailDataVm emailData = new EmailDataVm()
-                    {
-                        FromAddress = fromAddress,
-                        ToAddress = toAddress,
-                        Subject = subject,
-                        Body = body
-                    };
-                    var sent = SendEmailForForgetPassword(emailData);
+                    var sent = SendMailForResetPassword(user.FirstName, user.Email);
                     if (sent)
                     {
                         return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.MailSentForForgetPassword, StatusCode = ResponseStatusCode.OK, Result = true });
@@ -272,25 +250,26 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region SendEmail
-        private static bool SendEmailForForgetPassword(EmailDataVm EmailData)
+        private bool SendMailForResetPassword(string firstName, string email)
         {
-            var message = new MailMessage(EmailData.FromAddress, EmailData.ToAddress)
-            {
-                Subject = EmailData.Subject,
-                Body = EmailData.Body,
-                IsBodyHtml = true
-            };
-            message.Priority = MailPriority.High;
             try
             {
-                var smtpClient = new SmtpClient(_appSettingConfiguration["EmailGeneration:Host"], 587)
-                {
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(_appSettingConfiguration["EmailGeneration:FromEmail"], _appSettingConfiguration["EmailGeneration:Key"]),
-                    EnableSsl = true,
-                };
-                smtpClient.Send(message);
-                return true;
+                byte[] byteForEmail = Encoding.ASCII.GetBytes(email);
+                string encryptedEmail = Convert.ToBase64String(byteForEmail);
+                UriBuilder builder = new();
+                builder.Host = Convert.ToString(_appSettingConfiguration["EmailGeneration:FrontEndUrl"]);
+                builder.Port = Convert.ToInt16(_appSettingConfiguration["EmailGeneration:FrontEndPort"]);
+                builder.Path = "/ResetPassword";
+                builder.Query = "&email=" + encryptedEmail;
+                var resetLink = builder.ToString();
+
+                var toAddress = new MailAddress(email);
+                var subject = "Password reset request";
+                var body = $"<h3>Hello {firstName}</h3>,<br />we received password reset request from your side,<br /><br />Please click on the following link to reset your password <br /><br /><a href='{resetLink}'><h3>Click here</h3></a>";
+
+                var emailHelper = new EmailHelper(_appSettingConfiguration);
+                var isEmailSent = emailHelper.SendEmail(email, subject, body);
+                return isEmailSent;
             }
             catch
             {
