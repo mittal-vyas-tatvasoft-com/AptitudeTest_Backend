@@ -198,7 +198,7 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> Rename(GroupsQueryVM updatedGroup)
+        public async Task<JsonResult> Update(GroupsQueryVM updatedGroup)
         {
             try
             {

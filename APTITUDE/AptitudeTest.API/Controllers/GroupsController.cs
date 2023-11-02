@@ -65,11 +65,11 @@ namespace AptitudeTest.Controllers
         /// <param name="group">group to be renamed</param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<JsonResult> Rename(GroupsQueryVM group)
+        public async Task<JsonResult> Update(GroupsQueryVM group)
         {
             if (ModelState.IsValid)
             {
-                return await _service.Rename(group);
+                return await _service.Update(group);
             }
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }

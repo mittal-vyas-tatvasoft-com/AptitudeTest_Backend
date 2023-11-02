@@ -38,9 +38,9 @@ namespace AptitudeTest.Application.Services
             return await _repository.GetGroups(searchGroup);
         }
 
-        public async Task<JsonResult> Rename(GroupsQueryVM groupToBeRenamed)
+        public async Task<JsonResult> Update(GroupsQueryVM groupToBeRenamed)
         {
-            return await _repository.Rename(groupToBeRenamed);
+            return await _repository.Update(groupToBeRenamed);
         }
         #endregion
     }
