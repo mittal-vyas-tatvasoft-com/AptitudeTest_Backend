@@ -21,9 +21,9 @@ namespace AptitudeTest.Controllers
         #endregion
 
         [HttpGet("[action]")]
-        public async Task<JsonResult> GetAllAdmins(string? searchQuery, bool? Status, int currentPageIndex = 0, int pageSize = 10)
+        public async Task<JsonResult> GetAllAdmin(string? searchQuery, bool? Status, int currentPageIndex = 0, int pageSize = 10)
         {
-            return await _adminService.GetAllAdmins(searchQuery, Status, currentPageIndex, pageSize);
+            return await _adminService.GetAllAdmin(searchQuery, Status, currentPageIndex, pageSize);
         }
 
         [HttpGet("[action]/{id:int}")]

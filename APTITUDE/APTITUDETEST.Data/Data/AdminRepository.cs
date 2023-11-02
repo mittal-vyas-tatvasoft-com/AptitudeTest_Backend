@@ -34,7 +34,7 @@ namespace AptitudeTest.Data.Data
 
         #region methods
 
-        public async Task<JsonResult> GetAllAdmins(string? searchQuery, bool? Status, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetAllAdmin(string? searchQuery, bool? Status, int? currentPageIndex, int? pageSize)
         {
             try
             {

@@ -18,9 +18,9 @@ namespace AptitudeTest.Application.Services
         #endregion
 
         #region Methods
-        public async Task<JsonResult> GetAllAdmins(string? searchQuery, bool? Status, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetAllAdmin(string? searchQuery, bool? Status, int? currentPageIndex, int? pageSize)
         {
-            return await _adminRepository.GetAllAdmins(searchQuery, Status, currentPageIndex, pageSize);
+            return await _adminRepository.GetAllAdmin(searchQuery, Status, currentPageIndex, pageSize);
         }
 
         public async Task<JsonResult> GetAdminById(int? id)
