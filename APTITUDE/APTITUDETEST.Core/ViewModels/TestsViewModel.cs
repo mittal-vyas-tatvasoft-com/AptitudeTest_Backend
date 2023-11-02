@@ -1,6 +1,4 @@
-﻿using AptitudeTest.Core.Entities.Test;
-
-namespace AptitudeTest.Core.ViewModels
+﻿namespace AptitudeTest.Core.ViewModels
 {
     public class TestsViewModel
     {

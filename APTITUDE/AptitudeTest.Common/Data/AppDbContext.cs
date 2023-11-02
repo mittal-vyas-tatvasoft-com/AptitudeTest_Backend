@@ -6,7 +6,6 @@ using AptitudeTest.Core.Entities.Users;
 using AptitudeTest.Core.ViewModels;
 using APTITUDETEST.Core.Entities.Users;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace APTITUDETEST.Common.Data
 {

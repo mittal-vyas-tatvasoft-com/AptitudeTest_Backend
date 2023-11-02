@@ -1,6 +1,4 @@
-﻿using AptitudeTest.Core.Entities.Master;
-using AptitudeTest.Core.Entities.Test;
-using AptitudeTest.Core.Interfaces;
+﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
@@ -8,13 +6,6 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
-using System;
-using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace AptitudeTest.Data.Data
 {
@@ -34,7 +25,6 @@ namespace AptitudeTest.Data.Data
         #region Methods
         public async Task<JsonResult> GetTests(string? searchQuery, int? GroupId, int? Status, DateTime? Date, int? currentPageIndex, int? pageSize)
         {
-
             try
             {
                 searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
