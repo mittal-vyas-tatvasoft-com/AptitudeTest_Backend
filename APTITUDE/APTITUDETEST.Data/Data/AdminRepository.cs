@@ -239,7 +239,7 @@ namespace AptitudeTest.Data.Data
 
                     if (adminAlreadyExists == null)
                     {
-                        Admin? adminToBeUpdated = _appDbContext.Admins.Where(ad => ad.Email == admin.Email && ad.IsSuperAdmin == false).FirstOrDefault();
+                        Admin? adminToBeUpdated = _appDbContext.Admins.Where(ad => ad.Id == admin.Id && ad.IsSuperAdmin == false).FirstOrDefault();
                         if (adminToBeUpdated != null)
                         {
                             adminToBeUpdated.FirstName = admin.FirstName;
