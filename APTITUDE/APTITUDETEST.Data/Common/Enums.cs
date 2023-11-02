@@ -18,6 +18,12 @@
             SingleAnswer = 1,
             MultiAnswer = 2
         }
+        public enum TestStatus
+        {
+            Draft = 1,
+            Active = 2,
+            Completed = 3
+        }
         public enum NumberCount
         {
             Zero=0,
