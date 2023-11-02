@@ -150,10 +150,10 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterGroup> existingGroups = await Task.FromResult(_context.MasterGroup.Where(group => group.IsDeleted == null || group.IsDeleted == false).OrderByDescending(group => group.CreatedDate).ToList());
+                List<MasterGroup> existingGroups = await Task.FromResult(_context.MasterGroup.Where(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true).OrderByDescending(group => group.CreatedDate).ToList());
                 if (!searchGroup.IsNullOrEmpty())
                 {
-                    existingGroups = existingGroups.Where(group => group.Name.ToLower().Contains(searchGroup) && (group.IsDeleted == null || group.IsDeleted == false)).OrderByDescending(group => group.CreatedDate).ToList();
+                    existingGroups = existingGroups.Where(group => group.Name.ToLower().Contains(searchGroup)).OrderByDescending(group => group.CreatedDate).ToList();
                 }
                 List<GroupsResponseVM> groups = new List<GroupsResponseVM>();
 

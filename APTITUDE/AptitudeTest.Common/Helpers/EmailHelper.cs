@@ -1,16 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Protocols;
-using System;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
+﻿using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
-using System.Net.Mime;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace AptitudeTest.Common.Helpers
 {
@@ -26,7 +16,7 @@ namespace AptitudeTest.Common.Helpers
         {
             try
             {
-                using (SmtpClient smtpClient = new SmtpClient(_config["EmailGeneration:Host"],Convert.ToInt16(_config["EmailGeneration:Port"])))
+                using (SmtpClient smtpClient = new SmtpClient(_config["EmailGeneration:Host"], Convert.ToInt16(_config["EmailGeneration:Port"])))
                 {
                     smtpClient.EnableSsl = true;
                     smtpClient.UseDefaultCredentials = false;

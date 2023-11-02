@@ -16,6 +16,9 @@
 
         public static string Password = "Password";
 
+        public static string Admin = "Admin";
+
+
         public static string Group = "Group";
     }
 }
