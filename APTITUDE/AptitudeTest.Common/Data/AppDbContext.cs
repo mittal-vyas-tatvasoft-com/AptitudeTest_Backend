@@ -1,4 +1,5 @@
-﻿using AptitudeTest.Core.Entities.Master;
+﻿using AptitudeTest.Core.Entities.Admin;
+using AptitudeTest.Core.Entities.Master;
 using AptitudeTest.Core.Entities.Questions;
 using AptitudeTest.Core.Entities.Users;
 using AptitudeTest.Core.ViewModels;
@@ -243,6 +244,16 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             });
+            modelBuilder.Entity<Admin>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__ADMIN_ID");
+                entity.ToTable("Admin");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+                entity.Property(e => e.IsSuperAdmin).IsRequired(false).HasDefaultValue(false);
+            });
         }
 
         public DbSet<User> Users { get; set; }
@@ -259,5 +270,6 @@ namespace APTITUDETEST.Common.Data
         public DbSet<QuestionOptions> QuestionOptions { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<State> States { get; set; }
+        public DbSet<Admin> Admins { get; set; }
     }
 }

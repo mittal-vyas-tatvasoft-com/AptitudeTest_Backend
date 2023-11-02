@@ -4,7 +4,6 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
-using APTITUDETEST.Core.Entities.Users;
 using CsvHelper;
 using Dapper;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +14,6 @@ using Npgsql;
 using NpgsqlTypes;
 using System.Data;
 using System.Globalization;
-using System.Net;
 using System.Net.Mail;
 using System.Text;
 
@@ -177,7 +175,7 @@ namespace AptitudeTest.Data.Data
                     if (userId > 0)
                     {
                         bool isMailSent = SendMailForResetPassword(user.FirstName, user.Email);
-                        
+
                         return new JsonResult(new ApiResponse<string>
                         {
                             Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.User),
@@ -374,9 +372,9 @@ namespace AptitudeTest.Data.Data
 
                             connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
 
-                            foreach(var record in records)
+                            foreach (var record in records)
                             {
-                                bool isMailSent = SendMailForResetPassword(record.firstname,record.email);                                
+                                bool isMailSent = SendMailForResetPassword(record.firstname, record.email);
                             }
                         }
 
