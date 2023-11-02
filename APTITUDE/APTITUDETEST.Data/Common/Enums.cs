@@ -18,5 +18,10 @@
             SingleAnswer = 1,
             MultiAnswer = 2
         }
+        public enum NumberCount
+        {
+            Zero=0,
+            One=1,
+        }
     }
 }
