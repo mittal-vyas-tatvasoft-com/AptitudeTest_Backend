@@ -104,7 +104,7 @@ namespace AptitudeTest.Data.Data
             {
                 if (id != 0)
                 {
-                    Admin? admin = _appDbContext.Admins.Where(ad => ad.Id == id).FirstOrDefault();
+                    Admin? admin = _appDbContext.Admins.Where(ad => ad.Id == id && ad.IsSuperAdmin == false).FirstOrDefault();
                     if (admin != null)
                     {
                         return new JsonResult(new ApiResponse<Admin>
@@ -159,7 +159,7 @@ namespace AptitudeTest.Data.Data
                     {
                         FirstName = admin.FirstName,
                         LastName = admin.LastName,
-                        FatherName = admin.FatherName,
+                        FatherName = admin.MiddleName,
                         Email = admin.Email,
                         Password = pass,
                         Status = admin.Status,
@@ -170,14 +170,33 @@ namespace AptitudeTest.Data.Data
                     Admin? adminAlreadyExists = _appDbContext.Admins.Where(ad => ad.Email == admin.Email).FirstOrDefault();
                     if (adminAlreadyExists == null)
                     {
+                        bool isEmailSent;
                         _appDbContext.Add(adminToBeAdded);
-                        _appDbContext.SaveChanges();
-                        return new JsonResult(new ApiResponse<string>
+                        int count = _appDbContext.SaveChanges();
+                        if (count == 1)
                         {
-                            Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Admin),
-                            Result = true,
-                            StatusCode = ResponseStatusCode.OK
-                        });
+                            isEmailSent = SendMailForPassword(admin.FirstName, pass, admin.Email);
+                            if (isEmailSent)
+                            {
+                                return new JsonResult(new ApiResponse<string>
+                                {
+                                    Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Admin),
+                                    Result = true,
+                                    StatusCode = ResponseStatusCode.OK
+                                });
+                            }
+                            else
+                            {
+                                return new JsonResult(new ApiResponse<List<UserViewModel>>
+                                {
+                                    Message = ResponseMessages.InternalError,
+                                    Result = false,
+                                    StatusCode = ResponseStatusCode.InternalServerError
+                                });
+                            }
+                        }
+
+
                     }
                     else
                     {
@@ -190,11 +209,11 @@ namespace AptitudeTest.Data.Data
                     }
 
                 }
-                return new JsonResult(new ApiResponse<List<UserViewModel>>
+                return new JsonResult(new ApiResponse<string>
                 {
-                    Message = ResponseMessages.Success,
-                    Result = true,
-                    StatusCode = ResponseStatusCode.OK
+                    Message = ResponseMessages.BadRequest,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.BadRequest
                 });
             }
             catch
@@ -209,6 +228,246 @@ namespace AptitudeTest.Data.Data
 
         }
 
+        public async Task<JsonResult> Update(CreateAdminVM admin)
+        {
+            try
+            {
+
+                if (admin != null)
+                {
+                    Admin? adminAlreadyExists = _appDbContext.Admins.Where(ad => ad.Email == admin.Email && ad.Id != admin.Id).FirstOrDefault();
+
+                    if (adminAlreadyExists == null)
+                    {
+                        Admin? adminToBeUpdated = _appDbContext.Admins.Where(ad => ad.Email == admin.Email && ad.IsSuperAdmin == false).FirstOrDefault();
+                        if (adminToBeUpdated != null)
+                        {
+                            adminToBeUpdated.FirstName = admin.FirstName;
+                            adminToBeUpdated.LastName = admin.LastName;
+                            adminToBeUpdated.FatherName = admin.MiddleName;
+                            adminToBeUpdated.Status = admin.Status;
+                            adminToBeUpdated.Email = admin.Email;
+                            adminToBeUpdated.PhoneNumber = admin.PhoneNumber;
+                            adminToBeUpdated.UpdatedBy = admin.CreatedBy;
+                            adminToBeUpdated.UpdatedDate = DateTime.UtcNow;
+
+                            _appDbContext.Update(adminToBeUpdated);
+                            int count = _appDbContext.SaveChanges();
+
+                            if (count == 1)
+                            {
+                                return new JsonResult(new ApiResponse<string>
+                                {
+                                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Admin),
+                                    Result = true,
+                                    StatusCode = ResponseStatusCode.Success
+                                });
+                            }
+                            else
+                            {
+                                return new JsonResult(new ApiResponse<List<UserViewModel>>
+                                {
+                                    Message = ResponseMessages.InternalError,
+                                    Result = false,
+                                    StatusCode = ResponseStatusCode.InternalServerError
+                                });
+                            }
+                        }
+
+                        else
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.NotFound, ModuleNames.Admin),
+                                Result = false,
+                                StatusCode = ResponseStatusCode.NotFound
+                            });
+                        }
+
+
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Admin),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.AlreadyExist
+                        });
+                    }
+
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<List<UserViewModel>>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
+
+        public async Task<JsonResult> ActiveInActiveAdmin(AdminStatusVM adminStatusVM)
+        {
+            try
+            {
+                if (adminStatusVM != null)
+                {
+                    Admin? adminStatusToBeUpdated = _appDbContext.Admins.Where(ad => ad.Id == adminStatusVM.Id && ad.IsSuperAdmin == false).FirstOrDefault();
+                    if (adminStatusToBeUpdated != null)
+                    {
+                        adminStatusToBeUpdated.Status = adminStatusVM.status;
+                        _appDbContext.Update(adminStatusToBeUpdated);
+                        int count = _appDbContext.SaveChanges();
+
+                        if (count == 1)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Admin),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.Success
+                            });
+                        }
+                        else
+                        {
+                            return new JsonResult(new ApiResponse<List<UserViewModel>>
+                            {
+                                Message = ResponseMessages.InternalError,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.InternalServerError
+                            });
+                        }
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Admin),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<List<UserViewModel>>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> Delete(int id)
+        {
+            try
+            {
+                if (id != 0)
+                {
+                    Admin? adminToBeDeleted = _appDbContext.Admins.Where(ad => ad.Id == id && ad.IsSuperAdmin == false).FirstOrDefault();
+                    if (adminToBeDeleted != null)
+                    {
+                        adminToBeDeleted.IsDeleted = true;
+                        _appDbContext.Update(adminToBeDeleted);
+                        int count = _appDbContext.SaveChanges();
+
+                        if (count == 1)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.Admin),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.Success
+                            });
+                        }
+                        else
+                        {
+                            return new JsonResult(new ApiResponse<List<UserViewModel>>
+                            {
+                                Message = ResponseMessages.InternalError,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.InternalServerError
+                            });
+                        }
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Admin),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<List<UserViewModel>>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+
+        #region helpingMethods
+
+        #region SendEmailForPassword
+        private bool SendMailForPassword(string firstName, string password, string email)
+        {
+            try
+            {
+                var subject = "Password reset request";
+                var body = $"<h3>Hello {firstName}</h3>,<br />we received admin registration request for you ,<br /><br /Here is your credetials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2>";
+                var emailHelper = new EmailHelper(_config);
+                var isEmailSent = emailHelper.SendEmail(email, subject, body);
+                return isEmailSent;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        #endregion
+
+        #endregion
 
         #endregion
     }

@@ -8,6 +8,8 @@ namespace AptitudeTest.Core.Interfaces
         Task<JsonResult> GetAllAdmin(string? searchQuery, bool? Status, int? currentPageIndex, int? pageSize);
         Task<JsonResult> GetAdminById(int? id);
         Task<JsonResult> Create(CreateAdminVM admin);
-
+        Task<JsonResult> Update(CreateAdminVM admin);
+        Task<JsonResult> ActiveInActiveAdmin(AdminStatusVM adminStatusVM);
+        Task<JsonResult> Delete(int id);
     }
 }
