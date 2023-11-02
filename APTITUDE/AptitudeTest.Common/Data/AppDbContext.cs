@@ -1,6 +1,7 @@
 ﻿using AptitudeTest.Core.Entities.Admin;
 using AptitudeTest.Core.Entities.Master;
 using AptitudeTest.Core.Entities.Questions;
+using AptitudeTest.Core.Entities.Test;
 using AptitudeTest.Core.Entities.Users;
 using AptitudeTest.Core.ViewModels;
 using APTITUDETEST.Core.Entities.Users;
@@ -254,6 +255,27 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
                 entity.Property(e => e.IsSuperAdmin).IsRequired(false).HasDefaultValue(false);
             });
+            modelBuilder.Entity<Test>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK_TEST_ID");
+                entity.ToTable("Test");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.Name)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+                entity.Property(e => e.Description)
+                .HasMaxLength(1000)
+                .IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+                entity.Property(e => e.Status).HasDefaultValue(1);
+                entity.Property(e => e.IsRandomQuestion).HasDefaultValue(true);
+                entity.Property(e => e.IsRandomAnswer).HasDefaultValue(true);
+                entity.Property(e => e.IsLogoutWhenTimeExpire).HasDefaultValue(true);
+                entity.Property(e => e.IsQuestionsMenu).HasDefaultValue(true);
+
+            });
         }
 
         public DbSet<User> Users { get; set; }
@@ -271,5 +293,6 @@ namespace APTITUDETEST.Common.Data
         public DbSet<City> Cities { get; set; }
         public DbSet<State> States { get; set; }
         public DbSet<Admin> Admins { get; set; }
+        public DbSet<Test> Tests { get; set; }
     }
 }
