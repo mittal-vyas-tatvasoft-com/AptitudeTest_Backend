@@ -18,5 +18,7 @@
 
         public static string Admin = "Admin";
 
+
+        public static string Group = "Group";
     }
 }

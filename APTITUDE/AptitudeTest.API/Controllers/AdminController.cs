@@ -43,5 +43,29 @@ namespace AptitudeTest.Controllers
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
+        [HttpPut("[action]")]
+        public async Task<JsonResult> Update(CreateAdminVM admin)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _adminService.Update(admin);
+            }
+
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+
+        [HttpPut("[action]")]
+        public async Task<JsonResult> ActiveInActiveAdmin(AdminStatusVM adminStatusVM)
+        {
+            return await _adminService.ActiveInActiveAdmin(adminStatusVM);
+        }
+
+        [HttpDelete("[action]/{id:int}")]
+        public async Task<JsonResult> Delete(int id)
+        {
+            return await _adminService.Delete(id);
+        }
+
+
     }
 }

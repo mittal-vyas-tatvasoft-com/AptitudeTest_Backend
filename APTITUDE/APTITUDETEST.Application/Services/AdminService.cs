@@ -33,6 +33,21 @@ namespace AptitudeTest.Application.Services
             return await _adminRepository.Create(admin);
         }
 
+        public async Task<JsonResult> Update(CreateAdminVM admin)
+        {
+            return await _adminRepository.Update(admin);
+        }
+
+        public async Task<JsonResult> ActiveInActiveAdmin(AdminStatusVM adminStatusVM)
+        {
+            return await _adminRepository.ActiveInActiveAdmin(adminStatusVM);
+        }
+
+        public async Task<JsonResult> Delete(int id)
+        {
+            return await _adminRepository.Delete(id);
+        }
+
         #endregion
     }
 }
