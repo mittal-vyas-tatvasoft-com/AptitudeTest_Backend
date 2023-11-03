@@ -1,4 +1,4 @@
-﻿using AptitudeTest.Core.Interfaces.UserAuthentication;
+﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using Microsoft.AspNetCore.Authorization;
@@ -8,16 +8,16 @@ namespace AptitudeTest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserAuthenticationController : ControllerBase
+    public class AdminAuthenticationController : ControllerBase
     {
         #region Properties
-        private readonly IUserAuthenticationService _userAuthenticationService;
+        private readonly IAdminAuthenticationService _adminAuthenticationService;
         #endregion
 
         #region Constructor
-        public UserAuthenticationController(IUserAuthenticationService userAuthenticationService)
+        public AdminAuthenticationController(IAdminAuthenticationService adminAuthenticationService)
         {
-            _userAuthenticationService = userAuthenticationService;
+            _adminAuthenticationService = adminAuthenticationService;
         }
         #endregion
 
@@ -30,7 +30,7 @@ namespace AptitudeTest.Controllers
         [HttpPost("Login")]
         public async Task<JsonResult> Login(LoginVm loginVm)
         {
-            return await _userAuthenticationService.Login(loginVm);
+            return await _adminAuthenticationService.Login(loginVm);
         }
 
         #endregion
@@ -45,7 +45,7 @@ namespace AptitudeTest.Controllers
 
         public async Task<JsonResult> ForgetPassword(string email)
         {
-            return await _userAuthenticationService.ForgetPassword(email);
+            return await _adminAuthenticationService.ForgetPassword(email);
         }
 
         #endregion
@@ -59,7 +59,7 @@ namespace AptitudeTest.Controllers
         [HttpPost("ResetPassword")]
         public async Task<JsonResult> ResetPassword(ResetPasswordVm resetPassword)
         {
-            return await _userAuthenticationService.ResetPassword(resetPassword);
+            return await _adminAuthenticationService.ResetPassword(resetPassword);
         }
 
         #endregion
@@ -76,7 +76,7 @@ namespace AptitudeTest.Controllers
         {
             if (ModelState.IsValid)
             {
-                return await _userAuthenticationService.ChangePassword(changePassword);
+                return await _adminAuthenticationService.ChangePassword(changePassword);
             }
             else
             {
@@ -98,12 +98,11 @@ namespace AptitudeTest.Controllers
         {
             if (tokens != null)
             {
-                return await _userAuthenticationService.RefreshToken(tokens);
+                return await _adminAuthenticationService.RefreshToken(tokens);
             }
             return new JsonResult(new ApiResponseVm<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
 
         }
         #endregion
-
     }
 }

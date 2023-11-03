@@ -28,6 +28,9 @@
         public static string TokenInvalid = "token is invalid";
         #endregion
 
+        #region AdminAuthentication
+        public static string SuperAdminRequestFail = "You can't perform {0} for this user";
+        #endregion
 
     }
 }

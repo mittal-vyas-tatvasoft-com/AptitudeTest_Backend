@@ -18,7 +18,9 @@
 
         public static string Admin = "Admin";
 
-
         public static string Group = "Group";
+
+        public static string Operation = "Operation";
+
     }
 }
