@@ -7,11 +7,7 @@ using APTITUDETEST.Core.Entities.Users;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
-using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 //using ResponseMessages = AptitudeTest.Data.Common.ResponseMessages;
 
@@ -46,8 +42,8 @@ namespace AptitudeTest.Data.Data
                     User? user = _context.Users.Where(u => u.Email == loginVm.Email && u.Password == loginVm.Password)?.FirstOrDefault();
                     if (user != null)
                     {
-                        string newAccessToken = jwtHelper.GenerateJwtToken(user,null);
-                        string newRefreshToken = jwtHelper.CreateRefreshToken(user.Email,RefreshTokens);
+                        string newAccessToken = jwtHelper.GenerateJwtToken(user, null);
+                        string newRefreshToken = jwtHelper.CreateRefreshToken(user.Email, RefreshTokens);
 
                         if (!string.IsNullOrEmpty(newAccessToken) && !string.IsNullOrEmpty(newRefreshToken))
                         {
@@ -224,8 +220,8 @@ namespace AptitudeTest.Data.Data
                     }
                     else
                     {
-                        var newAccessToken = jwtHelper.GenerateJwtToken(user,null);
-                        var newRefreshToken = jwtHelper.CreateRefreshToken(email,RefreshTokens);
+                        var newAccessToken = jwtHelper.GenerateJwtToken(user, null);
+                        var newRefreshToken = jwtHelper.CreateRefreshToken(email, RefreshTokens);
                         if (!string.IsNullOrEmpty(newAccessToken) && !string.IsNullOrEmpty(newRefreshToken))
                         {
                             RefreshTokens[email].RefreshToken = newRefreshToken;
