@@ -12,5 +12,8 @@
         public int OptionId { get; set; }
         public string OptionData { get; set; }
         public bool IsAnswer { get; set; }
+        public int TotalRecords { get; set; }
+        public int TotalPages { get; set; }
+        public int? NextPage { get; set; }
     }
 }

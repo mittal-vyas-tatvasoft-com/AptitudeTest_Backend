@@ -41,11 +41,27 @@ namespace AptitudeTest.Controllers
         /// <param name="topic"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        [HttpGet()]
-        public async Task<JsonResult> GetQuestions(int? topic, bool? status)
+        [HttpGet]
+        public async Task<JsonResult> GetQuestions(int? topic, bool? status, int pageSize, int pageIndex)
         {
-            return await _service.GetQuestions(topic, status);
+            return await _service.GetQuestions(topic, status, pageSize, pageIndex);
         }
+        /// <summary>
+        /// This method gives count of questions in different topics
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<JsonResult> GetQuestionCount(int? topic, bool? status)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _service.GetQuestionCount(topic, status);
+            }
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+
         /// <summary>
         /// This method Adds new College
         /// </summary>
