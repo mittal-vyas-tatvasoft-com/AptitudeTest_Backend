@@ -24,5 +24,10 @@
             Active = 2,
             Completed = 3
         }
+        public enum NumberCount
+        {
+            Zero=0,
+            One=1,
+        }
     }
 }
