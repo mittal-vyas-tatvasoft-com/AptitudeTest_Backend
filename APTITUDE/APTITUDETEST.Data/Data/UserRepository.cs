@@ -56,7 +56,7 @@ namespace AptitudeTest.Data.Data
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
-                            Data = data.OrderByDescending(x => x.UserId).ToList(),
+                            Data = data.OrderByDescending(x => x.id).ToList(),
                             Message = ResponseMessages.Success,
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
@@ -72,7 +72,7 @@ namespace AptitudeTest.Data.Data
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
-                            Data = data.OrderByDescending(x => x.UserId).ToList(),
+                            Data = data.OrderByDescending(x => x.id).ToList(),
                             Message = ResponseMessages.Success,
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
@@ -296,7 +296,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.Success),
+                        Message = string.Format(ResponseMessages.StatusUpdateSuccess,ModuleNames.User),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -332,7 +332,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.Success),
+                        Message = string.Format(ResponseMessages.DeleteSuccess,ModuleNames.User),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
