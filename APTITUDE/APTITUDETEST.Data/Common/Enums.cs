@@ -24,10 +24,17 @@
             Active = 2,
             Completed = 3
         }
+
+        public enum Pagination
+        {
+            DefaultIndex = 0,
+            DefaultPageSize = 10
+        }
         public enum NumberCount
         {
-            Zero=0,
-            One=1,
+            Zero = 0,
+            One = 1,
+            Four = 4,
         }
     }
 }

@@ -27,7 +27,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (id < 1)
+                if (id < (int)Enums.NumberCount.One)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -40,7 +40,7 @@ namespace AptitudeTest.Data.Data
                 using (DbConnection connection = new DbConnection())
                 {
                     var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getQuestionbyid(@question_id)", new { question_id = id });
-                    if (data.Count() == 0)
+                    if (data.Count() == (int)Enums.NumberCount.Zero)
                     {
                         return new JsonResult(new ApiResponse<UserDetailsVM>
                         {
@@ -100,22 +100,22 @@ namespace AptitudeTest.Data.Data
             {
                 using (DbConnection connection = new DbConnection())
                 {
-                    if (pageSize < 1)
+                    if (pageSize < (int)Enums.NumberCount.One)
                     {
-                        pageSize = 10;
+                        pageSize = (int)Enums.Pagination.DefaultPageSize;
                     }
-                    if (pageIndex < 0)
+                    if (pageIndex < (int)Enums.NumberCount.Zero)
                     {
-                        pageIndex = 0;
+                        pageIndex = (int)Enums.Pagination.DefaultIndex;
                     }
                     var parameter = new
                     {
                         filter_topic = topic == (int)Enums.QuestionTopic.Maths || topic == (int)Enums.QuestionTopic.Reasoning || topic == (int)Enums.QuestionTopic.Technical ? topic : null,
                         filter_status = status == true || status == false ? status : null,
-                        paze_size = pageSize,
+                        page_size = pageSize,
                         page_index = pageIndex
                     };
-                    var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getAllQuestions(@filter_topic,@filter_status,@paze_size,@page_index)", parameter);
+                    var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getAllQuestions(@filter_topic,@filter_status,@page_size,@page_index)", parameter);
                     List<QuestionVM> questionVMList = new List<QuestionVM>();
                     questionVMList = data.GroupBy(question => question.QuestionId).Select(
                         x =>
@@ -143,11 +143,17 @@ namespace AptitudeTest.Data.Data
                         }
                         ).ToList();
 
+                    int PageCount = (int)Enums.NumberCount.Zero;
+                    int totalItemsCount = (int)Enums.NumberCount.Zero;
+                    bool isNextPage = false;
                     var temp = data.FirstOrDefault();
-                    int PageCount = (int)temp?.TotalPages;
-                    int totalItemsCount = (int)temp?.TotalRecords;
-                    bool isNextPage = temp?.NextPage == null ? false : true;
-                    bool isPreviousPage = pageIndex == 0 ? false : true;
+                    if (temp != null)
+                    {
+                        PageCount = (int)temp?.TotalPages;
+                        totalItemsCount = (int)temp?.TotalRecords;
+                        isNextPage = temp?.NextPage == null ? false : true;
+                    }
+                    bool isPreviousPage = pageIndex == (int)Enums.NumberCount.Zero ? false : true;
 
                     PaginationVM<QuestionVM> pagination = new PaginationVM<QuestionVM>()
                     {
@@ -225,7 +231,7 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)Common.Enums.OptionType.ImageType && !ValidateImageExtension(questionVM.Options, true)) || !ValidateOptionText(questionVM))
+                if (questionVM.Id != (int)Enums.NumberCount.Zero || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)Common.Enums.OptionType.ImageType && !ValidateImageExtension(questionVM.Options, true)) || !ValidateOptionText(questionVM))
                 {
                     return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
                 }
@@ -299,7 +305,97 @@ namespace AptitudeTest.Data.Data
 
         public async Task<JsonResult> Update(QuestionVM questionVM)
         {
-            return null;
+            try
+            {
+                if (questionVM.Id < (int)Enums.NumberCount.One || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateImageExtension(questionVM.Options, false)) || !ValidateOptionText(questionVM))
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
+                if (DoesQuestionExists(questionVM))
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Question),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+
+                Question question = await Task.FromResult(_context.Questions.Where(question => question.Id == questionVM.Id).FirstOrDefault());
+                if (question == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+                question.QuestionText = questionVM.QuestionText.Trim();
+                question.Status = questionVM.Status;
+                question.Difficulty = questionVM.Difficulty;
+                question.Topic = questionVM.TopicId;
+                question.QuestionType = questionVM.QuestionType;
+                question.OptionType = questionVM.OptionType;
+                question.UpdatedBy = questionVM.UpdatedBy;
+                question.UpdatedDate = DateTime.UtcNow;
+                _context.Update(question);
+
+                List<QuestionOptions> optionsList = await Task.FromResult(_context.QuestionOptions.Where(option => option.QuestionId == question.Id).OrderBy(option => option.Id).ToList());
+                List<OptionVM> optionVMList = questionVM.Options.OrderBy(option => option.OptionId).ToList();
+                for (int i = (int)Enums.NumberCount.Zero; i < (int)Enums.NumberCount.Four; i++)
+                {
+                    QuestionOptions questionOptions = optionsList[i];
+                    OptionVM optionVM = optionVMList[i];
+                    questionOptions.IsAnswer = optionVM.IsAnswer;
+                    // OptionType 1 refers to string option value and 2 refers to image option value
+                    if (questionVM.OptionType == (int)Enums.OptionType.TextType)
+                    {
+                        questionOptions.OptionData = optionVM.OptionValue;
+                    }
+                    else
+                    {
+                        if (optionVM.OptionImage != null)
+                        {
+                            string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files");
+                            string fileName = Guid.NewGuid().ToString() + "_" + optionVM.OptionImage.FileName;
+                            string filePath = Path.Combine(uploadFolder, fileName);
+                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                            {
+                                optionVM.OptionImage.CopyTo(fileStream);
+                            }
+                            questionOptions.OptionData = fileName;
+                        }
+
+                    }
+                }
+                _context.QuestionOptions.UpdateRange(optionsList);
+                _context.SaveChanges();
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Question),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
         }
 
         public async Task<JsonResult> UpdateStatus(StatusVM status)
@@ -344,7 +440,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (id < 1)
+                if (id < (int)Enums.NumberCount.One)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -395,14 +491,14 @@ namespace AptitudeTest.Data.Data
 
         private bool ValidateQuestion(QuestionVM questionVM)
         {
-            if (questionVM.Options.Count() == 4)
+            if (questionVM.Options.Count() == (int)Enums.NumberCount.Four)
             {
                 int answerCount = questionVM.Options.Where(option => option.IsAnswer == true).Count();
-                if (questionVM.QuestionType == (int)Common.Enums.QuestionType.SingleAnswer && answerCount == 1)
+                if (questionVM.QuestionType == (int)Common.Enums.QuestionType.SingleAnswer && answerCount == (int)Enums.NumberCount.One)
                 {
                     return true;
                 }
-                else if (questionVM.QuestionType == (int)Common.Enums.QuestionType.MultiAnswer && answerCount > 1)
+                else if (questionVM.QuestionType == (int)Common.Enums.QuestionType.MultiAnswer && answerCount > (int)Enums.NumberCount.One)
                 {
                     return true;
                 }
@@ -434,7 +530,7 @@ namespace AptitudeTest.Data.Data
             {
                 acceptableExtensions.Add(null);
             }
-            return extenaions.Except(acceptableExtensions).ToArray().Length == 0;
+            return extenaions.Except(acceptableExtensions).ToArray().Length == (int)Enums.NumberCount.Zero;
         }
 
         private bool DoesQuestionExists(QuestionVM questionVM)
@@ -444,7 +540,7 @@ namespace AptitudeTest.Data.Data
             {
                 if (questionVM.OptionType == (long)Common.Enums.QuestionType.MultiAnswer)
                 {
-                    if (questionVM.DuplicateFromQuestionId != 0 && questionVM.Options.Where(option => option.OptionImage != null).Count() == 0)
+                    if (questionVM.DuplicateFromQuestionId != (int)Enums.NumberCount.Zero && questionVM.Options.Where(option => option.OptionImage != null).Count() == (int)Enums.NumberCount.Zero)
                     {
                         return true;
                     }
@@ -453,7 +549,7 @@ namespace AptitudeTest.Data.Data
 
                 List<QuestionOptions> options = _context.QuestionOptions.Where(option => option.QuestionId == question.Id).OrderBy(option => option.Id).ToList();
                 bool[] flag = new bool[] { false, false, false, false };
-                for (int i = 0; i < 4; i++)
+                for (int i = (int)Enums.NumberCount.Zero; i < (int)Enums.NumberCount.Four; i++)
                 {
                     var option = options[i];
                     foreach (var questionOption in questionVM.Options)
