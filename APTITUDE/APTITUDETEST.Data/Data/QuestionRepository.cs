@@ -94,18 +94,28 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> GetQuestions(int? topic, bool? status)
+        public async Task<JsonResult> GetQuestions(int? topic, bool? status, int pageSize, int pageIndex)
         {
             try
             {
                 using (DbConnection connection = new DbConnection())
                 {
+                    if (pageSize < 1)
+                    {
+                        pageSize = 10;
+                    }
+                    if (pageIndex < 0)
+                    {
+                        pageIndex = 0;
+                    }
                     var parameter = new
                     {
-                        filter_topic = topic,
-                        filter_status = status
+                        filter_topic = topic == (int)Enums.QuestionTopic.Maths || topic == (int)Enums.QuestionTopic.Reasoning || topic == (int)Enums.QuestionTopic.Technical ? topic : null,
+                        filter_status = status == true || status == false ? status : null,
+                        paze_size = pageSize,
+                        page_index = pageIndex
                     };
-                    var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getAllQuestions(@filter_topic,@filter_status)", parameter);
+                    var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getAllQuestions(@filter_topic,@filter_status,@paze_size,@page_index)", parameter);
                     List<QuestionVM> questionVMList = new List<QuestionVM>();
                     questionVMList = data.GroupBy(question => question.QuestionId).Select(
                         x =>
@@ -133,9 +143,25 @@ namespace AptitudeTest.Data.Data
                         }
                         ).ToList();
 
-                    return new JsonResult(new ApiResponse<List<QuestionVM>>
+                    var temp = data.FirstOrDefault();
+                    int PageCount = (int)temp?.TotalPages;
+                    int totalItemsCount = (int)temp?.TotalRecords;
+                    bool isNextPage = temp?.NextPage == null ? false : true;
+                    bool isPreviousPage = pageIndex == 0 ? false : true;
+
+                    PaginationVM<QuestionVM> pagination = new PaginationVM<QuestionVM>()
                     {
-                        Data = questionVMList,
+                        EntityList = questionVMList,
+                        CurrentPageIndex = pageIndex,
+                        PageSize = pageSize,
+                        PageCount = PageCount,
+                        IsNextPage = isNextPage,
+                        IsPreviousPage = isPreviousPage,
+                        TotalItemsCount = totalItemsCount,
+                    };
+                    return new JsonResult(new ApiResponse<PaginationVM<QuestionVM>>
+                    {
+                        Data = pagination,
                         Message = ResponseMessages.Success,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
@@ -152,6 +178,46 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.InternalServerError
                 });
             }
+        }
+
+        public async Task<JsonResult> GetQuestionCount(int? topic, bool? status)
+        {
+            try
+            {
+                QuestionCountVM questionCount = new QuestionCountVM();
+                if (status == null)
+                {
+                    questionCount.TotalCount = _context.Questions.Where(q => q.IsDeleted != true).Count();
+                    questionCount.MathsCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Maths).Count();
+                    questionCount.ReasoningCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Reasoning).Count();
+                    questionCount.TechnicalCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Technical).Count();
+                }
+                else
+                {
+                    questionCount.TotalCount = _context.Questions.Where(q => q.IsDeleted != true && q.Status == status).Count();
+                    questionCount.MathsCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Maths && q.Status == status).Count();
+                    questionCount.ReasoningCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Reasoning && q.Status == status).Count();
+                    questionCount.TechnicalCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Technical && q.Status == status).Count();
+                }
+                return new JsonResult(new ApiResponse<QuestionCountVM>
+                {
+                    Data = questionCount,
+                    Message = ResponseMessages.Success,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
         }
 
         public async Task<JsonResult> Create(QuestionVM questionVM)
@@ -233,7 +299,97 @@ namespace AptitudeTest.Data.Data
 
         public async Task<JsonResult> Update(QuestionVM questionVM)
         {
-            return null;
+            try
+            {
+                if (questionVM.Id < 1 || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateImageExtension(questionVM.Options, false)) || !ValidateOptionText(questionVM))
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
+                if (DoesQuestionExists(questionVM))
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Question),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+
+                Question question = await Task.FromResult(_context.Questions.Where(question => question.Id == questionVM.Id).FirstOrDefault());
+                if (question == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+                question.QuestionText = questionVM.QuestionText.Trim();
+                question.Status = questionVM.Status;
+                question.Difficulty = questionVM.Difficulty;
+                question.Topic = questionVM.TopicId;
+                question.QuestionType = questionVM.QuestionType;
+                question.OptionType = questionVM.OptionType;
+                question.UpdatedBy = questionVM.UpdatedBy;
+                question.UpdatedDate = DateTime.UtcNow;
+                _context.Update(question);
+
+                List<QuestionOptions> optionsList = await Task.FromResult(_context.QuestionOptions.Where(option => option.QuestionId == question.Id).OrderBy(option => option.Id).ToList());
+                List<OptionVM> optionVMList = questionVM.Options.OrderBy(option => option.OptionId).ToList();
+                for (int i = 0; i < 4; i++)
+                {
+                    QuestionOptions questionOptions = optionsList[i];
+                    OptionVM optionVM = optionVMList[i];
+                    questionOptions.IsAnswer = optionVM.IsAnswer;
+                    // OptionType 1 refers to string option value and 2 refers to image option value
+                    if (questionVM.OptionType == (int)Enums.OptionType.TextType)
+                    {
+                        questionOptions.OptionData = optionVM.OptionValue;
+                    }
+                    else
+                    {
+                        if (optionVM.OptionImage != null)
+                        {
+                            string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files");
+                            string fileName = Guid.NewGuid().ToString() + "_" + optionVM.OptionImage.FileName;
+                            string filePath = Path.Combine(uploadFolder, fileName);
+                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                            {
+                                optionVM.OptionImage.CopyTo(fileStream);
+                            }
+                            questionOptions.OptionData = fileName;
+                        }
+
+                    }
+                }
+                _context.QuestionOptions.UpdateRange(optionsList);
+                _context.SaveChanges();
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Question),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
         }
 
         public async Task<JsonResult> UpdateStatus(StatusVM status)
