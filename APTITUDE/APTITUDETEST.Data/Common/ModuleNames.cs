@@ -20,5 +20,7 @@
 
 
         public static string Group = "Group";
+        public static string Test = "Test";
+
     }
 }

@@ -1,4 +1,6 @@
-﻿using AptitudeTest.Core.Interfaces;
+﻿using AptitudeTest.Core.Entities.Admin;
+using AptitudeTest.Core.Entities.Test;
+using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
@@ -6,6 +8,8 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
+using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AptitudeTest.Data.Data
 {
@@ -39,6 +43,67 @@ namespace AptitudeTest.Data.Data
                         Message = ResponseMessages.Success,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
+                    });
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
+
+
+        public async Task<JsonResult> CreateTest(CreateTestVM test)
+        {
+            try
+            {
+                Test testToBeAdded = new Test()
+                {
+                    Name = test.Name,
+                    Description = test.Description,
+                    Date = test.Date,
+                    StartTime = test.StartTime,
+                    EndTime = test.EndTime,
+                    TestDuration = test.TestDuration,
+                    Status = test.Status,
+                    BasicPoint = test.BasicPoint,
+                    MessaageAtStartOfTheTest = test.MessaageAtStartOfTheTest,
+                    MessaageAtEndOfTheTest = test.MessaageAtEndOfTheTest,
+                    IsRandomQuestion = test.IsRandomQuestion,
+                    IsRandomAnswer = test.IsRandomAnswer,
+                    IsLogoutWhenTimeExpire = test.IsLogoutWhenTimeExpire,
+                    IsQuestionsMenu = test.IsQuestionsMenu, 
+                    CreatedDate = DateTime.UtcNow,
+                    CreatedBy = test.CreatedBy,
+                };
+
+                Test? testAlreadyExists = _context.Tests.Where(t => t.Name == test.Name && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
+                if (testAlreadyExists == null)
+                {
+                    _context.Add(testToBeAdded);
+                    _context.SaveChanges();
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Test),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
 
