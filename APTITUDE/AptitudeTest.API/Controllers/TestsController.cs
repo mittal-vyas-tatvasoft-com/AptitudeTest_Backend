@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.Interfaces;
+using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +37,17 @@ namespace AptitudeTest.Controllers
         public async Task<JsonResult> GetTests(string? searchQuery, int? GroupId, int? Status, DateTime? Date, int? currentPageIndex = 0, int? pageSize = 10)
         {
             return await _service.GetTests(searchQuery, GroupId, Status, Date, currentPageIndex, pageSize);
+        }
+
+        /// <summary>
+        /// Create Test
+        /// </summary>
+        /// <param name="testVM"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<JsonResult> CreateTest(CreateTestVM testVM)
+        {
+            return await _service.CreateTest(testVM);
         }
 
         #endregion

@@ -16,7 +16,7 @@ namespace AptitudeTest.Core.Entities.Test
         [Required]
         public DateTime StartTime { get; set; }
         [Required]
-        public string EndTime { get; set; }
+        public DateTime EndTime { get; set; }
         [Required]
         public int TestDuration { get; set; }
 

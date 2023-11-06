@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.Interfaces;
+using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
@@ -22,6 +23,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.GetTests(searchQuery, GroupId, Status, Date, currentPageIndex, pageSize);
         }
+        public Task<JsonResult> CreateTest(CreateTestVM testVM)
+        {
+            return _repository.CreateTest(testVM);
+        }
+
         #endregion
     }
 }
