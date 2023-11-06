@@ -1,5 +1,4 @@
-﻿using AptitudeTest.Core.Entities.Test;
-using AptitudeTest.Core.Interfaces;
+﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 

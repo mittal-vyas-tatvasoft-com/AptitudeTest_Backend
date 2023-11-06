@@ -3,12 +3,12 @@
 
 namespace AptitudeTest.Core.Validations
 {
-    public class DateMustBeValidAttribute:ValidationAttribute
+    public class DateMustBeValidAttribute : ValidationAttribute
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             var dateProperty = validationContext.ObjectType.GetProperty("Date");
-            
+
             var date = (DateTime?)dateProperty.GetValue(validationContext.ObjectInstance);
 
             if (date < DateTime.UtcNow)
