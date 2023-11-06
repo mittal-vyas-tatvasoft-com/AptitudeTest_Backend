@@ -62,7 +62,6 @@ builder.Services.AddTransient<IAdminService, AdminService>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddTransient<ITestService, TestService>();
 builder.Services.AddScoped<ITestRepository, TestRepository>();
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -137,6 +136,7 @@ app.UseCors("MyPolicy");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles();
 
 app.MapControllers();
 
