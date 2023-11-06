@@ -64,30 +64,30 @@ namespace AptitudeTest.Data.Data
         public async Task<JsonResult> CreateTest(CreateTestVM test)
         {
             try
-            {
-                Test testToBeAdded = new Test()
-                {
-                    Name = test.Name,
-                    Description = test.Description,
-                    Date = test.Date,
-                    StartTime = test.StartTime,
-                    EndTime = test.EndTime,
-                    TestDuration = test.TestDuration,
-                    Status = test.Status,
-                    BasicPoint = test.BasicPoint,
-                    MessaageAtStartOfTheTest = test.MessaageAtStartOfTheTest,
-                    MessaageAtEndOfTheTest = test.MessaageAtEndOfTheTest,
-                    IsRandomQuestion = test.IsRandomQuestion,
-                    IsRandomAnswer = test.IsRandomAnswer,
-                    IsLogoutWhenTimeExpire = test.IsLogoutWhenTimeExpire,
-                    IsQuestionsMenu = test.IsQuestionsMenu, 
-                    CreatedDate = DateTime.UtcNow,
-                    CreatedBy = test.CreatedBy,
-                };
-
+            {           
                 Test? testAlreadyExists = _context.Tests.Where(t => t.Name == test.Name && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
                 if (testAlreadyExists == null)
                 {
+                    Test testToBeAdded = new Test()
+                    {
+                        Name = test.Name,
+                        Description = test.Description,
+                        Date = test.Date,
+                        StartTime = test.StartTime,
+                        EndTime = test.EndTime,
+                        TestDuration = test.TestDuration,
+                        Status = test.Status,
+                        BasicPoint = test.BasicPoint,
+                        MessaageAtStartOfTheTest = test.MessaageAtStartOfTheTest,
+                        MessaageAtEndOfTheTest = test.MessaageAtEndOfTheTest,
+                        IsRandomQuestion = test.IsRandomQuestion,
+                        IsRandomAnswer = test.IsRandomAnswer,
+                        IsLogoutWhenTimeExpire = test.IsLogoutWhenTimeExpire,
+                        IsQuestionsMenu = test.IsQuestionsMenu,
+                        CreatedDate = DateTime.UtcNow,
+                        CreatedBy = test.CreatedBy,
+                    };
+
                     _context.Add(testToBeAdded);
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
