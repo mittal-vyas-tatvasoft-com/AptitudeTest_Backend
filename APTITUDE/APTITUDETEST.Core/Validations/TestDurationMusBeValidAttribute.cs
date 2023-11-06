@@ -15,7 +15,7 @@ namespace AptitudeTest.Core.Validations
 
             TimeSpan duration = (DateTime)endTime - (DateTime)startTime;
 
-            if (duration.Minutes != testDuration)             
+            if (duration.TotalMinutes != testDuration)             
             {
                 return new ValidationResult("Duration must be valid");
             }

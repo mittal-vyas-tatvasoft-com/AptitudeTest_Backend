@@ -50,6 +50,16 @@ namespace AptitudeTest.Controllers
             return await _service.CreateTest(testVM);
         }
 
+        /// <summary>
+        /// This method Updates Test Group
+        /// </summary>
+        /// <param name="updateTest"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> UpdateTestGroup(UpdateTestGroupVM updateTest)
+        {
+            return await _service.UpdateTestGroup(updateTest);
+        }
         #endregion
     }
 }

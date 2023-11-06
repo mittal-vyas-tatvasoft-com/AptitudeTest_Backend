@@ -1,4 +1,5 @@
-﻿using AptitudeTest.Core.Interfaces;
+﻿using AptitudeTest.Core.Entities.Test;
+using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +28,10 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.CreateTest(testVM);
         }
-
+        public Task<JsonResult> UpdateTestGroup(UpdateTestGroupVM updateTest)
+        {
+            return _repository.UpdateTestGroup(updateTest);
+        }
         #endregion
     }
 }
