@@ -154,18 +154,16 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.currentAndNewSame, StatusCode = ResponseStatusCode.Forbidden, Result = false });
                 }
-                else
+
+                if (!changePassword.NewPassword.Equals(changePassword.confirmPassword))
                 {
-                    if (!changePassword.NewPassword.Equals(changePassword.confirmPassword))
-                    {
-                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.passwordNotMatched, StatusCode = ResponseStatusCode.Forbidden, Result = false });
-                    }
-                    user.Password = changePassword.NewPassword;
-                    user.UpdatedDate = DateTime.Now.ToUniversalTime();
-                    _context.Update(user);
-                    _context.SaveChanges();
-                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Password), StatusCode = ResponseStatusCode.OK, Result = true });
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.passwordNotMatched, StatusCode = ResponseStatusCode.Forbidden, Result = false });
                 }
+                user.Password = changePassword.NewPassword;
+                user.UpdatedDate = DateTime.Now.ToUniversalTime();
+                _context.Update(user);
+                _context.SaveChanges();
+                return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Password), StatusCode = ResponseStatusCode.OK, Result = true });
 
             }
             catch
@@ -198,23 +196,20 @@ namespace AptitudeTest.Data.Data
                     {
                         return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                     }
-                    else
+                    var newAccessToken = jwtHelper.GenerateJwtToken(user, null);
+                    var newRefreshToken = jwtHelper.CreateRefreshToken(email, RefreshTokens);
+                    if (string.IsNullOrEmpty(newAccessToken) && string.IsNullOrEmpty(newRefreshToken))
                     {
-                        var newAccessToken = jwtHelper.GenerateJwtToken(user, null);
-                        var newRefreshToken = jwtHelper.CreateRefreshToken(email, RefreshTokens);
-                        if (string.IsNullOrEmpty(newAccessToken) && string.IsNullOrEmpty(newRefreshToken))
-                        {
-                            return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
-                        }
-                        RefreshTokens[email].RefreshToken = newRefreshToken;
-                        TokenVm tokenPayload = new TokenVm()
-                        {
-                            AccessToken = newAccessToken,
-                            RefreshToken = newRefreshToken,
-                        };
-                        return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.SessionRefresh, StatusCode = ResponseStatusCode.OK, Result = true });
-
+                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                     }
+                    RefreshTokens[email].RefreshToken = newRefreshToken;
+                    TokenVm tokenPayload = new TokenVm()
+                    {
+                        AccessToken = newAccessToken,
+                        RefreshToken = newRefreshToken,
+                    };
+                    return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.SessionRefresh, StatusCode = ResponseStatusCode.OK, Result = true });
+
                 }
             }
             catch
