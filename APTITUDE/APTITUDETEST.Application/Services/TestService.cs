@@ -27,7 +27,10 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.CreateTest(testVM);
         }
-
+        public Task<JsonResult> UpdateTestGroup(UpdateTestGroupVM updateTest)
+        {
+            return _repository.UpdateTestGroup(updateTest);
+        }
         #endregion
     }
 }

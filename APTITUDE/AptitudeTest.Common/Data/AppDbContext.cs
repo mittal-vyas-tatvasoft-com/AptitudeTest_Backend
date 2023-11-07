@@ -276,6 +276,59 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.IsQuestionsMenu).HasDefaultValue(true);
 
             });
+            modelBuilder.Entity<TestQuestions>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK_TESTQUESTION_ID");
+                entity.ToTable("TestQuestions");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.TestId)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.TopicId)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.NoOfQuestions)
+                 .HasMaxLength(10)
+                 .IsUnicode(false);
+                entity.Property(e => e.Weightage)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+
+            });
+            modelBuilder.Entity<TestQuestionsCount>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK_TESTQUESTIONCOUNT_ID");
+                entity.ToTable("TestQuestionsCount");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.TestQuestionId)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.QuestionType)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.OneMarks)
+                 .HasMaxLength(10)
+                 .IsUnicode(false);
+                entity.Property(e => e.TwoMarks)
+                 .HasMaxLength(10)
+                 .IsUnicode(false);
+                entity.Property(e => e.ThreeMarks)
+                 .HasMaxLength(10)
+                 .IsUnicode(false);
+                entity.Property(e => e.FourMarks)
+                 .HasMaxLength(10)
+                 .IsUnicode(false);
+                entity.Property(e => e.FiveMarks)
+                 .HasMaxLength(10)
+                 .IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+
+            });
         }
 
         public DbSet<User> Users { get; set; }
@@ -294,5 +347,7 @@ namespace APTITUDETEST.Common.Data
         public DbSet<State> States { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Test> Tests { get; set; }
+        public DbSet<TestQuestions> TestQuestions { get; set; }
+        public DbSet<TestQuestionsCount> TestQuestionsCounts { get; set; }
     }
 }
