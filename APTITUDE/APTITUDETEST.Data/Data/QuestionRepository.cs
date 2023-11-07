@@ -231,7 +231,7 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)Common.Enums.OptionType.ImageType && !ValidateImageExtension(questionVM.Options, true)) || !ValidateOptionText(questionVM))
+                if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || !ValidateOptionImages(questionVM))
                 {
                     return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
                 }
@@ -297,7 +297,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (questionVM.Id < 1 || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateImageExtension(questionVM.Options, false)) || !ValidateOptionText(questionVM))
+                if (questionVM.Id < 1 || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || questionVM.Options.Any(option => option.OptionId == 0))
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
