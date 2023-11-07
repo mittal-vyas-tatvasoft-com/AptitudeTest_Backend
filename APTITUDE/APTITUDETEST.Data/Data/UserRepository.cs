@@ -6,7 +6,6 @@ using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using CsvHelper;
 using Dapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -351,26 +350,52 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region ImportUsers
-        public async Task<JsonResult> ImportUsers(IFormFile file)
+        public async Task<JsonResult> ImportUsers(ImportUserVM importUsers)
         {
             try
             {
-                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var reader = new StreamReader(importUsers.file.OpenReadStream()))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
                     var records = csv.GetRecords<UserImportVM>().ToList();
+                    if (records.Count <= 0)
+                    {
+                        return new JsonResult(new ApiResponse<int>
+                        {
+                            Message = string.Format(ResponseMessages.BadRequest),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
+                    foreach (var record in records)
+                    {
+                        record.groupid = importUsers.GroupId;
+                        record.collegeid = importUsers.CollegeId;
+                    }
                     if (records != null)
                     {
+                        int result;
                         using (var connection = _dapperContext.CreateConnection())
                         {
-                            var procedure = "import_users";
-                            var parameters = new DynamicParameters(
-                            new
-                            {
-                                p_import_user_data = records.ToArray()
-                            });
+                            var procedure = "import_users_new";
+                            var parameters = new DynamicParameters();
+                            parameters.Add("p_import_user_data", records, DbType.Object, ParameterDirection.Input);
+                            parameters.Add("candidates_added_count", ParameterDirection.Output);
 
-                            connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                            // Execute the stored procedure
+
+                            result = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                            if (result == 0)
+                            {
+                                return new JsonResult(new ApiResponse<int>
+                                {
+                                    Data = result,
+                                    Message = string.Format(ResponseMessages.AlreadyExists),
+                                    Result = true,
+                                    StatusCode = ResponseStatusCode.AlreadyExist
+                                });
+                            }
 
                             foreach (var record in records)
                             {
@@ -378,8 +403,9 @@ namespace AptitudeTest.Data.Data
                             }
                         }
 
-                        return new JsonResult(new ApiResponse<string>
+                        return new JsonResult(new ApiResponse<int>
                         {
+                            Data = result,
                             Message = string.Format(ResponseMessages.Success),
                             Result = true,
                             StatusCode = ResponseStatusCode.Success

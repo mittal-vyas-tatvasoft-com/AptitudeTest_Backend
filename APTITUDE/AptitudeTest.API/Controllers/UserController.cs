@@ -121,13 +121,11 @@ namespace AptitudeTest.API.Controllers
         /// <returns></returns>
 
         [HttpPost("[action]")]
-        public async Task<JsonResult> ImportUsers(IFormFile file)
+        public async Task<JsonResult> ImportUsers([FromForm] ImportUserVM importUsers)
         {
-            return await _userService.ImportUsers(file);
+            return await _userService.ImportUsers(importUsers);
         }
         #endregion
-
-
 
         #endregion
     }
