@@ -36,48 +36,40 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (!string.IsNullOrEmpty(loginVm.Email) && !string.IsNullOrEmpty(loginVm.Email))
-                {
-                    var jwtHelper = new JWTHelper(_appSettingConfiguration);
-                    User? user = _context.Users.Where(u => u.Email == loginVm.Email && u.Password == loginVm.Password)?.FirstOrDefault();
-                    if (user != null)
-                    {
-                        string newAccessToken = jwtHelper.GenerateJwtToken(user, null);
-                        string newRefreshToken = jwtHelper.CreateRefreshToken(user.Email, RefreshTokens);
-
-                        if (!string.IsNullOrEmpty(newAccessToken) && !string.IsNullOrEmpty(newRefreshToken))
-                        {
-
-                            TokenVm tokenPayload = new TokenVm()
-                            {
-                                AccessToken = newAccessToken,
-                                RefreshToken = newRefreshToken,
-                                RefreshTokenExpiryTime = DateTime.Now.AddHours(double.Parse(_appSettingConfiguration["JWT:RefreshTokenValidityInHours"])),
-                            };
-                            if (RefreshTokens.ContainsKey(user.Email))
-                            {
-                                RefreshTokens[user.Email] = tokenPayload;
-                            }
-                            else
-                            {
-                                RefreshTokens.Add(user.Email, tokenPayload);
-                            }
-                            return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
-                        }
-                        else
-                        {
-                            return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
-                        }
-                    }
-                    else
-                    {
-                        return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredetials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
-                    }
-                }
-                else
+                if (string.IsNullOrEmpty(loginVm.Email) && string.IsNullOrEmpty(loginVm.Password))
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
+                var jwtHelper = new JWTHelper(_appSettingConfiguration);
+                User? user = _context.Users.Where(u => u.Email == loginVm.Email && u.Password == loginVm.Password)?.FirstOrDefault();
+                if (user == null)
+                {
+                    return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredetials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
+                }
+                string newAccessToken = jwtHelper.GenerateJwtToken(user, null);
+                string newRefreshToken = jwtHelper.CreateRefreshToken(user.Email, RefreshTokens);
+
+                if (string.IsNullOrEmpty(newAccessToken) && string.IsNullOrEmpty(newRefreshToken))
+                {
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
+                }
+
+                TokenVm tokenPayload = new TokenVm()
+                {
+                    AccessToken = newAccessToken,
+                    RefreshToken = newRefreshToken,
+                    RefreshTokenExpiryTime = DateTime.Now.AddHours(double.Parse(_appSettingConfiguration["JWT:RefreshTokenValidityInHours"])),
+                };
+                if (RefreshTokens.ContainsKey(user.Email))
+                {
+                    RefreshTokens[user.Email] = tokenPayload;
+                }
+                else
+                {
+                    RefreshTokens.Add(user.Email, tokenPayload);
+                }
+                return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
+
             }
             catch
             {
@@ -92,22 +84,18 @@ namespace AptitudeTest.Data.Data
             try
             {
                 User? user = _context.Users.Where(u => u.Email == email).FirstOrDefault();
-                if (user != null)
+                if (user == null)
                 {
-                    var sent = SendMailForResetPassword(user.FirstName, user.Email);
-                    if (sent)
-                    {
-                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.MailSentForForgetPassword, StatusCode = ResponseStatusCode.OK, Result = true });
-                    }
-                    else
-                    {
-                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
-                    }
-
+                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.NotFound, ModuleNames.User), StatusCode = ResponseStatusCode.NotFound, Result = false });
+                }
+                var sent = SendMailForResetPassword(user.FirstName, user.Email);
+                if (sent)
+                {
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.MailSentForForgetPassword, StatusCode = ResponseStatusCode.OK, Result = true });
                 }
                 else
                 {
-                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.NotFound, ModuleNames.User), StatusCode = ResponseStatusCode.NotFound, Result = false });
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
                 }
 
             }
@@ -125,30 +113,25 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (!string.IsNullOrEmpty(resetPassword.EncryptedEmail) && !string.IsNullOrEmpty(resetPassword.NewPassword))
-                {
-                    byte[] byteForEmail = Convert.FromBase64String(resetPassword.EncryptedEmail);
-                    string decryptedEmail = Encoding.ASCII.GetString(byteForEmail);
-
-                    User? user = _context.Users.Where(u => u.Email == decryptedEmail).FirstOrDefault();
-                    if (user != null)
-                    {
-                        user.Password = resetPassword.NewPassword;
-                        user.UpdatedBy = user.Id;
-                        user.UpdatedDate = DateTime.Now.ToUniversalTime();
-                        _context.Update(user);
-                        _context.SaveChanges();
-                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.PasswordUpdatedSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
-                    }
-                    else
-                    {
-                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
-                    }
-                }
-                else
+                if (string.IsNullOrEmpty(resetPassword.EncryptedEmail) && string.IsNullOrEmpty(resetPassword.NewPassword))
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
+                byte[] byteForEmail = Convert.FromBase64String(resetPassword.EncryptedEmail);
+                string decryptedEmail = Encoding.ASCII.GetString(byteForEmail);
+
+                User? user = _context.Users.Where(u => u.Email == decryptedEmail).FirstOrDefault();
+                if (user == null)
+                {
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
+                }
+                user.Password = resetPassword.NewPassword;
+                user.UpdatedBy = user.Id;
+                user.UpdatedDate = DateTime.Now.ToUniversalTime();
+                _context.Update(user);
+                _context.SaveChanges();
+                return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.PasswordUpdatedSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
+
             }
             catch
             {
@@ -163,29 +146,27 @@ namespace AptitudeTest.Data.Data
             try
             {
                 User? user = await Task.FromResult(_context.Users.Where(x => x.Email.Equals(changePassword.Email) && x.Password.Equals(changePassword.CurrentPassword)).FirstOrDefault());
-                if (user != null)
-                {
-                    if (user.Password.Equals(changePassword.NewPassword))
-                    {
-                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.currentAndNewSame, StatusCode = ResponseStatusCode.Forbidden, Result = false });
-                    }
-                    else
-                    {
-                        if (!changePassword.NewPassword.Equals(changePassword.confirmPassword))
-                        {
-                            return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.passwordNotMatched, StatusCode = ResponseStatusCode.Forbidden, Result = false });
-                        }
-                        user.Password = changePassword.NewPassword;
-                        user.UpdatedDate = DateTime.Now.ToUniversalTime();
-                        _context.Update(user);
-                        _context.SaveChanges();
-                        return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Password), StatusCode = ResponseStatusCode.OK, Result = true });
-                    }
-                }
-                else
+                if (user == null)
                 {
                     return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.NotFound, ModuleNames.User), StatusCode = ResponseStatusCode.NotFound, Result = false });
                 }
+                if (user.Password.Equals(changePassword.NewPassword))
+                {
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.currentAndNewSame, StatusCode = ResponseStatusCode.Forbidden, Result = false });
+                }
+                else
+                {
+                    if (!changePassword.NewPassword.Equals(changePassword.confirmPassword))
+                    {
+                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.passwordNotMatched, StatusCode = ResponseStatusCode.Forbidden, Result = false });
+                    }
+                    user.Password = changePassword.NewPassword;
+                    user.UpdatedDate = DateTime.Now.ToUniversalTime();
+                    _context.Update(user);
+                    _context.SaveChanges();
+                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Password), StatusCode = ResponseStatusCode.OK, Result = true });
+                }
+
             }
             catch
             {
@@ -199,7 +180,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-
                 if (tokens is null)
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
@@ -222,20 +202,18 @@ namespace AptitudeTest.Data.Data
                     {
                         var newAccessToken = jwtHelper.GenerateJwtToken(user, null);
                         var newRefreshToken = jwtHelper.CreateRefreshToken(email, RefreshTokens);
-                        if (!string.IsNullOrEmpty(newAccessToken) && !string.IsNullOrEmpty(newRefreshToken))
-                        {
-                            RefreshTokens[email].RefreshToken = newRefreshToken;
-                            TokenVm tokenPayload = new TokenVm()
-                            {
-                                AccessToken = newAccessToken,
-                                RefreshToken = newRefreshToken,
-                            };
-                            return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.SessionRefresh, StatusCode = ResponseStatusCode.OK, Result = true });
-                        }
-                        else
+                        if (string.IsNullOrEmpty(newAccessToken) && string.IsNullOrEmpty(newRefreshToken))
                         {
                             return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                         }
+                        RefreshTokens[email].RefreshToken = newRefreshToken;
+                        TokenVm tokenPayload = new TokenVm()
+                        {
+                            AccessToken = newAccessToken,
+                            RefreshToken = newRefreshToken,
+                        };
+                        return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.SessionRefresh, StatusCode = ResponseStatusCode.OK, Result = true });
+
                     }
                 }
             }

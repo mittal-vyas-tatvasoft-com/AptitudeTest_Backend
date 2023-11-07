@@ -296,7 +296,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.StatusUpdateSuccess,ModuleNames.User),
+                        Message = string.Format(ResponseMessages.StatusUpdateSuccess, ModuleNames.User),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -332,7 +332,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.DeleteSuccess,ModuleNames.User),
+                        Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.User),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });

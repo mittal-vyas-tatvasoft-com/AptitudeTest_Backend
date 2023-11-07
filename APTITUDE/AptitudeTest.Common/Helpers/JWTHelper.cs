@@ -77,25 +77,23 @@ namespace AptitudeTest.Common.Helpers
                 var refreshToken = Convert.ToBase64String(tokenBytes);
                 TokenVm oldTokens = new TokenVm();
                 var tokenInDictionary = RefreshTokens.TryGetValue(email, out oldTokens);
-                if (oldTokens != null)
-                {
-                    if (oldTokens.RefreshTokenExpiryTime > DateTime.Now)
-                    {
-                        return refreshToken;
-                    }
-                    else
-                    {
-                        if (tokenInDictionary)
-                        {
-                            RefreshTokens.Remove(email);
-                        }
-                        throw new SecurityTokenException(TokenExpired);
-                    }
-                }
-                else
+                if (oldTokens == null)
                 {
                     return refreshToken;
                 }
+                if (oldTokens.RefreshTokenExpiryTime > DateTime.Now)
+                {
+                    return refreshToken;
+                }
+                else
+                {
+                    if (tokenInDictionary)
+                    {
+                        RefreshTokens.Remove(email);
+                    }
+                    throw new SecurityTokenException(TokenExpired);
+                }
+
             }
             catch
             {
