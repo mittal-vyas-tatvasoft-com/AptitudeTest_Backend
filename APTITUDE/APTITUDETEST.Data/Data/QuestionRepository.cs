@@ -518,18 +518,6 @@ namespace AptitudeTest.Data.Data
             return true;
         }
 
-        private bool ValidateImageExtension(List<OptionVM> options, bool strictCheck)
-        {
-            var a = options.Select(x => x.OptionImage.Length);
-            List<string> extenaions = options.Select(x => x.OptionImage?.ContentType).ToList();
-            List<string> acceptableExtensions = acceptableExtensions = new List<string>() { "image/png", "image/jpg", "image/jpeg" };
-            if (!strictCheck)
-            {
-                acceptableExtensions.Add(null);
-            }
-            return extenaions.Except(acceptableExtensions).ToArray().Length == (int)Enums.NumberCount.Zero;
-        }
-
         private bool DoesQuestionExists(QuestionVM questionVM)
         {
             Question question = _context.Questions.Where(question => question.Topic == questionVM.TopicId && question.Difficulty == questionVM.Difficulty && question.QuestionText.Trim().ToLower() == questionVM.QuestionText.Trim().ToLower() && question.QuestionType == questionVM.QuestionType && question.OptionType == questionVM.OptionType && question.IsDeleted != true).FirstOrDefault();
