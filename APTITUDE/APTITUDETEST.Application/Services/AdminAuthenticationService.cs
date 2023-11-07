@@ -1,20 +1,19 @@
-﻿using AptitudeTest.Core.Interfaces.UserAuthentication;
+﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
 {
-    public class UserAuthenticationService : IUserAuthenticationService
+    public class AdminAuthenticationService : IAdminAuthenticationService
     {
-
         #region Properties
-        private readonly IUserAuthenticationRepository _userAuthenticationRepository;
+        private readonly IAdminAuthenticationRepository _adminAuthenticationRepository;
         #endregion
 
         #region Constructor
-        public UserAuthenticationService(IUserAuthenticationRepository userAuthenticationRepository)
+        public AdminAuthenticationService(IAdminAuthenticationRepository adminAuthenticationRepository)
         {
-            _userAuthenticationRepository = userAuthenticationRepository;
+            _adminAuthenticationRepository = adminAuthenticationRepository;
         }
         #endregion
 
@@ -23,28 +22,28 @@ namespace AptitudeTest.Application.Services
         #region Login
         public async Task<JsonResult> Login(LoginVm loginVm)
         {
-            return await _userAuthenticationRepository.Login(loginVm);
+            return await _adminAuthenticationRepository.Login(loginVm);
         }
         #endregion
 
         #region ForgetPassword
         public async Task<JsonResult> ForgetPassword(string email)
         {
-            return await _userAuthenticationRepository.ForgetPassword(email);
+            return await _adminAuthenticationRepository.ForgetPassword(email);
         }
         #endregion
 
         #region ResetPassword
         public async Task<JsonResult> ResetPassword(ResetPasswordVm resetPassword)
         {
-            return await _userAuthenticationRepository.ResetPassword(resetPassword);
+            return await _adminAuthenticationRepository.ResetPassword(resetPassword);
         }
         #endregion
 
         #region ChangePassword
         public async Task<JsonResult> ChangePassword(ChangePasswordVM changePassword)
         {
-            return await _userAuthenticationRepository.ChangePassword(changePassword);
+            return await _adminAuthenticationRepository.ChangePassword(changePassword);
         }
         #endregion
 
@@ -52,12 +51,12 @@ namespace AptitudeTest.Application.Services
 
         public async Task<JsonResult> RefreshToken(TokenVm tokens)
         {
-            return await _userAuthenticationRepository.RefreshToken(tokens);
+            return await _adminAuthenticationRepository.RefreshToken(tokens);
         }
         #endregion
 
 
-        #endregion
 
+        #endregion
     }
 }

@@ -21,7 +21,7 @@ namespace AptitudeTest.Core.Entities.Test
         public int TestDuration { get; set; }
 
         [ForeignKey("MasterGroup")]
-        public int GroupId { get; set; }
+        public int? GroupId { get; set; }
         public int BasicPoint { get; set; }
         public string? MessaageAtStartOfTheTest { get; set; }
         public string? MessaageAtEndOfTheTest { get; set; }
