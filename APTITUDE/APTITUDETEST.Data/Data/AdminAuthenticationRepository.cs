@@ -116,7 +116,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (string.IsNullOrEmpty(resetPassword.EncryptedEmail) && string.IsNullOrEmpty(resetPassword.NewPassword))
+                if (string.IsNullOrEmpty(resetPassword.EncryptedEmail) || string.IsNullOrEmpty(resetPassword.NewPassword))
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }

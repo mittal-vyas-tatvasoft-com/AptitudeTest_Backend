@@ -36,7 +36,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (string.IsNullOrEmpty(loginVm.Email) && string.IsNullOrEmpty(loginVm.Password))
+                if (string.IsNullOrEmpty(loginVm.Email) || string.IsNullOrEmpty(loginVm.Password))
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
@@ -113,7 +113,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (string.IsNullOrEmpty(resetPassword.EncryptedEmail) && string.IsNullOrEmpty(resetPassword.NewPassword))
+                if (string.IsNullOrEmpty(resetPassword.EncryptedEmail) || string.IsNullOrEmpty(resetPassword.NewPassword))
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
