@@ -274,6 +274,7 @@ namespace AptitudeTest.Data.Data
                         string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files");
                         string fileName = Guid.NewGuid().ToString() + "_" + option.OptionImage.FileName;
                         string filePath = Path.Combine(uploadFolder, fileName);
+
                         using (var fileStream = new FileStream(filePath, FileMode.Create))
                         {
                             option.OptionImage.CopyTo(fileStream);
