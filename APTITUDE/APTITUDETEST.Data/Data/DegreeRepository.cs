@@ -37,7 +37,7 @@ namespace AptitudeTest.Data.Data
                     Status = degree.Status,
                     Level = degree.Level,
                     UpdatedBy = null,
-                    Streams = masterStreams.Where(stream => stream.DegreeId == degree.Id).Select(stream => stream.Name).ToList()
+                    Streams = masterStreams.Where(stream => stream.DegreeId == degree.Id).Select(stream => " " + stream.Name).ToList()
                 }).ToList();
 
                 return new JsonResult(new ApiResponse<List<DegreeVM>>

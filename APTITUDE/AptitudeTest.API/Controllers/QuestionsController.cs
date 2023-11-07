@@ -29,7 +29,7 @@ namespace AptitudeTest.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("[action]{id:int}")]
+        [HttpGet("[action]/{id:int}")]
         public async Task<JsonResult> Get(int id)
         {
             return await _service.Get(id);
@@ -46,6 +46,7 @@ namespace AptitudeTest.Controllers
         {
             return await _service.GetQuestions(topic, status, pageSize, pageIndex);
         }
+
         /// <summary>
         /// This method gives count of questions in different topics
         /// </summary>

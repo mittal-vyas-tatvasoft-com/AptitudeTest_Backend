@@ -231,19 +231,9 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                if (questionVM.Id != (int)Enums.NumberCount.Zero || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)Common.Enums.OptionType.ImageType && !ValidateImageExtension(questionVM.Options, true)) || !ValidateOptionText(questionVM))
+                if (questionVM.Id != (int)Enums.NumberCount.Zero || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || !ValidateOptionImages(questionVM))
                 {
                     return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
-                }
-
-                if (DoesQuestionExists(questionVM))
-                {
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Question),
-                        Result = false,
-                        StatusCode = ResponseStatusCode.AlreadyExist
-                    });
                 }
                 Question question = new Question();
                 question.QuestionText = questionVM.QuestionText.Trim();
@@ -264,7 +254,6 @@ namespace AptitudeTest.Data.Data
                     QuestionOptions options = new QuestionOptions();
                     options.QuestionId = questionId;
                     options.IsAnswer = option.IsAnswer;
-                    // OptionType 1 refers to string option value and 2 refers to image option value
                     if (questionVM.OptionType == (int)Common.Enums.OptionType.TextType)
                     {
                         options.OptionData = option.OptionValue;
@@ -308,23 +297,13 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (questionVM.Id < (int)Enums.NumberCount.One || !ValidateQuestion(questionVM) || (questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateImageExtension(questionVM.Options, false)) || !ValidateOptionText(questionVM))
+                if (questionVM.Id < (int)Enums.NumberCount.One || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || questionVM.Options.Any(option => option.OptionId == 0))
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
                         Message = ResponseMessages.BadRequest,
                         Result = false,
                         StatusCode = ResponseStatusCode.BadRequest
-                    });
-                }
-
-                if (DoesQuestionExists(questionVM))
-                {
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Question),
-                        Result = false,
-                        StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
 
@@ -338,7 +317,15 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.NotFound
                     });
                 }
-
+                if (question.OptionType != (int)Enums.OptionType.ImageType && questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateOptionImages(questionVM))
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
                 question.QuestionText = questionVM.QuestionText.Trim();
                 question.Status = questionVM.Status;
                 question.Difficulty = questionVM.Difficulty;
@@ -356,7 +343,6 @@ namespace AptitudeTest.Data.Data
                     QuestionOptions questionOptions = optionsList[i];
                     OptionVM optionVM = optionVMList[i];
                     questionOptions.IsAnswer = optionVM.IsAnswer;
-                    // OptionType 1 refers to string option value and 2 refers to image option value
                     if (questionVM.OptionType == (int)Enums.OptionType.TextType)
                     {
                         questionOptions.OptionData = optionVM.OptionValue;
@@ -374,7 +360,6 @@ namespace AptitudeTest.Data.Data
                             }
                             questionOptions.OptionData = fileName;
                         }
-
                     }
                 }
                 _context.QuestionOptions.UpdateRange(optionsList);
@@ -523,8 +508,19 @@ namespace AptitudeTest.Data.Data
             }
             return result;
         }
+
+        private bool ValidateOptionImages(QuestionVM questionVM)
+        {
+            if (questionVM.OptionType == (int)Common.Enums.OptionType.ImageType)
+            {
+                return !questionVM.Options.Any(option => option.OptionImage == null);
+            }
+            return true;
+        }
+
         private bool ValidateImageExtension(List<OptionVM> options, bool strictCheck)
         {
+            var a = options.Select(x => x.OptionImage.Length);
             List<string> extenaions = options.Select(x => x.OptionImage?.ContentType).ToList();
             List<string> acceptableExtensions = acceptableExtensions = new List<string>() { "image/png", "image/jpg", "image/jpeg" };
             if (!strictCheck)
