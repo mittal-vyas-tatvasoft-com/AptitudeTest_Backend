@@ -31,5 +31,7 @@
     <ProjectReference Include="..\APTITUDETEST.Core\AptitudeTest.Core.csproj" />
     <ProjectReference Include="..\APTITUDETEST.Data\AptitudeTest.Data.csproj" />
   </ItemGroup>
-
+<ItemGroup>
+	<Folder Include="wwwroot\Files\"/>
+	</ItemGroup>
 </Project>
