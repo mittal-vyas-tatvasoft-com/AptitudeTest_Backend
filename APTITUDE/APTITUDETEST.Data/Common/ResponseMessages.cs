@@ -12,6 +12,7 @@
         public static string AlreadyExists = "{0} already exists";
         public static string AddSuccess = "{0} Added successfully";
         public static string UpdateSuccess = "{0} updated successfully";
+        public static string StatusUpdateSuccess = "{0} status updated successfully";
         public static string passwordNotMatched = "New Password and Confirm Password doesn't match";
         public static string currentAndNewSame = "Current Password and New Password can't be same";
         public static string DeleteSuccess = "{0} deleted successfully";
@@ -28,6 +29,9 @@
         public static string TokenInvalid = "token is invalid";
         #endregion
 
+        #region AdminAuthentication
+        public static string SuperAdminRequestFail = "You can't perform {0} for this user";
+        #endregion
 
     }
 }
