@@ -7,6 +7,7 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
+using static AptitudeTest.Data.Common.Enums;
 
 namespace AptitudeTest.Data.Data
 {
@@ -182,14 +183,25 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
+                int totalQuestionsCount = addTestQuestion.TestQuestionsCount.Sum(x => x.OneMarkQuestion + x.TwoMarkQuestion + x.ThreeMarkQuestion + x.FourMarkQuestion + x.FiveMarkQuestion);
+                if(totalQuestionsCount != addTestQuestion.NoOfQuestions)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NoOfQuestions),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+                }
                 #region Code to check questions are available in DB
+                var questions = await Task.FromResult(_context.Questions.Where(t => t.Topic == addTestQuestion.TopicId && t.IsDeleted == false).ToList());
                 Func<TestQuestionsCountVM, int> func = x => x.OneMarkQuestion;
                 var MarkQuestionCountReq = 0;
                 for (int questionType = 1; questionType <= 2; questionType++)
                 {
                     for (int i = 1; i <= 5; i++)
                     {
-                        int MarkQuestionCountInDB = await Task.FromResult(_context.Questions.Where(t => t.Topic == addTestQuestion.TopicId && t.QuestionType == questionType && t.Difficulty == i && t.IsDeleted == false).Count());
+                        int MarkQuestionCountInDB = questions.Where(t => t.Topic == addTestQuestion.TopicId && t.QuestionType == questionType && t.Difficulty == i && t.IsDeleted == false).Count();
                         switch (i)
                         {
                             case 1:
@@ -244,7 +256,7 @@ namespace AptitudeTest.Data.Data
                 testQuestionsToBeAdded.NoOfQuestions = addTestQuestion.NoOfQuestions;
                 testQuestionsToBeAdded.Weightage = addTestQuestion.Weightage;
                 testQuestionsToBeAdded.CreatedDate = DateTime.UtcNow;
-                testQuestionsToBeAdded.CreatedBy = test.CreatedBy;
+                testQuestionsToBeAdded.CreatedBy = addTestQuestion.CreatedBy;
 
                 _context.Add(testQuestionsToBeAdded);
                 _context.SaveChanges();
@@ -261,7 +273,7 @@ namespace AptitudeTest.Data.Data
                     testQuestionsCountToBeAdded.FourMarks = testQuestionCount.FourMarkQuestion;
                     testQuestionsCountToBeAdded.FiveMarks = testQuestionCount.FiveMarkQuestion;
                     testQuestionsCountToBeAdded.CreatedDate = DateTime.UtcNow;
-                    testQuestionsCountToBeAdded.CreatedBy = test.CreatedBy;
+                    testQuestionsCountToBeAdded.CreatedBy = addTestQuestion.CreatedBy;
 
                     _context.Add(testQuestionsCountToBeAdded);
                     _context.SaveChanges();

@@ -32,6 +32,7 @@
         #region Test
         public static string NotEnoughQuestion = "There is not enough {0} mark questions in database";
         public static string TestTopicAlreadyExists = "Questions for this topic already exists";
+        public static string NoOfQuestions = "Please enter correct No of Questions";
         #endregion
 
         #region AdminAuthentication
