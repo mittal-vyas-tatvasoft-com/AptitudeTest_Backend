@@ -184,7 +184,7 @@ namespace AptitudeTest.Data.Data
                 }
 
                 int totalQuestionsCount = addTestQuestion.TestQuestionsCount.Sum(x => x.OneMarkQuestion + x.TwoMarkQuestion + x.ThreeMarkQuestion + x.FourMarkQuestion + x.FiveMarkQuestion);
-                if(totalQuestionsCount != addTestQuestion.NoOfQuestions)
+                if (totalQuestionsCount != addTestQuestion.NoOfQuestions)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -193,51 +193,18 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.OK
                     });
                 }
-                #region Code to check questions are available in DB
-                var questions = await Task.FromResult(_context.Questions.Where(t => t.Topic == addTestQuestion.TopicId && t.IsDeleted == false).ToList());
-                Func<TestQuestionsCountVM, int> func = x => x.OneMarkQuestion;
-                var MarkQuestionCountReq = 0;
-                for (int questionType = 1; questionType <= 2; questionType++)
+
+                var result = doesQuestionsAvailableInDB(addTestQuestion);
+                if (!result.Item1)
                 {
-                    for (int i = 1; i <= 5; i++)
+                    return new JsonResult(new ApiResponse<string>
                     {
-                        int MarkQuestionCountInDB = questions.Where(t => t.Topic == addTestQuestion.TopicId && t.QuestionType == questionType && t.Difficulty == i && t.IsDeleted == false).Count();
-                        switch (i)
-                        {
-                            case 1:
-                                func = x => x.OneMarkQuestion;
-                                break;
-                            case 2:
-                                func = x => x.TwoMarkQuestion;
-                                break;
-                            case 3:
-                                func = x => x.ThreeMarkQuestion;
-                                break;
-                            case 4:
-                                func = x => x.FourMarkQuestion;
-                                break;
-                            case 5:
-                                func = x => x.FiveMarkQuestion;
-                                break;
-                            default:
-                                break;
-                        }
-
-                        MarkQuestionCountReq = addTestQuestion.TestQuestionsCount.Where(t => t.QuestionType == questionType).Select(func).FirstOrDefault();
-
-                        if (MarkQuestionCountReq > MarkQuestionCountInDB)
-                        {
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = string.Format(ResponseMessages.NotEnoughQuestion, i),
-                                Result = true,
-                                StatusCode = ResponseStatusCode.OK
-                            });
-                        }
-                    }
+                        Message = string.Format(ResponseMessages.NotEnoughQuestion, result.Item2, result.Item3),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
                 }
-                #endregion
-                
+
                 TestQuestions testQuestion = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == addTestQuestion.TestId && t.TopicId == addTestQuestion.TopicId && t.IsDeleted == false).FirstOrDefault());
                 if (testQuestion != null)
                 {
@@ -297,6 +264,50 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
+        }
+        #endregion
+
+        #region Helper Method
+        private (bool, int, string) doesQuestionsAvailableInDB(AddTestQuestionsVM addTestQuestion)
+        {
+            var questions = _context.Questions.Where(t => t.Topic == addTestQuestion.TopicId && t.IsDeleted == false).ToList();
+            Func<TestQuestionsCountVM, int> func = x => x.OneMarkQuestion;
+            var MarkQuestionCountReq = 0;
+            for (int questionType = 1; questionType <= 2; questionType++)
+            {
+                for (int i = 1; i <= 5; i++)
+                {
+                    int MarkQuestionCountInDB = questions.Where(t => t.Topic == addTestQuestion.TopicId && t.QuestionType == questionType && t.Difficulty == i && t.IsDeleted == false).Count();
+                    switch (i)
+                    {
+                        case 1:
+                            func = x => x.OneMarkQuestion;
+                            break;
+                        case 2:
+                            func = x => x.TwoMarkQuestion;
+                            break;
+                        case 3:
+                            func = x => x.ThreeMarkQuestion;
+                            break;
+                        case 4:
+                            func = x => x.FourMarkQuestion;
+                            break;
+                        case 5:
+                            func = x => x.FiveMarkQuestion;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    MarkQuestionCountReq = addTestQuestion.TestQuestionsCount.Where(t => t.QuestionType == questionType).Select(func).FirstOrDefault();
+
+                    if (MarkQuestionCountReq > MarkQuestionCountInDB)
+                    {
+                        return (false, i, Enum.GetName(typeof(QuestionType), questionType));
+                    }
+                }
+            }
+            return (true, 0, null);
         }
         #endregion
     }
