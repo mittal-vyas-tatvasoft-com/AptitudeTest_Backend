@@ -417,7 +417,7 @@ namespace AptitudeTest.Data.Data
 
                         return new JsonResult(new ApiResponse<int>
                         {
-                            Data = 0,
+                            Data = result.candidates_added_count,
                             Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Candidates),
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
