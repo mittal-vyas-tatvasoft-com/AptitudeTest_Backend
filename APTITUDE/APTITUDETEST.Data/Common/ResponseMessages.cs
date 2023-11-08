@@ -30,6 +30,12 @@
         public static string TokenInvalid = "token is invalid";
         #endregion
 
+        #region Test
+        public static string NotEnoughQuestion = "There is not enough {0} mark questions of {1} in database";
+        public static string TestTopicAlreadyExists = "Questions for this topic already exists";
+        public static string NoOfQuestions = "Please enter correct no of questions";
+        #endregion
+
         #region AdminAuthentication
         public static string SuperAdminRequestFail = "You can't perform {0} for this user";
         #endregion

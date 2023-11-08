@@ -7,6 +7,7 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
+using static AptitudeTest.Data.Common.Enums;
 
 namespace AptitudeTest.Data.Data
 {
@@ -165,6 +166,148 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
+        }
+
+        public async Task<JsonResult> AddTestQuestions(AddTestQuestionsVM addTestQuestion)
+        {
+            try
+            {
+                Test test = await Task.FromResult(_context.Tests.Where(t => t.Id == addTestQuestion.TestId && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault());
+                if (test == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+                }
+
+                int totalQuestionsCount = addTestQuestion.TestQuestionsCount.Sum(x => x.OneMarkQuestion + x.TwoMarkQuestion + x.ThreeMarkQuestion + x.FourMarkQuestion + x.FiveMarkQuestion);
+                if (totalQuestionsCount != addTestQuestion.NoOfQuestions)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NoOfQuestions),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+                }
+
+                var result = doesQuestionsAvailableInDB(addTestQuestion);
+                if (!result.Item1)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotEnoughQuestion, result.Item2, result.Item3),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+                }
+
+                TestQuestions testQuestion = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == addTestQuestion.TestId && t.TopicId == addTestQuestion.TopicId && t.IsDeleted == false).FirstOrDefault());
+                if (testQuestion != null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.TestTopicAlreadyExists),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+                }
+
+                TestQuestions testQuestionsToBeAdded = new TestQuestions();
+
+                testQuestionsToBeAdded.TestId = addTestQuestion.TestId;
+                testQuestionsToBeAdded.TopicId = addTestQuestion.TopicId;
+                testQuestionsToBeAdded.NoOfQuestions = addTestQuestion.NoOfQuestions;
+                testQuestionsToBeAdded.Weightage = addTestQuestion.Weightage;
+                testQuestionsToBeAdded.CreatedDate = DateTime.UtcNow;
+                testQuestionsToBeAdded.CreatedBy = addTestQuestion.CreatedBy;
+
+                _context.Add(testQuestionsToBeAdded);
+                _context.SaveChanges();
+
+                TestQuestionsCount testQuestionsCountToBeAdded = new TestQuestionsCount();
+
+                foreach (var testQuestionCount in addTestQuestion.TestQuestionsCount)
+                {
+                    testQuestionsCountToBeAdded.TestQuestionId = testQuestionsToBeAdded.Id;
+                    testQuestionsCountToBeAdded.QuestionType = testQuestionCount.QuestionType;
+                    testQuestionsCountToBeAdded.OneMarks = testQuestionCount.OneMarkQuestion;
+                    testQuestionsCountToBeAdded.TwoMarks = testQuestionCount.TwoMarkQuestion;
+                    testQuestionsCountToBeAdded.ThreeMarks = testQuestionCount.ThreeMarkQuestion;
+                    testQuestionsCountToBeAdded.FourMarks = testQuestionCount.FourMarkQuestion;
+                    testQuestionsCountToBeAdded.FiveMarks = testQuestionCount.FiveMarkQuestion;
+                    testQuestionsCountToBeAdded.CreatedDate = DateTime.UtcNow;
+                    testQuestionsCountToBeAdded.CreatedBy = addTestQuestion.CreatedBy;
+
+                    _context.Add(testQuestionsCountToBeAdded);
+                    _context.SaveChanges();
+                }
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.TestQuestions),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.OK
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
+        #endregion
+
+        #region Helper Method
+        private (bool, int, string) doesQuestionsAvailableInDB(AddTestQuestionsVM addTestQuestion)
+        {
+            var questions = _context.Questions.Where(t => t.Topic == addTestQuestion.TopicId && t.IsDeleted == false).ToList();
+            Func<TestQuestionsCountVM, int> func = x => x.OneMarkQuestion;
+            var MarkQuestionCountReq = 0;
+            for (int questionType = 1; questionType <= 2; questionType++)
+            {
+                for (int i = 1; i <= 5; i++)
+                {
+                    int MarkQuestionCountInDB = questions.Where(t => t.Topic == addTestQuestion.TopicId && t.QuestionType == questionType && t.Difficulty == i && t.IsDeleted == false).Count();
+                    switch (i)
+                    {
+                        case 1:
+                            func = x => x.OneMarkQuestion;
+                            break;
+                        case 2:
+                            func = x => x.TwoMarkQuestion;
+                            break;
+                        case 3:
+                            func = x => x.ThreeMarkQuestion;
+                            break;
+                        case 4:
+                            func = x => x.FourMarkQuestion;
+                            break;
+                        case 5:
+                            func = x => x.FiveMarkQuestion;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    MarkQuestionCountReq = addTestQuestion.TestQuestionsCount.Where(t => t.QuestionType == questionType).Select(func).FirstOrDefault();
+
+                    if (MarkQuestionCountReq > MarkQuestionCountInDB)
+                    {
+                        return (false, i, Enum.GetName(typeof(QuestionType), questionType));
+                    }
+                }
+            }
+            return (true, 0, null);
         }
         #endregion
     }

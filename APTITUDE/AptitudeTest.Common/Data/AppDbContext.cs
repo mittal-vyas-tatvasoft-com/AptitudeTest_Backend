@@ -348,6 +348,6 @@ namespace APTITUDETEST.Common.Data
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Test> Tests { get; set; }
         public DbSet<TestQuestions> TestQuestions { get; set; }
-        public DbSet<TestQuestionsCount> TestQuestionsCounts { get; set; }
+        public DbSet<TestQuestionsCount> TestQuestionsCount { get; set; }
     }
 }

@@ -23,6 +23,7 @@
         public static string Group = "Group";
         public static string Operation = "Operation";
         public static string Test = "Test";
+        public static string TestQuestions = "TestQuestions";
 
     }
 }

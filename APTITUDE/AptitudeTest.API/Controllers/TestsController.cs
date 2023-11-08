@@ -60,6 +60,18 @@ namespace AptitudeTest.Controllers
         {
             return await _service.UpdateTestGroup(updateTest);
         }
+
+        /// <summary>
+        /// Add Test Questions
+        /// </summary>
+        /// <param name="testQuestionVM"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<JsonResult> AddTestQuestions(AddTestQuestionsVM testQuestionVM)
+        {
+            return await _service.AddTestQuestions(testQuestionVM);
+        }
+
         #endregion
     }
 }
