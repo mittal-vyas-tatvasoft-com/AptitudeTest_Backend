@@ -2,7 +2,7 @@
 
 namespace AptitudeTest.Core.ViewModels
 {
-    public class AddTestQuestionsVM
+    public class TestQuestionsVM
     {
         [Required]
         public int TestId { get; set; }
@@ -13,5 +13,6 @@ namespace AptitudeTest.Core.ViewModels
         [Required]
         public List<TestQuestionsCountVM> TestQuestionsCount { get; set; }
         public int CreatedBy { get; set; }
+        public int UpdatedBy { get; set; }
     }
 }
