@@ -67,9 +67,20 @@ namespace AptitudeTest.Controllers
         /// <param name="testQuestionVM"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<JsonResult> AddTestQuestions(AddTestQuestionsVM testQuestionVM)
+        public async Task<JsonResult> AddTestQuestions(TestQuestionsVM testQuestionVM)
         {
             return await _service.AddTestQuestions(testQuestionVM);
+        }
+
+        /// <summary>
+        /// Update Test Questions
+        /// </summary>
+        /// <param name="testQuestionVM"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<JsonResult> UpdateTestQuestions(TestQuestionsVM testQuestionVM)
+        {
+            return await _service.UpdateTestQuestions(testQuestionVM);
         }
 
         #endregion

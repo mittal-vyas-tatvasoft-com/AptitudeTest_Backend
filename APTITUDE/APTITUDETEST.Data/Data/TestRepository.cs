@@ -168,7 +168,7 @@ namespace AptitudeTest.Data.Data
 
         }
 
-        public async Task<JsonResult> AddTestQuestions(AddTestQuestionsVM addTestQuestion)
+        public async Task<JsonResult> AddTestQuestions(TestQuestionsVM addTestQuestion)
         {
             try
             {
@@ -265,10 +265,98 @@ namespace AptitudeTest.Data.Data
             }
 
         }
+
+        public async Task<JsonResult> UpdateTestQuestions(TestQuestionsVM updateTestQuestion)
+        {
+            try
+            {
+                Test test = await Task.FromResult(_context.Tests.Where(t => t.Id == updateTestQuestion.TestId && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault());
+                if (test == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+                }
+
+                int totalQuestionsCount = updateTestQuestion.TestQuestionsCount.Sum(x => x.OneMarkQuestion + x.TwoMarkQuestion + x.ThreeMarkQuestion + x.FourMarkQuestion + x.FiveMarkQuestion);
+                if (totalQuestionsCount != updateTestQuestion.NoOfQuestions)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NoOfQuestions),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+                }
+
+                var result = doesQuestionsAvailableInDB(updateTestQuestion);
+                if (!result.Item1)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotEnoughQuestion, result.Item2, result.Item3),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+                }
+
+                TestQuestions testQuestion = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == updateTestQuestion.TestId && t.TopicId == updateTestQuestion.TopicId && t.IsDeleted == false).FirstOrDefault());
+                if (testQuestion == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.TestTopicQuestionsNotFound),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+                }
+
+                testQuestion.NoOfQuestions = updateTestQuestion.NoOfQuestions;
+                testQuestion.UpdatedDate = DateTime.UtcNow;
+                testQuestion.UpdatedBy = updateTestQuestion.CreatedBy;
+                _context.SaveChanges();
+
+                foreach (var testQuestionCount in updateTestQuestion.TestQuestionsCount)
+                {
+                    TestQuestionsCount testQuestionTypeWiseCountExists = await Task.FromResult(_context.TestQuestionsCount.Where(t => t.TestQuestionId == testQuestion.Id && t.QuestionType == testQuestionCount.QuestionType && t.IsDeleted == false).FirstOrDefault());
+                    if (testQuestionTypeWiseCountExists != null)
+                    {
+                        testQuestionTypeWiseCountExists.OneMarks = testQuestionCount.OneMarkQuestion;
+                        testQuestionTypeWiseCountExists.TwoMarks = testQuestionCount.TwoMarkQuestion;
+                        testQuestionTypeWiseCountExists.ThreeMarks = testQuestionCount.ThreeMarkQuestion;
+                        testQuestionTypeWiseCountExists.FourMarks = testQuestionCount.FourMarkQuestion;
+                        testQuestionTypeWiseCountExists.FiveMarks = testQuestionCount.FiveMarkQuestion;
+
+                        _context.SaveChanges(true);
+                    }
+                }
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TestQuestions),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.OK
+                });
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
         #endregion
 
         #region Helper Method
-        private (bool, int, string) doesQuestionsAvailableInDB(AddTestQuestionsVM addTestQuestion)
+        private (bool, int, string) doesQuestionsAvailableInDB(TestQuestionsVM addTestQuestion)
         {
             var questions = _context.Questions.Where(t => t.Topic == addTestQuestion.TopicId && t.IsDeleted == false).ToList();
             Func<TestQuestionsCountVM, int> func = x => x.OneMarkQuestion;
