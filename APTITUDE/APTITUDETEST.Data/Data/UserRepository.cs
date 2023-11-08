@@ -556,8 +556,8 @@ namespace AptitudeTest.Data.Data
                     // Handle validation errors for the current record
                     validate.isValidate = false;
                     // You can also log or handle the validation errors in some way
-                    validate.validationMessage.AddRange(results.Select(x=> x.ErrorMessage).ToList());
-                 
+                    validate.validationMessage.AddRange(results.Select(x => x.ErrorMessage).ToList());
+
                 }
             }
             return validate;
@@ -565,7 +565,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #endregion
-        
+
         #endregion
 
         #endregion
