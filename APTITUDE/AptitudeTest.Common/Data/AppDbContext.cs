@@ -30,7 +30,7 @@ namespace APTITUDETEST.Common.Data
                     .IsUnicode(false).IsRequired(false);
                 entity.Property(e => e.FatherName)
                     .HasMaxLength(50)
-                    .IsUnicode(false).IsRequired(false).IsRequired(false);
+                    .IsUnicode(false).IsRequired(false);
                 entity.Property(e => e.Email).HasMaxLength(500);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.Status).HasDefaultValue(true);
