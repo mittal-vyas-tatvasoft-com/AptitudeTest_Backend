@@ -27,7 +27,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (id < (int)Enums.NumberCount.One)
+                if (id < 1)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -40,7 +40,7 @@ namespace AptitudeTest.Data.Data
                 using (DbConnection connection = new DbConnection())
                 {
                     var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getQuestionbyid(@question_id)", new { question_id = id });
-                    if (data.Count() == (int)Enums.NumberCount.Zero)
+                    if (data.Count() == 0)
                     {
                         return new JsonResult(new ApiResponse<UserDetailsVM>
                         {
@@ -100,11 +100,11 @@ namespace AptitudeTest.Data.Data
             {
                 using (DbConnection connection = new DbConnection())
                 {
-                    if (pageSize < (int)Enums.NumberCount.One)
+                    if (pageSize < 1)
                     {
                         pageSize = (int)Enums.Pagination.DefaultPageSize;
                     }
-                    if (pageIndex < (int)Enums.NumberCount.Zero)
+                    if (pageIndex < (int)Enums.Pagination.DefaultIndex)
                     {
                         pageIndex = (int)Enums.Pagination.DefaultIndex;
                     }
@@ -143,8 +143,8 @@ namespace AptitudeTest.Data.Data
                         }
                         ).ToList();
 
-                    int PageCount = (int)Enums.NumberCount.Zero;
-                    int totalItemsCount = (int)Enums.NumberCount.Zero;
+                    int PageCount = 0;
+                    int totalItemsCount = 0;
                     bool isNextPage = false;
                     var temp = data.FirstOrDefault();
                     if (temp != null)
@@ -153,7 +153,7 @@ namespace AptitudeTest.Data.Data
                         totalItemsCount = (int)temp?.TotalRecords;
                         isNextPage = temp?.NextPage == null ? false : true;
                     }
-                    bool isPreviousPage = pageIndex == (int)Enums.NumberCount.Zero ? false : true;
+                    bool isPreviousPage = pageIndex == (int)Enums.Pagination.DefaultIndex ? false : true;
 
                     PaginationVM<QuestionVM> pagination = new PaginationVM<QuestionVM>()
                     {
@@ -231,7 +231,7 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                if (questionVM.Id != (int)Enums.NumberCount.Zero || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || !ValidateOptionImages(questionVM))
+                if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || !ValidateOptionImages(questionVM))
                 {
                     return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
                 }
@@ -297,7 +297,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (questionVM.Id < (int)Enums.NumberCount.One || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || questionVM.Options.Any(option => option.OptionId == 0))
+                if (questionVM.Id < 1 || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || questionVM.Options.Any(option => option.OptionId == 0))
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -338,7 +338,7 @@ namespace AptitudeTest.Data.Data
 
                 List<QuestionOptions> optionsList = await Task.FromResult(_context.QuestionOptions.Where(option => option.QuestionId == question.Id).OrderBy(option => option.Id).ToList());
                 List<OptionVM> optionVMList = questionVM.Options.OrderBy(option => option.OptionId).ToList();
-                for (int i = (int)Enums.NumberCount.Zero; i < (int)Enums.NumberCount.Four; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     QuestionOptions questionOptions = optionsList[i];
                     OptionVM optionVM = optionVMList[i];
@@ -426,7 +426,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (id < (int)Enums.NumberCount.One)
+                if (id < 1)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -477,14 +477,14 @@ namespace AptitudeTest.Data.Data
 
         private bool ValidateQuestion(QuestionVM questionVM)
         {
-            if (questionVM.Options.Count() == (int)Enums.NumberCount.Four)
+            if (questionVM.Options.Count() == 4)
             {
                 int answerCount = questionVM.Options.Where(option => option.IsAnswer == true).Count();
-                if (questionVM.QuestionType == (int)Common.Enums.QuestionType.SingleAnswer && answerCount == (int)Enums.NumberCount.One)
+                if (questionVM.QuestionType == (int)Common.Enums.QuestionType.SingleAnswer && answerCount == 1)
                 {
                     return true;
                 }
-                else if (questionVM.QuestionType == (int)Common.Enums.QuestionType.MultiAnswer && answerCount > (int)Enums.NumberCount.One)
+                else if (questionVM.QuestionType == (int)Common.Enums.QuestionType.MultiAnswer && answerCount > 1)
                 {
                     return true;
                 }
@@ -525,7 +525,7 @@ namespace AptitudeTest.Data.Data
             {
                 if (questionVM.OptionType == (long)Common.Enums.QuestionType.MultiAnswer)
                 {
-                    if (questionVM.DuplicateFromQuestionId != (int)Enums.NumberCount.Zero && questionVM.Options.Where(option => option.OptionImage != null).Count() == (int)Enums.NumberCount.Zero)
+                    if (questionVM.DuplicateFromQuestionId != 0 && questionVM.Options.Where(option => option.OptionImage != null).Count() == 0)
                     {
                         return true;
                     }
@@ -534,7 +534,7 @@ namespace AptitudeTest.Data.Data
 
                 List<QuestionOptions> options = _context.QuestionOptions.Where(option => option.QuestionId == question.Id).OrderBy(option => option.Id).ToList();
                 bool[] flag = new bool[] { false, false, false, false };
-                for (int i = (int)Enums.NumberCount.Zero; i < (int)Enums.NumberCount.Four; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     var option = options[i];
                     foreach (var questionOption in questionVM.Options)

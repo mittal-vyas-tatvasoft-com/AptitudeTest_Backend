@@ -9,7 +9,6 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
-using static AptitudeTest.Data.Common.Enums;
 
 namespace AptitudeTest.Data.Data
 {
@@ -103,7 +102,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (id != (int)NumberCount.Zero)
+                if (id != 0)
                 {
                     Admin? admin = _appDbContext.Admins.Where(ad => ad.Id == id && ad.IsSuperAdmin == false).FirstOrDefault();
                     if (admin != null)
@@ -174,7 +173,7 @@ namespace AptitudeTest.Data.Data
                         bool isEmailSent;
                         _appDbContext.Add(adminToBeAdded);
                         int count = _appDbContext.SaveChanges();
-                        if (count == (int)NumberCount.One)
+                        if (count == 1)
                         {
                             isEmailSent = SendMailForPassword(admin.FirstName, pass, admin.Email);
                             if (isEmailSent)
@@ -255,7 +254,7 @@ namespace AptitudeTest.Data.Data
                             _appDbContext.Update(adminToBeUpdated);
                             int count = _appDbContext.SaveChanges();
 
-                            if (count == (int)NumberCount.One)
+                            if (count == 1)
                             {
                                 return new JsonResult(new ApiResponse<string>
                                 {
@@ -333,7 +332,7 @@ namespace AptitudeTest.Data.Data
                         _appDbContext.Update(adminStatusToBeUpdated);
                         int count = _appDbContext.SaveChanges();
 
-                        if (count == (int)NumberCount.One)
+                        if (count == 1)
                         {
                             return new JsonResult(new ApiResponse<string>
                             {
@@ -387,7 +386,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (id != (int)NumberCount.Zero)
+                if (id != 0)
                 {
                     Admin? adminToBeDeleted = _appDbContext.Admins.Where(ad => ad.Id == id && ad.IsSuperAdmin == false).FirstOrDefault();
                     if (adminToBeDeleted != null)
@@ -396,7 +395,7 @@ namespace AptitudeTest.Data.Data
                         _appDbContext.Update(adminToBeDeleted);
                         int count = _appDbContext.SaveChanges();
 
-                        if (count == (int)NumberCount.One)
+                        if (count == 1)
                         {
                             return new JsonResult(new ApiResponse<string>
                             {
