@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
 
@@ -356,6 +357,19 @@ namespace AptitudeTest.Data.Data
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
                     var records = csv.GetRecords<UserImportVM>().ToList();
+                    ValidateImportFileVM checkData = await checkImportedData(records);
+
+                    if (checkData.isValidate == false)
+                    {
+                        return new JsonResult(new ApiResponse<List<string>>
+                        {
+                            Data = checkData.validationMessage,
+                            Message = ResponseMessages.InsertProperData,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
+
                     if (records.Count <= 0)
                     {
                         return new JsonResult(new ApiResponse<int>
@@ -526,6 +540,29 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        private async Task<ValidateImportFileVM> checkImportedData(List<UserImportVM> records)
+        {
+
+            ValidateImportFileVM validate = new();
+
+            foreach (var record in records)
+            {
+                var context = new ValidationContext(record, serviceProvider: null, items: null);
+                var results = new List<ValidationResult>();
+
+                if (!Validator.TryValidateObject(record, context, results, validateAllProperties: true))
+                {
+                    // Handle validation errors for the current record
+                    validate.isValidate = false;
+                    // You can also log or handle the validation errors in some way
+                    foreach (var validationResult in results)
+                    {
+                        validate.validationMessage.Add(validationResult.ErrorMessage);
+                    }
+                }
+            }
+            return validate;
+        }
         #endregion
         #endregion
 
