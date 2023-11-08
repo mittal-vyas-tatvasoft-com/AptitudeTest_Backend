@@ -7,7 +7,7 @@
         public static string InternalError = "Internal Server Error";
         public static string Success = "Operation Success";
         public static string BadRequest = "Invalid Request";
-        public static string InsertProperData = "Please inser proper data according requirement";
+        public static string InsertProperData = "Please insert proper data according requirement";
 
         public static string NotFound = "{0} does not exists";
         public static string AlreadyExists = "{0} already exists";
