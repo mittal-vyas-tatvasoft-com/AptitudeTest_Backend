@@ -4,6 +4,7 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
+using APTITUDETEST.Core.Entities.Users;
 using CsvHelper;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -149,6 +150,16 @@ namespace AptitudeTest.Data.Data
             var password = RandomPasswordGenerator.GenerateRandomPassword(8);
             try
             {
+                User users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() && t.IsDeleted != true).FirstOrDefault();
+                if (users != null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Candidate),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     var procedure = "insert_user";
