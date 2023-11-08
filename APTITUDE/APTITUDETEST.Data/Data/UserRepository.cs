@@ -13,8 +13,6 @@ using Npgsql;
 using NpgsqlTypes;
 using System.Data;
 using System.Globalization;
-using System.Net.Mail;
-using System.Text;
 
 namespace AptitudeTest.Data.Data
 {
@@ -173,7 +171,7 @@ namespace AptitudeTest.Data.Data
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
                     if (userId > 0)
                     {
-                        bool isMailSent = SendMailForResetPassword(user.FirstName, user.Email);
+                        bool isMailSent = SendMailForPassword(user.FirstName, user.Email, pass);
 
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -367,46 +365,46 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
-                    foreach (var record in records)
-                    {
-                        record.groupid = importUsers.GroupId;
-                        record.collegeid = importUsers.CollegeId;
-                    }
+
                     if (records != null)
                     {
-                        int result;
+                        ImportCandidateResponseVM? result;
                         using (var connection = _dapperContext.CreateConnection())
                         {
-                            var procedure = "import_users_new";
+                            var procedure = "import_users";
                             var parameters = new DynamicParameters();
                             parameters.Add("p_import_user_data", records, DbType.Object, ParameterDirection.Input);
+                            parameters.Add("groupid", importUsers.GroupId, DbType.Int32, ParameterDirection.Input);
+                            parameters.Add("collegeid", importUsers.CollegeId, DbType.Int32, ParameterDirection.Input);
                             parameters.Add("candidates_added_count", ParameterDirection.Output);
+                            parameters.Add("inserted_emails", DbType.Object, direction: ParameterDirection.Output);
 
                             // Execute the stored procedure
 
-                            result = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                            result = connection.Query<ImportCandidateResponseVM>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
 
-                            if (result == 0)
+                            if (result.candidates_added_count == 0)
                             {
                                 return new JsonResult(new ApiResponse<int>
                                 {
-                                    Data = result,
-                                    Message = string.Format(ResponseMessages.AlreadyExists),
+                                    Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.AllCandidates),
                                     Result = true,
                                     StatusCode = ResponseStatusCode.AlreadyExist
                                 });
                             }
-
-                            foreach (var record in records)
+                            string[] insertedEmails = parameters.Get<string[]>("inserted_emails");
+                            foreach (var email in insertedEmails)
                             {
-                                bool isMailSent = SendMailForResetPassword(record.firstname, record.email);
+                                var pass = RandomPasswordGenerator.GenerateRandomPassword(8);
+                                var record = records.Where(r => r.email == email).FirstOrDefault();
+                                bool isMailSent = SendMailForPassword(record.firstname, email, pass);
                             }
                         }
 
                         return new JsonResult(new ApiResponse<int>
                         {
-                            Data = result,
-                            Message = string.Format(ResponseMessages.Success),
+                            Data = 0,
+                            Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Candidates),
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
                         });
@@ -415,9 +413,9 @@ namespace AptitudeTest.Data.Data
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = string.Format(ResponseMessages.InternalError, "Import Users"),
+                            Message = ResponseMessages.BadRequest,
                             Result = false,
-                            StatusCode = ResponseStatusCode.RequestFailed
+                            StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
                 }
@@ -426,7 +424,7 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
+                    Message = ResponseMessages.InternalError,
                     Result = false,
                     StatusCode = ResponseStatusCode.RequestFailed
                 });
@@ -512,23 +510,12 @@ namespace AptitudeTest.Data.Data
         }
 
         #region SendEmail
-        private bool SendMailForResetPassword(string firstName, string email)
+        private bool SendMailForPassword(string firstName, string email, string password)
         {
             try
             {
-                byte[] byteForEmail = Encoding.ASCII.GetBytes(email);
-                string encryptedEmail = Convert.ToBase64String(byteForEmail);
-                UriBuilder builder = new();
-                builder.Host = Convert.ToString(_config["EmailGeneration:FrontEndUrl"]);
-                builder.Port = Convert.ToInt16(_config["EmailGeneration:FrontEndPort"]);
-                builder.Path = "/ResetPassword";
-                builder.Query = "&email=" + encryptedEmail;
-                var resetLink = builder.ToString();
-
-                var toAddress = new MailAddress(email);
-                var subject = "Password reset request";
-                var body = $"<h3>Hello {firstName}</h3>,<br />Please click on the following link to reset your password <br /><a href='{resetLink}'><h3>Click here</h3></a>";
-
+                var subject = "Credetials for login";
+                var body = $"<h3>Hello {firstName}</h3>,<br />we received registration request for you ,<br /><br /Here is your credetials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2>";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;

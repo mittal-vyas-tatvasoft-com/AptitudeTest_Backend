@@ -13,6 +13,8 @@
         public static string Question = "Question";
 
         public static string User = "User";
+        public static string AllCandidates = "All the candidates";
+        public static string Candidates = "Candidates";
 
         public static string Password = "Password";
 
