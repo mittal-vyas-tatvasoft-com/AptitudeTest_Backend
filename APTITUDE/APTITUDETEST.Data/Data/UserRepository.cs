@@ -540,6 +540,7 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        #region validationImportedUsers
         private async Task<ValidateImportFileVM> checkImportedData(List<UserImportVM> records)
         {
 
@@ -562,6 +563,9 @@ namespace AptitudeTest.Data.Data
             return validate;
         }
         #endregion
+
+        #endregion
+        
         #endregion
 
         #endregion
