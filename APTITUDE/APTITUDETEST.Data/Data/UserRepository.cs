@@ -146,7 +146,7 @@ namespace AptitudeTest.Data.Data
         #region Create
         public async Task<JsonResult> Create(CreateUserVM user)
         {
-            var pass = RandomPasswordGenerator.GenerateRandomPassword(8);
+            var password = RandomPasswordGenerator.GenerateRandomPassword(8);
             try
             {
                 using (var connection = _dapperContext.CreateConnection())
@@ -159,7 +159,7 @@ namespace AptitudeTest.Data.Data
                             p_lastname = user.LastName,
                             p_fathername = user.FatherName,
                             p_email = user.Email,
-                            p_password = pass,
+                            p_password = password,
                             p_phonenumber = user.PhoneNumber,
                             p_groupid = user.GroupId,
                             p_collegeid = user.CollegeId,
@@ -172,7 +172,7 @@ namespace AptitudeTest.Data.Data
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
                     if (userId > 0)
                     {
-                        bool isMailSent = SendMailForPassword(user.FirstName, user.Email, pass);
+                        bool isMailSent = SendMailForPassword(user.FirstName, user.Email, password);
 
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -409,9 +409,9 @@ namespace AptitudeTest.Data.Data
                             string[] insertedEmails = parameters.Get<string[]>("inserted_emails");
                             foreach (var email in insertedEmails)
                             {
-                                var pass = RandomPasswordGenerator.GenerateRandomPassword(8);
+                                var password = RandomPasswordGenerator.GenerateRandomPassword(8);
                                 var record = records.Where(r => r.email == email).FirstOrDefault();
-                                bool isMailSent = SendMailForPassword(record.firstname, email, pass);
+                                bool isMailSent = SendMailForPassword(record.firstname, email, password);
                             }
                         }
 
