@@ -1,6 +1,5 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
@@ -49,9 +48,9 @@ namespace AptitudeTest.Application.Services
             return await _userRepository.DeleteUsers(userIds);
         }
 
-        public async Task<JsonResult> ImportUsers(IFormFile file)
+        public async Task<JsonResult> ImportUsers(ImportUserVM importUsers)
         {
-            return await _userRepository.ImportUsers(file);
+            return await _userRepository.ImportUsers(importUsers);
         }
         #endregion
     }

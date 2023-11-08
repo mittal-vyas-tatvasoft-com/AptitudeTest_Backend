@@ -6,16 +6,14 @@ using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using CsvHelper;
 using Dapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
-using System.Net.Mail;
-using System.Text;
 
 namespace AptitudeTest.Data.Data
 {
@@ -148,7 +146,7 @@ namespace AptitudeTest.Data.Data
         #region Create
         public async Task<JsonResult> Create(CreateUserVM user)
         {
-            var pass = RandomPasswordGenerator.GenerateRandomPassword(8);
+            var password = RandomPasswordGenerator.GenerateRandomPassword(8);
             try
             {
                 using (var connection = _dapperContext.CreateConnection())
@@ -161,7 +159,7 @@ namespace AptitudeTest.Data.Data
                             p_lastname = user.LastName,
                             p_fathername = user.FatherName,
                             p_email = user.Email,
-                            p_password = pass,
+                            p_password = password,
                             p_phonenumber = user.PhoneNumber,
                             p_groupid = user.GroupId,
                             p_collegeid = user.CollegeId,
@@ -174,7 +172,7 @@ namespace AptitudeTest.Data.Data
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
                     if (userId > 0)
                     {
-                        bool isMailSent = SendMailForResetPassword(user.FirstName, user.Email);
+                        bool isMailSent = SendMailForPassword(user.FirstName, user.Email, password);
 
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -351,36 +349,76 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region ImportUsers
-        public async Task<JsonResult> ImportUsers(IFormFile file)
+        public async Task<JsonResult> ImportUsers(ImportUserVM importUsers)
         {
             try
             {
-                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var reader = new StreamReader(importUsers.file.OpenReadStream()))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
                     var records = csv.GetRecords<UserImportVM>().ToList();
+                    ValidateImportFileVM checkData = await checkImportedData(records);
+
+                    if (checkData.isValidate == false)
+                    {
+                        return new JsonResult(new ApiResponse<List<string>>
+                        {
+                            Data = checkData.validationMessage,
+                            Message = ResponseMessages.InsertProperData,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
+
+                    if (records.Count <= 0)
+                    {
+                        return new JsonResult(new ApiResponse<int>
+                        {
+                            Message = string.Format(ResponseMessages.BadRequest),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
+
                     if (records != null)
                     {
+                        ImportCandidateResponseVM? result;
                         using (var connection = _dapperContext.CreateConnection())
                         {
                             var procedure = "import_users";
-                            var parameters = new DynamicParameters(
-                            new
-                            {
-                                p_import_user_data = records.ToArray()
-                            });
+                            var parameters = new DynamicParameters();
+                            parameters.Add("p_import_user_data", records, DbType.Object, ParameterDirection.Input);
+                            parameters.Add("groupid", importUsers.GroupId, DbType.Int32, ParameterDirection.Input);
+                            parameters.Add("collegeid", importUsers.CollegeId, DbType.Int32, ParameterDirection.Input);
+                            parameters.Add("candidates_added_count", ParameterDirection.Output);
+                            parameters.Add("inserted_emails", DbType.Object, direction: ParameterDirection.Output);
 
-                            connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                            // Execute the stored procedure
 
-                            foreach (var record in records)
+                            result = connection.Query<ImportCandidateResponseVM>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                            if (result.candidates_added_count == 0)
                             {
-                                bool isMailSent = SendMailForResetPassword(record.firstname, record.email);
+                                return new JsonResult(new ApiResponse<int>
+                                {
+                                    Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.AllCandidates),
+                                    Result = true,
+                                    StatusCode = ResponseStatusCode.AlreadyExist
+                                });
+                            }
+                            string[] insertedEmails = parameters.Get<string[]>("inserted_emails");
+                            foreach (var email in insertedEmails)
+                            {
+                                var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+                                var record = records.Where(r => r.email == email).FirstOrDefault();
+                                bool isMailSent = SendMailForPassword(record.firstname, email, password);
                             }
                         }
 
-                        return new JsonResult(new ApiResponse<string>
+                        return new JsonResult(new ApiResponse<int>
                         {
-                            Message = string.Format(ResponseMessages.Success),
+                            Data = result.candidates_added_count,
+                            Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Candidates),
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
                         });
@@ -389,9 +427,9 @@ namespace AptitudeTest.Data.Data
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = string.Format(ResponseMessages.InternalError, "Import Users"),
+                            Message = ResponseMessages.BadRequest,
                             Result = false,
-                            StatusCode = ResponseStatusCode.RequestFailed
+                            StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
                 }
@@ -400,7 +438,7 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
+                    Message = ResponseMessages.InternalError,
                     Result = false,
                     StatusCode = ResponseStatusCode.RequestFailed
                 });
@@ -486,23 +524,12 @@ namespace AptitudeTest.Data.Data
         }
 
         #region SendEmail
-        private bool SendMailForResetPassword(string firstName, string email)
+        private bool SendMailForPassword(string firstName, string email, string password)
         {
             try
             {
-                byte[] byteForEmail = Encoding.ASCII.GetBytes(email);
-                string encryptedEmail = Convert.ToBase64String(byteForEmail);
-                UriBuilder builder = new();
-                builder.Host = Convert.ToString(_config["EmailGeneration:FrontEndUrl"]);
-                builder.Port = Convert.ToInt16(_config["EmailGeneration:FrontEndPort"]);
-                builder.Path = "/ResetPassword";
-                builder.Query = "&email=" + encryptedEmail;
-                var resetLink = builder.ToString();
-
-                var toAddress = new MailAddress(email);
-                var subject = "Password reset request";
-                var body = $"<h3>Hello {firstName}</h3>,<br />Please click on the following link to reset your password <br /><a href='{resetLink}'><h3>Click here</h3></a>";
-
+                var subject = "Credetials for login";
+                var body = $"<h3>Hello {firstName}</h3>,<br />we received registration request for you ,<br /><br /Here is your credetials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2>";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
@@ -513,7 +540,31 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        #region validationImportedUsers
+        private async Task<ValidateImportFileVM> checkImportedData(List<UserImportVM> records)
+        {
+
+            ValidateImportFileVM validate = new();
+
+            foreach (var record in records)
+            {
+                var context = new ValidationContext(record, serviceProvider: null, items: null);
+                var results = new List<ValidationResult>();
+
+                if (!Validator.TryValidateObject(record, context, results, validateAllProperties: true))
+                {
+                    validate.validationMessage = new List<string>();
+                    validate.isValidate = false;
+                    validate.validationMessage.AddRange(results.Select(x => x.ErrorMessage).ToList());
+
+                }
+            }
+            return validate;
+        }
         #endregion
+
+        #endregion
+
         #endregion
 
         #endregion
