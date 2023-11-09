@@ -6,6 +6,8 @@ namespace AptitudeTest.Core.Interfaces
     public interface IProfileRepository
     {
         public Task<JsonResult> GetProfiles();
+        public Task<JsonResult> GetActiveProfiles();
+
         public Task<JsonResult> Create(ProfileVM profile);
         public Task<JsonResult> Update(ProfileVM profile);
         public Task<JsonResult> CheckUncheckAll(bool check);
