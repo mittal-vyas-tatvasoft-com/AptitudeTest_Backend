@@ -51,6 +51,18 @@ namespace AptitudeTest.API.Controllers
         }
         #endregion
 
+        #region GetAllStates
+        /// <summary>
+        /// GetAllStates
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllStates")]
+        public async Task<JsonResult> GetAllStates()
+        {
+            return await _userService.GetAllStates();
+        }
+        #endregion
+
         #region Create
         /// <summary>
         /// This method Creates User
