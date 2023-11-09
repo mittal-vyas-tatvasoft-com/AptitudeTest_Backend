@@ -5,7 +5,7 @@ namespace AptitudeTest.Core.Interfaces
 {
     public interface IAdminService
     {
-        Task<JsonResult> GetAllAdmin(string? searchQuery, bool? Status, int? currentPageIndex, int? pageSize);
+        Task<JsonResult> GetAllAdmin(string? searchQuery, bool? Status, string? sortField,string?sortOrder, int? currentPageIndex, int? pageSizee);
         Task<JsonResult> GetAdminById(int? id);
         Task<JsonResult> Create(CreateAdminVM admin);
         Task<JsonResult> Update(CreateAdminVM admin);

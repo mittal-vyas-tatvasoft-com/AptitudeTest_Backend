@@ -19,9 +19,9 @@ namespace AptitudeTest.Application.Services
 
         #region Methods
 
-        public async Task<JsonResult> GetProfiles()
+        public async Task<JsonResult> GetProfiles(string? sortField,string? sortOrder)
         {
-            return await _repository.GetProfiles();
+            return await _repository.GetProfiles(sortField,sortOrder);
         }
 
         public async Task<JsonResult> Create(ProfileVM profile)

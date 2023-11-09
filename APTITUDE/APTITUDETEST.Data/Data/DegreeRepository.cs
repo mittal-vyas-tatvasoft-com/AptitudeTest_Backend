@@ -22,7 +22,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Methods
-        public async Task<JsonResult> GetDegrees()
+        public async Task<JsonResult> GetDegrees(string? sortField, string? sortOrder)
         {
             try
             {
@@ -39,6 +39,34 @@ namespace AptitudeTest.Data.Data
                     UpdatedBy = null,
                     Streams = masterStreams.Where(stream => stream.DegreeId == degree.Id).Select(stream => " " + stream.Name).ToList()
                 }).ToList();
+
+
+                switch (sortField)
+                {
+                    case "Name":
+                        switch (sortOrder)
+                        {
+                            case "asc":
+                                degreeData = degreeData.OrderBy(x => x.Name).ToList();
+                                break;
+                            case "desc":
+                                degreeData = degreeData.OrderByDescending(x => x.Name).ToList();
+                                break;
+                        }
+                    break;
+
+                    case "Level":
+                        switch (sortOrder)
+                        {
+                            case "asc":
+                                degreeData = degreeData.OrderBy(x => x.Name).ToList();
+                                break;
+                            case "desc":
+                                degreeData = degreeData.OrderByDescending(x => x.Name).ToList();
+                                break;
+                        }
+                        break;
+                }
 
                 return new JsonResult(new ApiResponse<List<DegreeVM>>
                 {

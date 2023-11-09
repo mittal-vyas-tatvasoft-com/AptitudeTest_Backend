@@ -34,7 +34,7 @@ namespace AptitudeTest.Data.Data
 
         #region methods
 
-        public async Task<JsonResult> GetAllAdmin(string? searchQuery, bool? Status, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetAllAdmin(string? searchQuery, bool? Status, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
         {
             try
             {
@@ -48,9 +48,11 @@ namespace AptitudeTest.Data.Data
                             SearchQuery = searchQuery,
                             Status = Status,
                             PageNumber = currentPageIndex,
-                            PageSize = pageSize
+                            PageSize = pageSize,
+                            SortField=sortField,
+                            sortOrder=sortOrder,
                         };
-                        List<AdminDataVM> data = connection.Query<AdminDataVM>("Select * from getAllAdmins(@SearchQuery,@Status,@PageNumber,@PageSize)", parameter).ToList();
+                        List<AdminDataVM> data = connection.Query<AdminDataVM>("Select * from getAllAdmins(@SearchQuery,@Status,@PageNumber,@PageSize,@SortField,@SortOrder)", parameter).ToList();
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<AdminDataVM>>
                         {
@@ -71,9 +73,11 @@ namespace AptitudeTest.Data.Data
                             SearchQuery = string.Empty,
                             Status = Status,
                             PageNumber = currentPageIndex,
-                            PageSize = pageSize
+                            PageSize = pageSize,
+                            SortField = sortField,
+                            sortOrder = sortOrder,
                         };
-                        List<AdminDataVM> data = connection.Query<AdminDataVM>("Select * from getAllAdmins(@SearchQuery,@Status,@PageNumber,@PageSize)", parameter).ToList();
+                        List<AdminDataVM> data = connection.Query<AdminDataVM>("Select * from getAllAdmins(@SearchQuery,@Status,@PageNumber,@PageSize,@SortField,@SortOrder)", parameter).ToList();
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<AdminDataVM>>
                         {

@@ -18,9 +18,9 @@ namespace AptitudeTest.Application.Services
         #endregion
 
         #region Methods
-        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
         {
-            return await _userRepository.GetAllUsers(searchQuery, CollegeId, GroupId, Status, Year, currentPageIndex, pageSize);
+            return await _userRepository.GetAllUsers(searchQuery, CollegeId, GroupId, Status, Year, sortField, sortOrder, currentPageIndex, pageSize);
         }
 
         public async Task<JsonResult> GetUserById(int id)

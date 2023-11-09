@@ -26,7 +26,36 @@ namespace AptitudeTest.Data.Data
             try
             {
                 List<MasterCollege> collegeList = await Task.FromResult(_context.MasterCollege.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(x => x.CreatedDate).ToList());
+
+                switch (collegeQuery.sortField)
+                {
+                    case "Name":
+                        switch (collegeQuery.sortOrder)
+                        {
+                            case "asc":
+                                collegeList = collegeList.OrderBy(x => x.Name).ToList();
+                                break;
+                            case "desc":
+                                collegeList = collegeList.OrderByDescending(x => x.Name).ToList();
+                                break;
+                        }
+                        break;
+
+                    case "Abbreviation":
+                        switch (collegeQuery.sortOrder)
+                        {
+                            case "asc":
+                                collegeList = collegeList.OrderBy(x => x.Abbreviation).ToList();
+                                break;
+                            case "desc":
+                                collegeList = collegeList.OrderByDescending(x => x.Abbreviation).ToList();
+                                break;
+                        }
+                        break;
+                }
                 PaginationVM<MasterCollege> paginatedData = Pagination<MasterCollege>.Paginate(collegeList, collegeQuery.PageSize, collegeQuery.CurrentPageIndex);
+
+
 
                 return new JsonResult(new ApiResponse<PaginationVM<MasterCollege>>
                 {
