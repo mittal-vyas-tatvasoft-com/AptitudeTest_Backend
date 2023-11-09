@@ -52,6 +52,16 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
+        /// Get Active Degrees 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetActiveDegrees")]
+        public async Task<JsonResult> GetActiveDegrees()
+        {
+            return await _service.GetActiveDegrees();
+        }
+
+        /// <summary>
         /// This method Creates Degree
         /// </summary>
         /// <param name="degree"></param>

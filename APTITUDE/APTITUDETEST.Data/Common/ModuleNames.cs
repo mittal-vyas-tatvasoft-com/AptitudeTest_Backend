@@ -7,7 +7,7 @@
         public static string Degree = "Degree";
         public static string Profile = "Profile";
         public static string College = "College";
-
+        public static string Stream = "Stream";
         #endregion
 
         public static string Question = "Question";
@@ -25,6 +25,6 @@
         public static string Test = "Test";
         public static string TestQuestions = "TestQuestions";
         public static string Candidate = "Candidate";
-
+       
     }
 }
