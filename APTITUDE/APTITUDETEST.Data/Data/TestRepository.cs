@@ -354,7 +354,7 @@ namespace AptitudeTest.Data.Data
 
         }
 
-        public async Task<JsonResult> DeleteTestQuestions(int testId, int topicId)
+        public async Task<JsonResult> DeleteTopicWiseTestQuestions(int testId, int topicId)
         {
             try
             {

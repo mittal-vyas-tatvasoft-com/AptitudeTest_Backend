@@ -90,9 +90,9 @@ namespace AptitudeTest.Controllers
         /// <param name="topicId"></param>
         /// <returns></returns>
         [HttpDelete("[action]/{testId:int}/{topicId:int}")]
-        public async Task<JsonResult> DeleteTestQuestions(int testId, int topicId)
+        public async Task<JsonResult> DeleteTopicWiseTestQuestions(int testId, int topicId)
         {
-            return await _service.DeleteTestQuestions(testId, topicId);
+            return await _service.DeleteTopicWiseTestQuestions(testId, topicId);
         }
         #endregion
     }

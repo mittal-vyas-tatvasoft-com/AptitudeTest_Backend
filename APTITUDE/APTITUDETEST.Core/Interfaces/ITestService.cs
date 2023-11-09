@@ -10,6 +10,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> UpdateTestGroup(UpdateTestGroupVM updateTest);
         public Task<JsonResult> AddTestQuestions(TestQuestionsVM addTestQuestion);
         public Task<JsonResult> UpdateTestQuestions(TestQuestionsVM updateTestQuestion);
-        public Task<JsonResult> DeleteTestQuestions(int testId, int topicId);
+        public Task<JsonResult> DeleteTopicWiseTestQuestions(int testId, int topicId);
     }
 }
