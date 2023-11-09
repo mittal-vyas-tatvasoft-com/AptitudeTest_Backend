@@ -22,6 +22,62 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Methods
+
+        #region GetAllActiveStreams
+        public async Task<JsonResult> GetAllActiveStreams()
+        {
+            try
+            {
+                var distinctStreams = await Task.FromResult(_context.MasterStream
+                .Join(_context.MasterDegree, ms => ms.DegreeId, md => md.Id, (ms, md) => new { ms, md })
+                .Where(x => (x.ms.IsDeleted == null || x.ms.IsDeleted == false) && x.ms.Status == true
+                        && (x.md.IsDeleted == null || x.md.IsDeleted == false) && x.md.Status == true)
+                .Select(x => new
+                {
+                    level = x.md.Level,
+                    id = x.ms.Id,
+                    name = x.ms.Name
+                })
+                .ToList());
+
+                var distinctFilteredStreams = distinctStreams
+                    .GroupBy(x => new { x.level, x.name })
+                    .Select(x => x.First())
+                    .ToList();
+
+                if (distinctFilteredStreams != null && distinctFilteredStreams.Any())
+                {
+                    return new JsonResult(new ApiResponse<IEnumerable<object>>
+                    {
+                        Data = distinctFilteredStreams,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Data = string.Format(ResponseMessages.NotFound, ModuleNames.Stream),
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+        #endregion
+
         public async Task<JsonResult> Getstreams(string? searchQuery, int? filter, List<int>? degreelist, int? currentPageIndex, int? pageSize)
         {
             try
@@ -92,7 +148,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, "Stream"),
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Stream),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -102,7 +158,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.NotFound, "Degree"),
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Degree),
                         Result = false,
                         StatusCode = ResponseStatusCode.BadRequest
                     });
@@ -117,7 +173,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.AddSuccess, "Stream"),
+                    Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Stream),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -145,7 +201,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, "Stream"),
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Stream),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -155,7 +211,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.NotFound, "Degree"),
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Stream),
                         Result = false,
                         StatusCode = ResponseStatusCode.BadRequest
                     });
@@ -174,7 +230,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.UpdateSuccess, "Stream"),
+                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Stream),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -182,7 +238,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.NotFound, "Stream"),
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Stream),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
@@ -207,7 +263,7 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
-                    Message = string.Format(ResponseMessages.UpdateSuccess, "Stream"),
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Stream),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -246,14 +302,14 @@ namespace AptitudeTest.Data.Data
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.DeleteSuccess, "Stream"),
+                        Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.Stream),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.NotFound, "Stream"),
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Stream),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });

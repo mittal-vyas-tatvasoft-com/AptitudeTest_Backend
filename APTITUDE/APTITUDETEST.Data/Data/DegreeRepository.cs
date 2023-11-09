@@ -88,6 +88,50 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> GetActiveDegrees()
+        {
+
+            try
+            {
+                var DegreeList = await Task.FromResult(_context.MasterDegree
+                .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
+                .Select(x => new { Id = x.Id, Name = x.Name, Level = x.Level })
+                .ToList());
+
+                if (DegreeList != null)
+                {
+                    return new JsonResult(new ApiResponse<IEnumerable<object>>
+                    {
+                        Data = DegreeList,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Data = string.Format(ResponseMessages.NotFound, ModuleNames.Degree),
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+
+
         public async Task<JsonResult> Get(int id)
         {
             try
@@ -106,7 +150,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.NotFound, "Degree"),
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Degree),
                         Result = false,
                         StatusCode = ResponseStatusCode.NotFound
                     });
@@ -153,7 +197,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, "Degree"),
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Degree),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -173,7 +217,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.AddSuccess, "Degree"),
+                    Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Degree),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -200,7 +244,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, "Degree"),
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Degree),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -213,7 +257,7 @@ namespace AptitudeTest.Data.Data
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = string.Format(ResponseMessages.NotEditable, "Degree"),
+                            Message = string.Format(ResponseMessages.NotEditable, ModuleNames.Degree),
                             Result = false,
                             StatusCode = ResponseStatusCode.BadRequest
                         });
@@ -233,7 +277,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.UpdateSuccess, "Degree"),
+                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Degree),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -241,7 +285,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.NotFound, "Degree"),
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Degree),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });
@@ -267,7 +311,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<int>
                     {
-                        Message = string.Format(ResponseMessages.NotFound, "Degree"),
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Degree),
                         Result = true,
                         StatusCode = ResponseStatusCode.NotFound
                     });
@@ -279,7 +323,7 @@ namespace AptitudeTest.Data.Data
 
                 return new JsonResult(new ApiResponse<int>
                 {
-                    Message = string.Format(ResponseMessages.UpdateSuccess, "Degree"),
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Degree),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -304,7 +348,7 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<int>
                 {
                     Data = rowsEffected,
-                    Message = string.Format(ResponseMessages.UpdateSuccess, "Degree"),
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Degree),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
@@ -343,14 +387,14 @@ namespace AptitudeTest.Data.Data
                     _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.DeleteSuccess, "Degree"),
+                        Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.Degree),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.NotFound, "Degree"),
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Degree),
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
                 });

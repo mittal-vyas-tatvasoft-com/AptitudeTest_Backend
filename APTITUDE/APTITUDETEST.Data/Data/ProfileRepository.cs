@@ -65,6 +65,48 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> GetActiveProfiles()
+        {
+
+            try
+            {
+                var ProfileList = await Task.FromResult(_context.MasterTechnology
+                .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
+                .Select(x => new { Id = x.Id, Name = x.Name })
+                .ToList());
+
+                if (ProfileList != null)
+                {
+                    return new JsonResult(new ApiResponse<IEnumerable<object>>
+                    {
+                        Data = ProfileList,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Data = string.Format(ResponseMessages.NotFound, ModuleNames.Profile),
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
         public async Task<JsonResult> Create(ProfileVM profile)
         {
             try
