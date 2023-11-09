@@ -5,7 +5,6 @@ namespace AptitudeTest.Core.Interfaces
 {
     public interface IDegreeRepository
     {
-        public Task<JsonResult> GetDegrees();
         public Task<JsonResult> GetActiveDegrees();
         public Task<JsonResult> GetDegrees(string? sortField, string? sortOrder);
         public Task<JsonResult> Get(int id);

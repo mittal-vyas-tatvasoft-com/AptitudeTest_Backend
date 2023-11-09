@@ -5,7 +5,6 @@ namespace AptitudeTest.Core.Interfaces
 {
     public interface IProfileService
     {
-        public Task<JsonResult> GetProfiles();
         public Task<JsonResult> GetActiveProfiles();
         public Task<JsonResult> GetProfiles(string? sortField, string? sortOrder);
 
