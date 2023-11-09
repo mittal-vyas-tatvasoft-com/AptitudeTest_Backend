@@ -23,6 +23,10 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.Getstreams(searchQuery, filter, degreelist, currentPageIndex, pageSize);
         }
+        public async Task<JsonResult> GetAllActiveStreams()
+        {
+            return await _repository.GetAllActiveStreams();
+        }
 
         public async Task<JsonResult> Create(StreamVM stream)
         {

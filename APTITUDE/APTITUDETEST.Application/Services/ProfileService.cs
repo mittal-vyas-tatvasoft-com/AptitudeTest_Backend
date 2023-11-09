@@ -24,6 +24,10 @@ namespace AptitudeTest.Application.Services
             return await _repository.GetProfiles();
         }
 
+        public async Task<JsonResult> GetActiveProfiles()
+        {
+            return await _repository.GetActiveProfiles();
+        }
         public async Task<JsonResult> Create(ProfileVM profile)
         {
             return await _repository.Create(profile);

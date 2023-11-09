@@ -26,6 +26,16 @@ namespace AptitudeTest.Controllers
         #region Methods
 
         /// <summary>
+        /// Get All Active Streams
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllActiveStreams")]
+        public async Task<JsonResult> GetAllActiveStreams()
+        {
+            return await _service.GetAllActiveStreams();
+        }
+
+        /// <summary>
         /// This gives List of streams with searching,filtering and pagination
         /// </summary>
         /// <param name="searchQuery">Word that we want to search</param>
@@ -40,6 +50,8 @@ namespace AptitudeTest.Controllers
         {
             return await _service.Getstreams(searchQuery, filter, degreelist, currentPageIndex, pageSize);
         }
+
+        
 
         /// <summary>
         /// This method Creates stream
