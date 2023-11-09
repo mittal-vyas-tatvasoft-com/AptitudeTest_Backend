@@ -146,14 +146,19 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> GetGroups(string? searchGroup)
+        public async Task<JsonResult> GetGroups(string? searchedGroup, int? searchedCollegeId)
         {
             try
             {
                 List<MasterGroup> existingGroups = await Task.FromResult(_context.MasterGroup.Where(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true).OrderByDescending(group => group.CreatedDate).ToList());
-                if (!searchGroup.IsNullOrEmpty())
+                if (!searchedGroup.IsNullOrEmpty())
                 {
-                    existingGroups = existingGroups.Where(group => group.Name.ToLower().Contains(searchGroup)).OrderByDescending(group => group.CreatedDate).ToList();
+                    existingGroups = existingGroups.Where(group => group.Name.ToLower().Contains(searchedGroup)).OrderByDescending(group => group.CreatedDate).ToList();
+                }
+                if (searchedCollegeId != null)
+                {
+                    int? groupId = _context.Users.FirstOrDefault(user => user.CollegeId == searchedCollegeId).GroupId;
+                    existingGroups = existingGroups.Where(group => group.Id == groupId).ToList();
                 }
                 List<GroupsResponseVM> groups = new List<GroupsResponseVM>();
 
@@ -166,16 +171,25 @@ namespace AptitudeTest.Data.Data
                         IsDefault = (bool)group.IsDefault,
                         CollegesUnderGroup = new List<GroupedCollegeVM>()
                     };
-                    var colleges = _context.MasterCollege.Where(college => college.GroupId == group.Id).ToList();
-                    foreach (var college in colleges)
+                    var users = _context.Users.Where(user => user.GroupId == group.Id && user.IsDeleted != true).ToList();
+                    foreach (var user in users)
                     {
-                        int students = _context.Users.Where(user => user.CollegeId == college.Id).Count();
-                        groupItem.CollegesUnderGroup.Add(new GroupedCollegeVM()
+                        var college = _context.MasterCollege.FirstOrDefault(college => college.Id == user.CollegeId && college.IsDeleted != true);
+                        if (college != null)
                         {
-                            Name = college.Name,
-                            NumberOfStudentsInCollege = students,
-                        });
+                            bool collegeExists = groupItem.CollegesUnderGroup.Any(existedCollege => existedCollege.Name.Equals(college.Name));
+                            if (!collegeExists)
+                            {
+                                int students = _context.Users.Where(user => user.CollegeId == college.Id && user.IsDeleted != true).Count();
+                                groupItem.CollegesUnderGroup.Add(new GroupedCollegeVM()
+                                {
+                                    Name = college.Name,
+                                    NumberOfStudentsInCollege = students,
+                                });
+                            }
+                        }
                     }
+
                     groupItem.NumberOfStudentsInGroup = groupItem.CollegesUnderGroup.Sum(x => x.NumberOfStudentsInCollege);
                     groups.Add(groupItem);
                 }
@@ -212,11 +226,24 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-                MasterGroup groupToBeRenamed = await Task.FromResult(_context.MasterGroup.AsNoTracking().Where(group => group.Id == updatedGroup.Id && group.IsDeleted != true).FirstOrDefault());
-                if (groupToBeRenamed != null)
+                MasterGroup groupToBeUpdated = await Task.FromResult(_context.MasterGroup.AsNoTracking().Where(group => group.Id == updatedGroup.Id && group.IsDeleted != true).FirstOrDefault());
+                if (groupToBeUpdated != null)
                 {
-                    groupToBeRenamed.Name = updatedGroup.Name;
-                    _context.Update(groupToBeRenamed);
+                    groupToBeUpdated.Name = updatedGroup.Name;
+                    groupToBeUpdated.IsDefault = updatedGroup.IsDefault;
+                    _context.Update(groupToBeUpdated);
+
+                    if ((bool)groupToBeUpdated.IsDefault)
+                    {
+                        foreach (var group in _context.MasterGroup)
+                        {
+                            if (group.Id != groupToBeUpdated.Id)
+                            {
+                                group.IsDefault = false;
+                                _context.Update(group);
+                            }
+                        }
+                    }
                     _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>

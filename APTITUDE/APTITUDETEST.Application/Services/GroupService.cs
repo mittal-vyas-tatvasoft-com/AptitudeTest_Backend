@@ -33,9 +33,9 @@ namespace AptitudeTest.Application.Services
             return await _repository.Delete(id);
         }
 
-        public async Task<JsonResult> GetGroups(string? searchGroup)
+        public async Task<JsonResult> GetGroups(string? searchedGroup, int? searchedCollegeId)
         {
-            return await _repository.GetGroups(searchGroup);
+            return await _repository.GetGroups(searchedGroup, searchedCollegeId);
         }
 
         public async Task<JsonResult> Update(GroupsQueryVM groupToBeRenamed)
