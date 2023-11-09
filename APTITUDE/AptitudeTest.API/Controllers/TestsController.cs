@@ -77,12 +77,23 @@ namespace AptitudeTest.Controllers
         /// </summary>
         /// <param name="testQuestionVM"></param>
         /// <returns></returns>
-        [HttpPost("[action]")]
+        [HttpPut("[action]")]
         public async Task<JsonResult> UpdateTestQuestions(TestQuestionsVM testQuestionVM)
         {
             return await _service.UpdateTestQuestions(testQuestionVM);
         }
 
+        /// <summary>
+        /// Delete Test Questions
+        /// </summary>
+        /// <param name="testId"></param>
+        /// <param name="topicId"></param>
+        /// <returns></returns>
+        [HttpDelete("[action]/{testId:int}/{topicId:int}")]
+        public async Task<JsonResult> DeleteTestQuestions(int testId, int topicId)
+        {
+            return await _service.DeleteTestQuestions(testId, topicId);
+        }
         #endregion
     }
 }
