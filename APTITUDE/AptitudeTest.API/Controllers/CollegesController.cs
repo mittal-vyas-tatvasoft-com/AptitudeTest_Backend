@@ -46,14 +46,14 @@ namespace AptitudeTest.Controllers
         /// <param name="searchQuery">word that we want to search</param>
         /// <returns>filtered list of colleges</returns>
         [HttpGet]
-        public async Task<JsonResult> GetColleges(int? currentPageIndex, int? pageSize,string? sortField,string? sortOrder)
+        public async Task<JsonResult> GetColleges(int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
         {
             CollegeQueryVM collegeQuery = new CollegeQueryVM()
             {
                 CurrentPageIndex = currentPageIndex,
                 PageSize = pageSize,
-                sortField=sortField,
-                sortOrder=sortOrder
+                sortField = sortField,
+                sortOrder = sortOrder
             };
             return await _service.GetColleges(collegeQuery);
         }

@@ -5,7 +5,7 @@ namespace AptitudeTest.Core.Interfaces
 {
     public interface IProfileRepository
     {
-        public Task<JsonResult> GetProfiles(string? sortField,string? sortOrder);
+        public Task<JsonResult> GetProfiles(string? sortField, string? sortOrder);
         public Task<JsonResult> Create(ProfileVM profile);
         public Task<JsonResult> Update(ProfileVM profile);
         public Task<JsonResult> CheckUncheckAll(bool check);

@@ -32,7 +32,7 @@ namespace AptitudeTest.API.Controllers
         /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet("{currentPageIndex:int}/{pageSize:int}")]
-        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status,int? Year,string? sortField,string? sortOrder, int? currentPageIndex = 0, int? pageSize = 10)
+        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, string? sortField, string? sortOrder, int? currentPageIndex = 0, int? pageSize = 10)
         {
             return await _userService.GetAllUsers(searchQuery, CollegeId, GroupId, Status, Year, sortField, sortOrder, currentPageIndex, pageSize);
         }

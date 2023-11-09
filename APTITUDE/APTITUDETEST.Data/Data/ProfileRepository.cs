@@ -22,12 +22,12 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Methods
-        public async Task<JsonResult> GetProfiles(string? sortField,string? sortOrder)
+        public async Task<JsonResult> GetProfiles(string? sortField, string? sortOrder)
         {
             try
             {
-                List<MasterTechnology> profilelist = await Task.FromResult(_context.MasterTechnology.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(x=>x.CreatedDate).ToList());
-               
+                List<MasterTechnology> profilelist = await Task.FromResult(_context.MasterTechnology.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(x => x.CreatedDate).ToList());
+
                 List<ProfileVM> profileData = profilelist.Select(profile => new ProfileVM()
                 {
                     Id = profile.Id,
@@ -39,11 +39,11 @@ namespace AptitudeTest.Data.Data
 
                 if (sortField == "Name" && sortOrder == "asc")
                 {
-                    profileData=profileData.OrderBy(x => x.Name).ToList();
+                    profileData = profileData.OrderBy(x => x.Name).ToList();
                 }
                 else if (sortField == "Name" && sortOrder == "desc")
                 {
-                   profileData = profileData.OrderByDescending(x => x.Name).ToList();
+                    profileData = profileData.OrderByDescending(x => x.Name).ToList();
                 }
                 return new JsonResult(new ApiResponse<List<ProfileVM>>
                 {

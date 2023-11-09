@@ -1,7 +1,6 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Controllers
@@ -25,7 +24,7 @@ namespace AptitudeTest.Controllers
         [HttpGet("[action]")]
         public async Task<JsonResult> GetAllAdmin(string? searchQuery, bool? Status, string? sortField, string? sortOrder, int currentPageIndex = 0, int pageSize = 10)
         {
-            return await _adminService.GetAllAdmin(searchQuery, Status,sortField,sortOrder, currentPageIndex, pageSize);
+            return await _adminService.GetAllAdmin(searchQuery, Status, sortField, sortOrder, currentPageIndex, pageSize);
         }
 
         [HttpGet("[action]/{id:int}")]

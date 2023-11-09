@@ -49,8 +49,8 @@ namespace AptitudeTest.Data.Data
                             Status = Status,
                             PageNumber = currentPageIndex,
                             PageSize = pageSize,
-                            SortField=sortField,
-                            sortOrder=sortOrder,
+                            SortField = sortField,
+                            sortOrder = sortOrder,
                         };
                         List<AdminDataVM> data = connection.Query<AdminDataVM>("Select * from getAllAdmins(@SearchQuery,@Status,@PageNumber,@PageSize,@SortField,@SortOrder)", parameter).ToList();
                         connection.Close();

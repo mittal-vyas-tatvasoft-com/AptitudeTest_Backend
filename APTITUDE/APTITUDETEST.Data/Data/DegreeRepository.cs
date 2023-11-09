@@ -53,7 +53,7 @@ namespace AptitudeTest.Data.Data
                                 degreeData = degreeData.OrderByDescending(x => x.Name).ToList();
                                 break;
                         }
-                    break;
+                        break;
 
                     case "Level":
                         switch (sortOrder)

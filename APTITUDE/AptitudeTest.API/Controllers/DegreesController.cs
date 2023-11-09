@@ -48,7 +48,7 @@ namespace AptitudeTest.Controllers
 
         public async Task<JsonResult> GetDegrees(string? sortField, string? sortOrder)
         {
-            return await _service.GetDegrees(sortField,sortOrder);
+            return await _service.GetDegrees(sortField, sortOrder);
         }
 
         /// <summary>

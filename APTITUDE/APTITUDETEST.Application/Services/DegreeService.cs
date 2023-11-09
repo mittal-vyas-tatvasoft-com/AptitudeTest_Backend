@@ -21,7 +21,7 @@ namespace AptitudeTest.Application.Services
 
         public async Task<JsonResult> GetDegrees(string? sortField, string? sortOrder)
         {
-            return await _repository.GetDegrees(sortField,sortOrder);
+            return await _repository.GetDegrees(sortField, sortOrder);
         }
         public async Task<JsonResult> Get(int id)
         {
