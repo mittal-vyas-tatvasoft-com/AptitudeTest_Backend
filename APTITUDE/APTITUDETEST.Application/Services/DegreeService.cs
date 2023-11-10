@@ -23,6 +23,12 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.GetDegrees();
         }
+
+        public async Task<JsonResult> GetActiveDegrees()
+        {
+            return await _repository.GetActiveDegrees();
+        }
+
         public async Task<JsonResult> Get(int id)
         {
             return await _repository.Get(id);

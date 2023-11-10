@@ -41,6 +41,16 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
+        /// Get Active Profiles
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetActiveProfiles")]
+        public async Task<JsonResult> GetActiveProfiles()
+        {
+            return await _service.GetActiveProfiles();
+        }
+
+        /// <summary>
         /// This method Create profile
         /// </summary>
         /// <param name="profile"></param>
