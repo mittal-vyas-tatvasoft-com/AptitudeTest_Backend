@@ -51,15 +51,15 @@ namespace AptitudeTest.API.Controllers
         }
         #endregion
 
-        #region GetAllStates
+        #region GetAllState
         /// <summary>
-        /// GetAllStates
+        /// GetAllState
         /// </summary>
         /// <returns></returns>
-        [HttpGet("GetAllStates")]
-        public async Task<JsonResult> GetAllStates()
+        [HttpGet("GetAllState")]
+        public async Task<JsonResult> GetAllState()
         {
-            return await _userService.GetAllStates();
+            return await _userService.GetAllState();
         }
         #endregion
 

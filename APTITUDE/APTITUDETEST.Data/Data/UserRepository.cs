@@ -145,7 +145,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region GetAllStates
-        public async Task<JsonResult> GetAllStates()
+        public async Task<JsonResult> GetAllState()
         {
 
             try

@@ -28,9 +28,9 @@ namespace AptitudeTest.Application.Services
             return await _userRepository.GetUserById(id);
         }
 
-        public async Task<JsonResult> GetAllStates()
+        public async Task<JsonResult> GetAllState()
         {
-            return await _userRepository.GetAllStates();
+            return await _userRepository.GetAllState();
         }
 
         public async Task<JsonResult> Create(CreateUserVM user)
