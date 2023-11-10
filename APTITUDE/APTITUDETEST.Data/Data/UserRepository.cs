@@ -144,6 +144,50 @@ namespace AptitudeTest.Data.Data
         }
         #endregion
 
+        #region GetAllStates
+        public async Task<JsonResult> GetAllState()
+        {
+
+            try
+            {
+                var stateList = await Task.FromResult(_appDbContext.States
+                .Where(x => (x.IsDeleted == null || x.IsDeleted == false))
+                .Select(x => new { Id = x.Id, Name = x.name })
+                .ToList());
+
+                if (stateList != null)
+                {
+                    return new JsonResult(new ApiResponse<IEnumerable<object>>
+                    {
+                        Data = stateList,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Data = string.Format(ResponseMessages.NotFound, ModuleNames.State),
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+        #endregion
+
         #region Create
         public async Task<JsonResult> Create(CreateUserVM user)
         {
@@ -475,19 +519,19 @@ namespace AptitudeTest.Data.Data
             userDetails.Email = userData.email ?? "";
             userDetails.PhoneNumber = userData.phonenumber ?? 0;
             userDetails.DateOfBirth = userData.dateofbirth ?? new DateTime();
-            userDetails.PermanentAddress1 = userData.permanentaddress ?? "";
+            userDetails.PermanentAddress1 = userData.permanentaddress1 ?? "";
             userDetails.PermanentAddress2 = userData.permanentaddress ?? "";
             userDetails.Pincode = userData.pincode ?? 0;
             userDetails.CityName = userData.cityname ?? "";
-            userDetails.State = userData.stateid ?? 0;
+            userDetails.State = userData.StateId ?? 0;
             userDetails.StateName = userData.statename ?? "";
             userDetails.AppliedThrough = userData.appliedthrough ?? 0;
-            userDetails.TechnologyInterestedIn = userData.technologyinterestedIn ?? 0;
+            userDetails.TechnologyInterestedIn = userData.technologyinterestedin ?? 0;
             userDetails.TechnologyName = userData.technologyname ?? "";
             userDetails.ACPCMeritRank = userData.acpcmeritrank ?? 0;
             userDetails.GUJCETScore = userData.gujcetscore ?? 0;
             userDetails.JEEScore = userData.jeescore ?? 0;
-
+            userDetails.Status = userData.status ?? 0;
         }
 
         private void FillAcademicAndFamilyData(dynamic data, UserDetailsVM userDetails, List<int> acadamicIds, List<int> familyIds)
