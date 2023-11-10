@@ -36,6 +36,14 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
+                if ((bool)groupToBeAdded.IsDefault)
+                {
+                    foreach (var masterGroup in _context.MasterGroup)
+                    {
+                        masterGroup.IsDefault = false;
+                    }
+                }
+                _context.SaveChanges();
                 group.Name = groupToBeAdded.Name;
                 group.IsDefault = groupToBeAdded.IsDefault;
                 _context.MasterGroup.Add(group);
@@ -146,18 +154,18 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> GetGroups(string? searchedGroup, int? searchedCollegeId)
+        public async Task<JsonResult> GetGroups(string? searchGroup, int? collegeId)
         {
             try
             {
                 List<MasterGroup> existingGroups = await Task.FromResult(_context.MasterGroup.Where(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true).OrderByDescending(group => group.CreatedDate).ToList());
-                if (!searchedGroup.IsNullOrEmpty())
+                if (!searchGroup.IsNullOrEmpty())
                 {
-                    existingGroups = existingGroups.Where(group => group.Name.ToLower().Contains(searchedGroup)).OrderByDescending(group => group.CreatedDate).ToList();
+                    existingGroups = existingGroups.Where(group => group.Name.ToLower().Contains(searchGroup)).OrderByDescending(group => group.CreatedDate).ToList();
                 }
-                if (searchedCollegeId != null)
+                if (collegeId != null)
                 {
-                    int? groupId = _context.Users.FirstOrDefault(user => user.CollegeId == searchedCollegeId).GroupId;
+                    int? groupId = _context.Users.FirstOrDefault(user => user.CollegeId == collegeId).GroupId;
                     existingGroups = existingGroups.Where(group => group.Id == groupId).ToList();
                 }
                 List<GroupsResponseVM> groups = new List<GroupsResponseVM>();
