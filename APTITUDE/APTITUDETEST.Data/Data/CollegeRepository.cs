@@ -20,17 +20,17 @@ namespace AptitudeTest.Data.Data
         }
 
         #region Methods
-        public async Task<JsonResult> GetColleges(CollegeQueryVM collegeQuery)
+        public async Task<JsonResult> GetColleges(int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
         {
 
             try
             {
                 List<MasterCollege> collegeList = await Task.FromResult(_context.MasterCollege.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(x => x.CreatedDate).ToList());
 
-                switch (collegeQuery.sortField)
+                switch (sortField)
                 {
                     case "Name":
-                        switch (collegeQuery.sortOrder)
+                        switch (sortOrder)
                         {
                             case "asc":
                                 collegeList = collegeList.OrderBy(x => x.Name).ToList();
@@ -42,7 +42,7 @@ namespace AptitudeTest.Data.Data
                         break;
 
                     case "Abbreviation":
-                        switch (collegeQuery.sortOrder)
+                        switch (sortOrder)
                         {
                             case "asc":
                                 collegeList = collegeList.OrderBy(x => x.Abbreviation).ToList();
@@ -53,7 +53,7 @@ namespace AptitudeTest.Data.Data
                         }
                         break;
                 }
-                PaginationVM<MasterCollege> paginatedData = Pagination<MasterCollege>.Paginate(collegeList, collegeQuery.PageSize, collegeQuery.CurrentPageIndex);
+                PaginationVM<MasterCollege> paginatedData = Pagination<MasterCollege>.Paginate(collegeList, pageSize, currentPageIndex);
 
 
 

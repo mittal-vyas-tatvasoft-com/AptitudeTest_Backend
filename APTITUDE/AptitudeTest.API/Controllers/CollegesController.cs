@@ -48,14 +48,7 @@ namespace AptitudeTest.Controllers
         [HttpGet]
         public async Task<JsonResult> GetColleges(int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
         {
-            CollegeQueryVM collegeQuery = new CollegeQueryVM()
-            {
-                CurrentPageIndex = currentPageIndex,
-                PageSize = pageSize,
-                sortField = sortField,
-                sortOrder = sortOrder
-            };
-            return await _service.GetColleges(collegeQuery);
+            return await _service.GetColleges(currentPageIndex, pageSize, sortField, sortOrder);
         }
 
         /// <summary>

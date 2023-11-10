@@ -51,7 +51,7 @@ namespace AptitudeTest.Controllers
             return await _service.Getstreams(searchQuery, filter, degreelist, currentPageIndex, pageSize);
         }
 
-        
+
 
         /// <summary>
         /// This method Creates stream

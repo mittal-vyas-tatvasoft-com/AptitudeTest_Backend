@@ -25,6 +25,6 @@
         public static string Test = "Test";
         public static string TestQuestions = "TestQuestions";
         public static string Candidate = "Candidate";
-       
+
     }
 }

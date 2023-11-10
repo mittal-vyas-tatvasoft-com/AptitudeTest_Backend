@@ -59,10 +59,10 @@ namespace AptitudeTest.Data.Data
                         switch (sortOrder)
                         {
                             case "asc":
-                                degreeData = degreeData.OrderBy(x => x.Name).ToList();
+                                degreeData = degreeData.OrderBy(x => x.Level).ToList();
                                 break;
                             case "desc":
-                                degreeData = degreeData.OrderByDescending(x => x.Name).ToList();
+                                degreeData = degreeData.OrderByDescending(x => x.Level).ToList();
                                 break;
                         }
                         break;
