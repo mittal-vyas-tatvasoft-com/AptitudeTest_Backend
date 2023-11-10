@@ -8,7 +8,6 @@ namespace AptitudeTest.Core.Interfaces
         Task<JsonResult> GetUserById(int id);
 
         Task<JsonResult> GetAllState();
-        Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, int? currentPageIndex, int? pageSize);
         Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize);
         Task<JsonResult> Create(CreateUserVM user);
         Task<JsonResult> Update(UserVM user);
