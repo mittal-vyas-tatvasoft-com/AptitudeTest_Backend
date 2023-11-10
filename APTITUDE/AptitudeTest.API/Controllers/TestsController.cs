@@ -94,6 +94,28 @@ namespace AptitudeTest.Controllers
         {
             return await _service.DeleteTopicWiseTestQuestions(testId, topicId);
         }
+
+        /// <summary>
+        /// Delete All Test Questions
+        /// </summary>
+        /// <param name="testId"></param>
+        /// <returns></returns>
+        [HttpDelete("[action]/{testId:int}")]
+        public async Task<JsonResult> DeleteAllTestQuestions(int testId)
+        {
+            return await _service.DeleteAllTestQuestions(testId);
+        }
+
+        /// <summary>
+        /// Delete Test 
+        /// </summary>
+        /// <param name="testId"></param>
+        /// <returns></returns>
+        [HttpDelete("[action]/{testId:int}")]
+        public async Task<JsonResult> DeleteTest(int testId)
+        {
+            return await _service.DeleteTest(testId);
+        }
         #endregion
     }
 }

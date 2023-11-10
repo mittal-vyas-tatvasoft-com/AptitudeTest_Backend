@@ -43,6 +43,14 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.DeleteTopicWiseTestQuestions(testId, topicId);
         }
+        public Task<JsonResult> DeleteAllTestQuestions(int testId)
+        {
+            return _repository.DeleteAllTestQuestions(testId);
+        }
+        public Task<JsonResult> DeleteTest(int testId)
+        {
+            return _repository.DeleteTest(testId);
+        }
         #endregion
     }
 }
