@@ -1,10 +1,16 @@
-﻿using AptitudeTest.Core.Entities.Questions;
+﻿using AptitudeTest.Common.Data;
+using AptitudeTest.Core.Entities.Questions;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
+using CsvHelper;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Globalization;
 
 namespace AptitudeTest.Data.Data
 {
@@ -12,12 +18,18 @@ namespace AptitudeTest.Data.Data
     {
         #region Properties
         AppDbContext _context;
+        private readonly DapperAppDbContext _dapperContext;
+        private readonly IConfiguration _config;
+        private readonly string connectionString;
         #endregion
 
         #region Constructor
-        public QuestionRepository(AppDbContext context)
+        public QuestionRepository(AppDbContext context, IConfiguration config, DapperAppDbContext dapperContext)
         {
             _context = context;
+            _dapperContext = dapperContext;
+            _config = config;
+            connectionString = _config["ConnectionStrings:AptitudeTest"];
         }
         #endregion
 
@@ -240,7 +252,7 @@ namespace AptitudeTest.Data.Data
                 if (questionVM.DuplicateFromQuestionId != 0)
                 {
                     Question duplicateQuestion = _context.Questions.Where(x => x.Id == questionVM.DuplicateFromQuestionId).FirstOrDefault();
-                    if (duplicateQuestion.OptionType != (int)Enums.OptionType.ImageType && questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateOptionImages(questionVM))
+                    if (duplicateQuestion == null || duplicateQuestion.OptionType != (int)Enums.OptionType.ImageType && questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateOptionImages(questionVM))
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -498,6 +510,112 @@ namespace AptitudeTest.Data.Data
             }
 
         }
+
+        public async Task<JsonResult> ImportQuestions(ImportQuestionVM importQuestionVM)
+        {
+            try
+            {
+                List<ImportQuestionFieldsVM> importQuestionFieldsVMList = new List<ImportQuestionFieldsVM>();
+                using (var reader = new StreamReader(importQuestionVM.File.OpenReadStream()))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    importQuestionFieldsVMList = csv.GetRecords<ImportQuestionFieldsVM>().ToList();
+                }
+
+                if (importQuestionFieldsVMList.Count == 0)
+                {
+                    return new JsonResult(new ApiResponse<int>
+                    {
+                        Message = string.Format(ResponseMessages.BadRequest),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
+                ValidateImportFileVM validateImportFileVM = await checkImportedData<ImportQuestionFieldsVM>(importQuestionFieldsVMList);
+
+                if (validateImportFileVM.isValidate == false)
+                {
+                    return new JsonResult(new ApiResponse<List<string>>
+                    {
+                        Data = validateImportFileVM.validationMessage,
+                        Message = ResponseMessages.InsertProperData,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
+                List<int> rows = new List<int>();
+                for (int i = 0; i < importQuestionFieldsVMList.Count; i++)
+                {
+                    var item = importQuestionFieldsVMList[i];
+                    QuestionVM questionVM = new QuestionVM();
+                    List<OptionVM> optios = new List<OptionVM>();
+                    questionVM.QuestionType = item.questiontype;
+                    optios.Add(new OptionVM() { IsAnswer = item.isanswer1 });
+                    optios.Add(new OptionVM() { IsAnswer = item.isanswer2 });
+                    optios.Add(new OptionVM() { IsAnswer = item.isanswer3 });
+                    optios.Add(new OptionVM() { IsAnswer = item.isanswer4 });
+                    if (!ValidateQuestion(questionVM))
+                    {
+                        rows.Add(i + 1);
+                    }
+                }
+
+                if (rows.Count != 0)
+                {
+                    return new JsonResult(new ApiResponse<List<int>>
+                    {
+                        Data = rows,
+                        Message = ResponseMessages.InvalidAnswerSelection,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
+                int count = 0;
+                using (var connection = _dapperContext.CreateConnection())
+                {
+                    var procedure = "import_questions";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("import_question_data", importQuestionFieldsVMList, DbType.Object, ParameterDirection.Input);
+                    parameters.Add("topicid", importQuestionVM.TopicId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("questions_imported_count", ParameterDirection.Output);
+                    count = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
+                if (count > 0)
+                {
+                    return new JsonResult(new ApiResponse<int>
+                    {
+                        Data = count,
+                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Questions),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.InternalError,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.InternalServerError
+                    });
+                }
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
         #endregion
 
         #region Helper Method
@@ -578,6 +696,26 @@ namespace AptitudeTest.Data.Data
                 return flag.All(x => x);
             }
             return false;
+        }
+
+        private async Task<ValidateImportFileVM> checkImportedData<T>(List<T> records)
+        {
+            ValidateImportFileVM validate = new();
+
+            foreach (var record in records)
+            {
+                var context = new ValidationContext(record, serviceProvider: null, items: null);
+                var results = new List<ValidationResult>();
+
+                if (!Validator.TryValidateObject(record, context, results, validateAllProperties: true))
+                {
+                    validate.validationMessage = new List<string>();
+                    validate.isValidate = false;
+                    validate.validationMessage.AddRange(results.Select(x => x.ErrorMessage).ToList());
+
+                }
+            }
+            return validate;
         }
 
         #endregion

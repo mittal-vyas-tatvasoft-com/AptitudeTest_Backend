@@ -30,6 +30,7 @@ namespace AptitudeTest.Common.Data
             dataSourceBuilder.MapComposite<DapperUserFamilyVM>("userfamily_datatype");
             dataSourceBuilder.MapComposite<DapperUserAcademicsVM>("useracademics_datatype");
             dataSourceBuilder.MapComposite<UserImportVM>("importusers_datatype");
+            dataSourceBuilder.MapComposite<ImportQuestionFieldsVM>("importquestiondatatype");
             NpgsqlConnection conn = dataSource.OpenConnection();
             return conn;
         }
