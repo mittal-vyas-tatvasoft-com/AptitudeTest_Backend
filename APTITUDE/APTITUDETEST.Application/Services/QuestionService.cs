@@ -52,6 +52,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.Delete(id);
         }
+
+        public async Task<JsonResult> ImportQuestions(ImportQuestionVM importQuestionVM)
+        {
+            return await _repository.ImportQuestions(importQuestionVM);
+        }
         #endregion
     }
 }
