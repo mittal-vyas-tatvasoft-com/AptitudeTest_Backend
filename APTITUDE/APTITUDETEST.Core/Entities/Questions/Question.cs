@@ -12,8 +12,7 @@ namespace AptitudeTest.Core.Entities.Questions
         public int Topic { get; set; }
         [Required]
         public int Difficulty { get; set; }
-        [Required]
-        public bool Status { get; set; }
+        public bool? Status { get; set; }
         [Required]
         public string QuestionText { get; set; }
         [Required]

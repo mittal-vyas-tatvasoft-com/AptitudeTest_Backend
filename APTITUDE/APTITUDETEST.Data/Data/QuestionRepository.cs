@@ -231,9 +231,27 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || !ValidateOptionImages(questionVM))
+                List<int> duplicateOptionIds = new List<int>();
+                List<QuestionOptions> duplicateOptions = new List<QuestionOptions>();
+                if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || (questionVM.DuplicateFromQuestionId == 0 && !ValidateOptionImages(questionVM)))
                 {
                     return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+                }
+                if (questionVM.DuplicateFromQuestionId != 0)
+                {
+                    Question duplicateQuestion = _context.Questions.Where(x => x.Id == questionVM.DuplicateFromQuestionId).FirstOrDefault();
+                    if (duplicateQuestion.OptionType != (int)Enums.OptionType.ImageType && questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateOptionImages(questionVM))
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.BadRequest,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
+                    duplicateOptionIds = questionVM.Options.Select(x => x.OptionId).ToList();
+                    duplicateOptions = _context.QuestionOptions.Where(option => duplicateOptionIds.Contains(option.Id)).ToList();
+
                 }
                 Question question = new Question();
                 question.QuestionText = questionVM.QuestionText.Trim();
@@ -249,6 +267,7 @@ namespace AptitudeTest.Data.Data
                 int questionId = _context.Questions.OrderByDescending(q => q.CreatedDate).FirstOrDefault().Id;
 
                 List<QuestionOptions> questionOptions = new List<QuestionOptions>();
+
                 foreach (var option in questionVM.Options)
                 {
                     QuestionOptions options = new QuestionOptions();
@@ -260,15 +279,23 @@ namespace AptitudeTest.Data.Data
                     }
                     else
                     {
-                        string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files");
-                        string fileName = Guid.NewGuid().ToString() + "_" + option.OptionImage.FileName;
-                        string filePath = Path.Combine(uploadFolder, fileName);
-
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        if (option.OptionImage != null)
                         {
-                            option.OptionImage.CopyTo(fileStream);
+                            string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files");
+                            string fileName = Guid.NewGuid().ToString() + "_" + option.OptionImage.FileName;
+                            string filePath = Path.Combine(uploadFolder, fileName);
+
+                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                            {
+                                option.OptionImage.CopyTo(fileStream);
+                            }
+                            options.OptionData = fileName;
                         }
-                        options.OptionData = fileName;
+                        else
+                        {
+                            options.OptionData = duplicateOptions.Where(x => x.Id == option.OptionId).FirstOrDefault().OptionData;
+                        }
+
                     }
                     questionOptions.Add(options);
                 }
