@@ -11,7 +11,7 @@
         #endregion
 
         public static string Question = "Question";
-
+        public static string Questions = "Questions";
         public static string User = "User";
         public static string AllCandidates = "All the candidates";
         public static string Candidates = "Candidates";

@@ -6,7 +6,7 @@ namespace AptitudeTest.Core.Interfaces
 
     public interface IUsersRepository
     {
-        public Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, int? currentPageIndex, int? pageSize);
+        public Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize);
         public Task<JsonResult> GetUserById(int id);
         public Task<JsonResult> GetAllState();
         public Task<JsonResult> Create(CreateUserVM user);

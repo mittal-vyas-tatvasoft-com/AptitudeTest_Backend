@@ -35,9 +35,9 @@ namespace AptitudeTest.Controllers
         /// <returns>filtered list of profiles</returns>
         [HttpGet]
 
-        public async Task<JsonResult> GetProfiles()
+        public async Task<JsonResult> GetProfiles(string? sortField, string? sortOrder)
         {
-            return await _service.GetProfiles();
+            return await _service.GetProfiles(sortField, sortOrder);
         }
 
         /// <summary>

@@ -42,7 +42,7 @@ namespace AptitudeTest.Data.Data
         #region methods
 
         #region GetAllUsers
-        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetAllUsers(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
         {
             try
             {
@@ -51,11 +51,11 @@ namespace AptitudeTest.Data.Data
                     using (var connection = new NpgsqlConnection(connectionString))
                     {
                         connection.Open();
-                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getAllUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize)", new { SearchQuery = searchQuery, CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, YearFilter = Year, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
+                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getallUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, YearFilter = Year, SortField = sortField, SortOrder = sortOrder, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
-                            Data = data.OrderByDescending(x => x.id).ToList(),
+                            Data = data,
                             Message = ResponseMessages.Success,
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
@@ -67,11 +67,11 @@ namespace AptitudeTest.Data.Data
                     using (var connection = new NpgsqlConnection(connectionString))
                     {
                         connection.Open();
-                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getAllUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize)", new { SearchQuery = "", CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, YearFilter = Year, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
+                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getallUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = "", CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, YearFilter = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
-                            Data = data.OrderByDescending(x => x.id).ToList(),
+                            Data = data,
                             Message = ResponseMessages.Success,
                             Result = true,
                             StatusCode = ResponseStatusCode.Success

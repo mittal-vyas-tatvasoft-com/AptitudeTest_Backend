@@ -39,9 +39,9 @@ namespace AptitudeTest.Controllers
         /// <param name="searchGroup">key for searching in group names</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<JsonResult> GetAllGroups(string? searchGroup)
+        public async Task<JsonResult> GetAllGroups(string? searchGroup, int? collegeId)
         {
-            return await _service.GetGroups(searchGroup);
+            return await _service.GetGroups(searchGroup, collegeId);
         }
 
         /// <summary>

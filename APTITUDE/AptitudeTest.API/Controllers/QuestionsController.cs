@@ -121,6 +121,17 @@ namespace AptitudeTest.Controllers
             return await _service.Delete(id);
         }
 
+        /// <summary>
+        /// This method imports Questions
+        /// </summary>
+        /// <param name="importQuestionVM"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<JsonResult> ImportQuestions([FromForm] ImportQuestionVM importQuestionVM)
+        {
+            return await _service.ImportQuestions(importQuestionVM);
+        }
+
         #endregion
     }
 }

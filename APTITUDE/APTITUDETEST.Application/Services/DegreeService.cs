@@ -19,9 +19,9 @@ namespace AptitudeTest.Application.Services
 
         #region Methods
 
-        public async Task<JsonResult> GetDegrees()
+        public async Task<JsonResult> GetDegrees(string? sortField, string? sortOrder)
         {
-            return await _repository.GetDegrees();
+            return await _repository.GetDegrees(sortField, sortOrder);
         }
 
         public async Task<JsonResult> GetActiveDegrees()
