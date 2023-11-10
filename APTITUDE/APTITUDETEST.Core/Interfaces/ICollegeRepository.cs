@@ -7,7 +7,7 @@ namespace AptitudeTest.Core.Interfaces
     {
         #region College
 
-        public Task<JsonResult> GetColleges(CollegeQueryVM collegeQuery);
+        public Task<JsonResult> GetColleges(int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder);
         public Task<JsonResult> GetActiveColleges();
         public Task<JsonResult> Get(int id);
         public Task<JsonResult> Create(CollegeVM college);

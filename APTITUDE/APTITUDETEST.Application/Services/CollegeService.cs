@@ -19,9 +19,9 @@ namespace AptitudeTest.Application.Services
 
         #region Methods
 
-        public async Task<JsonResult> GetColleges(CollegeQueryVM collegeQuery)
+        public async Task<JsonResult> GetColleges(int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
         {
-            return await _repository.GetColleges(collegeQuery);
+            return await _repository.GetColleges(currentPageIndex, pageSize, sortField, sortOrder);
         }
 
         public async Task<JsonResult> GetActiveColleges()
