@@ -550,12 +550,13 @@ namespace AptitudeTest.Data.Data
                 {
                     var item = importQuestionFieldsVMList[i];
                     QuestionVM questionVM = new QuestionVM();
-                    List<OptionVM> optios = new List<OptionVM>();
+                    List<OptionVM> options = new List<OptionVM>();
+                    questionVM.Options = options;
                     questionVM.QuestionType = item.questiontype;
-                    optios.Add(new OptionVM() { IsAnswer = item.isanswer1 });
-                    optios.Add(new OptionVM() { IsAnswer = item.isanswer2 });
-                    optios.Add(new OptionVM() { IsAnswer = item.isanswer3 });
-                    optios.Add(new OptionVM() { IsAnswer = item.isanswer4 });
+                    options.Add(new OptionVM() { IsAnswer = item.isanswer1 });
+                    options.Add(new OptionVM() { IsAnswer = item.isanswer2 });
+                    options.Add(new OptionVM() { IsAnswer = item.isanswer3 });
+                    options.Add(new OptionVM() { IsAnswer = item.isanswer4 });
                     if (!ValidateQuestion(questionVM))
                     {
                         rows.Add(i + 1);
