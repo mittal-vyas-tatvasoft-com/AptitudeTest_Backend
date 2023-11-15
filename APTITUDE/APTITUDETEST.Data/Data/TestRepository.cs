@@ -445,6 +445,123 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+        public async Task<JsonResult> DeleteAllTestQuestions(int testId)
+        {
+            try
+            {
+                if (testId != 0)
+                {
+                    List<TestQuestions> testQuestionsToBeDeleted = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == testId && t.IsDeleted == false).ToList());
+                    if (testQuestionsToBeDeleted != null && testQuestionsToBeDeleted.Count > 0)
+                    {
+                        foreach (var testQuestion in testQuestionsToBeDeleted)
+                        {
+                            testQuestion.IsDeleted = true;
+                            testQuestion.UpdatedDate = DateTime.UtcNow;
+                            _context.Update(testQuestion);
+                            int count = _context.SaveChanges();
+
+                            if (count == 1)
+                            {
+                                List<TestQuestionsCount> testQuestionsCountToBeDeleted = _context.TestQuestionsCount.Where(t => t.TestQuestionId == testQuestion.Id && t.IsDeleted == false).ToList();
+                                if (testQuestionsCountToBeDeleted != null && testQuestionsCountToBeDeleted.Count > 0)
+                                {
+                                    foreach (var testQuestionCount in testQuestionsCountToBeDeleted)
+                                    {
+                                        testQuestionCount.IsDeleted = true;
+                                        _context.Update(testQuestionCount);
+                                        count = _context.SaveChanges();
+                                    }
+                                }
+                            }
+                        }
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.TestQuestions),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.TestQuestions),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+                }
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.BadRequest),
+                    Result = false,
+                    StatusCode = ResponseStatusCode.BadRequest
+                });
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> DeleteTest(int testId)
+        {
+            try
+            {
+                if (testId != 0)
+                {
+                    Test? testToBeDeleted = await Task.FromResult(_context.Tests.Where(t => t.Id == testId && t.IsDeleted == false).FirstOrDefault());
+                    if (testToBeDeleted != null)
+                    {
+                        testToBeDeleted.IsDeleted = true;
+                        int count = _context.SaveChanges();
+
+                        if (count == 1)
+                        { 
+                            var result= await DeleteAllTestQuestions(testId);
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.DeleteSuccess,ModuleNames.Test),
+                                Result = false,
+                                StatusCode = ResponseStatusCode.BadRequest
+                            }); 
+                        }
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.NotFound,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+                }
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.BadRequest,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.BadRequest
+                });
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
         #endregion
 
         #region Helper Method
