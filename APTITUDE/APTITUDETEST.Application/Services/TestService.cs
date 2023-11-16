@@ -51,6 +51,10 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.DeleteTest(testId);
         }
+        public Task<JsonResult> GetQuestinsMarksCount(int testId)
+        {
+            return _repository.GetQuestinsMarksCount(testId);
+        }
         #endregion
     }
 }

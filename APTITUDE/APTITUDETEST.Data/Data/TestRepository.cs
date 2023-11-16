@@ -524,14 +524,14 @@ namespace AptitudeTest.Data.Data
                         int count = _context.SaveChanges();
 
                         if (count == 1)
-                        { 
-                            var result= await DeleteAllTestQuestions(testId);
+                        {
+                            var result = await DeleteAllTestQuestions(testId);
                             return new JsonResult(new ApiResponse<string>
                             {
-                                Message = string.Format(ResponseMessages.DeleteSuccess,ModuleNames.Test),
+                                Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.Test),
                                 Result = false,
                                 StatusCode = ResponseStatusCode.BadRequest
-                            }); 
+                            });
                         }
                     }
                     else
@@ -541,6 +541,91 @@ namespace AptitudeTest.Data.Data
                             Message = ResponseMessages.NotFound,
                             Result = false,
                             StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+                }
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.BadRequest,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.BadRequest
+                });
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> GetQuestinsMarksCount(int testId)
+        {
+            try
+            {
+
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+                    List<TestQuestionCountMarksDataVM> data = connection.Query<TestQuestionCountMarksDataVM>("Select * from getTestQuestionsCount(@test_id)", new { test_id = testId }).ToList();
+                    connection.Close();
+                    TestQuestionsCountMarksVM testQuestionsCountMarksVM = new();
+                    if (data.Count != 0)
+                    {
+                        var firstRow = data.FirstOrDefault();
+                        testQuestionsCountMarksVM.TestId = firstRow.TestId;
+                        testQuestionsCountMarksVM.TotalMarks = firstRow.TotalMarks;
+                        testQuestionsCountMarksVM.TotalQuestions = firstRow.TotalQuestion;
+                        testQuestionsCountMarksVM.QuestionsCount =
+                            data.GroupBy(x => x.TopicId).Select(x =>
+                            {
+                                var q = x.FirstOrDefault();
+                                TestQuestionCountMarksDataVM? multiAns = x.Where(x => x.QuestionType == (int)Enums.QuestionType.MultiAnswer).FirstOrDefault();
+                                if (multiAns == null)
+                                {
+                                    multiAns = new();
+                                }
+                                TestQuestionCountMarksDataVM? singleAns = x.Where(x => x.QuestionType == (int)Enums.QuestionType.SingleAnswer).FirstOrDefault();
+                                if (singleAns == null)
+                                {
+                                    singleAns = new();
+                                }
+                                return new QuestionsCountMarksVM()
+                                {
+                                    TopicId = q.TopicId,
+                                    TotalMarks = x.Sum(x => x.TotalTopicMarks),
+                                    TotalQuestions = q.TotalTopicQuestion,
+                                    MultiAnswerCount = multiAns.TotalTopicQuestion,
+                                    SingleAnswerCount = singleAns.TotalTopicQuestion,
+                                    MultiAnswer = new TestQuestionsCountVM()
+                                    {
+                                        OneMarkQuestion = multiAns.OneMarks,
+                                        TwoMarkQuestion = multiAns.TwoMarks,
+                                        ThreeMarkQuestion = multiAns.ThreeMarks,
+                                        FourMarkQuestion = multiAns.FourMarks,
+                                        FiveMarkQuestion = multiAns.FiveMarks,
+                                    },
+                                    SingleAnswer = new TestQuestionsCountVM()
+                                    {
+                                        OneMarkQuestion = singleAns.OneMarks,
+                                        TwoMarkQuestion = singleAns.TwoMarks,
+                                        ThreeMarkQuestion = singleAns.ThreeMarks,
+                                        FourMarkQuestion = singleAns.FourMarks,
+                                        FiveMarkQuestion = singleAns.FiveMarks,
+                                    }
+                                };
+                            }).ToList();
+
+                        return new JsonResult(new ApiResponse<TestQuestionsCountMarksVM>
+                        {
+                            Data = testQuestionsCountMarksVM,
+                            Message = ResponseMessages.Success,
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
                         });
                     }
                 }
