@@ -55,6 +55,10 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.UpdateTest(testVM);
         }
+        public Task<JsonResult> GetQuestinsMarksCount(int testId)
+        {
+            return _repository.GetQuestinsMarksCount(testId);
+        }
         #endregion
     }
 }

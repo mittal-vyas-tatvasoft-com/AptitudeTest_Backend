@@ -14,5 +14,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> DeleteAllTestQuestions(int testId);
         public Task<JsonResult> DeleteTest(int testId);
         public Task<JsonResult> UpdateTest(CreateTestVM testVM);
+        public Task<JsonResult> GetQuestinsMarksCount(int testId);
     }
 }
