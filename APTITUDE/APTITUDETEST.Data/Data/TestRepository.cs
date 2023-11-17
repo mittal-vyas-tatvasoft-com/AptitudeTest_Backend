@@ -598,7 +598,7 @@ namespace AptitudeTest.Data.Data
                                 {
                                     TopicId = q.TopicId,
                                     TotalMarks = x.Sum(x => x.TotalTopicMarks),
-                                    TotalQuestions = q.TotalTopicQuestion,
+                                    TotalQuestions = x.Sum(x => x.TotalTopicQuestion),
                                     MultiAnswerCount = multiAns.TotalTopicQuestion,
                                     SingleAnswerCount = singleAns.TotalTopicQuestion,
                                     MultiAnswer = new TestQuestionsCountVM()
