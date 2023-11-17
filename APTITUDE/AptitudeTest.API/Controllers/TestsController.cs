@@ -116,6 +116,17 @@ namespace AptitudeTest.Controllers
         {
             return await _service.DeleteTest(testId);
         }
+
+        /// <summary>
+        /// Update Test 
+        /// </summary>
+        /// <param name="testVM"></param>
+        /// <returns></returns>
+        [HttpDelete("[action]")]
+        public async Task<JsonResult> UpdateTest(CreateTestVM testVM)
+        {
+            return await _service.UpdateTest(testVM);
+        }
         #endregion
     }
 }

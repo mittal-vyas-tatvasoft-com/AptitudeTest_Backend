@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using static AptitudeTest.Data.Common.Enums;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AptitudeTest.Data.Data
 {
@@ -117,6 +118,85 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
+        }
+
+        public async Task<JsonResult> UpdateTest(CreateTestVM testVM)
+        {
+            try
+            {
+                Test? testAlreadyExists = _context.Tests.Where(t => t.Name == testVM.Name && t.Id != testVM.Id && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
+                if (testAlreadyExists == null)
+                {
+                    Test? test = _context.Tests.Where(t => t.Id == testVM.Id && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
+                    if (test != null)
+                    {
+                        test.Name = testVM.Name;
+                        test.Description = testVM.Description;
+                        test.Date = testVM.Date;
+                        test.StartTime = testVM.StartTime;
+                        test.EndTime = testVM.EndTime;
+                        test.TestDuration = testVM.TestDuration;
+                        test.Status = testVM.Status;
+                        test.BasicPoint = testVM.BasicPoint;
+                        test.MessaageAtStartOfTheTest = testVM.MessaageAtStartOfTheTest;
+                        test.MessaageAtEndOfTheTest = testVM.MessaageAtEndOfTheTest;
+                        test.IsRandomQuestion = testVM.IsRandomQuestion;
+                        test.IsRandomAnswer = testVM.IsRandomAnswer;
+                        test.IsLogoutWhenTimeExpire = testVM.IsLogoutWhenTimeExpire;
+                        test.IsQuestionsMenu = testVM.IsQuestionsMenu;
+                        test.UpdatedDate = DateTime.UtcNow;
+                        test.UpdatedBy = testVM.CreatedBy;
+
+                        int count = _context.SaveChanges();
+                        if (count == 1)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Test),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.Success
+                            });
+                        }
+                        else
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.InternalError,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.InternalServerError
+                            });
+                        }
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
         }
 
         public async Task<JsonResult> UpdateTestGroup(UpdateTestGroupVM updateTest)

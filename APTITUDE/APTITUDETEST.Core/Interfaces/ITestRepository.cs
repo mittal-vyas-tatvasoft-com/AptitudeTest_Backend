@@ -13,5 +13,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> DeleteTopicWiseTestQuestions(int testId, int topicId);
         public Task<JsonResult> DeleteAllTestQuestions(int testId);
         public Task<JsonResult> DeleteTest(int testId);
+        public Task<JsonResult> UpdateTest(CreateTestVM testVM);
     }
 }
