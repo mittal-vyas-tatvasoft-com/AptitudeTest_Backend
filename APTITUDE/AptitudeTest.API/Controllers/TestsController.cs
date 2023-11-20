@@ -118,6 +118,17 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
+        /// Update Test 
+        /// </summary>
+        /// <param name="testVM"></param>
+        /// <returns></returns>
+        [HttpDelete("[action]")]
+        public async Task<JsonResult> UpdateTest(CreateTestVM testVM)
+        {
+            return await _service.UpdateTest(testVM);
+        }
+
+        /// <summary>
         /// This method gives count of questions in each topic and its marks
         /// </summary>
         /// <param name="testId"></param>

@@ -6,6 +6,7 @@ namespace AptitudeTest.Core.ViewModels
 {
     public class CreateTestVM
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         [TestDurationMusBeValid]
         public int TestDuration { get; set; }
