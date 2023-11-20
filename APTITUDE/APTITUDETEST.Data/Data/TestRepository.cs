@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using static AptitudeTest.Data.Common.Enums;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace AptitudeTest.Data.Data
 {
@@ -72,8 +71,8 @@ namespace AptitudeTest.Data.Data
                         Name = test.Name,
                         Description = test.Description,
                         Date = test.Date,
-                        StartTime = test.StartTime,
-                        EndTime = test.EndTime,
+                        StartTime = test.StartTime.AddDays(1),
+                        EndTime = test.EndTime.AddDays(1),
                         TestDuration = test.TestDuration,
                         Status = test.Status,
                         BasicPoint = test.BasicPoint,
@@ -89,8 +88,9 @@ namespace AptitudeTest.Data.Data
 
                     _context.Add(testToBeAdded);
                     _context.SaveChanges();
-                    return new JsonResult(new ApiResponse<string>
+                    return new JsonResult(new ApiResponse<int>
                     {
+                        Data = testToBeAdded.Id,
                         Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Test),
                         Result = true,
                         StatusCode = ResponseStatusCode.OK
@@ -206,28 +206,34 @@ namespace AptitudeTest.Data.Data
                 Test testAlreadyExists = _context.Tests.Where(t => t.Id != updateTest.TestId && t.GroupId == updateTest.GroupId && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
                 if (testAlreadyExists != null)
                 {
+                    testAlreadyExists.GroupId = updateTest.GroupId;
+                    testAlreadyExists.UpdatedBy = updateTest.UpdatedBy;
+                    testAlreadyExists.UpdatedDate = DateTime.UtcNow;
+                    _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Test),
+                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Group),
                         Result = true,
                         StatusCode = ResponseStatusCode.OK
                     });
                 }
-                Test test = await Task.FromResult(_context.Tests.Where(t => t.Id == updateTest.TestId && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault());
+
+                Test? test = _context.Tests.Where(t => t.Id == updateTest.TestId && t.IsDeleted == false).FirstOrDefault();
+
                 if (test != null)
                 {
                     test.GroupId = updateTest.GroupId;
                     test.UpdatedBy = updateTest.UpdatedBy;
                     test.UpdatedDate = DateTime.UtcNow;
                     _context.SaveChanges();
-
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Test),
+                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Group),
                         Result = true,
-                        StatusCode = ResponseStatusCode.Success
+                        StatusCode = ResponseStatusCode.OK
                     });
                 }
+
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -631,6 +637,48 @@ namespace AptitudeTest.Data.Data
                     Result = false,
                     StatusCode = ResponseStatusCode.BadRequest
                 });
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+
+        public async Task<JsonResult> GetAllTestCandidates(string? searchQuery, int GroupId, int? CollegeId, string? SortField, string? SortOrder, int? currentPageIndex, int? pageSize)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+                    var parameter = new
+                    {
+                        SearchQuery = searchQuery,
+                        CollegeId = (object)CollegeId,
+                        GroupId = (object)GroupId,
+                        PageNumber = currentPageIndex,
+                        PageSize = pageSize,
+                        SortField = SortField,
+                        sortOrder = SortOrder,
+                    };
+                    List<TestCandidatesVM> data = connection.Query<TestCandidatesVM>("Select * from getAllTestCandidatesSorting(@SearchQuery,@CollegeId,@GroupId,@PageNumber,@PageSize,@SortField,@SortOrder)", parameter).ToList();
+                    connection.Close();
+                    return new JsonResult(new ApiResponse<List<TestCandidatesVM>>
+                    {
+                        Data = data,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+
+
             }
             catch
             {

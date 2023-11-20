@@ -11,7 +11,8 @@ namespace AptitudeTest.Core.Validations
 
             var date = (DateTime?)dateProperty.GetValue(validationContext.ObjectInstance);
 
-            if (date < DateTime.UtcNow)
+
+            if (date < DateTime.Today)
             {
                 return new ValidationResult("Date must be valid");
             }

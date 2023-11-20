@@ -1,11 +1,10 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TestsController : ControllerBase
@@ -115,6 +114,23 @@ namespace AptitudeTest.Controllers
         public async Task<JsonResult> DeleteTest(int testId)
         {
             return await _service.DeleteTest(testId);
+        }
+
+        /// <summary>
+        /// GetAllTestCandidates
+        /// </summary>
+        /// <param name="searchQuery"></param>
+        /// <param name="GroupId"></param>
+        /// <param name="CollegeId"></param>
+        /// <param name="SortField"></param>
+        /// <param name="SortOrder"></param>
+        /// <param name="currentPageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{GroupId:int}/{currentPageIndex:int}/{pageSize:int}")]
+        public async Task<JsonResult> GetAllTestCandidates(string? searchQuery, int GroupId, int? CollegeId, string? SortField, string? SortOrder, int? currentPageIndex = 0, int? pageSize = 10)
+        {
+            return await _service.GetAllTestCandidates(searchQuery, GroupId, CollegeId, SortField, SortOrder, currentPageIndex, pageSize);
         }
 
         /// <summary>

@@ -51,6 +51,10 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.DeleteTest(testId);
         }
+        public Task<JsonResult> GetAllTestCandidates(string? searchQuery, int GroupId, int? CollegeId, string? SortField, string? SortOrder, int? currentPageIndex = 0, int? pageSize = 10)
+        {
+            return _repository.GetAllTestCandidates(searchQuery, GroupId, CollegeId, SortField, SortOrder, currentPageIndex, pageSize);
+        }
         public Task<JsonResult> UpdateTest(CreateTestVM testVM)
         {
             return _repository.UpdateTest(testVM);

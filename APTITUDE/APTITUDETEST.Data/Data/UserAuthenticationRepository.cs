@@ -8,7 +8,6 @@ using APTITUDETEST.Core.Entities.Users;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
 using System.Text;
 //using ResponseMessages = AptitudeTest.Data.Common.ResponseMessages;
