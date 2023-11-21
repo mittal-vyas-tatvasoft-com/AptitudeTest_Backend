@@ -155,6 +155,16 @@ namespace AptitudeTest.Controllers
         {
             return await _service.GetQuestinsMarksCount(testId);
         }
+
+        /// <summary>
+        /// This method gives count of questions of each topic
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<JsonResult> GetTopicWiseQuestionsCount()
+        {
+            return await _service.GetTopicWiseQuestionsCount();
+        }
         #endregion
     }
 }
