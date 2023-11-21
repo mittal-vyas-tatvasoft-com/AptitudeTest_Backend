@@ -203,7 +203,7 @@ namespace AptitudeTest.Data.Data
                     string refreshToken = tokens.RefreshToken;
                     var principal = jwtHelper.GetPrincipleFromExpiredToken(accessToken);
                     var allClaims = principal.Claims.ToList();
-                    var email = allClaims[3].Value;
+                    var email = allClaims[4].Value;
                     var tokenssss = RefreshTokens.GetValueOrDefault(email);
                     var admin = await _context.Admins.FirstOrDefaultAsync(U => U.Email == email);
                     if (admin == null || RefreshTokens[email].RefreshToken != refreshToken || RefreshTokens[email].RefreshTokenExpiryTime <= DateTime.Now)
