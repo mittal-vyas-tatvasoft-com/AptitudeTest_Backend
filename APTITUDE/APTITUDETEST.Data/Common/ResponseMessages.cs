@@ -9,6 +9,7 @@
         public static string BadRequest = "Invalid Request";
         public static string InsertProperData = "Please insert proper data according requirement";
         public static string InvalidAnswerSelection = "Invalid Answers Selected";
+        public static string InvalidTopics = "Invalid Topics Entered";
 
         public static string NotFound = "{0} does not exists";
         public static string AlreadyExists = "{0} already exists";

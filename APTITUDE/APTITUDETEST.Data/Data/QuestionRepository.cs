@@ -5,6 +5,7 @@ using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -516,8 +517,14 @@ namespace AptitudeTest.Data.Data
             try
             {
                 List<ImportQuestionFieldsVM> importQuestionFieldsVMList = new List<ImportQuestionFieldsVM>();
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    HasHeaderRecord = true,
+                };
+                config.HeaderValidated = null;
+                config.MissingFieldFound = null;
                 using (var reader = new StreamReader(importQuestionVM.File.OpenReadStream()))
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                using (var csv = new CsvReader(reader, config))
                 {
                     importQuestionFieldsVMList = csv.GetRecords<ImportQuestionFieldsVM>().ToList();
                 }
@@ -546,6 +553,7 @@ namespace AptitudeTest.Data.Data
                 }
 
                 List<int> rows = new List<int>();
+                List<int> topicRows = new List<int>();
                 for (int i = 0; i < importQuestionFieldsVMList.Count; i++)
                 {
                     var item = importQuestionFieldsVMList[i];
@@ -561,6 +569,10 @@ namespace AptitudeTest.Data.Data
                     {
                         rows.Add(i + 1);
                     }
+                    if (!ValidateTopics(item))
+                    {
+                        topicRows.Add(i + 1);
+                    }
                 }
 
                 if (rows.Count != 0)
@@ -574,13 +586,23 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
+                if (topicRows.Count != 0)
+                {
+                    return new JsonResult(new ApiResponse<List<int>>
+                    {
+                        Data = rows,
+                        Message = ResponseMessages.InvalidTopics,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
                 int count = 0;
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     var procedure = "import_questions";
                     var parameters = new DynamicParameters();
                     parameters.Add("import_question_data", importQuestionFieldsVMList, DbType.Object, ParameterDirection.Input);
-                    parameters.Add("topicid", importQuestionVM.TopicId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("questions_imported_count", ParameterDirection.Output);
                     count = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
                 }
@@ -697,6 +719,32 @@ namespace AptitudeTest.Data.Data
                 return flag.All(x => x);
             }
             return false;
+        }
+
+        private bool ValidateTopics(ImportQuestionFieldsVM question)
+        {
+
+            string topic = question.topic.Trim().ToLower();
+            bool valid = true;
+            switch (topic)
+            {
+                case "maths":
+                    question.topicid = (int)Enums.QuestionTopic.Maths;
+                    break;
+
+                case "reasoning":
+                    question.topicid = (int)Enums.QuestionTopic.Reasoning;
+                    break;
+
+                case "technical":
+                    question.topicid = (int)Enums.QuestionTopic.Technical;
+                    break;
+
+                default:
+                    valid = false;
+                    return valid;
+            }
+            return valid;
         }
 
         private async Task<ValidateImportFileVM> checkImportedData<T>(List<T> records)

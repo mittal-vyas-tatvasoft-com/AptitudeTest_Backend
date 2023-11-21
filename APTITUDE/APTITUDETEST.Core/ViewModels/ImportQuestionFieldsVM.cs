@@ -4,6 +4,8 @@ namespace AptitudeTest.Core.ViewModels
 {
     public class ImportQuestionFieldsVM
     {
+        public string topic { get; set; }
+        public int? topicid { get; set; }
         [Required]
         [Range(1, 5)]
         public int difficulty { get; set; }
