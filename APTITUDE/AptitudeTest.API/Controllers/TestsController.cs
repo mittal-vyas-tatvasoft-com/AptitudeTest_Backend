@@ -34,7 +34,7 @@ namespace AptitudeTest.Controllers
         /// <returns></returns>
 
         [HttpGet("{currentPageIndex:int}/{pageSize:int}")]
-        public async Task<JsonResult> GetTests(string? searchQuery, int? GroupId, int? Status, DateTime? Date, string? sortField, string? sortOrder, int? currentPageIndex = 0, int? pageSize = 10)
+        public async Task<JsonResult> GetTests(string? searchQuery, int? GroupId, int? Status, DateOnly? Date, string? sortField, string? sortOrder, int? currentPageIndex = 0, int? pageSize = 10)
         {
             return await _service.GetTests(searchQuery, GroupId, Status, Date, currentPageIndex, pageSize, sortField, sortOrder);
         }
