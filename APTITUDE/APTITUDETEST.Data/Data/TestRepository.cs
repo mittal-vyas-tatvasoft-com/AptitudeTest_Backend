@@ -773,6 +773,76 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+        public async Task<JsonResult> GetTopicWiseQuestionsCount()
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+                    List<TestTopicWiseCountVM> data = connection.Query<TestTopicWiseCountVM>("Select * from gettopicwisequestionscount()").ToList();
+                    connection.Close();
+                    List<QuestionsCountMarksVM> questionsCountVM = new();
+                    if (data.Count != 0)
+                    {
+                        var firstRow = data.FirstOrDefault();
+                        questionsCountVM =
+                            data.GroupBy(x => x.TopicId).Select(x =>
+                            {
+                                var q = x.FirstOrDefault();
+                                return new QuestionsCountMarksVM()
+                                {
+                                    TopicId = q.TopicId,
+                                    TotalQuestions = x.Sum(x => x.CountOfQuestions),
+                                    MultiAnswerCount = x.Where(x => x.QuestionType == (int)Enums.QuestionType.MultiAnswer).Sum(x => x.CountOfQuestions),
+                                    SingleAnswerCount = x.Where(x => x.QuestionType == (int)Enums.QuestionType.SingleAnswer).Sum(x => x.CountOfQuestions),
+                                    MultiAnswer = new TestQuestionsCountVM()
+                                    {
+                                        OneMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 1),
+                                        TwoMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 2),
+                                        ThreeMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 3),
+                                        FourMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 4),
+                                        FiveMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 5),
+                                    },
+                                    SingleAnswer = new TestQuestionsCountVM()
+                                    {
+                                        OneMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 1),
+                                        TwoMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 2),
+                                        ThreeMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 3),
+                                        FourMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 4),
+                                        FiveMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 5),
+                                    }
+                                };
+                            }).ToList();
+
+                        return new JsonResult(new ApiResponse<List<QuestionsCountMarksVM>>
+                        {
+                            Data = questionsCountVM,
+                            Message = ResponseMessages.Success,
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
+                    }
+                }
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.BadRequest,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.BadRequest
+                });
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
         #endregion
 
         #region Helper Method
@@ -816,6 +886,11 @@ namespace AptitudeTest.Data.Data
                 }
             }
             return (true, 0, null);
+        }
+
+        static int GetQuestionDetails(IGrouping<int, TestTopicWiseCountVM> x, int questionType, int difficulty)
+        {
+            return x.Where(x => x.QuestionType == questionType && x.Difficulty == difficulty).Select(x => x.CountOfQuestions).FirstOrDefault();
         }
         #endregion
     }
