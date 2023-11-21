@@ -858,12 +858,12 @@ namespace AptitudeTest.Data.Data
             return (true, 0, null);
         }
 
-        static int GetQuestionDetails(IGrouping<int, TestTopicWiseCountVM> x, int questionType, int difficulty)
+        private int GetQuestionDetails(IGrouping<int, TestTopicWiseCountVM> x, int questionType, int difficulty)
         {
             return x.Where(x => x.QuestionType == questionType && x.Difficulty == difficulty).Select(x => x.CountOfQuestions).FirstOrDefault();
         }
 
-        static List<QuestionsCountMarksVM> FillQuestionsCountData(List<TestTopicWiseCountVM> data)
+        private List<QuestionsCountMarksVM> FillQuestionsCountData(List<TestTopicWiseCountVM> data)
         {
             if (data.Count != 0)
             {
