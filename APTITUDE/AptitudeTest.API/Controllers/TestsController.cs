@@ -118,6 +118,23 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
+        /// GetAllTestCandidates
+        /// </summary>
+        /// <param name="searchQuery"></param>
+        /// <param name="GroupId"></param>
+        /// <param name="CollegeId"></param>
+        /// <param name="SortField"></param>
+        /// <param name="SortOrder"></param>
+        /// <param name="currentPageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{GroupId:int}/{currentPageIndex:int}/{pageSize:int}")]
+        public async Task<JsonResult> GetAllTestCandidates(string? searchQuery, int GroupId, int? CollegeId, string? SortField, string? SortOrder, int? currentPageIndex = 0, int? pageSize = 10)
+        {
+            return await _service.GetAllTestCandidates(searchQuery, GroupId, CollegeId, SortField, SortOrder, currentPageIndex, pageSize);
+        }
+
+        /// <summary>
         /// Update Test 
         /// </summary>
         /// <param name="testVM"></param>
