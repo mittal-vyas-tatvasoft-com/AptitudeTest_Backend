@@ -81,7 +81,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
                 MasterGroup groupToBeDeleted = _context.MasterGroup.Where(group => group.Id == id && group.IsDeleted != true).FirstOrDefault();
-                if (groupToBeDeleted != null)
+                if (groupToBeDeleted != null && groupToBeDeleted.IsDefault == false)
                 {
                     groupToBeDeleted.IsDeleted = true;
                     _context.Update(groupToBeDeleted);
@@ -93,6 +93,15 @@ namespace AptitudeTest.Data.Data
 
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                if (groupToBeDeleted.IsDefault == true)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotEditable, ModuleNames.Group),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.NotAcceptable
                     });
                 }
                 return new JsonResult(new ApiResponse<string>

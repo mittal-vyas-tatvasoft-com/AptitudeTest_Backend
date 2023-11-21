@@ -656,7 +656,6 @@ namespace AptitudeTest.Data.Data
             {
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
-                    connection.Open();
                     var parameter = new
                     {
                         SearchQuery = searchQuery,
@@ -668,7 +667,6 @@ namespace AptitudeTest.Data.Data
                         sortOrder = SortOrder,
                     };
                     List<TestCandidatesVM> data = connection.Query<TestCandidatesVM>("Select * from getAllTestCandidatesSorting(@SearchQuery,@CollegeId,@GroupId,@PageNumber,@PageSize,@SortField,@SortOrder)", parameter).ToList();
-                    connection.Close();
                     return new JsonResult(new ApiResponse<List<TestCandidatesVM>>
                     {
                         Data = data,
