@@ -786,35 +786,7 @@ namespace AptitudeTest.Data.Data
                     List<QuestionsCountMarksVM> questionsCountVM = new();
                     if (data.Count != 0)
                     {
-                        var firstRow = data.FirstOrDefault();
-                        questionsCountVM =
-                            data.GroupBy(x => x.TopicId).Select(x =>
-                            {
-                                var q = x.FirstOrDefault();
-                                return new QuestionsCountMarksVM()
-                                {
-                                    TopicId = q.TopicId,
-                                    TotalQuestions = x.Sum(x => x.CountOfQuestions),
-                                    MultiAnswerCount = x.Where(x => x.QuestionType == (int)Enums.QuestionType.MultiAnswer).Sum(x => x.CountOfQuestions),
-                                    SingleAnswerCount = x.Where(x => x.QuestionType == (int)Enums.QuestionType.SingleAnswer).Sum(x => x.CountOfQuestions),
-                                    MultiAnswer = new TestQuestionsCountVM()
-                                    {
-                                        OneMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 1),
-                                        TwoMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 2),
-                                        ThreeMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 3),
-                                        FourMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 4),
-                                        FiveMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 5),
-                                    },
-                                    SingleAnswer = new TestQuestionsCountVM()
-                                    {
-                                        OneMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 1),
-                                        TwoMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 2),
-                                        ThreeMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 3),
-                                        FourMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 4),
-                                        FiveMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 5),
-                                    }
-                                };
-                            }).ToList();
+                        questionsCountVM = FillQuestionsCountData(data);
 
                         return new JsonResult(new ApiResponse<List<QuestionsCountMarksVM>>
                         {
@@ -891,6 +863,46 @@ namespace AptitudeTest.Data.Data
         static int GetQuestionDetails(IGrouping<int, TestTopicWiseCountVM> x, int questionType, int difficulty)
         {
             return x.Where(x => x.QuestionType == questionType && x.Difficulty == difficulty).Select(x => x.CountOfQuestions).FirstOrDefault();
+        }
+
+        static List<QuestionsCountMarksVM> FillQuestionsCountData(List<TestTopicWiseCountVM> data)
+        {
+            if (data.Count != 0)
+            {
+                List<QuestionsCountMarksVM> questionsCountVM = data.GroupBy(x => x.TopicId).Select(x =>
+                {
+                    var q = x.FirstOrDefault();
+                    return new QuestionsCountMarksVM()
+                    {
+                        TopicId = q.TopicId,
+                        TotalQuestions = x.Sum(x => x.CountOfQuestions),
+                        MultiAnswerCount = x.Where(x => x.QuestionType == (int)Enums.QuestionType.MultiAnswer).Sum(x => x.CountOfQuestions),
+                        SingleAnswerCount = x.Where(x => x.QuestionType == (int)Enums.QuestionType.SingleAnswer).Sum(x => x.CountOfQuestions),
+                        MultiAnswer = new TestQuestionsCountVM()
+                        {
+                            OneMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 1),
+                            TwoMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 2),
+                            ThreeMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 3),
+                            FourMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 4),
+                            FiveMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.MultiAnswer, 5),
+                        },
+                        SingleAnswer = new TestQuestionsCountVM()
+                        {
+                            OneMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 1),
+                            TwoMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 2),
+                            ThreeMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 3),
+                            FourMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 4),
+                            FiveMarkQuestion = GetQuestionDetails(x, (int)Enums.QuestionType.SingleAnswer, 5),
+                        }
+                    };
+                }).ToList();
+
+                return questionsCountVM;
+            }
+            else
+            {
+                return new List<QuestionsCountMarksVM>();
+            }
         }
         #endregion
     }
