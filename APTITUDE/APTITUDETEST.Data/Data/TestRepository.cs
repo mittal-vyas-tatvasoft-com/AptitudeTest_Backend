@@ -26,7 +26,7 @@ namespace AptitudeTest.Data.Data
         }
 
         #region Methods
-        public async Task<JsonResult> GetTests(string? searchQuery, int? GroupId, int? Status, DateTime? Date, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetTests(string? searchQuery, int? GroupId, int? Status, DateTime? Date, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
         {
             try
             {
@@ -34,11 +34,11 @@ namespace AptitudeTest.Data.Data
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
-                    List<TestsViewModel> data = connection.Query<TestsViewModel>("Select * from getalltests(@SearchQuery,@GroupId,@Status,@DateFilter,@PageNumber,@PageSize)", new { SearchQuery = searchQuery, GroupId = (object)GroupId, Status = Status, DateFilter = Date, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
+                    List<TestsViewModel> data = connection.Query<TestsViewModel>("Select * from getalltests(@SearchQuery,@GroupId,@Status,@DateFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId, Status = Status, DateFilter = Date, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                     connection.Close();
                     return new JsonResult(new ApiResponse<List<TestsViewModel>>
                     {
-                        Data = data.OrderByDescending(x => x.Testid).ToList(),
+                        Data = data,
                         Message = ResponseMessages.Success,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success

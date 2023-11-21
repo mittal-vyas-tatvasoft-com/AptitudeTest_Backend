@@ -19,9 +19,9 @@ namespace AptitudeTest.Application.Services
 
         #region Methods
 
-        public async Task<JsonResult> GetTests(string? searchQuery, int? GroupId, int? Status, DateTime? Date, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetTests(string? searchQuery, int? GroupId, int? Status, DateTime? Date, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
         {
-            return await _repository.GetTests(searchQuery, GroupId, Status, Date, currentPageIndex, pageSize);
+            return await _repository.GetTests(searchQuery, GroupId, Status, Date, currentPageIndex, pageSize, sortField, sortOrder);
         }
         public Task<JsonResult> CreateTest(CreateTestVM testVM)
         {
