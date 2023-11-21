@@ -532,6 +532,7 @@ namespace AptitudeTest.Data.Data
             userDetails.GUJCETScore = userData.gujcetscore ?? 0;
             userDetails.JEEScore = userData.jeescore ?? 0;
             userDetails.Status = userData.status ?? 0;
+            userDetails.CreatedYear = userData.createdyear ?? 0;
         }
 
         private void FillAcademicAndFamilyData(dynamic data, UserDetailsVM userDetails, List<int> acadamicIds, List<int> familyIds)

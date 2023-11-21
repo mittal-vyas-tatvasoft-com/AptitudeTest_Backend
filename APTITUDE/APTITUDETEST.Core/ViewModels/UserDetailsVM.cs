@@ -28,6 +28,7 @@
         public int? Gender { get; set; }
 
         public bool? Status { get; set; }
+        public int? CreatedYear { get; set; }
 
         public List<UserFamilyVM> FamilyDetails { get; set; }
         public List<UserAcademicsVM> AcademicsDetails { get; set; }
