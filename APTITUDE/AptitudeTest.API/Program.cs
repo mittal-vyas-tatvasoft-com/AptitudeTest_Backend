@@ -40,6 +40,8 @@ builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUserAuthenticationService, UserAuthenticationService>();
 builder.Services.AddScoped<IUsersRepository, UserRepository>();
 builder.Services.AddScoped<IUserAuthenticationRepository, UserAuthenticationRepository>();
+builder.Services.AddScoped<IAdminAuthenticationService, AdminAuthenticationService>();
+builder.Services.AddScoped<IAdminAuthenticationRepository, AdminAuthenticationRepository>();
 builder.Services.AddTransient<ICollegeService, CollegeService>();
 builder.Services.AddScoped<ICollegeRepository, CollegeRepository>();
 builder.Services.AddTransient<IDegreeService, DegreeService>();
