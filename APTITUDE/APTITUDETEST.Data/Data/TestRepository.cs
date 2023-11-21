@@ -780,9 +780,7 @@ namespace AptitudeTest.Data.Data
             {
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
-                    connection.Open();
                     List<TestTopicWiseCountVM> data = connection.Query<TestTopicWiseCountVM>("Select * from gettopicwisequestionscount()").ToList();
-                    connection.Close();
                     List<QuestionsCountMarksVM> questionsCountVM = new();
                     if (data.Count != 0)
                     {
