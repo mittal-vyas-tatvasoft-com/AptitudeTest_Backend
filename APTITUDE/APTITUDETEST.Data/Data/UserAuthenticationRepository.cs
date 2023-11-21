@@ -37,34 +37,20 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (string.IsNullOrEmpty(loginVm.Password) || string.IsNullOrEmpty(loginVm.Email))
+                if (string.IsNullOrEmpty(loginVm.Email) || string.IsNullOrEmpty(loginVm.Password))
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
                 var jwtHelper = new JWTHelper(_appSettingConfiguration);
-                var userOrAdmin = _context.Users.FirstOrDefault(u => u.Email == loginVm.Email && u.Password == loginVm.Password)
-                                  ?? (object)_context.Admins.FirstOrDefault(a => a.Email == loginVm.Email && a.Password == loginVm.Password);
-
-                if (userOrAdmin == null)
+                User? user = _context.Users.Where(u => u.Email == loginVm.Email && u.Password == loginVm.Password)?.FirstOrDefault();
+                if (user == null)
                 {
-                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InvalidCredetials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
+                    return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredetials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
                 }
+                string newAccessToken = jwtHelper.GenerateJwtToken(user, null);
+                string newRefreshToken = jwtHelper.CreateRefreshToken(user.Email, RefreshTokens);
 
-                string newAccessToken = null;
-                string newRefreshToken = null;
-
-                if (userOrAdmin is User)
-                {
-                    newAccessToken = jwtHelper.GenerateJwtToken(userOrAdmin as User, null);
-                    newRefreshToken = jwtHelper.CreateRefreshToken((userOrAdmin as User).Email, RefreshTokens);
-                }
-                else if (userOrAdmin is Admin)
-                {
-                    newAccessToken = jwtHelper.GenerateJwtToken(null, userOrAdmin as Admin);
-                    newRefreshToken = jwtHelper.CreateRefreshToken((userOrAdmin as Admin).Email, RefreshTokens);
-                }
-
-                if (string.IsNullOrEmpty(newAccessToken) || string.IsNullOrEmpty(newRefreshToken))
+                if (string.IsNullOrEmpty(newAccessToken) && string.IsNullOrEmpty(newRefreshToken))
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
@@ -75,19 +61,16 @@ namespace AptitudeTest.Data.Data
                     RefreshToken = newRefreshToken,
                     RefreshTokenExpiryTime = DateTime.Now.AddHours(double.Parse(_appSettingConfiguration["JWT:RefreshTokenValidityInHours"])),
                 };
-
-                string userEmailOrAdminEmail = userOrAdmin is User ? (userOrAdmin as User).Email : (userOrAdmin as Admin).Email;
-
-                if (RefreshTokens.ContainsKey(userEmailOrAdminEmail))
+                if (RefreshTokens.ContainsKey(user.Email))
                 {
-                    RefreshTokens[userEmailOrAdminEmail] = tokenPayload;
+                    RefreshTokens[user.Email] = tokenPayload;
                 }
                 else
                 {
-                    RefreshTokens.Add(userEmailOrAdminEmail, tokenPayload);
+                    RefreshTokens.Add(user.Email, tokenPayload);
                 }
-
                 return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
+
             }
             catch
             {
@@ -208,36 +191,26 @@ namespace AptitudeTest.Data.Data
                     var principal = jwtHelper.GetPrincipleFromExpiredToken(accessToken);
                     var allClaims = principal.Claims.ToList();
                     var email = allClaims[4].Value;
-
-                    if (RefreshTokens.TryGetValue(email, out var storedTokens))
+                    var tokenssss = RefreshTokens.GetValueOrDefault(email);
+                    var user = await _context.Users.FirstOrDefaultAsync(U => U.Email == email);
+                    if (user == null || RefreshTokens[email].RefreshToken != refreshToken || RefreshTokens[email].RefreshTokenExpiryTime <= DateTime.Now)
                     {
-                        if (storedTokens.RefreshToken == refreshToken && storedTokens.RefreshTokenExpiryTime > DateTime.Now)
-                        {
-                            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-                            var admin = await _context.Admins.FirstOrDefaultAsync(a => a.Email == email);
-
-                            if (user != null || admin != null)
-                            {
-                                var newAccessToken = user != null ? jwtHelper.GenerateJwtToken(user, null) : jwtHelper.GenerateJwtToken(null, admin);
-                                var newRefreshToken = jwtHelper.CreateRefreshToken(email, RefreshTokens);
-
-                                if (!string.IsNullOrEmpty(newAccessToken) && !string.IsNullOrEmpty(newRefreshToken))
-                                {
-                                    RefreshTokens[email].RefreshToken = newRefreshToken;
-
-                                    TokenVm tokenPayload = new TokenVm()
-                                    {
-                                        AccessToken = newAccessToken,
-                                        RefreshToken = newRefreshToken,
-                                    };
-
-                                    return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.SessionRefresh, StatusCode = ResponseStatusCode.OK, Result = true });
-                                }
-                            }
-                        }
+                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                     }
+                    var newAccessToken = jwtHelper.GenerateJwtToken(user, null);
+                    var newRefreshToken = jwtHelper.CreateRefreshToken(email, RefreshTokens);
+                    if (string.IsNullOrEmpty(newAccessToken) && string.IsNullOrEmpty(newRefreshToken))
+                    {
+                        return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
+                    }
+                    RefreshTokens[email].RefreshToken = newRefreshToken;
+                    TokenVm tokenPayload = new TokenVm()
+                    {
+                        AccessToken = newAccessToken,
+                        RefreshToken = newRefreshToken,
+                    };
+                    return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.SessionRefresh, StatusCode = ResponseStatusCode.OK, Result = true });
 
-                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
             }
             catch
