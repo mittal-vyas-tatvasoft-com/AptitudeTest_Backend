@@ -615,8 +615,8 @@ namespace AptitudeTest.Data.Data
                             return new JsonResult(new ApiResponse<string>
                             {
                                 Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.Test),
-                                Result = false,
-                                StatusCode = ResponseStatusCode.BadRequest
+                                Result = true,
+                                StatusCode = ResponseStatusCode.OK
                             });
                         }
                     }
