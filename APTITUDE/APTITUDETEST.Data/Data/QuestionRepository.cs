@@ -725,7 +725,6 @@ namespace AptitudeTest.Data.Data
         {
 
             string topic = question.topic.Trim().ToLower();
-            bool valid = true;
             switch (topic)
             {
                 case "maths":
@@ -741,10 +740,9 @@ namespace AptitudeTest.Data.Data
                     break;
 
                 default:
-                    valid = false;
-                    return valid;
+                    return false;
             }
-            return valid;
+            return true;
         }
 
         private async Task<ValidateImportFileVM> checkImportedData<T>(List<T> records)
