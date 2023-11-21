@@ -6,7 +6,7 @@ namespace AptitudeTest.Common.Helpers
     {
         private static readonly string lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
         private static readonly string uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        private static readonly string specialChars = "!@#$%^&*()_+-=[]{}|;:'\"<>,.?/";
+        private static readonly string specialChars = "@$!^#%*?&";
         private static readonly string digitChars = "0123456789";
 
         private static Random random = new Random();
