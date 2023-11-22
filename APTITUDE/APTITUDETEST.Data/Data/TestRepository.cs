@@ -7,6 +7,7 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
+using NpgsqlTypes;
 using static AptitudeTest.Data.Common.Enums;
 
 namespace AptitudeTest.Data.Data
@@ -25,15 +26,17 @@ namespace AptitudeTest.Data.Data
         }
 
         #region Methods
-        public async Task<JsonResult> GetTests(string? searchQuery, int? GroupId, int? Status, DateTime? Date, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
+        public async Task<JsonResult> GetTests(string? searchQuery, int? GroupId, int? Status, DateOnly? Date, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
         {
             try
             {
                 searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
+               var dateParameter = new NpgsqlParameter("datefilter", NpgsqlDbType.Date);
+                dateParameter.Value = Date;
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
-                    List<TestsViewModel> data = connection.Query<TestsViewModel>("Select * from getalltests(@SearchQuery,@GroupId,@Status,@DateFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId, Status = Status, DateFilter = Date, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    List<TestsViewModel> data = connection.Query<TestsViewModel>("Select * from getalltests(@SearchQuery,@GroupId,@Status,@DateFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId, Status = Status, DateFilter = dateParameter.Value, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                     connection.Close();
                     return new JsonResult(new ApiResponse<List<TestsViewModel>>
                     {
