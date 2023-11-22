@@ -18,13 +18,6 @@ namespace AptitudeTest.Common.Data
 
         public IDbConnection CreateConnection()
         {
-            //var dataSourceBuilder = new NpgsqlDataSourceBuilder(_connectionString);
-            //dataSourceBuilder.MapComposite<userfamilyvm>();
-            //var dataSource = dataSourceBuilder.Build();
-
-            //return new NpgsqlConnection(_connectionString);
-
-
             NpgsqlDataSourceBuilder dataSourceBuilder = new NpgsqlDataSourceBuilder(_connectionString);
             using NpgsqlDataSource dataSource = dataSourceBuilder.Build();
             dataSourceBuilder.MapComposite<DapperUserFamilyVM>("userfamily_datatype");

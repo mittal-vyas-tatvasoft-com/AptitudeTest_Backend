@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.Entities.Admin;
+using AptitudeTest.Core.Entities.CandidateSide;
 using AptitudeTest.Core.Entities.Master;
 using AptitudeTest.Core.Entities.Questions;
 using AptitudeTest.Core.Entities.Test;
@@ -329,6 +330,100 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             });
+
+            modelBuilder.Entity<TempUserTest>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK_TEMPUSERTEST_ID");
+                entity.ToTable("TempUserTest");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.UserId)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.TestId)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.Status)
+                 .HasDefaultValue(true)
+                 .IsUnicode(false);
+                entity.Property(e => e.IsFinished)
+                 .HasDefaultValue(false)
+                 .IsUnicode(false);
+                entity.Property(e => e.TimeRemaining)
+                 .HasMaxLength(10)
+                 .IsUnicode(false);
+                entity.Property(e => e.IsAdminApproved)
+                 .HasDefaultValue(false)
+                 .IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            });
+
+            modelBuilder.Entity<UserTest>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK_USERTEST_ID");
+                entity.ToTable("UserTest");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.UserId)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.TestId)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.Status)
+                 .HasDefaultValue(true)
+                 .IsUnicode(false);
+                entity.Property(e => e.IsFinished)
+                 .HasDefaultValue(false)
+                 .IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            });
+
+            modelBuilder.Entity<TempUserTestResult>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK_TEMPUSERTESTRESULT_ID");
+                entity.ToTable("UserTest");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.UserTestId)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.QuestionId)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.UserAnswers)
+                 .HasMaxLength(2000)
+                 .IsUnicode(false);
+                entity.Property(e => e.IsAttended)
+                 .HasDefaultValue(false)
+                 .IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            });
+
+            modelBuilder.Entity<UserTestResult>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK_USERTESTRESULT_ID");
+                entity.ToTable("UserTest");
+                entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+                entity.Property(e => e.UserTestId)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.QuestionId)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+                entity.Property(e => e.UserAnswers)
+                 .HasMaxLength(2000)
+                 .IsUnicode(false);
+                entity.Property(e => e.IsAttended)
+                 .HasDefaultValue(false)
+                 .IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+                entity.Property(e => e.CreatedBy).HasDefaultValue(1);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            });
         }
 
         public DbSet<User> Users { get; set; }
@@ -349,5 +444,9 @@ namespace APTITUDETEST.Common.Data
         public DbSet<Test> Tests { get; set; }
         public DbSet<TestQuestions> TestQuestions { get; set; }
         public DbSet<TestQuestionsCount> TestQuestionsCount { get; set; }
+        public DbSet<TempUserTest> TempUserTests { get; set; }
+        public DbSet<UserTest> UserTests { get; set; }
+        public DbSet<TempUserTestResult> TempUserTestResult { get; set; }
+        public DbSet<UserTestResult> UserTestResult { get; set; }
     }
 }
