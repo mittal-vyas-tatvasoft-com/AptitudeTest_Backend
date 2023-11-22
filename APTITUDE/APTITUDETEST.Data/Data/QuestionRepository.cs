@@ -552,11 +552,8 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                List<int> rows = new List<int>();
-                List<int> topicRows = new List<int>();
-                for (int i = 0; i < importQuestionFieldsVMList.Count; i++)
+                foreach (var item in importQuestionFieldsVMList)
                 {
-                    var item = importQuestionFieldsVMList[i];
                     QuestionVM questionVM = new QuestionVM();
                     List<OptionVM> options = new List<OptionVM>();
                     questionVM.Options = options;
@@ -565,36 +562,25 @@ namespace AptitudeTest.Data.Data
                     options.Add(new OptionVM() { IsAnswer = item.isanswer2 });
                     options.Add(new OptionVM() { IsAnswer = item.isanswer3 });
                     options.Add(new OptionVM() { IsAnswer = item.isanswer4 });
+
                     if (!ValidateQuestion(questionVM))
                     {
-                        rows.Add(i + 1);
+                        return new JsonResult(new ApiResponse<List<int>>
+                        {
+                            Message = ResponseMessages.InvalidAnswerSelection,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
                     }
                     if (!ValidateTopics(item))
                     {
-                        topicRows.Add(i + 1);
+                        return new JsonResult(new ApiResponse<List<int>>
+                        {
+                            Message = ResponseMessages.InvalidTopics,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
                     }
-                }
-
-                if (rows.Count != 0)
-                {
-                    return new JsonResult(new ApiResponse<List<int>>
-                    {
-                        Data = rows,
-                        Message = ResponseMessages.InvalidAnswerSelection,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.BadRequest
-                    });
-                }
-
-                if (topicRows.Count != 0)
-                {
-                    return new JsonResult(new ApiResponse<List<int>>
-                    {
-                        Data = rows,
-                        Message = ResponseMessages.InvalidTopics,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.BadRequest
-                    });
                 }
 
                 int count = 0;
