@@ -9,7 +9,6 @@ namespace AptitudeTest.Core.ViewModels
         [Required(ErrorMessage = "Please select a file.")]
         [FileExtensionMustBeValid(".txt", ".csv")] // Add the allowed extensions you want to allow
         public IFormFile File { get; set; }
-        [Range(1, 5)]
-        public int TopicId { get; set; }
+
     }
 }

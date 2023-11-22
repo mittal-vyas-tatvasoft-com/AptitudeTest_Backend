@@ -5,6 +5,7 @@ using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -516,8 +517,14 @@ namespace AptitudeTest.Data.Data
             try
             {
                 List<ImportQuestionFieldsVM> importQuestionFieldsVMList = new List<ImportQuestionFieldsVM>();
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    HasHeaderRecord = true,
+                };
+                config.HeaderValidated = null;
+                config.MissingFieldFound = null;
                 using (var reader = new StreamReader(importQuestionVM.File.OpenReadStream()))
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                using (var csv = new CsvReader(reader, config))
                 {
                     importQuestionFieldsVMList = csv.GetRecords<ImportQuestionFieldsVM>().ToList();
                 }
@@ -545,10 +552,8 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                List<int> rows = new List<int>();
-                for (int i = 0; i < importQuestionFieldsVMList.Count; i++)
+                foreach (var item in importQuestionFieldsVMList)
                 {
-                    var item = importQuestionFieldsVMList[i];
                     QuestionVM questionVM = new QuestionVM();
                     List<OptionVM> options = new List<OptionVM>();
                     questionVM.Options = options;
@@ -557,21 +562,25 @@ namespace AptitudeTest.Data.Data
                     options.Add(new OptionVM() { IsAnswer = item.isanswer2 });
                     options.Add(new OptionVM() { IsAnswer = item.isanswer3 });
                     options.Add(new OptionVM() { IsAnswer = item.isanswer4 });
+
                     if (!ValidateQuestion(questionVM))
                     {
-                        rows.Add(i + 1);
+                        return new JsonResult(new ApiResponse<List<int>>
+                        {
+                            Message = ResponseMessages.InvalidAnswerSelection,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
                     }
-                }
-
-                if (rows.Count != 0)
-                {
-                    return new JsonResult(new ApiResponse<List<int>>
+                    if (!ValidateTopics(item))
                     {
-                        Data = rows,
-                        Message = ResponseMessages.InvalidAnswerSelection,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.BadRequest
-                    });
+                        return new JsonResult(new ApiResponse<List<int>>
+                        {
+                            Message = ResponseMessages.InvalidTopics,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
                 }
 
                 int count = 0;
@@ -580,7 +589,6 @@ namespace AptitudeTest.Data.Data
                     var procedure = "import_questions";
                     var parameters = new DynamicParameters();
                     parameters.Add("import_question_data", importQuestionFieldsVMList, DbType.Object, ParameterDirection.Input);
-                    parameters.Add("topicid", importQuestionVM.TopicId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("questions_imported_count", ParameterDirection.Output);
                     count = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
                 }
@@ -697,6 +705,30 @@ namespace AptitudeTest.Data.Data
                 return flag.All(x => x);
             }
             return false;
+        }
+
+        private bool ValidateTopics(ImportQuestionFieldsVM question)
+        {
+
+            string topic = question.topic.Trim().ToLower();
+            switch (topic)
+            {
+                case "maths":
+                    question.topicid = (int)Enums.QuestionTopic.Maths;
+                    break;
+
+                case "reasoning":
+                    question.topicid = (int)Enums.QuestionTopic.Reasoning;
+                    break;
+
+                case "technical":
+                    question.topicid = (int)Enums.QuestionTopic.Technical;
+                    break;
+
+                default:
+                    return false;
+            }
+            return true;
         }
 
         private async Task<ValidateImportFileVM> checkImportedData<T>(List<T> records)
