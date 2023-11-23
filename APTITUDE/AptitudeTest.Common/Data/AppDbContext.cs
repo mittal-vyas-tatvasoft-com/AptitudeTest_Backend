@@ -384,7 +384,7 @@ namespace APTITUDETEST.Common.Data
             modelBuilder.Entity<TempUserTestResult>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("PK_TEMPUSERTESTRESULT_ID");
-                entity.ToTable("UserTest");
+                entity.ToTable("TempUserTestResult");
                 entity.Property(e => e.Id).UseIdentityAlwaysColumn();
                 entity.Property(e => e.UserTestId)
                 .HasMaxLength(10)
@@ -406,7 +406,7 @@ namespace APTITUDETEST.Common.Data
             modelBuilder.Entity<UserTestResult>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("PK_USERTESTRESULT_ID");
-                entity.ToTable("UserTest");
+                entity.ToTable("UserTestResult");
                 entity.Property(e => e.Id).UseIdentityAlwaysColumn();
                 entity.Property(e => e.UserTestId)
                 .HasMaxLength(10)

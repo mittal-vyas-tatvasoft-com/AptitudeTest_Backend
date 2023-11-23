@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using APTITUDETEST.Core.Entities.Users;
 using System.ComponentModel.DataAnnotations;
-using APTITUDETEST.Core.Entities.Users;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AptitudeTest.Core.Entities.CandidateSide
 {
