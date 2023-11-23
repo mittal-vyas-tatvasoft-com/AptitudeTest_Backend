@@ -31,7 +31,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
-               var dateParameter = new NpgsqlParameter("datefilter", NpgsqlDbType.Date);
+                var dateParameter = new NpgsqlParameter("datefilter", NpgsqlDbType.Date);
                 dateParameter.Value = Date;
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
