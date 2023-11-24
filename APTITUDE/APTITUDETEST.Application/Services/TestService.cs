@@ -59,9 +59,9 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.UpdateTest(testVM);
         }
-        public Task<JsonResult> GetQuestinsMarksCount(int testId)
+        public Task<JsonResult> GetQuestionsMarksCount(int testId)
         {
-            return _repository.GetQuestinsMarksCount(testId);
+            return _repository.GetQuestionsMarksCount(testId);
         }
         public Task<JsonResult> GetTopicWiseQuestionsCount()
         {

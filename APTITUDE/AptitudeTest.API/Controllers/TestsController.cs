@@ -151,9 +151,9 @@ namespace AptitudeTest.Controllers
         /// <param name="testId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{testId:int}")]
-        public async Task<JsonResult> GetQuestinsMarksCount(int testId)
+        public async Task<JsonResult> GetQuestionsMarksCount(int testId)
         {
-            return await _service.GetQuestinsMarksCount(testId);
+            return await _service.GetQuestionsMarksCount(testId);
         }
 
         /// <summary>
