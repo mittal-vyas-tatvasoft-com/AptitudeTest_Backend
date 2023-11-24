@@ -753,8 +753,7 @@ namespace AptitudeTest.Data.Data
         {
             if (duplicateId == 0)
             {
-                int highestNumber = getHighestSequence();
-                return (highestNumber + 1).ToString();
+                return (getHighestSequence() + 1).ToString();
             }
             else
             {
