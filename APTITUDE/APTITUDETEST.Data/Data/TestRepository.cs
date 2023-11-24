@@ -261,7 +261,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Test test = await Task.FromResult(_context.Tests.Where(t => t.Id == addTestQuestion.TestId && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault());
+                Test test = await Task.FromResult(_context.Tests.Where(t => t.Id == addTestQuestion.TestId && t.Status == (int)Common.Enums.TestStatus.Draft && t.IsDeleted == false).FirstOrDefault());
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -317,10 +317,10 @@ namespace AptitudeTest.Data.Data
                 _context.Add(testQuestionsToBeAdded);
                 _context.SaveChanges();
 
-                TestQuestionsCount testQuestionsCountToBeAdded = new TestQuestionsCount();
 
                 foreach (var testQuestionCount in addTestQuestion.TestQuestionsCount)
                 {
+                    TestQuestionsCount testQuestionsCountToBeAdded = new TestQuestionsCount();
                     testQuestionsCountToBeAdded.TestQuestionId = testQuestionsToBeAdded.Id;
                     testQuestionsCountToBeAdded.QuestionType = testQuestionCount.QuestionType;
                     testQuestionsCountToBeAdded.OneMarks = testQuestionCount.OneMarkQuestion;
