@@ -25,5 +25,10 @@ namespace AptitudeTest.Core.Entities.Questions
         public DateTime? UpdatedDate { get; set; }
         public int? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; } = false;
+        public string? Sequence { get; set; }
+        [ForeignKey("Questions")]
+        public int? ParentId { get; set; }
+        public virtual Question Questions { get; set; }
+
     }
 }

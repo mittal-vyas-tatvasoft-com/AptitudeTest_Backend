@@ -30,5 +30,11 @@
             DefaultIndex = 0,
             DefaultPageSize = 10
         }
+
+        public enum SequenceStart
+        {
+            Start = 65
+        }
+
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
+using static AptitudeTest.Data.Common.Enums;
 
 namespace AptitudeTest.Data.Data
 {
@@ -74,6 +75,7 @@ namespace AptitudeTest.Data.Data
                         QuestionType = question.QuestionType,
                         Status = question.Status,
                         QuestionText = question.QuestionText,
+                        ParentId = question.ParentId
                     };
                     foreach (var item in data)
                     {
@@ -128,7 +130,7 @@ namespace AptitudeTest.Data.Data
                         page_size = pageSize,
                         page_index = pageIndex
                     };
-                    var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getAllQuestions(@filter_topic,@filter_status,@page_size,@page_index)", parameter);
+                    var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getallquestions(@filter_topic,@filter_status,@page_size,@page_index)", parameter);
                     List<QuestionVM> questionVMList = new List<QuestionVM>();
                     questionVMList = data.GroupBy(question => question.QuestionId).Select(
                         x =>
@@ -136,6 +138,7 @@ namespace AptitudeTest.Data.Data
                             var q = x.FirstOrDefault();
                             return new QuestionVM()
                             {
+                                Sequence = q.Sequence,
                                 Id = q.QuestionId,
                                 Difficulty = q.Difficulty,
                                 OptionType = q.OptionType,
@@ -143,6 +146,7 @@ namespace AptitudeTest.Data.Data
                                 QuestionType = q.QuestionType,
                                 Status = q.Status,
                                 TopicId = q.Topic,
+                                ParentId = q.ParentId,
                                 Options = x.Select(x =>
                                 {
                                     return new OptionVM()
@@ -262,6 +266,7 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
+                    questionVM.TopicId = duplicateQuestion.Topic;
                     duplicateOptionIds = questionVM.Options.Select(x => x.OptionId).ToList();
                     duplicateOptions = _context.QuestionOptions.Where(option => duplicateOptionIds.Contains(option.Id)).ToList();
 
@@ -274,6 +279,12 @@ namespace AptitudeTest.Data.Data
                 question.QuestionType = questionVM.QuestionType;
                 question.OptionType = questionVM.OptionType;
                 question.CreatedBy = questionVM.CreatedBy;
+                if (questionVM.DuplicateFromQuestionId != 0)
+                {
+                    question.ParentId = questionVM.DuplicateFromQuestionId;
+                }
+                string sequence = GenerateSequence(questionVM.DuplicateFromQuestionId);
+                question.Sequence = sequence;
                 _context.Add(question);
                 _context.SaveChanges();
 
@@ -369,11 +380,17 @@ namespace AptitudeTest.Data.Data
                 question.QuestionText = questionVM.QuestionText.Trim();
                 question.Status = questionVM.Status;
                 question.Difficulty = questionVM.Difficulty;
-                question.Topic = questionVM.TopicId;
                 question.QuestionType = questionVM.QuestionType;
                 question.OptionType = questionVM.OptionType;
                 question.UpdatedBy = questionVM.UpdatedBy;
                 question.UpdatedDate = DateTime.UtcNow;
+                if (question.ParentId == null || question.ParentId == 0)
+                {
+                    question.Topic = questionVM.TopicId;
+                    List<Question> childQuestions = _context.Questions.Where(q => q.ParentId == question.Id).ToList();
+                    childQuestions.ForEach(q => q.Topic = questionVM.TopicId);
+                    _context.UpdateRange(childQuestions);
+                }
                 _context.Update(question);
 
                 List<QuestionOptions> optionsList = await Task.FromResult(_context.QuestionOptions.Where(option => option.QuestionId == question.Id).OrderBy(option => option.Id).ToList());
@@ -581,8 +598,9 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
-                }
 
+                }
+                FillImportQuestionSequence(importQuestionFieldsVMList);
                 int count = 0;
                 using (var connection = _dapperContext.CreateConnection())
                 {
@@ -729,6 +747,51 @@ namespace AptitudeTest.Data.Data
                     return false;
             }
             return true;
+        }
+
+        private string GenerateSequence(int duplicateId)
+        {
+            if (duplicateId == 0)
+            {
+                int highestNumber = getHighestSequence();
+                return (highestNumber + 1).ToString();
+            }
+            else
+            {
+                string temp = _context.Questions.Where(q => q.ParentId == duplicateId && q.IsDeleted != true).Select(x => x.Sequence).ToList()
+               .OrderByDescending(s => s)
+               .FirstOrDefault();
+                if (temp == null)
+                {
+                    return _context.Questions.Where(q => q.Id == duplicateId).Select(q => q.Sequence).FirstOrDefault() + ((char)SequenceStart.Start).ToString();
+                }
+                else
+                {
+                    string num = new string(temp.TakeWhile(char.IsDigit).ToArray());
+                    char alphabet = new string(temp.SkipWhile(char.IsDigit).ToArray())[0];
+                    char nextChar = (char)(alphabet + 1);
+                    return num + nextChar;
+                }
+            }
+        }
+
+        private void FillImportQuestionSequence(List<ImportQuestionFieldsVM> questions)
+        {
+            int start = getHighestSequence() + 1;
+            questions.ForEach(q =>
+            {
+                q.sequence = start.ToString();
+                start++;
+            });
+        }
+
+        private int getHighestSequence()
+        {
+            return _context.Questions.Select(x => x.Sequence).ToList()
+               .OrderBy(s => int.Parse(new string(s.TakeWhile(char.IsDigit).ToArray())))
+               .ThenBy(s => s)
+               .Select(s => int.Parse(new string(s.TakeWhile(char.IsDigit).ToArray())))
+               .LastOrDefault();
         }
 
         private async Task<ValidateImportFileVM> checkImportedData<T>(List<T> records)
