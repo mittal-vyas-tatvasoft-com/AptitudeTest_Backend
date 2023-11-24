@@ -32,18 +32,18 @@ namespace AptitudeTest.Data.Data
             {
                 if (userTest != null)
                 {
-                    UserTest userTestToBeAdded = new UserTest()
-                    {
-                        UserId = userTest.UserId,
-                        TestId = userTest.TestId,
-                        Status = userTest.Status,
-                        IsFinished = userTest.IsFinished,
-                        CreatedBy = userTest.CreatedBy,
-                    };
-
                     UserTest? userTestAlreadyExists = _appDbContext.UserTests.Where(x => x.UserId == userTest.UserId && x.TestId == userTest.TestId && x.IsDeleted == false).FirstOrDefault();
                     if (userTestAlreadyExists == null)
                     {
+                        UserTest userTestToBeAdded = new UserTest()
+                        {
+                            UserId = userTest.UserId,
+                            TestId = userTest.TestId,
+                            Status = userTest.Status,
+                            IsFinished = userTest.IsFinished,
+                            CreatedBy = userTest.CreatedBy,
+                        };
+
                         _appDbContext.Add(userTestToBeAdded);
                         int count = _appDbContext.SaveChanges();
                         if (count == 1)
@@ -100,20 +100,20 @@ namespace AptitudeTest.Data.Data
             {
                 if (tempUserTest != null)
                 {
-                    TempUserTest tempUserTestToBeAdded = new TempUserTest()
-                    {
-                        UserId = tempUserTest.UserId,
-                        TestId = tempUserTest.TestId,
-                        Status = tempUserTest.Status,
-                        TimeRemaining = tempUserTest.TimeRemaining,
-                        IsAdminApproved = tempUserTest.IsAdminApproved,
-                        IsFinished = tempUserTest.IsFinished,
-                        CreatedBy = tempUserTest.CreatedBy,
-                    };
-
                     TempUserTest? tempUserTestAlreadyExists = _appDbContext.TempUserTests.Where(x => x.UserId == tempUserTest.UserId && x.TestId == tempUserTest.TestId && x.IsDeleted == false).FirstOrDefault();
                     if (tempUserTestAlreadyExists == null)
                     {
+                        TempUserTest tempUserTestToBeAdded = new TempUserTest()
+                        {
+                            UserId = tempUserTest.UserId,
+                            TestId = tempUserTest.TestId,
+                            Status = tempUserTest.Status,
+                            TimeRemaining = tempUserTest.TimeRemaining,
+                            IsAdminApproved = tempUserTest.IsAdminApproved,
+                            IsFinished = tempUserTest.IsFinished,
+                            CreatedBy = tempUserTest.CreatedBy,
+                        };
+
                         _appDbContext.Add(tempUserTestToBeAdded);
                         int count = _appDbContext.SaveChanges();
                         if (count == 1)
