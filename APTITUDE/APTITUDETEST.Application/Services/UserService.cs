@@ -57,6 +57,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _userRepository.ImportUsers(importUsers);
         }
+
+        public async Task<JsonResult> RegisterUser(UserVM registerUserVM)
+        {
+            return await _userRepository.RegisterUser(registerUserVM);
+        }
         #endregion
     }
 }
