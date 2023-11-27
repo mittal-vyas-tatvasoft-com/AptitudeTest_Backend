@@ -1,5 +1,6 @@
 ﻿using AptitudeTest.Common.Data;
 using AptitudeTest.Common.Helpers;
+using AptitudeTest.Core.Entities.Master;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
@@ -327,7 +328,101 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        #endregion
 
+        #region
+        public async Task<JsonResult> RegisterUser(UserVM registerUser)
+        {
+            try
+            {
+                User? users = await Task.FromResult(_appDbContext.Users.Where(x => x.Email.Trim().ToLower() == registerUser.Email.Trim().ToLower() && x.IsDeleted != true).FirstOrDefault());
+                MasterCollege? masterCollege = await Task.FromResult(_appDbContext.MasterCollege.Where(x => x.Id == registerUser.CollegeId).FirstOrDefault());
+                if (users != null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Candidate),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+                var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+
+                if (registerUser.UserAcademicsVM == null)
+                {
+                    registerUser.UserAcademicsVM = new List<DapperUserAcademicsVM>();
+                }
+                if (registerUser.UserFamilyVM == null)
+                {
+                    registerUser.UserFamilyVM = new List<DapperUserFamilyVM>();
+                }
+                using (var connection = _dapperContext.CreateConnection())
+                {
+                    var procedure = "register_user";
+                    var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
+                    dateParameter.Value = registerUser.DateOfBirth;
+                    var parameters = new DynamicParameters(
+                    new
+                    {
+                        p_groupid = masterCollege.GroupId,
+                        p_collegeid = registerUser.CollegeId,
+                        p_status = true,
+                        p_firstname = registerUser.FirstName,
+                        p_lastname = registerUser.LastName,
+                        p_fathername = registerUser.FatherName,
+                        p_password = password,
+                        p_gender = registerUser.Gender,
+                        p_dateofbirth = dateParameter.Value,
+                        p_email = registerUser.Email,
+                        p_phonenumber = registerUser.PhoneNumber,
+                        p_appliedthrough = registerUser.AppliedThrough,
+                        p_technologyinterestedin = registerUser.TechnologyInterestedIn,
+                        p_permanentaddress1 = registerUser.PermanentAddress1,
+                        p_permanentaddress2 = registerUser.PermanentAddress2,
+                        p_pincode = registerUser.Pincode,
+                        p_city = registerUser.City,
+                        p_stateid = registerUser.State,
+                        p_acpcmeritrank = registerUser.ACPCMeritRank,
+                        p_gujcetscore = registerUser.GUJCETScore,
+                        p_jeescore = registerUser.JEEScore,
+                        p_userfamilydata = registerUser.UserFamilyVM.ToArray(),
+                        p_useracademicsdata = registerUser.UserAcademicsVM.ToArray(),
+                        next_id = 0
+                    });
+                    var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                    if (userId > 0)
+                    {
+                        bool isMailSent = SendMailForPassword(registerUser.FirstName, registerUser.Email, password);
+
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.RegisterSuccess, ModuleNames.User),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.RequestFailed
+                        }); ;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
+                    Result = false,
+                    StatusCode = ResponseStatusCode.RequestFailed
+                });
+            }
+        }
         #endregion
 
         #region InActiveUsers
