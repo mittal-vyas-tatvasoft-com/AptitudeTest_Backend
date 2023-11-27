@@ -44,5 +44,27 @@ namespace AptitudeTest.Controllers
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
+        [HttpPost("[action]")]
+        public async Task<JsonResult> CreateTempUserTestResult(CreateUserTestResultVM tempUserTestResult)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _candidateService.CreateTempUserTestResult(tempUserTestResult);
+            }
+
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _candidateService.CreateUserTestResult(userTestResult);
+            }
+
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+
     }
 }

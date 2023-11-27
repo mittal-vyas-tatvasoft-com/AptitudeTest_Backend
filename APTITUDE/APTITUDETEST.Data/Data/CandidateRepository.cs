@@ -163,6 +163,142 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+        public async Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult)
+        {
+            try
+            {
+                if (userTestResult != null)
+                {
+                    UserTestResult? userTestResultAlreadyExists = _appDbContext.UserTestResult.Where(x => x.UserTestId == userTestResult.UserTestId && x.IsDeleted == false).FirstOrDefault();
+                    if (userTestResultAlreadyExists == null)
+                    {
+                        UserTestResult userTestResultToBeAdded = new UserTestResult()
+                        {
+                            UserTestId = userTestResult.UserTestId,
+                            QuestionId = userTestResult.QuestionId,
+                            UserAnswers = userTestResult.UserAnswers,
+                            IsAttended = userTestResult.IsAttended,
+                            CreatedBy = userTestResult.CreatedBy,
+                        };
+
+                        _appDbContext.Add(userTestResultToBeAdded);
+                        int count = _appDbContext.SaveChanges();
+                        if (count == 1)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.UserTestResult),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.OK
+                            });
+                        }
+                        else
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.InternalError,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.InternalServerError
+                            });
+                        }
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.UserTestResult),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.AlreadyExist
+                        });
+                    }
+
+                }
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.BadRequest,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.BadRequest
+                });
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
+        public async Task<JsonResult> CreateTempUserTestResult(CreateUserTestResultVM tempUserTestResult)
+        {
+            try
+            {
+                if (tempUserTestResult != null)
+                {
+                    TempUserTestResult? tempUserTestResultAlreadyExists = _appDbContext.TempUserTestResult.Where(x => x.UserTestId == tempUserTestResult.UserTestId && x.IsDeleted == false).FirstOrDefault();
+                    if (tempUserTestResultAlreadyExists == null)
+                    {
+                        TempUserTestResult tempUserTestResultToBeAdded = new TempUserTestResult()
+                        {
+                            UserTestId = tempUserTestResult.UserTestId,
+                            QuestionId = tempUserTestResult.QuestionId,
+                            UserAnswers = tempUserTestResult.UserAnswers,
+                            IsAttended = tempUserTestResult.IsAttended,
+                            CreatedBy = tempUserTestResult.CreatedBy,
+                        };
+
+                        _appDbContext.Add(tempUserTestResultToBeAdded);
+                        int count = _appDbContext.SaveChanges();
+                        if (count == 1)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.TempUserTestResult),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.OK
+                            });
+                        }
+                        else
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.InternalError,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.InternalServerError
+                            });
+                        }
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.TempUserTestResult),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.AlreadyExist
+                        });
+                    }
+
+                }
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.BadRequest,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.BadRequest
+                });
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
         #endregion
     }
 }
