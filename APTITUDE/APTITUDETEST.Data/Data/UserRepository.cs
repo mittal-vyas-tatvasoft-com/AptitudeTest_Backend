@@ -336,7 +336,6 @@ namespace AptitudeTest.Data.Data
             try
             {
                 User? users = await Task.FromResult(_appDbContext.Users.Where(x => x.Email.Trim().ToLower() == registerUser.Email.Trim().ToLower() && x.IsDeleted != true).FirstOrDefault());
-                MasterCollege? masterCollege = await Task.FromResult(_appDbContext.MasterCollege.Where(x => x.Id == registerUser.CollegeId).FirstOrDefault());
                 if (users != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -347,6 +346,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
                 var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+                MasterCollege? masterCollege = await Task.FromResult(_appDbContext.MasterCollege.Where(x => x.Id == registerUser.CollegeId).FirstOrDefault());
 
                 if (registerUser.UserAcademicsVM == null)
                 {
