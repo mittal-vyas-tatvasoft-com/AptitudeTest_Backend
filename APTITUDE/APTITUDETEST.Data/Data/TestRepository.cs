@@ -692,7 +692,7 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> GetQuestinsMarksCount(int testId)
+        public async Task<JsonResult> GetQuestionsMarksCount(int testId)
         {
             try
             {

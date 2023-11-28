@@ -14,6 +14,7 @@
         public static string NotFound = "{0} does not exists";
         public static string AlreadyExists = "{0} already exists";
         public static string AddSuccess = "{0} Added successfully";
+        public static string RegisterSuccess = "{0} Registerd successfully, Password has been sent to your registerd email";
         public static string UpdateSuccess = "{0} updated successfully";
         public static string StatusUpdateSuccess = "{0} status updated successfully";
         public static string passwordNotMatched = "New Password and Confirm Password doesn't match";

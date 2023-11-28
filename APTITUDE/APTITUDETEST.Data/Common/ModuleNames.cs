@@ -15,6 +15,8 @@
         public static string User = "User";
         public static string AllCandidates = "All the candidates";
         public static string Candidates = "Candidates";
+        public static string UserTest = "UserTest";
+        public static string TempUserTest = "TempUserTest";
 
         public static string Password = "Password";
 

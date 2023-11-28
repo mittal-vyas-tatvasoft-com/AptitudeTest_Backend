@@ -4,7 +4,7 @@ namespace AptitudeTest.Core.ViewModels
 {
     public class QuestionVM
     {
-
+        public string? Sequence { get; set; }
         public int Id { get; set; }
         public int DuplicateFromQuestionId { get; set; }
         [Required]
@@ -27,5 +27,6 @@ namespace AptitudeTest.Core.ViewModels
         public List<OptionVM> Options { get; set; } = new List<OptionVM>();
         public int? CreatedBy { get; set; } = 1;
         public int? UpdatedBy { get; set; }
+        public int? ParentId { get; set; }
     }
 }
