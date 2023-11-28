@@ -548,7 +548,7 @@ namespace AptitudeTest.Data.Data
 
                 if (importQuestionFieldsVMList.Count == 0)
                 {
-                    return new JsonResult(new ApiResponse<int>
+                    return new JsonResult(new ApiResponse<string>
                     {
                         Message = string.Format(ResponseMessages.BadRequest),
                         Result = false,
@@ -560,9 +560,8 @@ namespace AptitudeTest.Data.Data
 
                 if (validateImportFileVM.isValidate == false)
                 {
-                    return new JsonResult(new ApiResponse<List<string>>
+                    return new JsonResult(new ApiResponse<string>
                     {
-                        Data = validateImportFileVM.validationMessage,
                         Message = ResponseMessages.InsertProperData,
                         Result = false,
                         StatusCode = ResponseStatusCode.BadRequest
@@ -582,7 +581,7 @@ namespace AptitudeTest.Data.Data
 
                     if (!ValidateQuestion(questionVM))
                     {
-                        return new JsonResult(new ApiResponse<List<int>>
+                        return new JsonResult(new ApiResponse<string>
                         {
                             Message = ResponseMessages.InvalidAnswerSelection,
                             Result = false,
@@ -591,7 +590,7 @@ namespace AptitudeTest.Data.Data
                     }
                     if (!ValidateTopics(item))
                     {
-                        return new JsonResult(new ApiResponse<List<int>>
+                        return new JsonResult(new ApiResponse<string>
                         {
                             Message = ResponseMessages.InvalidTopics,
                             Result = false,
