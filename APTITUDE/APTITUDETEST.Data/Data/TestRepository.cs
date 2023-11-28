@@ -317,10 +317,10 @@ namespace AptitudeTest.Data.Data
                 _context.Add(testQuestionsToBeAdded);
                 _context.SaveChanges();
 
-
+                TestQuestionsCount testQuestionsCountToBeAdded;
                 foreach (var testQuestionCount in addTestQuestion.TestQuestionsCount)
                 {
-                    TestQuestionsCount testQuestionsCountToBeAdded = new TestQuestionsCount();
+                    testQuestionsCountToBeAdded  = new TestQuestionsCount();
                     testQuestionsCountToBeAdded.TestQuestionId = testQuestionsToBeAdded.Id;
                     testQuestionsCountToBeAdded.QuestionType = testQuestionCount.QuestionType;
                     testQuestionsCountToBeAdded.OneMarks = testQuestionCount.OneMarkQuestion;
