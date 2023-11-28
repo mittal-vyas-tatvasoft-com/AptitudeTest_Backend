@@ -8,5 +8,7 @@ namespace AptitudeTest.Core.Interfaces
     {
         Task<JsonResult> CreateUserTest(CreateUserTestVM userTest);
         Task<JsonResult> CreateTempUserTest(CreateTempUserTestVM tempUserTest);
+        Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult);
+        Task<JsonResult> CreateTempUserTestResult(CreateUserTestResultVM tempUserTestResult);
     }
 }
