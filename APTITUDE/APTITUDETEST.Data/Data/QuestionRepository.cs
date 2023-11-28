@@ -766,7 +766,6 @@ namespace AptitudeTest.Data.Data
                 else
                 {
                     string num = new string(temp.TakeWhile(char.IsDigit).ToArray());
-                    string s = new string(temp.SkipWhile(char.IsDigit).ToArray());
                     char alphabet = new string(temp.SkipWhile(char.IsDigit).ToArray())[1];
                     char nextChar = (char)(alphabet + 1);
                     return num +" "+ nextChar;
