@@ -165,6 +165,18 @@ namespace AptitudeTest.Controllers
         {
             return await _service.GetTopicWiseQuestionsCount();
         }
+
+        /// <summary>
+        /// This method gives test details by test id
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{testId:int}")]
+        public async Task<JsonResult> GetTestById(int testId)
+        {
+            return await _service.GetTestById(testId);
+        }
+
+
         #endregion
     }
 }
