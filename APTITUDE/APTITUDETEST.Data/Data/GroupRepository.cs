@@ -174,9 +174,19 @@ namespace AptitudeTest.Data.Data
                 }
                 if (collegeId != null)
                 {
-                    int? groupId = _context.Users.FirstOrDefault(user => user.CollegeId == collegeId).GroupId;
-                    existingGroups = existingGroups.Where(group => group.Id == groupId).ToList();
+                    var user = _context.Users.FirstOrDefault(user => user.CollegeId == collegeId);
+                    if (user == null)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Group),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+                    existingGroups = existingGroups.Where(group => group.Id == user.GroupId).ToList();
                 }
+
                 List<GroupsResponseVM> groups = new List<GroupsResponseVM>();
 
                 foreach (var group in existingGroups)
