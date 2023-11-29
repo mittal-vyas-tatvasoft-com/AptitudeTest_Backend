@@ -761,14 +761,14 @@ namespace AptitudeTest.Data.Data
                .FirstOrDefault();
                 if (temp == null)
                 {
-                    return _context.Questions.Where(q => q.Id == duplicateId).Select(q => q.Sequence).FirstOrDefault() +" "+ ((char)SequenceStart.Start).ToString();
+                    return _context.Questions.Where(q => q.Id == duplicateId).Select(q => q.Sequence).FirstOrDefault() + " " + ((char)SequenceStart.Start).ToString();
                 }
                 else
                 {
                     string num = new string(temp.TakeWhile(char.IsDigit).ToArray());
                     char alphabet = new string(temp.SkipWhile(char.IsDigit).ToArray())[1];
                     char nextChar = (char)(alphabet + 1);
-                    return num +" "+ nextChar;
+                    return num + " " + nextChar;
                 }
             }
         }
