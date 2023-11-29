@@ -8,6 +8,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -543,7 +544,41 @@ namespace AptitudeTest.Data.Data
                 using (var reader = new StreamReader(importQuestionVM.File.OpenReadStream()))
                 using (var csv = new CsvReader(reader, config))
                 {
-                    importQuestionFieldsVMList = csv.GetRecords<ImportQuestionFieldsVM>().ToList();
+                    var csvContent = new List<string[]>();
+                    while (!reader.EndOfStream)
+                    {
+                        var line = reader.ReadLine();
+                        var values = line.Split(',');
+                        csvContent.Add(values);
+                       
+                    }
+                    var headers = csvContent.FirstOrDefault();
+                    if (headers != null) {
+                         importQuestionFieldsVMList = new List<ImportQuestionFieldsVM>();
+                        for (int i = 1; i < csvContent.Count; i++)
+                        {
+                            var row = csvContent[i];
+                            var viewModel = new ImportQuestionFieldsVM
+                            {
+
+                                topic = GetValueForHeader(row, headers, "Topic"),
+                                
+                                difficulty = Int32.Parse(GetValueForHeader(row, headers, "Difficulty")),
+                                isanswer1 = bool.Parse(GetValueForHeader(row, headers, "Answer A")),
+                                isanswer2 = bool.Parse(GetValueForHeader(row, headers, "Answer B")),
+                                isanswer3 = bool.Parse(GetValueForHeader(row, headers, "Answer C")),
+                                isanswer4 = bool.Parse(GetValueForHeader(row, headers, "Answer D")),
+                                optiondata1 = GetValueForHeader(row, headers, "Option A"),
+                                optiondata2 = GetValueForHeader(row, headers, "Option B"),
+                                optiondata3 = GetValueForHeader(row, headers, "Option C"),
+                                optiondata4 = GetValueForHeader(row, headers, "Option D"),
+                                optiontype = Int32.Parse(GetValueForHeader(row, headers, "OptionType")),
+                                questiontext = GetValueForHeader(row, headers, "Question"),
+                                questiontype = Int32.Parse(GetValueForHeader(row, headers, "QuestionType")),
+                            };
+                            importQuestionFieldsVMList.Add(viewModel);
+                        }
+                    }
                 }
 
                 if (importQuestionFieldsVMList.Count == 0)
@@ -790,6 +825,12 @@ namespace AptitudeTest.Data.Data
                .ThenBy(s => s)
                .Select(s => int.Parse(new string(s.TakeWhile(char.IsDigit).ToArray())))
                .LastOrDefault();
+        }
+
+        private string GetValueForHeader(string[] row, string[] headers, string headerName)
+        {
+            var index = Array.IndexOf(headers, headerName);
+            return index >= 0 && index < row.Length ? row[index] : null;
         }
 
         private async Task<ValidateImportFileVM> checkImportedData<T>(List<T> records)
