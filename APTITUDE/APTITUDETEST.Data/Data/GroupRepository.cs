@@ -167,7 +167,8 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterGroup> existingGroups = await Task.FromResult(_context.MasterGroup.Where(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true).OrderByDescending(group => group.CreatedDate).ToList());
+                List<MasterGroup> existingGroups = await Task.FromResult(_context.MasterGroup.Where(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true).OrderBy(group => group.Name).ToList());
+
                 if (!searchGroup.IsNullOrEmpty())
                 {
                     existingGroups = existingGroups.Where(group => group.Name.ToLower().Contains(searchGroup)).OrderByDescending(group => group.CreatedDate).ToList();
@@ -218,6 +219,8 @@ namespace AptitudeTest.Data.Data
                     }
 
                     groupItem.NumberOfStudentsInGroup = groupItem.CollegesUnderGroup.Sum(x => x.NumberOfStudentsInCollege);
+                    var sortedColleges = groupItem.CollegesUnderGroup.OrderBy(college => college.Name).ToList();
+                    groupItem.CollegesUnderGroup = sortedColleges;
                     groups.Add(groupItem);
                 }
                 return new JsonResult(new ApiResponse<List<GroupsResponseVM>>
