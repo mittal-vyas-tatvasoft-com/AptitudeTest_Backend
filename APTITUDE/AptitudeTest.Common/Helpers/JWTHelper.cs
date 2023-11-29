@@ -44,10 +44,17 @@ namespace AptitudeTest.Common.Helpers
                 }
                 else
                 {
+                    if (admin.IsSuperAdmin == true)
+                    {
+                        claims.Add(new Claim("Role", "SuperAdmin"));
+                    }
+                    else
+                    {
+                        claims.Add(new Claim("Role", "Admin"));
+                    }
                     claims.Add(new Claim("Id", admin.Id.ToString()));
                     claims.Add(new Claim("FirstName", admin.FirstName));
                     claims.Add(new Claim("Name", admin.LastName));
-                    claims.Add(new Claim("Role", "Admin"));
                     claims.Add(new Claim("Email", admin.Email));
                 }
                 var tokenDescriptor = new SecurityTokenDescriptor

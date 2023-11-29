@@ -90,7 +90,7 @@ namespace AptitudeTest.Data.Data
                 }
                 if (admin.IsSuperAdmin == true)
                 {
-                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.SuperAdminRequestFail, ModuleNames.Operation), StatusCode = ResponseStatusCode.OK, Result = true });
+                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.SuperAdminRequestFail, ModuleNames.Operation), StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
                 var sent = SendMailForResetPassword(admin.FirstName, admin.Email);
                 if (sent)
@@ -130,7 +130,7 @@ namespace AptitudeTest.Data.Data
                 }
                 if (admin.IsSuperAdmin == true)
                 {
-                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.SuperAdminRequestFail, ModuleNames.Operation), StatusCode = ResponseStatusCode.OK, Result = true });
+                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.SuperAdminRequestFail, ModuleNames.Operation), StatusCode = ResponseStatusCode.BadRequest, Result = false });
 
                 }
                 admin.Password = resetPassword.NewPassword;
@@ -160,7 +160,7 @@ namespace AptitudeTest.Data.Data
                 }
                 if (admin.IsSuperAdmin == true)
                 {
-                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.SuperAdminRequestFail, ModuleNames.Operation), StatusCode = ResponseStatusCode.OK, Result = true });
+                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.SuperAdminRequestFail, ModuleNames.Operation), StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
                 if (admin.Password.Equals(changePassword.NewPassword))
                 {
