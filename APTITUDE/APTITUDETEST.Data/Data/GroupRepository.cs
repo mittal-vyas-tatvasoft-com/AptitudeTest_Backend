@@ -171,12 +171,13 @@ namespace AptitudeTest.Data.Data
 
                 if (!searchGroup.IsNullOrEmpty())
                 {
-                    existingGroups = existingGroups.Where(group => group.Name.ToLower().Contains(searchGroup)).OrderByDescending(group => group.CreatedDate).ToList();
+                    existingGroups = existingGroups.Where(group => group.Name.ToLower().Contains(searchGroup.ToLower())).ToList();
                 }
                 if (collegeId != null)
                 {
-                    var user = _context.Users.FirstOrDefault(user => user.CollegeId == collegeId);
-                    if (user == null)
+                    // var user = _context.Users.FirstOrDefault(user => user.CollegeId == collegeId);
+                    var users = _context.Users.Where(user => user.CollegeId == collegeId).ToList();
+                    if (users.Count == 0)
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -185,7 +186,22 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.NotFound
                         });
                     }
-                    existingGroups = existingGroups.Where(group => group.Id == user.GroupId).ToList();
+                    List<MasterGroup> filteredGroups = new List<MasterGroup>();
+                    foreach (var user in users)
+                    {
+                        var userGroup = existingGroups.FirstOrDefault(group => group.Id == user.GroupId);
+                        if (userGroup != null)
+                        {
+                            var groupExists = filteredGroups.Any(group => group.Id == userGroup.Id);
+                            if (!groupExists)
+                            {
+                                filteredGroups.Add(userGroup);
+                            }
+                        }
+
+                    }
+                    existingGroups = filteredGroups.OrderBy(group => group.Name).ToList();
+                    //existingGroups = existingGroups.Where(group => group.Id == user.GroupId).ToList();
                 }
 
                 List<GroupsResponseVM> groups = new List<GroupsResponseVM>();
