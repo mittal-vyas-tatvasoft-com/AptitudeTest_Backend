@@ -67,6 +67,11 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.GetTopicWiseQuestionsCount();
         }
+
+        public Task<JsonResult> GetTestById(int testId)
+        {
+            return _repository.GetTestById(testId);
+        }
         #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using AptitudeTest.Core.Entities.Test;
+﻿using AptitudeTest.Core.Entities.Admin;
+using AptitudeTest.Core.Entities.Test;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
@@ -805,6 +806,55 @@ namespace AptitudeTest.Data.Data
                     Result = false,
                     StatusCode = ResponseStatusCode.BadRequest
                 });
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> GetTestById(int testId)
+        {
+            try
+            {
+                if (testId != 0)
+                {
+                    Test? test = _context.Tests.Where(x => x.Id == testId && x.IsDeleted == false).FirstOrDefault();
+                    if (test != null)
+                    {
+                        return new JsonResult(new ApiResponse<Test>
+                        {
+                            Data = test,
+                            Message = ResponseMessages.Success,
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<Admin>
+                        {
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
+                    }
+
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
             }
             catch
             {
