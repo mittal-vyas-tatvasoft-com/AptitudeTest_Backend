@@ -44,7 +44,7 @@ namespace AptitudeTest.Data.Data
                 User? user = _context.Users.Where(u => u.Email == loginVm.Email && u.Password == loginVm.Password)?.FirstOrDefault();
                 if (user == null)
                 {
-                    return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredetials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
+                    return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredentials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
                 }
                 string newAccessToken = jwtHelper.GenerateJwtToken(user, null);
                 string newRefreshToken = jwtHelper.CreateRefreshToken(user.Email, RefreshTokens);
