@@ -544,11 +544,14 @@ namespace AptitudeTest.Data.Data
 
                     List<ImportCandidateVM> data = new List<ImportCandidateVM>();
                     ImportCandidateVM dataToBeAdd;
+
+                    List<MasterCollege>? colleges = _appDbContext.MasterCollege.ToList();
+                    List<MasterGroup>? groups = _appDbContext.MasterGroup.ToList();
                     foreach (var item in records)
                     {
                         dataToBeAdd = new ImportCandidateVM();
 
-                        MasterCollege? college = _appDbContext.MasterCollege.Where(c => c.Name.ToLower().Trim() == item.collegename.ToLower()).FirstOrDefault();
+                        MasterCollege? college = colleges.Where(c => c.Name.ToLower().Trim() == item.collegename.ToLower()).FirstOrDefault();
                         dataToBeAdd.firstname = item.firstname;
                         dataToBeAdd.email = item.email;
                         dataToBeAdd.contactnumber = item.contactnumber;
@@ -565,7 +568,7 @@ namespace AptitudeTest.Data.Data
                             dataToBeAdd.collegeid = importUsers.CollegeId;
                         }
 
-                        MasterGroup? group = _appDbContext.MasterGroup.Where(g => g.Name.ToLower().Trim() == item.groupname.ToLower()).FirstOrDefault();
+                        MasterGroup? group = groups.Where(g => g.Name.ToLower().Trim() == item.groupname.ToLower()).FirstOrDefault();
                         if (group != null)
                         {
                             dataToBeAdd.groupid = group.Id;
