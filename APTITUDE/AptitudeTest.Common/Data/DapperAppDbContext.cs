@@ -22,7 +22,7 @@ namespace AptitudeTest.Common.Data
             using NpgsqlDataSource dataSource = dataSourceBuilder.Build();
             dataSourceBuilder.MapComposite<DapperUserFamilyVM>("userfamily_datatype");
             dataSourceBuilder.MapComposite<DapperUserAcademicsVM>("useracademics_datatype");
-            dataSourceBuilder.MapComposite<UserImportVM>("importusers_datatype");
+            dataSourceBuilder.MapComposite<ImportCandidateVM>("importusers_datatype");
             dataSourceBuilder.MapComposite<ImportQuestionFieldsVM>("importquestiondatatype");
             NpgsqlConnection conn = dataSource.OpenConnection();
             return conn;

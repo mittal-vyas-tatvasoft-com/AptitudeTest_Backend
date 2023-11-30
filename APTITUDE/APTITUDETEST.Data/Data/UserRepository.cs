@@ -506,8 +506,106 @@ namespace AptitudeTest.Data.Data
                 using (var reader = new StreamReader(importUsers.file.OpenReadStream()))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
-                    var records = csv.GetRecords<UserImportVM>().ToList();
+
+                    List<UserImportVM> records = new List<UserImportVM>();
+
+                    var csvContent = new List<string[]>();
+                    while (!reader.EndOfStream)
+                    {
+                        var line = reader.ReadLine();
+                        var values = line.Split(',');
+                        csvContent.Add(values);
+
+                    }
+                    var headers = csvContent.FirstOrDefault();
+                    if (headers != null)
+                    {
+                        for (int i = 1; i < csvContent.Count; i++)
+                        {
+                            var row = csvContent[i];
+                            var viewModel = new UserImportVM
+                            {
+
+                                firstname = GetValueForHeader(row, headers, "FirstName"),
+                                lastname = GetValueForHeader(row, headers, "LastName"),
+                                middlename = GetValueForHeader(row, headers, "MiddleName"),
+                                email = GetValueForHeader(row, headers, "Email"),
+                                contactnumber = long.Parse(GetValueForHeader(row, headers, "ContactNumber")),
+                                collegename = GetValueForHeader(row, headers, "CollegeName"),
+                                groupname = GetValueForHeader(row, headers, "GroupName"),
+                                status = GetValueForHeader(row, headers, "Status(true/false)"),
+                                gender = GetValueForHeader(row, headers, "Gender(male/female)"),
+
+                            };
+                            records.Add(viewModel);
+                        }
+                    }
+
                     ValidateImportFileVM checkData = await checkImportedData(records);
+
+                    List<ImportCandidateVM> data = new List<ImportCandidateVM>();
+                    ImportCandidateVM dataToBeAdd;
+                    foreach (var item in records)
+                    {
+                        dataToBeAdd = new ImportCandidateVM();
+
+                        MasterCollege? college = _appDbContext.MasterCollege.Where(c => c.Name.ToLower().Trim() == item.collegename.ToLower()).FirstOrDefault();
+                        dataToBeAdd.firstname = item.firstname;
+                        dataToBeAdd.email = item.email;
+                        dataToBeAdd.contactnumber = item.contactnumber;
+                        if (college != null)
+                        {
+                            dataToBeAdd.collegeid = college.Id;
+                        }
+                        else if (importUsers.CollegeId != null)
+                        {
+                            dataToBeAdd.collegeid = importUsers.CollegeId;
+                        }
+                        else
+                        {
+                            dataToBeAdd.collegeid = importUsers.CollegeId;
+                        }
+
+                        MasterGroup? group = _appDbContext.MasterGroup.Where(g => g.Name.ToLower().Trim() == item.groupname.ToLower()).FirstOrDefault();
+                        if (group != null)
+                        {
+                            dataToBeAdd.groupid = group.Id;
+                        }
+                        else if (importUsers.GroupId != null)
+                        {
+                            dataToBeAdd.groupid = importUsers.GroupId;
+                        }
+                        else
+                        {
+                            dataToBeAdd.groupid = importUsers.GroupId;
+                        }
+
+
+                        if (item.gender.ToLower() == "male")
+                        {
+                            dataToBeAdd.gender = 0;
+                        }
+                        else if (item.gender.ToLower() == "female")
+                        {
+                            dataToBeAdd.gender = 1;
+                        }
+                        else
+                        {
+                            dataToBeAdd.gender = null;
+                        }
+
+                        if (item.status.ToLower() == "true" || string.IsNullOrEmpty(item.status))
+                        {
+                            dataToBeAdd.status = true;
+                        }
+                        else
+                        {
+                            dataToBeAdd.status = false;
+                        }
+
+                        data.Add(dataToBeAdd);
+                    }
+
 
                     if (checkData.isValidate == false)
                     {
@@ -537,7 +635,7 @@ namespace AptitudeTest.Data.Data
                         {
                             var procedure = "import_users";
                             var parameters = new DynamicParameters();
-                            parameters.Add("p_import_user_data", records, DbType.Object, ParameterDirection.Input);
+                            parameters.Add("p_import_user_data", data, DbType.Object, ParameterDirection.Input);
                             parameters.Add("groupid", importUsers.GroupId, DbType.Int32, ParameterDirection.Input);
                             parameters.Add("collegeid", importUsers.CollegeId, DbType.Int32, ParameterDirection.Input);
                             parameters.Add("candidates_added_count", ParameterDirection.Output);
@@ -712,8 +810,15 @@ namespace AptitudeTest.Data.Data
             }
             return validate;
         }
+
         #endregion
 
+
+        private string GetValueForHeader(string[] row, string[] headers, string headerName)
+        {
+            var index = Array.IndexOf(headers, headerName);
+            return index >= 0 && index < row.Length ? row[index] : null;
+        }
         #endregion
 
         #endregion
