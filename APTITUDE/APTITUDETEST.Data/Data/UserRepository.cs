@@ -506,8 +506,113 @@ namespace AptitudeTest.Data.Data
                 using (var reader = new StreamReader(importUsers.file.OpenReadStream()))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
-                    var records = csv.GetRecords<UserImportVM>().ToList();
+
+                    List<UserImportVM> records = new List<UserImportVM>();
+
+                    var csvContent = new List<string[]>();
+                    while (!reader.EndOfStream)
+                    {
+                        var line = reader.ReadLine();
+                        var values = line.Split(',');
+                        csvContent.Add(values);
+
+                    }
+                    var headers = csvContent.FirstOrDefault();
+                    if (headers != null)
+                    {
+                        foreach (var item in csvContent.Skip(1))
+                        {
+                            var viewModel = new UserImportVM
+                            {
+
+                                firstname = GetValueForHeader(item, headers, "FirstName"),
+                                lastname = GetValueForHeader(item, headers, "LastName"),
+                                middlename = GetValueForHeader(item, headers, "MiddleName"),
+                                email = GetValueForHeader(item, headers, "Email"),
+                                contactnumber = long.Parse(GetValueForHeader(item, headers, "ContactNumber")),
+                                collegename = GetValueForHeader(item, headers, "CollegeName"),
+                                groupname = GetValueForHeader(item, headers, "GroupName"),
+                                status = GetValueForHeader(item, headers, "Status(true/false)"),
+                                gender = GetValueForHeader(item, headers, "Gender(male/female)"),
+
+                            };
+                            records.Add(viewModel);
+                        }
+                    }
+
                     ValidateImportFileVM checkData = await checkImportedData(records);
+
+                    List<ImportCandidateVM> data = new List<ImportCandidateVM>();
+                    ImportCandidateVM dataToBeAdd;
+                    var collagesInRecords = records.Select(x => x.collegename.Trim().ToLower()).Distinct().ToList();
+                    var groupsInRecords = records.Select(x => x.groupname.Trim().ToLower()).Distinct().ToList();
+                    List<MasterCollege> colleges = _appDbContext.MasterCollege
+    .Where(college => collagesInRecords.Contains(college.Name.Trim().ToLower()))
+    .ToList();
+                    List<MasterGroup>? groups = _appDbContext.MasterGroup
+    .Where(group => groupsInRecords.Contains(group.Name.Trim().ToLower()))
+    .ToList();
+                    foreach (var item in records)
+                    {
+                        dataToBeAdd = new ImportCandidateVM();
+
+                        MasterCollege? college = colleges.Where(c => c.Name.ToLower().Trim() == item.collegename.ToLower()).FirstOrDefault();
+                        dataToBeAdd.firstname = item.firstname;
+                        dataToBeAdd.email = item.email;
+                        dataToBeAdd.contactnumber = item.contactnumber;
+                        if (college != null)
+                        {
+                            dataToBeAdd.collegeid = college.Id;
+                        }
+                        else if (importUsers.CollegeId != null)
+                        {
+                            dataToBeAdd.collegeid = importUsers.CollegeId;
+                        }
+                        else
+                        {
+                            dataToBeAdd.collegeid = importUsers.CollegeId;
+                        }
+
+                        MasterGroup? group = groups.Where(g => g.Name.ToLower().Trim() == item.groupname.ToLower()).FirstOrDefault();
+                        if (group != null)
+                        {
+                            dataToBeAdd.groupid = group.Id;
+                        }
+                        else if (importUsers.GroupId != null)
+                        {
+                            dataToBeAdd.groupid = importUsers.GroupId;
+                        }
+                        else
+                        {
+                            dataToBeAdd.groupid = importUsers.GroupId;
+                        }
+
+
+                        if (item.gender.ToLower() == "male")
+                        {
+                            dataToBeAdd.gender = 0;
+                        }
+                        else if (item.gender.ToLower() == "female")
+                        {
+                            dataToBeAdd.gender = 1;
+                        }
+                        else
+                        {
+                            dataToBeAdd.gender = null;
+                        }
+
+                        if (item.status.ToLower() == "true" || string.IsNullOrEmpty(item.status))
+                        {
+                            dataToBeAdd.status = true;
+                        }
+                        else
+                        {
+                            dataToBeAdd.status = false;
+                        }
+
+                        data.Add(dataToBeAdd);
+                    }
+
 
                     if (checkData.isValidate == false)
                     {
@@ -537,7 +642,7 @@ namespace AptitudeTest.Data.Data
                         {
                             var procedure = "import_users";
                             var parameters = new DynamicParameters();
-                            parameters.Add("p_import_user_data", records, DbType.Object, ParameterDirection.Input);
+                            parameters.Add("p_import_user_data", data, DbType.Object, ParameterDirection.Input);
                             parameters.Add("groupid", importUsers.GroupId, DbType.Int32, ParameterDirection.Input);
                             parameters.Add("collegeid", importUsers.CollegeId, DbType.Int32, ParameterDirection.Input);
                             parameters.Add("candidates_added_count", ParameterDirection.Output);
@@ -712,8 +817,15 @@ namespace AptitudeTest.Data.Data
             }
             return validate;
         }
+
         #endregion
 
+
+        private string GetValueForHeader(string[] row, string[] headers, string headerName)
+        {
+            var index = Array.IndexOf(headers, headerName);
+            return index >= 0 && index < row.Length ? row[index] : null;
+        }
         #endregion
 
         #endregion

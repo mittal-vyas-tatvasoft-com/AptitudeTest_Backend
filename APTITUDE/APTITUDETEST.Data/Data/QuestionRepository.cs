@@ -8,7 +8,6 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -550,11 +549,12 @@ namespace AptitudeTest.Data.Data
                         var line = reader.ReadLine();
                         var values = line.Split(',');
                         csvContent.Add(values);
-                       
+
                     }
                     var headers = csvContent.FirstOrDefault();
-                    if (headers != null) {
-                         importQuestionFieldsVMList = new List<ImportQuestionFieldsVM>();
+                    if (headers != null)
+                    {
+                        importQuestionFieldsVMList = new List<ImportQuestionFieldsVM>();
                         for (int i = 1; i < csvContent.Count; i++)
                         {
                             var row = csvContent[i];
@@ -562,7 +562,7 @@ namespace AptitudeTest.Data.Data
                             {
 
                                 topic = GetValueForHeader(row, headers, "Topic"),
-                                
+
                                 difficulty = Int32.Parse(GetValueForHeader(row, headers, "Difficulty")),
                                 isanswer1 = bool.Parse(GetValueForHeader(row, headers, "Answer A")),
                                 isanswer2 = bool.Parse(GetValueForHeader(row, headers, "Answer B")),
