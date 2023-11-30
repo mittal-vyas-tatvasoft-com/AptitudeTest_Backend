@@ -33,9 +33,9 @@ namespace AptitudeTest.Core.Entities.Test
         public bool? IsDeleted { get; set; } = false;
         [Required]
         public int Status { get; set; }
-        public bool IsRandomQuestion { get; set; }
-        public bool IsRandomAnswer { get; set; }
-        public bool IsLogoutWhenTimeExpire { get; set; }
-        public bool IsQuestionsMenu { get; set; }
+        public bool? IsRandomQuestion { get; set; }
+        public bool? IsRandomAnswer { get; set; }
+        public bool? IsLogoutWhenTimeExpire { get; set; }
+        public bool? IsQuestionsMenu { get; set; }
     }
 }
