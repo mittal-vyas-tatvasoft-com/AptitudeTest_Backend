@@ -66,5 +66,11 @@ namespace AptitudeTest.Controllers
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
+        [HttpGet("[action]/{questionId}/{userId}/{testId}")]
+        public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId, int testId)
+        {
+            return await _candidateService.GetCandidateTestQuestion(questionId, userId, testId);
+        }
+
     }
 }

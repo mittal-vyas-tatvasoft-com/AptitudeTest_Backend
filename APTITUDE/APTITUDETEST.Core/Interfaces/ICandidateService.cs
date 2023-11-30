@@ -1,5 +1,4 @@
-﻿
-using AptitudeTest.Core.ViewModels;
+﻿using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Core.Interfaces
@@ -10,5 +9,6 @@ namespace AptitudeTest.Core.Interfaces
         Task<JsonResult> CreateTempUserTest(int userId);
         Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult);
         Task<JsonResult> CreateTempUserTestResult(CreateUserTestResultVM tempUserTestResult);
+        Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId, int testId);
     }
 }
