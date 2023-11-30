@@ -139,8 +139,8 @@ namespace AptitudeTest.Controllers
         /// </summary>
         /// <param name="testVM"></param>
         /// <returns></returns>
-        [HttpDelete("[action]")]
-        public async Task<JsonResult> UpdateTest(CreateTestVM testVM)
+        [HttpPut("[action]")]
+        public async Task<JsonResult> UpdateTest(UpdateTestVM testVM)
         {
             return await _service.UpdateTest(testVM);
         }
