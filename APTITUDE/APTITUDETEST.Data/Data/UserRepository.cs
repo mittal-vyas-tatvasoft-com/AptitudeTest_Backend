@@ -16,6 +16,7 @@ using NpgsqlTypes;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
+using System.Linq;
 
 namespace AptitudeTest.Data.Data
 {
@@ -544,9 +545,14 @@ namespace AptitudeTest.Data.Data
 
                     List<ImportCandidateVM> data = new List<ImportCandidateVM>();
                     ImportCandidateVM dataToBeAdd;
-
-                    List<MasterCollege>? colleges = _appDbContext.MasterCollege.ToList();
-                    List<MasterGroup>? groups = _appDbContext.MasterGroup.ToList();
+                    var collagesInRecords = records.Select(x => x.collegename.Trim().ToLower()).Distinct().ToList();
+                    var groupsInRecords = records.Select(x => x.groupname.Trim().ToLower()).Distinct().ToList();
+                    List<MasterCollege> colleges = _appDbContext.MasterCollege
+    .Where(college => collagesInRecords.Contains(college.Name.ToLower()))
+    .ToList();
+                    List<MasterGroup>? groups = _appDbContext.MasterGroup
+    .Where(group => groupsInRecords.Contains(group.Name.ToLower()))
+    .ToList(); 
                     foreach (var item in records)
                     {
                         dataToBeAdd = new ImportCandidateVM();
