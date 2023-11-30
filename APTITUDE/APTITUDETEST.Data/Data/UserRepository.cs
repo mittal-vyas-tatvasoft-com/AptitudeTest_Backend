@@ -520,21 +520,20 @@ namespace AptitudeTest.Data.Data
                     var headers = csvContent.FirstOrDefault();
                     if (headers != null)
                     {
-                        for (int i = 1; i < csvContent.Count; i++)
+                        foreach (var item in csvContent.Skip(1))
                         {
-                            var row = csvContent[i];
                             var viewModel = new UserImportVM
                             {
 
-                                firstname = GetValueForHeader(row, headers, "FirstName"),
-                                lastname = GetValueForHeader(row, headers, "LastName"),
-                                middlename = GetValueForHeader(row, headers, "MiddleName"),
-                                email = GetValueForHeader(row, headers, "Email"),
-                                contactnumber = long.Parse(GetValueForHeader(row, headers, "ContactNumber")),
-                                collegename = GetValueForHeader(row, headers, "CollegeName"),
-                                groupname = GetValueForHeader(row, headers, "GroupName"),
-                                status = GetValueForHeader(row, headers, "Status(true/false)"),
-                                gender = GetValueForHeader(row, headers, "Gender(male/female)"),
+                                firstname = GetValueForHeader(item, headers, "FirstName"),
+                                lastname = GetValueForHeader(item, headers, "LastName"),
+                                middlename = GetValueForHeader(item, headers, "MiddleName"),
+                                email = GetValueForHeader(item, headers, "Email"),
+                                contactnumber = long.Parse(GetValueForHeader(item, headers, "ContactNumber")),
+                                collegename = GetValueForHeader(item, headers, "CollegeName"),
+                                groupname = GetValueForHeader(item, headers, "GroupName"),
+                                status = GetValueForHeader(item, headers, "Status(true/false)"),
+                                gender = GetValueForHeader(item, headers, "Gender(male/female)"),
 
                             };
                             records.Add(viewModel);
