@@ -72,8 +72,8 @@ namespace AptitudeTest.Data.Data
                 {
                     Test testToBeAdded = new Test()
                     {
-                        Name = test.Name,
-                        Description = test.Description,
+                        Name = test.Name.Trim(),
+                        Description = test.Description.Trim(),
                         Date = test.Date,
                         StartTime = test.StartTime.AddDays(1),
                         EndTime = test.EndTime.AddDays(1),
