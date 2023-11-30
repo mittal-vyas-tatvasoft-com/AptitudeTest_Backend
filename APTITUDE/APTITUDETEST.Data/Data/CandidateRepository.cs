@@ -114,7 +114,7 @@ namespace AptitudeTest.Data.Data
                         TempUserTest? tempUserTestAlreadyExists = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && x.IsDeleted == false).FirstOrDefault();
                         if (tempUserTestAlreadyExists == null)
                         {
-                            TimeSpan difference = (DateTime)test.StartTime - DateTime.UtcNow;
+                            TimeSpan difference = DateTime.UtcNow - (DateTime)test.StartTime;
                             int timeRamining = test.TestDuration - (int)difference.TotalMinutes;
 
                             TempUserTest tempUserTestToBeAdded = new TempUserTest()
