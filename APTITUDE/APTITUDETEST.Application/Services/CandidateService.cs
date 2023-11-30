@@ -34,6 +34,12 @@ namespace AptitudeTest.Application.Services
         {
             return await _candidateRepository.CreateTempUserTestResult(tempUserTestResult);
         }
+
+        public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId, int testId)
+        {
+            return await _candidateRepository.GetCandidateTestQuestion(questionId, userId, testId);
+        }
+
         #endregion
     }
 }
