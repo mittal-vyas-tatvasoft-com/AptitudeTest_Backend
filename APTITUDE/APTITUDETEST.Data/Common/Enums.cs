@@ -36,5 +36,10 @@
             Start = 65
         }
 
+        public enum DefaultQuestionId
+        {
+            QuestionId = -1
+        }
+
     }
 }
