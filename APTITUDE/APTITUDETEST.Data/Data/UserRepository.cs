@@ -16,7 +16,6 @@ using NpgsqlTypes;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
-using System.Linq;
 
 namespace AptitudeTest.Data.Data
 {
@@ -552,7 +551,7 @@ namespace AptitudeTest.Data.Data
     .ToList();
                     List<MasterGroup>? groups = _appDbContext.MasterGroup
     .Where(group => groupsInRecords.Contains(group.Name.ToLower()))
-    .ToList(); 
+    .ToList();
                     foreach (var item in records)
                     {
                         dataToBeAdd = new ImportCandidateVM();
