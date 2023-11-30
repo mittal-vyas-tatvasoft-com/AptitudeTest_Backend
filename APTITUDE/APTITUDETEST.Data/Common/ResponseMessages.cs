@@ -44,5 +44,9 @@
         public static string SuperAdminRequestFail = "You can't perform {0} for this user";
         #endregion
 
+        #region Candidate
+        public static string InternalErrorForAddingQuestionsToTest = "Internal error for adding questions to test";
+        #endregion
+
     }
 }
