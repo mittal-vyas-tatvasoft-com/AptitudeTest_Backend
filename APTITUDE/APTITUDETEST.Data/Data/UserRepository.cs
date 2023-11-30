@@ -547,10 +547,10 @@ namespace AptitudeTest.Data.Data
                     var collagesInRecords = records.Select(x => x.collegename.Trim().ToLower()).Distinct().ToList();
                     var groupsInRecords = records.Select(x => x.groupname.Trim().ToLower()).Distinct().ToList();
                     List<MasterCollege> colleges = _appDbContext.MasterCollege
-    .Where(college => collagesInRecords.Contains(college.Name.ToLower()))
+    .Where(college => collagesInRecords.Contains(college.Name.Trim().ToLower()))
     .ToList();
                     List<MasterGroup>? groups = _appDbContext.MasterGroup
-    .Where(group => groupsInRecords.Contains(group.Name.ToLower()))
+    .Where(group => groupsInRecords.Contains(group.Name.Trim().ToLower()))
     .ToList();
                     foreach (var item in records)
                     {
