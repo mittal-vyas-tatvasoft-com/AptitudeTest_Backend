@@ -66,6 +66,8 @@ builder.Services.AddTransient<ITestService, TestService>();
 builder.Services.AddScoped<ITestRepository, TestRepository>();
 builder.Services.AddTransient<ICandidateService, CandidateService>();
 builder.Services.AddScoped<ICandidateRepository, CandidateRepository>();
+builder.Services.AddTransient<ICandidateTestService, CandidateTestService>();
+builder.Services.AddScoped<ICandidateTestRepository, CandidateTestRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
