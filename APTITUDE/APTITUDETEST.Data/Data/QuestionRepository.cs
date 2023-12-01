@@ -585,7 +585,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.BadRequest),
+                        Message = string.Format(ResponseMessages.NoRecordsFound),
                         Result = false,
                         StatusCode = ResponseStatusCode.BadRequest
                     });
