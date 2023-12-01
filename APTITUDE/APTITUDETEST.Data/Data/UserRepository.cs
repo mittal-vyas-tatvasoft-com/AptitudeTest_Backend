@@ -211,9 +211,9 @@ namespace AptitudeTest.Data.Data
                     var parameters = new DynamicParameters(
                         new
                         {
-                            p_firstname = user.FirstName,
-                            p_lastname = user.LastName,
-                            p_fathername = user.FatherName,
+                            p_firstname = user.FirstName.Trim(),
+                            p_lastname = user.LastName.Trim(),
+                            p_fathername = user.FatherName.Trim(),
                             p_email = user.Email,
                             p_password = password,
                             p_phonenumber = user.PhoneNumber,
@@ -285,9 +285,9 @@ namespace AptitudeTest.Data.Data
                         p_groupid = user.GroupId,
                         p_collegeid = user.CollegeId,
                         p_status = user.Status,
-                        p_firstname = user.FirstName,
-                        p_lastname = user.LastName,
-                        p_fathername = user.FatherName,
+                        p_firstname = user.FirstName.Trim(),
+                        p_lastname = user.LastName.Trim(),
+                        p_fathername = user.FatherName.Trim(),
                         p_gender = user.Gender,
                         p_dateofbirth = dateParameter.Value,
                         p_email = user.Email,

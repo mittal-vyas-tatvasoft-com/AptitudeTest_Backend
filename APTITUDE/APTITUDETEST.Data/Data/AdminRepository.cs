@@ -161,9 +161,9 @@ namespace AptitudeTest.Data.Data
 
                     Admin adminToBeAdded = new Admin()
                     {
-                        FirstName = admin.FirstName,
-                        LastName = admin.LastName,
-                        FatherName = admin.MiddleName,
+                        FirstName = admin.FirstName.Trim(),
+                        LastName = admin.LastName.Trim(),
+                        FatherName = admin.MiddleName.Trim(),
                         Email = admin.Email,
                         Password = pass,
                         Status = admin.Status,
@@ -244,11 +244,27 @@ namespace AptitudeTest.Data.Data
                     if (adminAlreadyExists == null)
                     {
                         Admin? adminToBeUpdated = _appDbContext.Admins.Where(ad => ad.Id == admin.Id && ad.IsSuperAdmin == false).FirstOrDefault();
+                        if (adminToBeUpdated != null &&
+                           adminToBeUpdated.FirstName.Equals(admin.FirstName.Trim()) &&
+                           adminToBeUpdated.LastName.Equals(admin.LastName.Trim()) &&
+                           adminToBeUpdated.FatherName.Equals(admin.MiddleName.Trim()) &&
+                           adminToBeUpdated.Status.Equals(admin.Status) &&
+                           adminToBeUpdated.Email.Equals(admin.Email) &&
+                           adminToBeUpdated.PhoneNumber == admin.PhoneNumber
+                                )
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.NoChanges, ModuleNames.Admin),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.Success
+                            });
+                        }
                         if (adminToBeUpdated != null)
                         {
-                            adminToBeUpdated.FirstName = admin.FirstName;
-                            adminToBeUpdated.LastName = admin.LastName;
-                            adminToBeUpdated.FatherName = admin.MiddleName;
+                            adminToBeUpdated.FirstName = admin.FirstName.Trim();
+                            adminToBeUpdated.LastName = admin.LastName.Trim();
+                            adminToBeUpdated.FatherName = admin.MiddleName.Trim();
                             adminToBeUpdated.Status = admin.Status;
                             adminToBeUpdated.Email = admin.Email;
                             adminToBeUpdated.PhoneNumber = admin.PhoneNumber;

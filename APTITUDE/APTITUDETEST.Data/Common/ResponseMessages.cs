@@ -11,6 +11,7 @@
         public static string InsertSomeData = "Please insert some data";
         public static string InvalidAnswerSelection = "Invalid Answers";
         public static string InvalidTopics = "Invalid Topics";
+        public static string NoChanges = "No Changes were made";
 
         public static string NotFound = "{0} does not exists";
         public static string AlreadyExists = "{0} already exists";
@@ -22,6 +23,7 @@
         public static string currentAndNewSame = "Current Password and New Password can't be same";
         public static string DeleteSuccess = "{0} deleted successfully";
         public static string NotEditable = "{0} not editable";
+        public static string NoRecordsFound = "No Record Found";
         #endregion
 
         #region UserAuthentication
