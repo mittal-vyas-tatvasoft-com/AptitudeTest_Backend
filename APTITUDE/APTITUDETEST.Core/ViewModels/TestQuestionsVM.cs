@@ -9,7 +9,7 @@ namespace AptitudeTest.Core.ViewModels
         [Required]
         public int TopicId { get; set; }
         public int NoOfQuestions { get; set; }
-        public int Weightage { get; set; }
+        public int? Weightage { get; set; }
         [Required]
         public List<TestQuestionsCountVM> TestQuestionsCount { get; set; }
         public int CreatedBy { get; set; }
