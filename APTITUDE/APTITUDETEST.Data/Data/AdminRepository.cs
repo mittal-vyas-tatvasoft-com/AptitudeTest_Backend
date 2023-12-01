@@ -20,6 +20,7 @@ namespace AptitudeTest.Data.Data
         private readonly DapperAppDbContext _dapperContext;
         private readonly IConfiguration _config;
         private readonly string connectionString;
+        private readonly string adminLoginUrl;
         #endregion
 
         #region Constructor
@@ -29,6 +30,7 @@ namespace AptitudeTest.Data.Data
             _dapperContext = dapperContext;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
+            adminLoginUrl = _config["EmailGeneration:AdminUrlForBody"];
         }
         #endregion
 
@@ -474,7 +476,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 var subject = "Password reset request";
-                var body = $"<h3>Hello {firstName}, </h3><br />We have received admin registration request for you.<br /><br />Here is your credentials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2><br/>You can login using the following link:<br/><a href=http://aptitudetest-frontend.web2.anasource.com/admin/login>http://aptitudetest-frontend.web2.anasource.com/admin/login</a><br/><br/>Regards<br/>Tatvasoft";
+                var body = $"<h3>Hello {firstName}, </h3><br />We have received admin registration request for you.<br /><br />Here is your credentials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2><br/>You can login using the following link:<br/><a href={adminLoginUrl}>{adminLoginUrl}</a><br/><br/>Regards<br/>Tatvasoft";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
