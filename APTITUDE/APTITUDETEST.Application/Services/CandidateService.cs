@@ -22,9 +22,9 @@ namespace AptitudeTest.Application.Services
         {
             return await _candidateRepository.CreateUserTest(userTest);
         }
-        public async Task<JsonResult> CreateTempUserTest(int userId)
+        public async Task<JsonResult> CreateTempUserTest(CreateTempUserTestVM tempUserTest)
         {
-            return await _candidateRepository.CreateTempUserTest(userId);
+            return await _candidateRepository.CreateTempUserTest(tempUserTest);
         }
         public async Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult)
         {
@@ -34,12 +34,6 @@ namespace AptitudeTest.Application.Services
         {
             return await _candidateRepository.CreateTempUserTestResult(tempUserTestResult);
         }
-
-        public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId, int testId)
-        {
-            return await _candidateRepository.GetCandidateTestQuestion(questionId, userId, testId);
-        }
-
         #endregion
     }
 }

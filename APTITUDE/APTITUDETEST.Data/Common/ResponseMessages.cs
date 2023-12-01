@@ -8,10 +8,8 @@
         public static string Success = "Operation Success";
         public static string BadRequest = "Invalid Request";
         public static string InsertProperData = "Please insert proper data according requirement";
-        public static string InsertSomeData = "Please insert some data";
         public static string InvalidAnswerSelection = "Invalid Answers";
         public static string InvalidTopics = "Invalid Topics";
-        public static string NoChanges = "No Changes were made";
 
         public static string NotFound = "{0} does not exists";
         public static string AlreadyExists = "{0} already exists";
@@ -23,7 +21,6 @@
         public static string currentAndNewSame = "Current Password and New Password can't be same";
         public static string DeleteSuccess = "{0} deleted successfully";
         public static string NotEditable = "{0} not editable";
-        public static string NoRecordsFound = "No Record Found";
         #endregion
 
         #region UserAuthentication
@@ -45,10 +42,6 @@
 
         #region AdminAuthentication
         public static string SuperAdminRequestFail = "You can't perform {0} for this user";
-        #endregion
-
-        #region Candidate
-        public static string InternalErrorForAddingQuestionsToTest = "Internal error for adding questions to test";
         #endregion
 
     }

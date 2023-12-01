@@ -72,8 +72,8 @@ namespace AptitudeTest.Data.Data
                 {
                     Test testToBeAdded = new Test()
                     {
-                        Name = test.Name.Trim(),
-                        Description = test.Description.Trim(),
+                        Name = test.Name,
+                        Description = test.Description,
                         Date = test.Date,
                         StartTime = test.StartTime.AddDays(1),
                         EndTime = test.EndTime.AddDays(1),
@@ -124,58 +124,60 @@ namespace AptitudeTest.Data.Data
 
         }
 
-        public async Task<JsonResult> UpdateTest(UpdateTestVM testVM)
+        public async Task<JsonResult> UpdateTest(CreateTestVM testVM)
         {
             try
             {
-
-                Test? test = _context.Tests.Where(t => t.Id == testVM.Id && t.IsDeleted == false).FirstOrDefault();
-                if (test != null)
+                Test? testAlreadyExists = _context.Tests.Where(t => t.Name == testVM.Name && t.Id != testVM.Id && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
+                if (testAlreadyExists == null)
                 {
-                    Test? testNameExist = _context.Tests.Where(t => t.Name == testVM.Name && t.Id != testVM.Id && t.IsDeleted == false).FirstOrDefault();
-                    if (testNameExist != null)
+                    Test? test = _context.Tests.Where(t => t.Id == testVM.Id && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
+                    if (test != null)
                     {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.TestWithSameName),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.AlreadyExist
-                        });
-                    }
-                    test.Name = testVM.Name;
-                    test.Description = testVM.Description;
-                    test.Date = testVM.Date;
-                    test.StartTime = testVM.StartTime;
-                    test.EndTime = testVM.EndTime;
-                    test.TestDuration = testVM.TestDuration;
-                    test.Status = testVM.Status;
-                    test.BasicPoint = testVM.BasicPoint;
-                    test.MessaageAtStartOfTheTest = testVM.MessaageAtStartOfTheTest;
-                    test.MessaageAtEndOfTheTest = testVM.MessaageAtEndOfTheTest;
-                    test.IsRandomQuestion = testVM.IsRandomQuestion;
-                    test.IsRandomAnswer = testVM.IsRandomAnswer;
-                    test.IsLogoutWhenTimeExpire = testVM.IsLogoutWhenTimeExpire;
-                    test.IsQuestionsMenu = testVM.IsQuestionsMenu;
-                    test.UpdatedDate = DateTime.UtcNow;
-                    test.UpdatedBy = testVM.CreatedBy;
+                        test.Name = testVM.Name;
+                        test.Description = testVM.Description;
+                        test.Date = testVM.Date;
+                        test.StartTime = testVM.StartTime;
+                        test.EndTime = testVM.EndTime;
+                        test.TestDuration = testVM.TestDuration;
+                        test.Status = testVM.Status;
+                        test.BasicPoint = testVM.BasicPoint;
+                        test.MessaageAtStartOfTheTest = testVM.MessaageAtStartOfTheTest;
+                        test.MessaageAtEndOfTheTest = testVM.MessaageAtEndOfTheTest;
+                        test.IsRandomQuestion = testVM.IsRandomQuestion;
+                        test.IsRandomAnswer = testVM.IsRandomAnswer;
+                        test.IsLogoutWhenTimeExpire = testVM.IsLogoutWhenTimeExpire;
+                        test.IsQuestionsMenu = testVM.IsQuestionsMenu;
+                        test.UpdatedDate = DateTime.UtcNow;
+                        test.UpdatedBy = testVM.CreatedBy;
 
-                    int count = _context.SaveChanges();
-                    if (count == 1)
-                    {
-                        return new JsonResult(new ApiResponse<string>
+                        int count = _context.SaveChanges();
+                        if (count == 1)
                         {
-                            Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Test),
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                        });
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Test),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.Success
+                            });
+                        }
+                        else
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.InternalError,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.InternalServerError
+                            });
+                        }
                     }
                     else
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = ResponseMessages.InternalError,
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
                             Result = false,
-                            StatusCode = ResponseStatusCode.InternalServerError
+                            StatusCode = ResponseStatusCode.NotFound
                         });
                     }
                 }
@@ -183,11 +185,12 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Test),
                         Result = false,
-                        StatusCode = ResponseStatusCode.NotFound
+                        StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
+
             }
             catch (Exception ex)
             {
@@ -783,23 +786,18 @@ namespace AptitudeTest.Data.Data
                 {
                     List<TestTopicWiseCountVM> data = connection.Query<TestTopicWiseCountVM>("Select * from gettopicwisequestionscount()").ToList();
                     List<QuestionsCountMarksVM> questionsCountVM = new();
-                    if (data != null)
+                    if (data.Count != 0)
                     {
+                        questionsCountVM = FillQuestionsCountData(data);
 
-                        if (data.Count != 0)
+                        return new JsonResult(new ApiResponse<List<QuestionsCountMarksVM>>
                         {
-                            questionsCountVM = FillQuestionsCountData(data);
-
-                            return new JsonResult(new ApiResponse<List<QuestionsCountMarksVM>>
-                            {
-                                Data = questionsCountVM,
-                                Message = ResponseMessages.Success,
-                                Result = true,
-                                StatusCode = ResponseStatusCode.Success
-                            });
-                        }
+                            Data = questionsCountVM,
+                            Message = ResponseMessages.Success,
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
                     }
-
                 }
 
                 return new JsonResult(new ApiResponse<string>

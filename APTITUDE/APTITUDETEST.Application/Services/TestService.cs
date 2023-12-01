@@ -55,7 +55,7 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.GetAllTestCandidates(searchQuery, GroupId, CollegeId, SortField, SortOrder, currentPageIndex, pageSize);
         }
-        public Task<JsonResult> UpdateTest(UpdateTestVM testVM)
+        public Task<JsonResult> UpdateTest(CreateTestVM testVM)
         {
             return _repository.UpdateTest(testVM);
         }

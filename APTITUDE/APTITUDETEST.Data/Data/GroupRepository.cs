@@ -44,7 +44,7 @@ namespace AptitudeTest.Data.Data
                     }
                 }
                 _context.SaveChanges();
-                group.Name = groupToBeAdded.Name.Trim();
+                group.Name = groupToBeAdded.Name;
                 group.IsDefault = groupToBeAdded.IsDefault;
                 _context.MasterGroup.Add(group);
                 _context.SaveChanges();
@@ -275,7 +275,7 @@ namespace AptitudeTest.Data.Data
                 MasterGroup groupToBeUpdated = await Task.FromResult(_context.MasterGroup.AsNoTracking().Where(group => group.Id == updatedGroup.Id && group.IsDeleted != true).FirstOrDefault());
                 if (groupToBeUpdated != null)
                 {
-                    groupToBeUpdated.Name = updatedGroup.Name.Trim();
+                    groupToBeUpdated.Name = updatedGroup.Name;
                     groupToBeUpdated.IsDefault = updatedGroup.IsDefault;
                     _context.Update(groupToBeUpdated);
 

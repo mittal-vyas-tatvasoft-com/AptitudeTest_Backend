@@ -27,7 +27,6 @@
         public static string Group = "Group";
         public static string Operation = "Operation";
         public static string Test = "Test";
-        public static string TestWithSameName = "Test with same name";
         public static string TestQuestions = "TestQuestions";
         public static string Candidate = "Candidate";
         public static string State = "State";
