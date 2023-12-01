@@ -10,5 +10,6 @@ namespace AptitudeTest.Core.Interfaces
         Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult);
         Task<JsonResult> CreateTempUserTestResult(CreateUserTestResultVM tempUserTestResult);
         Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId, int testId);
+        Task<JsonResult> GetQuestionsStatus(int userId, int testId);
     }
 }

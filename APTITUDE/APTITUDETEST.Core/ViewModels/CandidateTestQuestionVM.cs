@@ -11,5 +11,6 @@
         public int QuestionNumber { get; set; }
         public int TotalQuestions { get; set; }
         public List<string> Options { get; set; } = new List<string>();
+        public bool[] Answers { get; set; } = new bool[] { false, false, false, false };
     }
 }
