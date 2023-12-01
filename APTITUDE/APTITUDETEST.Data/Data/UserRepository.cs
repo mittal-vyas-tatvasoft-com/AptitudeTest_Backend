@@ -522,167 +522,183 @@ namespace AptitudeTest.Data.Data
                     {
                         foreach (var item in csvContent.Skip(1))
                         {
-                            var viewModel = new UserImportVM
+                            if (item.Length > 1)
                             {
 
-                                firstname = GetValueForHeader(item, headers, "FirstName"),
-                                lastname = GetValueForHeader(item, headers, "LastName"),
-                                middlename = GetValueForHeader(item, headers, "MiddleName"),
-                                email = GetValueForHeader(item, headers, "Email"),
-                                contactnumber = long.Parse(GetValueForHeader(item, headers, "ContactNumber")),
-                                collegename = GetValueForHeader(item, headers, "CollegeName"),
-                                groupname = GetValueForHeader(item, headers, "GroupName"),
-                                status = GetValueForHeader(item, headers, "Status(true/false)"),
-                                gender = GetValueForHeader(item, headers, "Gender(male/female)"),
-
-                            };
-                            records.Add(viewModel);
-                        }
-                    }
-
-                    ValidateImportFileVM checkData = await checkImportedData(records);
-
-                    List<ImportCandidateVM> data = new List<ImportCandidateVM>();
-                    ImportCandidateVM dataToBeAdd;
-                    var collagesInRecords = records.Select(x => x.collegename.Trim().ToLower()).Distinct().ToList();
-                    var groupsInRecords = records.Select(x => x.groupname.Trim().ToLower()).Distinct().ToList();
-                    List<MasterCollege> colleges = _appDbContext.MasterCollege
-    .Where(college => collagesInRecords.Contains(college.Name.Trim().ToLower()))
-    .ToList();
-                    List<MasterGroup>? groups = _appDbContext.MasterGroup
-    .Where(group => groupsInRecords.Contains(group.Name.Trim().ToLower()))
-    .ToList();
-                    foreach (var item in records)
-                    {
-                        dataToBeAdd = new ImportCandidateVM();
-
-                        MasterCollege? college = colleges.Where(c => c.Name.ToLower().Trim() == item.collegename.ToLower()).FirstOrDefault();
-                        dataToBeAdd.firstname = item.firstname;
-                        dataToBeAdd.email = item.email;
-                        dataToBeAdd.contactnumber = item.contactnumber;
-                        if (college != null)
-                        {
-                            dataToBeAdd.collegeid = college.Id;
-                        }
-                        else if (importUsers.CollegeId != null)
-                        {
-                            dataToBeAdd.collegeid = importUsers.CollegeId;
-                        }
-                        else
-                        {
-                            dataToBeAdd.collegeid = importUsers.CollegeId;
-                        }
-
-                        MasterGroup? group = groups.Where(g => g.Name.ToLower().Trim() == item.groupname.ToLower()).FirstOrDefault();
-                        if (group != null)
-                        {
-                            dataToBeAdd.groupid = group.Id;
-                        }
-                        else if (importUsers.GroupId != null)
-                        {
-                            dataToBeAdd.groupid = importUsers.GroupId;
-                        }
-                        else
-                        {
-                            dataToBeAdd.groupid = importUsers.GroupId;
-                        }
-
-
-                        if (item.gender.ToLower() == "male")
-                        {
-                            dataToBeAdd.gender = 0;
-                        }
-                        else if (item.gender.ToLower() == "female")
-                        {
-                            dataToBeAdd.gender = 1;
-                        }
-                        else
-                        {
-                            dataToBeAdd.gender = null;
-                        }
-
-                        if (item.status.ToLower() == "true" || string.IsNullOrEmpty(item.status))
-                        {
-                            dataToBeAdd.status = true;
-                        }
-                        else
-                        {
-                            dataToBeAdd.status = false;
-                        }
-
-                        data.Add(dataToBeAdd);
-                    }
-
-
-                    if (checkData.isValidate == false)
-                    {
-                        return new JsonResult(new ApiResponse<List<string>>
-                        {
-                            Data = checkData.validationMessage,
-                            Message = ResponseMessages.InsertProperData,
-                            Result = false,
-                            StatusCode = ResponseStatusCode.BadRequest
-                        });
-                    }
-
-                    if (records.Count <= 0)
-                    {
-                        return new JsonResult(new ApiResponse<int>
-                        {
-                            Message = string.Format(ResponseMessages.BadRequest),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.BadRequest
-                        });
-                    }
-
-                    if (records != null)
-                    {
-                        ImportCandidateResponseVM? result;
-                        using (var connection = _dapperContext.CreateConnection())
-                        {
-                            var procedure = "import_users";
-                            var parameters = new DynamicParameters();
-                            parameters.Add("p_import_user_data", data, DbType.Object, ParameterDirection.Input);
-                            parameters.Add("groupid", importUsers.GroupId, DbType.Int32, ParameterDirection.Input);
-                            parameters.Add("collegeid", importUsers.CollegeId, DbType.Int32, ParameterDirection.Input);
-                            parameters.Add("candidates_added_count", ParameterDirection.Output);
-                            parameters.Add("inserted_emails", DbType.Object, direction: ParameterDirection.Output);
-
-                            // Execute the stored procedure
-
-                            result = connection.Query<ImportCandidateResponseVM>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
-
-                            if (result.candidates_added_count == 0)
-                            {
-                                return new JsonResult(new ApiResponse<int>
+                                var viewModel = new UserImportVM
                                 {
-                                    Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.AllCandidates),
-                                    Result = true,
-                                    StatusCode = ResponseStatusCode.AlreadyExist
-                                });
+
+                                    firstname = GetValueForHeader(item, headers, "FirstName"),
+                                    lastname = GetValueForHeader(item, headers, "LastName"),
+                                    middlename = GetValueForHeader(item, headers, "MiddleName"),
+                                    email = GetValueForHeader(item, headers, "Email"),
+                                    contactnumber = long.Parse(GetValueForHeader(item, headers, "ContactNumber")),
+                                    collegename = GetValueForHeader(item, headers, "CollegeName"),
+                                    groupname = GetValueForHeader(item, headers, "GroupName"),
+                                    status = GetValueForHeader(item, headers, "Status(true/false)"),
+                                    gender = GetValueForHeader(item, headers, "Gender(male/female)"),
+
+                                };
+                                records.Add(viewModel);
                             }
-                            string[] insertedEmails = parameters.Get<string[]>("inserted_emails");
-                            foreach (var email in insertedEmails)
+
+                        }
+                    }
+
+                    if (records.Count > 0)
+                    {
+
+                        ValidateImportFileVM checkData = await checkImportedData(records);
+
+                        List<ImportCandidateVM> data = new List<ImportCandidateVM>();
+                        ImportCandidateVM dataToBeAdd;
+                        var collagesInRecords = records.Select(x => x.collegename.Trim().ToLower()).Distinct().ToList();
+                        var groupsInRecords = records.Select(x => x.groupname.Trim().ToLower()).Distinct().ToList();
+                        List<MasterCollege> colleges = _appDbContext.MasterCollege.Where(college => collagesInRecords.Contains(college.Name.Trim().ToLower())).ToList();
+                        List<MasterGroup>? groups = _appDbContext.MasterGroup.Where(group => groupsInRecords.Contains(group.Name.Trim().ToLower())).ToList();
+                        foreach (var item in records)
+                        {
+                            dataToBeAdd = new ImportCandidateVM();
+
+                            MasterCollege? college = colleges.Where(c => c.Name.ToLower().Trim() == item.collegename.ToLower()).FirstOrDefault();
+                            dataToBeAdd.firstname = item.firstname;
+                            dataToBeAdd.email = item.email;
+                            dataToBeAdd.contactnumber = item.contactnumber;
+                            if (college != null)
                             {
-                                var password = RandomPasswordGenerator.GenerateRandomPassword(8);
-                                var record = records.Where(r => r.email == email).FirstOrDefault();
-                                bool isMailSent = SendMailForPassword(record.firstname, email, password);
+                                dataToBeAdd.collegeid = college.Id;
                             }
+                            else if (importUsers.CollegeId != null)
+                            {
+                                dataToBeAdd.collegeid = importUsers.CollegeId;
+                            }
+                            else
+                            {
+                                dataToBeAdd.collegeid = importUsers.CollegeId;
+                            }
+
+                            MasterGroup? group = groups.Where(g => g.Name.ToLower().Trim() == item.groupname.ToLower()).FirstOrDefault();
+                            if (group != null)
+                            {
+                                dataToBeAdd.groupid = group.Id;
+                            }
+                            else if (importUsers.GroupId != null)
+                            {
+                                dataToBeAdd.groupid = importUsers.GroupId;
+                            }
+                            else
+                            {
+                                dataToBeAdd.groupid = importUsers.GroupId;
+                            }
+
+
+                            if (item.gender.ToLower() == "male")
+                            {
+                                dataToBeAdd.gender = 0;
+                            }
+                            else if (item.gender.ToLower() == "female")
+                            {
+                                dataToBeAdd.gender = 1;
+                            }
+                            else
+                            {
+                                dataToBeAdd.gender = null;
+                            }
+
+                            if (item.status.ToLower() == "true" || string.IsNullOrEmpty(item.status))
+                            {
+                                dataToBeAdd.status = true;
+                            }
+                            else
+                            {
+                                dataToBeAdd.status = false;
+                            }
+
+                            data.Add(dataToBeAdd);
                         }
 
-                        return new JsonResult(new ApiResponse<int>
+
+                        if (checkData.isValidate == false)
                         {
-                            Data = result.candidates_added_count,
-                            Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Candidates),
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                        });
+                            return new JsonResult(new ApiResponse<List<string>>
+                            {
+                                Data = checkData.validationMessage,
+                                Message = ResponseMessages.InsertProperData,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.BadRequest
+                            });
+                        }
+
+                        if (records.Count <= 0)
+                        {
+                            return new JsonResult(new ApiResponse<int>
+                            {
+                                Message = string.Format(ResponseMessages.BadRequest),
+                                Result = false,
+                                StatusCode = ResponseStatusCode.BadRequest
+                            });
+                        }
+
+                        if (records != null)
+                        {
+                            ImportCandidateResponseVM? result;
+                            using (var connection = _dapperContext.CreateConnection())
+                            {
+                                var procedure = "import_users";
+                                var parameters = new DynamicParameters();
+                                parameters.Add("p_import_user_data", data, DbType.Object, ParameterDirection.Input);
+                                parameters.Add("groupid", importUsers.GroupId, DbType.Int32, ParameterDirection.Input);
+                                parameters.Add("collegeid", importUsers.CollegeId, DbType.Int32, ParameterDirection.Input);
+                                parameters.Add("candidates_added_count", ParameterDirection.Output);
+                                parameters.Add("inserted_emails", DbType.Object, direction: ParameterDirection.Output);
+
+                                // Execute the stored procedure
+
+                                result = connection.Query<ImportCandidateResponseVM>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                                if (result.candidates_added_count == 0)
+                                {
+                                    return new JsonResult(new ApiResponse<int>
+                                    {
+                                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.AllCandidates),
+                                        Result = true,
+                                        StatusCode = ResponseStatusCode.AlreadyExist
+                                    });
+                                }
+                                string[] insertedEmails = parameters.Get<string[]>("inserted_emails");
+                                foreach (var email in insertedEmails)
+                                {
+                                    var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+                                    var record = records.Where(r => r.email == email).FirstOrDefault();
+                                    bool isMailSent = SendMailForPassword(record.firstname, email, password);
+                                }
+                            }
+
+                            return new JsonResult(new ApiResponse<int>
+                            {
+                                Data = result.candidates_added_count,
+                                Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Candidates),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.Success
+                            });
+                        }
+                        else
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.InsertSomeData,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.BadRequest
+                            });
+                        }
+
                     }
+
                     else
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = ResponseMessages.BadRequest,
+                            Message = ResponseMessages.InsertSomeData,
                             Result = false,
                             StatusCode = ResponseStatusCode.BadRequest
                         });
