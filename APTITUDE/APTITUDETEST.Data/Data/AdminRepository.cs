@@ -161,9 +161,9 @@ namespace AptitudeTest.Data.Data
 
                     Admin adminToBeAdded = new Admin()
                     {
-                        FirstName = admin.FirstName,
-                        LastName = admin.LastName,
-                        FatherName = admin.MiddleName,
+                        FirstName = admin.FirstName.Trim(),
+                        LastName = admin.LastName.Trim(),
+                        FatherName = admin.MiddleName.Trim(),
                         Email = admin.Email,
                         Password = pass,
                         Status = admin.Status,
@@ -244,11 +244,27 @@ namespace AptitudeTest.Data.Data
                     if (adminAlreadyExists == null)
                     {
                         Admin? adminToBeUpdated = _appDbContext.Admins.Where(ad => ad.Id == admin.Id && ad.IsSuperAdmin == false).FirstOrDefault();
+                        if (adminToBeUpdated != null &&
+                           adminToBeUpdated.FirstName.Equals(admin.FirstName.Trim()) &&
+                           adminToBeUpdated.LastName.Equals(admin.LastName.Trim()) &&
+                           adminToBeUpdated.FatherName.Equals(admin.MiddleName.Trim()) &&
+                           adminToBeUpdated.Status.Equals(admin.Status) &&
+                           adminToBeUpdated.Email.Equals(admin.Email) &&
+                           adminToBeUpdated.PhoneNumber == admin.PhoneNumber
+                                )
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.NoChanges, ModuleNames.Admin),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.Success
+                            });
+                        }
                         if (adminToBeUpdated != null)
                         {
-                            adminToBeUpdated.FirstName = admin.FirstName;
-                            adminToBeUpdated.LastName = admin.LastName;
-                            adminToBeUpdated.FatherName = admin.MiddleName;
+                            adminToBeUpdated.FirstName = admin.FirstName.Trim();
+                            adminToBeUpdated.LastName = admin.LastName.Trim();
+                            adminToBeUpdated.FatherName = admin.MiddleName.Trim();
                             adminToBeUpdated.Status = admin.Status;
                             adminToBeUpdated.Email = admin.Email;
                             adminToBeUpdated.PhoneNumber = admin.PhoneNumber;
@@ -458,7 +474,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 var subject = "Password reset request";
-                var body = $"<h3>Hello {firstName}</h3>,<br />we received admin registration request for you ,<br /><br /Here is your credetials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2>";
+                var body = $"<h3>Hello {firstName} </h3>,<br />We have received admin registration request for you.<br /><br /Here is your credentials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2><br/>You can login using the following link:<br/><a href=http://aptitudetest-frontend.web2.anasource.com/admin/login><br/><br/>Regards<br/>Tatvasoft";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;

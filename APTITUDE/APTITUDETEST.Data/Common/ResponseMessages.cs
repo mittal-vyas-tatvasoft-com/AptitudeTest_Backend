@@ -8,8 +8,10 @@
         public static string Success = "Operation Success";
         public static string BadRequest = "Invalid Request";
         public static string InsertProperData = "Please insert proper data according requirement";
+        public static string InsertSomeData = "Please insert some data";
         public static string InvalidAnswerSelection = "Invalid Answers";
         public static string InvalidTopics = "Invalid Topics";
+        public static string NoChanges = "No Changes were made";
 
         public static string NotFound = "{0} does not exists";
         public static string AlreadyExists = "{0} already exists";
