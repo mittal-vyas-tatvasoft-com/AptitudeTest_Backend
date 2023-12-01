@@ -308,7 +308,7 @@ namespace AptitudeTest.Data.Data
                 testQuestionsToBeAdded.TestId = addTestQuestion.TestId;
                 testQuestionsToBeAdded.TopicId = addTestQuestion.TopicId;
                 testQuestionsToBeAdded.NoOfQuestions = addTestQuestion.NoOfQuestions;
-                testQuestionsToBeAdded.Weightage = addTestQuestion.Weightage;
+                testQuestionsToBeAdded.Weightage = (int)addTestQuestion.Weightage;
                 testQuestionsToBeAdded.CreatedDate = DateTime.UtcNow;
                 testQuestionsToBeAdded.CreatedBy = addTestQuestion.CreatedBy;
 
@@ -357,7 +357,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Test test = await Task.FromResult(_context.Tests.Where(t => t.Id == updateTestQuestion.TestId && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault());
+                Test test = await Task.FromResult(_context.Tests.Where(t => t.Id == updateTestQuestion.TestId && t.IsDeleted == false).FirstOrDefault());
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<string>
