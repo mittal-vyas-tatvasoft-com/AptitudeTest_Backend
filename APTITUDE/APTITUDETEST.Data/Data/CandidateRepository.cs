@@ -284,7 +284,7 @@ namespace AptitudeTest.Data.Data
 
                         if (tempUserTestQuestion != null)
                         {
-                            tempUserTestQuestion.UserAnswers = userTestQuestionAnswer.UserAnswers;
+                            tempUserTestQuestion.UserAnswers = userTestQuestionAnswer.UserAnswers?.Length != 0 ? userTestQuestionAnswer.UserAnswers : null;
                             tempUserTestQuestion.IsAttended = userTestQuestionAnswer.IsAttended;
                             tempUserTestQuestion.UpdatedDate = DateTime.UtcNow;
                             tempUserTestQuestion.UpdatedBy = userTestQuestionAnswer.UserId;
@@ -295,7 +295,7 @@ namespace AptitudeTest.Data.Data
                                 return new JsonResult(new ApiResponse<string>
                                 {
                                     Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TempUserTestResult),
-                                    Result = true,
+                                            Result = true,
                                     StatusCode = ResponseStatusCode.Success
                                 });
                             }
