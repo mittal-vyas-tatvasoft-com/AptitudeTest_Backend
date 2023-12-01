@@ -33,23 +33,17 @@ namespace AptitudeTest.Controllers
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
+        /// <summary>
+        /// starts the test for user and random questions will be stored in DB
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpPost("[action]/{userId:int}")]
         public async Task<JsonResult> StartUserTest(int userId)
         {
             if (ModelState.IsValid)
             {
                 return await _candidateService.CreateTempUserTest(userId);
-            }
-
-            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
-        }
-
-        [HttpPost("[action]")]
-        public async Task<JsonResult> CreateTempUserTestResult(CreateUserTestResultVM tempUserTestResult)
-        {
-            if (ModelState.IsValid)
-            {
-                return await _candidateService.CreateTempUserTestResult(tempUserTestResult);
             }
 
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
@@ -70,6 +64,22 @@ namespace AptitudeTest.Controllers
         public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId, int testId)
         {
             return await _candidateService.GetCandidateTestQuestion(questionId, userId, testId);
+        }
+
+        /// <summary>
+        /// saves the answer of test question given by user 
+        /// </summary>
+        /// <param name="userTestQuestionAnswer"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> SaveTestQuestionAnswer(UpdateTestQuestionAnswerVM userTestQuestionAnswer)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _candidateService.SaveTestQuestionAnswer(userTestQuestionAnswer);
+            }
+
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
     }

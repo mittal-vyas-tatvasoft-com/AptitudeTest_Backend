@@ -268,52 +268,65 @@ namespace AptitudeTest.Data.Data
             }
 
         }
-        public async Task<JsonResult> CreateTempUserTestResult(CreateUserTestResultVM tempUserTestResult)
+        public async Task<JsonResult> SaveTestQuestionAnswer(UpdateTestQuestionAnswerVM userTestQuestionAnswer)
         {
             try
             {
-                if (tempUserTestResult != null)
+                if (userTestQuestionAnswer != null)
                 {
-                    TempUserTestResult? tempUserTestResultAlreadyExists = _appDbContext.TempUserTestResult.Where(x => x.UserTestId == tempUserTestResult.UserTestId && x.IsDeleted == false).FirstOrDefault();
-                    if (tempUserTestResultAlreadyExists == null)
+                    TempUserTest? tempUserTest = _appDbContext.TempUserTests.Where(x => x.UserId == userTestQuestionAnswer.UserId && x.TestId == userTestQuestionAnswer.TestId && x.IsDeleted == false).FirstOrDefault();
+                    if (tempUserTest != null)
                     {
-                        TempUserTestResult tempUserTestResultToBeAdded = new TempUserTestResult()
-                        {
-                            UserTestId = tempUserTestResult.UserTestId,
-                            QuestionId = tempUserTestResult.QuestionId,
-                            UserAnswers = tempUserTestResult.UserAnswers,
-                            IsAttended = tempUserTestResult.IsAttended,
-                            CreatedBy = tempUserTestResult.CreatedBy,
-                        };
+                        tempUserTest.TimeRemaining = userTestQuestionAnswer.TimeRemaining;
+                        _appDbContext.SaveChanges();
 
-                        _appDbContext.Add(tempUserTestResultToBeAdded);
-                        int count = _appDbContext.SaveChanges();
-                        if (count == 1)
+                        TempUserTestResult? tempUserTestQuestion = _appDbContext.TempUserTestResult.Where(x => x.UserTestId == tempUserTest.Id && x.QuestionId == userTestQuestionAnswer.QuestionId && x.IsDeleted == false).FirstOrDefault();
+
+                        if (tempUserTestQuestion != null)
                         {
-                            return new JsonResult(new ApiResponse<string>
+                            tempUserTestQuestion.UserAnswers = userTestQuestionAnswer.UserAnswers;
+                            tempUserTestQuestion.IsAttended = userTestQuestionAnswer.IsAttended;
+                            tempUserTestQuestion.UpdatedDate = DateTime.UtcNow;
+                            tempUserTestQuestion.UpdatedBy = userTestQuestionAnswer.UserId;
+
+                            int count = _appDbContext.SaveChanges();
+                            if (count == 1)
                             {
-                                Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.TempUserTestResult),
-                                Result = true,
-                                StatusCode = ResponseStatusCode.OK
-                            });
+                                return new JsonResult(new ApiResponse<string>
+                                {
+                                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TempUserTestResult),
+                                    Result = true,
+                                    StatusCode = ResponseStatusCode.Success
+                                });
+                            }
+                            else
+                            {
+                                return new JsonResult(new ApiResponse<string>
+                                {
+                                    Message = ResponseMessages.InternalError,
+                                    Result = false,
+                                    StatusCode = ResponseStatusCode.InternalServerError
+                                });
+                            }
                         }
                         else
                         {
                             return new JsonResult(new ApiResponse<string>
                             {
-                                Message = ResponseMessages.InternalError,
+                                Message = string.Format(ResponseMessages.NotFound, ModuleNames.UserTestResult),
                                 Result = false,
-                                StatusCode = ResponseStatusCode.InternalServerError
+                                StatusCode = ResponseStatusCode.NotFound
                             });
                         }
+
                     }
                     else
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.TempUserTestResult),
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.UserTest),
                             Result = false,
-                            StatusCode = ResponseStatusCode.AlreadyExist
+                            StatusCode = ResponseStatusCode.NotFound
                         });
                     }
 
