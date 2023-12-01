@@ -311,7 +311,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.User),
+                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.User),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
