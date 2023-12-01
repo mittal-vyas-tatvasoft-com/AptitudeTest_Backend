@@ -474,7 +474,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 var subject = "Password reset request";
-                var body = $"<h3>Hello {firstName}</h3>,<br />we received admin registration request for you ,<br /><br /Here is your credetials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2>";
+                var body = $"<h3>Hello {firstName} </h3>,<br />We have received admin registration request for you.<br /><br /Here is your credentials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2><br/>You can login using the following link:<br/><a href=http://aptitudetest-frontend.web2.anasource.com/admin/login><br/><br/>Regards<br/>Tatvasoft";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
