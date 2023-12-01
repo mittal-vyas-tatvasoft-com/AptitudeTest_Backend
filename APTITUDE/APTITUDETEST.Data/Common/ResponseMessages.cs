@@ -21,6 +21,7 @@
         public static string currentAndNewSame = "Current Password and New Password can't be same";
         public static string DeleteSuccess = "{0} deleted successfully";
         public static string NotEditable = "{0} not editable";
+        public static string NoRecordsFound = "No Record Found";
         #endregion
 
         #region UserAuthentication
