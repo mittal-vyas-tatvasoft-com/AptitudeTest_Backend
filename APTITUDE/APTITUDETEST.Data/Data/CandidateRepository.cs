@@ -435,7 +435,7 @@ namespace AptitudeTest.Data.Data
                     }
 
                     var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getQuestionbyid(@question_id)", new { question_id = questionId });
-                    if (data.Count() == 0)
+                    if (data?.Count() == 0)
                     {
                         return new JsonResult(new ApiResponse<UserDetailsVM>
                         {
@@ -446,6 +446,17 @@ namespace AptitudeTest.Data.Data
                         });
                     }
                     var question = data.FirstOrDefault();
+
+                    if (question == null)
+                    {
+                        return new JsonResult(new ApiResponse<UserDetailsVM>
+                        {
+                            Data = null,
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
                     CandidateTestQuestionVM candidateTestQuestionVM = new CandidateTestQuestionVM()
                     {
                         Id = question.QuestionId,

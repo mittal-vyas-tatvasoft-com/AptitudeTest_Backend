@@ -131,64 +131,78 @@ namespace AptitudeTest.Data.Data
                         page_index = pageIndex
                     };
                     var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getallquestions(@filter_topic,@filter_status,@page_size,@page_index)", parameter);
-                    List<QuestionVM> questionVMList = new List<QuestionVM>();
-                    questionVMList = data.GroupBy(question => question.QuestionId).Select(
-                        x =>
-                        {
-                            var q = x.FirstOrDefault();
-                            return new QuestionVM()
+                    if (data != null)
+                    {
+                        List<QuestionVM> questionVMList = new List<QuestionVM>();
+                        questionVMList = data.GroupBy(question => question.QuestionId).Select(
+                            x =>
                             {
-                                Sequence = q.Sequence,
-                                Id = q.QuestionId,
-                                Difficulty = q.Difficulty,
-                                OptionType = q.OptionType,
-                                QuestionText = q.QuestionText,
-                                QuestionType = q.QuestionType,
-                                Status = q.Status,
-                                TopicId = q.Topic,
-                                ParentId = q.ParentId,
-                                Options = x.Select(x =>
+                                var q = x.FirstOrDefault();
+
+                                return new QuestionVM()
                                 {
-                                    return new OptionVM()
+                                    Sequence = q.Sequence,
+                                    Id = q.QuestionId,
+                                    Difficulty = q.Difficulty,
+                                    OptionType = q.OptionType,
+                                    QuestionText = q.QuestionText,
+                                    QuestionType = q.QuestionType,
+                                    Status = q.Status,
+                                    TopicId = q.Topic,
+                                    ParentId = q.ParentId,
+                                    Options = x.Select(x =>
                                     {
-                                        IsAnswer = x.IsAnswer,
-                                        OptionId = x.OptionId,
-                                        OptionValue = x.OptionData
-                                    };
-                                }).ToList()
-                            };
+                                        return new OptionVM()
+                                        {
+                                            IsAnswer = x.IsAnswer,
+                                            OptionId = x.OptionId,
+                                            OptionValue = x.OptionData
+                                        };
+                                    }).ToList()
+                                };
+                            }
+                            ).ToList();
+
+                        int PageCount = 0;
+                        int totalItemsCount = 0;
+                        bool isNextPage = false;
+                        var temp = data.FirstOrDefault();
+                        if (temp != null)
+                        {
+                            PageCount = (int)temp?.TotalPages;
+                            totalItemsCount = (int)temp?.TotalRecords;
+                            isNextPage = temp?.NextPage == null ? false : true;
                         }
-                        ).ToList();
+                        bool isPreviousPage = pageIndex == (int)Enums.Pagination.DefaultIndex ? false : true;
 
-                    int PageCount = 0;
-                    int totalItemsCount = 0;
-                    bool isNextPage = false;
-                    var temp = data.FirstOrDefault();
-                    if (temp != null)
-                    {
-                        PageCount = (int)temp?.TotalPages;
-                        totalItemsCount = (int)temp?.TotalRecords;
-                        isNextPage = temp?.NextPage == null ? false : true;
+                        PaginationVM<QuestionVM> pagination = new PaginationVM<QuestionVM>()
+                        {
+                            EntityList = questionVMList,
+                            CurrentPageIndex = pageIndex,
+                            PageSize = pageSize,
+                            PageCount = PageCount,
+                            IsNextPage = isNextPage,
+                            IsPreviousPage = isPreviousPage,
+                            TotalItemsCount = totalItemsCount,
+                        };
+                        return new JsonResult(new ApiResponse<PaginationVM<QuestionVM>>
+                        {
+                            Data = pagination,
+                            Message = ResponseMessages.Success,
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
                     }
-                    bool isPreviousPage = pageIndex == (int)Enums.Pagination.DefaultIndex ? false : true;
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
 
-                    PaginationVM<QuestionVM> pagination = new PaginationVM<QuestionVM>()
-                    {
-                        EntityList = questionVMList,
-                        CurrentPageIndex = pageIndex,
-                        PageSize = pageSize,
-                        PageCount = PageCount,
-                        IsNextPage = isNextPage,
-                        IsPreviousPage = isPreviousPage,
-                        TotalItemsCount = totalItemsCount,
-                    };
-                    return new JsonResult(new ApiResponse<PaginationVM<QuestionVM>>
-                    {
-                        Data = pagination,
-                        Message = ResponseMessages.Success,
-                        Result = true,
-                        StatusCode = ResponseStatusCode.Success
-                    });
                 }
             }
 
