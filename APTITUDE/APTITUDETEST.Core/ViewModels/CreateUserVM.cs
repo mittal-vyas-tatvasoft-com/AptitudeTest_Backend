@@ -6,6 +6,7 @@ namespace AptitudeTest.Core.ViewModels
     {
         [Required]
         public string? FirstName { get; set; }
+        [Required]
         public string? LastName { get; set; }
         public string? FatherName { get; set; }
         [Required]

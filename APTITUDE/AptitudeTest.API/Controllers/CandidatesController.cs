@@ -1,12 +1,11 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CandidatesController : ControllerBase
@@ -33,12 +32,12 @@ namespace AptitudeTest.Controllers
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
-        [HttpPost("[action]")]
-        public async Task<JsonResult> CreateTempUserTest(CreateTempUserTestVM tempUserTest)
+        [HttpPost("[action]/{userId:int}")]
+        public async Task<JsonResult> StartUserTest(int userId)
         {
             if (ModelState.IsValid)
             {
-                return await _candidateService.CreateTempUserTest(tempUserTest);
+                return await _candidateService.CreateTempUserTest(userId);
             }
 
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
@@ -64,6 +63,12 @@ namespace AptitudeTest.Controllers
             }
 
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+
+        [HttpGet("[action]/{questionId}/{userId}/{testId}")]
+        public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId, int testId)
+        {
+            return await _candidateService.GetCandidateTestQuestion(questionId, userId, testId);
         }
 
     }
