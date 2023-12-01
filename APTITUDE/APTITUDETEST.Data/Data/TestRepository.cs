@@ -72,8 +72,8 @@ namespace AptitudeTest.Data.Data
                 {
                     Test testToBeAdded = new Test()
                     {
-                        Name = test.Name,
-                        Description = test.Description,
+                        Name = test.Name.Trim(),
+                        Description = test.Description.Trim(),
                         Date = test.Date,
                         StartTime = test.StartTime.AddDays(1),
                         EndTime = test.EndTime.AddDays(1),
@@ -783,18 +783,23 @@ namespace AptitudeTest.Data.Data
                 {
                     List<TestTopicWiseCountVM> data = connection.Query<TestTopicWiseCountVM>("Select * from gettopicwisequestionscount()").ToList();
                     List<QuestionsCountMarksVM> questionsCountVM = new();
-                    if (data.Count != 0)
+                    if (data != null)
                     {
-                        questionsCountVM = FillQuestionsCountData(data);
 
-                        return new JsonResult(new ApiResponse<List<QuestionsCountMarksVM>>
+                        if (data.Count != 0)
                         {
-                            Data = questionsCountVM,
-                            Message = ResponseMessages.Success,
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                        });
+                            questionsCountVM = FillQuestionsCountData(data);
+
+                            return new JsonResult(new ApiResponse<List<QuestionsCountMarksVM>>
+                            {
+                                Data = questionsCountVM,
+                                Message = ResponseMessages.Success,
+                                Result = true,
+                                StatusCode = ResponseStatusCode.Success
+                            });
+                        }
                     }
+
                 }
 
                 return new JsonResult(new ApiResponse<string>
