@@ -704,9 +704,13 @@ namespace AptitudeTest.Data.Data
                     if (data.Count != 0)
                     {
                         var firstRow = data.FirstOrDefault();
-                        testQuestionsCountMarksVM.TestId = firstRow.TestId;
-                        testQuestionsCountMarksVM.TotalMarks = firstRow.TotalMarks;
-                        testQuestionsCountMarksVM.TotalQuestions = firstRow.TotalQuestion;
+                        if (firstRow != null)
+                        {
+                            testQuestionsCountMarksVM.TestId = firstRow.TestId;
+                            testQuestionsCountMarksVM.TotalMarks = firstRow.TotalMarks;
+                            testQuestionsCountMarksVM.TotalQuestions = firstRow.TotalQuestion;
+                        }
+
                         testQuestionsCountMarksVM.QuestionsCount =
                             data.GroupBy(x => x.TopicId).Select(x =>
                             {

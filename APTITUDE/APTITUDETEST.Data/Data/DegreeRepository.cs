@@ -210,7 +210,7 @@ namespace AptitudeTest.Data.Data
                 masterDegree.Level = degree.Level;
                 _context.Add(masterDegree);
                 _context.SaveChanges();
-                int id = _context.MasterDegree.OrderBy(degree => degree.CreatedDate).LastOrDefault().Id;
+                int id = _context.MasterDegree.OrderBy(degree => degree.CreatedDate).LastOrDefault()!.Id;
                 IEnumerable<MasterStream> streams = degree.Streams.Select(stream => new MasterStream { Name = stream, DegreeId = id });
                 _context.MasterStream.AddRange(streams);
                 _context.SaveChanges();
