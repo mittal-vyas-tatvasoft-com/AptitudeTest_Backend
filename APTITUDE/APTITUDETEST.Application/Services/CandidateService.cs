@@ -44,6 +44,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _candidateRepository.SaveTestQuestionAnswer(userTestQuestionAnswer);
         }
+
+        public async Task<JsonResult> EndTest(int userId)
+        {
+            return await _candidateRepository.EndTest(userId);
+        }
         #endregion
     }
 }

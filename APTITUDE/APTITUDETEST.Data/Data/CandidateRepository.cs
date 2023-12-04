@@ -603,9 +603,134 @@ namespace AptitudeTest.Data.Data
 
         }
 
+        public async Task<JsonResult> EndTest(int userId)
+        {
+            try
+            {
+                if (userId != 0)
+                {
+                    Test? test = GetTestOfUser(userId);
+                    if (test != null)
+                    {
+                        TempUserTest? tempUserTest = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && x.IsDeleted == false).FirstOrDefault();
+                        if (tempUserTest != null)
+                        {
+                            tempUserTest.IsDeleted = true;
+                            _appDbContext.SaveChanges();
+
+                            UserTest userTestToBeAdded = new UserTest()
+                            {
+                                UserId = userId,
+                                TestId = test.Id,
+                                Status = true,
+                                IsFinished = true,
+                                CreatedBy = userId,
+                            };
+
+                            _appDbContext.Add(userTestToBeAdded);
+                            int count = _appDbContext.SaveChanges();
+                            if (count == 1)
+                            {
+                                return await AddUserTempResultToUserTestResult(tempUserTest.Id);
+                            }
+                            else
+                            {
+                                return new JsonResult(new ApiResponse<string>
+                                {
+                                    Message = ResponseMessages.InternalError,
+                                    Result = false,
+                                    StatusCode = ResponseStatusCode.InternalServerError
+                                });
+                            }
+                        }
+                        else
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.NotFound, ModuleNames.TempUserTest),
+                                Result = false,
+                                StatusCode = ResponseStatusCode.NotFound
+                            });
+                        }
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<Admin>
+                        {
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+                }
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.BadRequest,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.BadRequest
+                });
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
         #endregion
 
         #region Helper Method
+        private async Task<JsonResult> AddUserTempResultToUserTestResult(int userTestId)
+        {
+            List<TempUserTestResult>? tempUserTestResultList = _appDbContext.TempUserTestResult.Where(x => x.UserTestId == userTestId).ToList();
+            if (tempUserTestResultList != null && tempUserTestResultList.Count > 0)
+            {
+                List<UserTestResult>? UserTestResultList = tempUserTestResultList.Select(x => new UserTestResult()
+                {
+                    UserTestId = x.UserTestId,
+                    QuestionId = x.QuestionId,
+                    UserAnswers = x.UserAnswers,
+                    IsAttended = x.IsAttended,
+                    CreatedBy = x.CreatedBy,
+                }).ToList();
+
+                tempUserTestResultList.ForEach(x => x.IsDeleted = true);
+
+                _appDbContext.UserTestResult.AddRange(UserTestResultList);
+                int result = _appDbContext.SaveChanges();
+                if (result > 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.EndTest),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.InternalError,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.InternalServerError
+                    });
+                }
+            }
+            else
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.TempUserTestResult),
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
+            }
+        }
         private Test? GetTestOfUser(int userId)
         {
             int? collegeId = _appDbContext.Users.Where(x => x.Id == userId && x.IsDeleted == false).Select(x => x.CollegeId).FirstOrDefault();

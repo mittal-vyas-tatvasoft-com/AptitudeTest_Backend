@@ -88,5 +88,16 @@ namespace AptitudeTest.Controllers
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
+        /// <summary>
+        /// end the test of candidate
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpPut("[action]/{userId:int}")]
+        public async Task<JsonResult> EndTest(int userId)
+        {
+            return await _candidateService.EndTest(userId);
+        }
+
     }
 }
