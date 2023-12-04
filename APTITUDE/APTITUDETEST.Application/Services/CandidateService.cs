@@ -30,16 +30,16 @@ namespace AptitudeTest.Application.Services
         {
             return await _candidateRepository.CreateUserTestResult(userTestResult);
         }
-        public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId, int testId)
+        public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId)
         {
-            return await _candidateRepository.GetCandidateTestQuestion(questionId, userId, testId);
+            return await _candidateRepository.GetCandidateTestQuestion(questionId, userId);
         }
 
-        public async Task<JsonResult> GetQuestionsStatus(int userId, int testId)
+        public async Task<JsonResult> GetQuestionsStatus(int userId)
         {
-            return await _candidateRepository.GetQuestionsStatus(userId, testId);
+            return await _candidateRepository.GetQuestionsStatus(userId);
         }
-        
+
         public async Task<JsonResult> SaveTestQuestionAnswer(UpdateTestQuestionAnswerVM userTestQuestionAnswer)
         {
             return await _candidateRepository.SaveTestQuestionAnswer(userTestQuestionAnswer);

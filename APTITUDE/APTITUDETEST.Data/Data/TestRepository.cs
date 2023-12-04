@@ -67,7 +67,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Test? testAlreadyExists = _context.Tests.Where(t => t.Name.Trim().ToLower() == test.Name.Trim().ToLower()  && t.IsDeleted == false).FirstOrDefault();
+                Test? testAlreadyExists = _context.Tests.Where(t => t.Name.Trim().ToLower() == test.Name.Trim().ToLower() && t.IsDeleted == false).FirstOrDefault();
                 if (testAlreadyExists == null)
                 {
                     Test testToBeAdded = new Test()
