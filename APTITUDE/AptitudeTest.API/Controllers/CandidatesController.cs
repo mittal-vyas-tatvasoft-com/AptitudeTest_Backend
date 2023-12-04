@@ -66,6 +66,12 @@ namespace AptitudeTest.Controllers
             return await _candidateService.GetCandidateTestQuestion(questionId, userId, testId);
         }
 
+        [HttpGet("[action]/{userId}/{testId}")]
+        public async Task<JsonResult> GetQuestionsStatus(int userId, int testId)
+        {
+            return await _candidateService.GetQuestionsStatus(userId, testId);
+        }
+        
         /// <summary>
         /// saves the answer of test question given by user 
         /// </summary>

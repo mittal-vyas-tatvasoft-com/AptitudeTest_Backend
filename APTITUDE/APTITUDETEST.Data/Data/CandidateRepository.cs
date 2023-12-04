@@ -390,7 +390,7 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                if ((questionId != (int)Enums.DefaultQuestionId.QuestionId && questionId < 1) || testId < 1)
+                if ((questionId != (int)Enums.DefaultQuestionId.QuestionId && questionId < 1) || testId < 1 || (userId < 1))
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -402,49 +402,32 @@ namespace AptitudeTest.Data.Data
 
                 using (DbConnection connection = new DbConnection())
                 {
-                    int userTestId = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == testId).Select(x => x.Id).FirstOrDefault();
-                    if (userTestId == null || userTestId == 0)
+                    var data = await connection.Connection.QueryAsync<UserTestQuestionModelVM>("select * from getCandidateTestquestion(@question_id,@user_id,@test_id)", new { question_id = questionId, user_id = userId, test_id = testId });
+                    if (data == null || data.Count() == 0)
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = ResponseMessages.BadRequest,
+                            Message = ResponseMessages.NoRecordsFound,
                             Result = false,
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
-                    var questions = _appDbContext.TempUserTestResult.Where(t => t.UserTestId == userTestId).Select(x => x.QuestionId).ToList();
+                    int[] questions = data.FirstOrDefault().Questions;
                     if (questionId == (int)Enums.DefaultQuestionId.QuestionId)
                     {
                         questionId = questions.FirstOrDefault();
                     }
-                    if (questions.IndexOf(questionId) == -1)
-                    {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = ResponseMessages.BadRequest,
-                            Result = false,
-                            StatusCode = ResponseStatusCode.BadRequest
-                        });
-                    }
-                    int nextIndex = questions.IndexOf(questionId) + 1;
+                    int nextIndex = Array.IndexOf(questions, questionId) + 1;
                     int nextQuestionId = 0;
                     int questionNumber = nextIndex;
-                    if (nextIndex < questions.Count)
+
+
+
+                    if (nextIndex < questions.Length)
                     {
                         nextQuestionId = questions[nextIndex];
                     }
 
-                    var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getQuestionbyid(@question_id)", new { question_id = questionId });
-                    if (data?.Count() == 0)
-                    {
-                        return new JsonResult(new ApiResponse<UserDetailsVM>
-                        {
-                            Data = null,
-                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.NotFound
-                        });
-                    }
                     var question = data.FirstOrDefault();
 
                     if (question == null)
@@ -466,12 +449,19 @@ namespace AptitudeTest.Data.Data
                         QuestionText = question.QuestionText,
                         NextQuestionId = nextQuestionId,
                         QuestionNumber = questionNumber,
-                        TotalQuestions = questions.Count
+                        TotalQuestions = questions.Length
                     };
 
                     foreach (var item in data)
                     {
                         candidateTestQuestionVM.Options.Add(item.OptionData);
+                    }
+                    if (question.Answer != null)
+                    {
+                        foreach (var item in question.Answer)
+                        {
+                            candidateTestQuestionVM.Answers[item - 1] = true;
+                        }
                     }
                     return new JsonResult(new ApiResponse<CandidateTestQuestionVM>
                     {
@@ -493,6 +483,103 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.InternalServerError
                 });
             }
+        }
+
+        public async Task<JsonResult> GetQuestionsStatus(int userId, int testId)
+        {
+            try
+            {
+                if (userId < 1 || testId < 1)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
+                using (DbConnection connection = new DbConnection())
+                {
+                    int userTestId = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == testId).Select(x => x.Id).FirstOrDefault();
+                    if (userTestId == null || userTestId == 0)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.BadRequest,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
+                    var questions = _appDbContext.TempUserTestResult.Where(t => t.UserTestId == userTestId).OrderBy(X => X.Id).Select((x) => new TempQuestionStatusVM()
+                    {
+                        QuestionId = x.QuestionId,
+                        IsAttended = x.IsAttended,
+                        UserAnswers = x.UserAnswers
+                    }).ToList();
+
+                    if (questions.Count == 0)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.NoRecordsFound,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
+
+                    List<QuestionStatusVM> data = new List<QuestionStatusVM>();
+                    int totalCount = 0;
+                    int answered = 0;
+                    int unAnswered = 0;
+                    foreach (var item in questions)
+                    {
+                        totalCount++;
+                        int status = 0;
+                        if (item.IsAttended && item.UserAnswers == null)
+                        {
+                            unAnswered++;
+                            status = (int)Enums.QuestionStatus.Skipped;
+                        }
+                        else if (item.IsAttended && item.UserAnswers != null)
+                        {
+                            answered++;
+                            status = (int)Enums.QuestionStatus.Answered;
+                        }
+                        data.Add(new QuestionStatusVM()
+                        {
+                            QuestionId = item.QuestionId,
+                            Status = status,
+                        });
+                    }
+                    CandidateQuestionsStatusVM candidateQuestionsStatusVM = new CandidateQuestionsStatusVM()
+                    {
+                        questionStatusVMs = data,
+                        Answered = answered,
+                        TotalQuestion = totalCount,
+                        UnAnswered = unAnswered
+                    };
+                    return new JsonResult(new ApiResponse<CandidateQuestionsStatusVM>
+                    {
+                        Data = candidateQuestionsStatusVM,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
         }
 
         #endregion

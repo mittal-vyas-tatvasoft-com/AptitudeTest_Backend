@@ -34,6 +34,12 @@ namespace AptitudeTest.Application.Services
         {
             return await _candidateRepository.GetCandidateTestQuestion(questionId, userId, testId);
         }
+
+        public async Task<JsonResult> GetQuestionsStatus(int userId, int testId)
+        {
+            return await _candidateRepository.GetQuestionsStatus(userId, testId);
+        }
+        
         public async Task<JsonResult> SaveTestQuestionAnswer(UpdateTestQuestionAnswerVM userTestQuestionAnswer)
         {
             return await _candidateRepository.SaveTestQuestionAnswer(userTestQuestionAnswer);

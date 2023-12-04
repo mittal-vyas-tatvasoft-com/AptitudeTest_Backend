@@ -41,5 +41,11 @@
             QuestionId = -1
         }
 
+        public enum QuestionStatus
+        {
+            UnVisited = 0,
+            Answered = 1,
+            Skipped = 2
+        }
     }
 }
