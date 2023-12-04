@@ -7,19 +7,25 @@ namespace AptitudeTest.Core.Validations
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            var testDuration = (int)value;
+            int testDuration = 0;
+            if (value != null)
+            {
+                testDuration = (int)value;
+            }
             var startTimeProperty = validationContext.ObjectType.GetProperty("StartTime");
             var endTimeProperty = validationContext.ObjectType.GetProperty("EndTime");
-            var startTime = (DateTime)startTimeProperty.GetValue(validationContext.ObjectInstance);
-            var endTime = (DateTime)endTimeProperty.GetValue(validationContext.ObjectInstance);
-
-            TimeSpan duration = (DateTime)endTime - (DateTime)startTime;
-
-            if (duration.TotalMinutes != testDuration)
+            if (startTimeProperty != null && endTimeProperty != null)
             {
-                return new ValidationResult("Duration must be valid");
-            }
+                var startTime = (DateTime)startTimeProperty.GetValue(validationContext.ObjectInstance);
+                var endTime = (DateTime)endTimeProperty.GetValue(validationContext.ObjectInstance);
 
+                TimeSpan duration = endTime - startTime;
+
+                if (duration.TotalMinutes != testDuration)
+                {
+                    return new ValidationResult("Duration must be valid");
+                }
+            }
             return ValidationResult.Success;
         }
     }

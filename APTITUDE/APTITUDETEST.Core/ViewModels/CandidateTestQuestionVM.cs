@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public int Difficulty { get; set; }
-        public string QuestionText { get; set; }
+        public string? QuestionText { get; set; }
         public int QuestionType { get; set; }
         public int OptionType { get; set; }
         public int NextQuestionId { get; set; }

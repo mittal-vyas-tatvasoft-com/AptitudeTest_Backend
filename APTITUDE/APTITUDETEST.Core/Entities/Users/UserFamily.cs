@@ -21,7 +21,7 @@ namespace AptitudeTest.Core.Entities.Users
         public DateTime? UpdatedDate { get; set; }
         public int? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; } = false;
-        public virtual User Users { get; set; }
+        public virtual User? Users { get; set; }
 
     }
 }

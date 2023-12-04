@@ -10,13 +10,18 @@ namespace AptitudeTest.Core.Validations
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             var endTimeProperty = validationContext.ObjectType.GetProperty("EndTime");
-            var startTime = (DateTime)value;
-            var endTime = (DateTime?)endTimeProperty.GetValue(validationContext.ObjectInstance);
-
-            if (endTime <= startTime)
+            DateTime? startTime, endTime;
+            if (value != null && endTimeProperty != null)
             {
-                return new ValidationResult("End Time must be greater than Start Time");
+                startTime = (DateTime)value;
+                endTime = (DateTime?)endTimeProperty.GetValue(validationContext.ObjectInstance);
+
+                if (endTime <= startTime)
+                {
+                    return new ValidationResult("End Time must be greater than Start Time");
+                }
             }
+
 
             return ValidationResult.Success;
         }
