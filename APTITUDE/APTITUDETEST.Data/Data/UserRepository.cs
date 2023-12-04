@@ -311,7 +311,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.User),
+                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Candidate),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -321,7 +321,7 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
+                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
                     Result = false,
                     StatusCode = ResponseStatusCode.RequestFailed
                 });
@@ -330,7 +330,7 @@ namespace AptitudeTest.Data.Data
 
         #endregion
 
-        #region
+        #region Register
         public async Task<JsonResult> RegisterUser(UserVM registerUser)
         {
             try
