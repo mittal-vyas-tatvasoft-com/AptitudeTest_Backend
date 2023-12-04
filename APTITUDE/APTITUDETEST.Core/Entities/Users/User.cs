@@ -38,7 +38,7 @@ namespace APTITUDETEST.Core.Entities.Users
         public int? TechnologyInterestedIn { get; set; }
         public int? ACPCMeritRank { get; set; }
         public int? GUJCETScore { get; set; }
-        public int? JEEScore { get; set; }
+        public float? JEEScore { get; set; }
         public int? Gender { get; set; }
         public int? PreferedLocation { get; set; }
         public string? RelationshipWithExistingEmployee { get; set; }

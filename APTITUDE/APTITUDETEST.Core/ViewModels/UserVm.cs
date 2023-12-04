@@ -36,7 +36,7 @@ namespace AptitudeTest.Core.ViewModels
         public string? RelationshipWithExistingEmployee { get; set; }
         public int? ACPCMeritRank { get; set; }
         public int? GUJCETScore { get; set; }
-        public int? JEEScore { get; set; }
+        public float? JEEScore { get; set; }
         public int? CreatedBy { get; set; }
         public int? UpdatedBy { get; set; }
 
