@@ -67,7 +67,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Test? testAlreadyExists = _context.Tests.Where(t => t.Name == test.Name && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
+                Test? testAlreadyExists = _context.Tests.Where(t => t.Name.Trim().ToLower() == test.Name.Trim().ToLower()  && t.IsDeleted == false).FirstOrDefault();
                 if (testAlreadyExists == null)
                 {
                     Test testToBeAdded = new Test()
@@ -104,7 +104,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Test),
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.TestWithSameName),
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -132,7 +132,7 @@ namespace AptitudeTest.Data.Data
                 Test? test = _context.Tests.Where(t => t.Id == testVM.Id && t.IsDeleted == false).FirstOrDefault();
                 if (test != null)
                 {
-                    Test? testNameExist = _context.Tests.Where(t => t.Name == testVM.Name && t.Id != testVM.Id && t.IsDeleted == false).FirstOrDefault();
+                    Test? testNameExist = _context.Tests.Where(t => t.Name.Trim().ToLower() == testVM.Name.Trim().ToLower() && t.Id != testVM.Id && t.IsDeleted == false).FirstOrDefault();
                     if (testNameExist != null)
                     {
                         return new JsonResult(new ApiResponse<string>
@@ -704,9 +704,13 @@ namespace AptitudeTest.Data.Data
                     if (data.Count != 0)
                     {
                         var firstRow = data.FirstOrDefault();
-                        testQuestionsCountMarksVM.TestId = firstRow.TestId;
-                        testQuestionsCountMarksVM.TotalMarks = firstRow.TotalMarks;
-                        testQuestionsCountMarksVM.TotalQuestions = firstRow.TotalQuestion;
+                        if (firstRow != null)
+                        {
+                            testQuestionsCountMarksVM.TestId = firstRow.TestId;
+                            testQuestionsCountMarksVM.TotalMarks = firstRow.TotalMarks;
+                            testQuestionsCountMarksVM.TotalQuestions = firstRow.TotalQuestion;
+                        }
+
                         testQuestionsCountMarksVM.QuestionsCount =
                             data.GroupBy(x => x.TopicId).Select(x =>
                             {

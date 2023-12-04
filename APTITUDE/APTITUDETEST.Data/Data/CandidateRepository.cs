@@ -429,6 +429,17 @@ namespace AptitudeTest.Data.Data
                     }
 
                     var question = data.FirstOrDefault();
+
+                    if (question == null)
+                    {
+                        return new JsonResult(new ApiResponse<UserDetailsVM>
+                        {
+                            Data = null,
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Question),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
                     CandidateTestQuestionVM candidateTestQuestionVM = new CandidateTestQuestionVM()
                     {
                         Id = question.QuestionId,

@@ -95,7 +95,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
-                if (groupToBeDeleted.IsDefault == true)
+                if (groupToBeDeleted != null && groupToBeDeleted.IsDefault == true)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {

@@ -24,7 +24,7 @@
         public string? TechnologyName { get; set; }
         public int? ACPCMeritRank { get; set; }
         public int? GUJCETScore { get; set; }
-        public int? JEEScore { get; set; }
+        public float? JEEScore { get; set; }
         public int? Gender { get; set; }
 
         public bool? Status { get; set; }
