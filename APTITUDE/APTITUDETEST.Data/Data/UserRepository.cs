@@ -232,7 +232,7 @@ namespace AptitudeTest.Data.Data
 
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.User),
+                            Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Candidate),
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
                         }); ;
@@ -241,7 +241,7 @@ namespace AptitudeTest.Data.Data
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
-                            Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
+                            Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
                             Result = false,
                             StatusCode = ResponseStatusCode.RequestFailed
                         }); ;
@@ -252,7 +252,7 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
+                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
                     Result = false,
                     StatusCode = ResponseStatusCode.RequestFailed
                 });
@@ -444,7 +444,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.StatusUpdateSuccess, ModuleNames.User),
+                        Message = string.Format(ResponseMessages.StatusUpdateSuccess, ModuleNames.Candidate),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -454,7 +454,7 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
+                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
                     Result = false,
                     StatusCode = ResponseStatusCode.RequestFailed
                 });
@@ -480,7 +480,7 @@ namespace AptitudeTest.Data.Data
 
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.User),
+                        Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.Candidate),
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
@@ -490,7 +490,7 @@ namespace AptitudeTest.Data.Data
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
+                    Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
                     Result = false,
                     StatusCode = ResponseStatusCode.RequestFailed
                 });
