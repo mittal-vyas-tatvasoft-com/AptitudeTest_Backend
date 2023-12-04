@@ -49,6 +49,7 @@
 
         #region Candidate
         public static string InternalErrorForAddingQuestionsToTest = "Internal error for adding questions to test";
+        public static string EndTest = "End test successfully";
         #endregion
 
     }

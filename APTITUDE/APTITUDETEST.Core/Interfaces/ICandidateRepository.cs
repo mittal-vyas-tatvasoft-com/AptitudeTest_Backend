@@ -12,5 +12,6 @@ namespace AptitudeTest.Core.Interfaces
         Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId, int testId);
         Task<JsonResult> GetQuestionsStatus(int userId, int testId);
         Task<JsonResult> SaveTestQuestionAnswer(UpdateTestQuestionAnswerVM userTestQuestionAnswer);
+        Task<JsonResult> EndTest(int userId);
     }
 }
