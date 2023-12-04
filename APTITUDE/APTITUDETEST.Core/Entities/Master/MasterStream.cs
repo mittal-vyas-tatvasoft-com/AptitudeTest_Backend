@@ -20,7 +20,7 @@ namespace AptitudeTest.Core.Entities.Master
         public DateTime? UpdatedDate { get; set; }
         public int? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; } = false;
-        public virtual MasterDegree MasterDegrees { get; set; }
+        public virtual MasterDegree? MasterDegrees { get; set; }
 
     }
 }

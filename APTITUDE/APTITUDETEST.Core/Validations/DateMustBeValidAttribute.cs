@@ -8,15 +8,15 @@ namespace AptitudeTest.Core.Validations
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             var dateProperty = validationContext.ObjectType.GetProperty("Date");
-
-            var date = (DateTime?)dateProperty.GetValue(validationContext.ObjectInstance);
-
-
-            if (date < DateTime.Today)
+            DateTime? date;
+            if (dateProperty != null)
             {
-                return new ValidationResult("Date must be valid");
+                date = (DateTime?)dateProperty.GetValue(validationContext.ObjectInstance);
+                if (date < DateTime.Today)
+                {
+                    return new ValidationResult("Date must be valid");
+                }
             }
-
             return ValidationResult.Success;
         }
     }

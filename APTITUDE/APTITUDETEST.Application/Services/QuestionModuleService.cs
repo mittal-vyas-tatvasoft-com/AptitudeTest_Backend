@@ -7,7 +7,7 @@ namespace AptitudeTest.Application.Services
     public class QuestionModuleService : IQuestionModuleService
     {
         #region Properties
-        IQuestionModuleRepository _repository;
+        readonly IQuestionModuleRepository _repository;
         #endregion
 
         #region Constructor

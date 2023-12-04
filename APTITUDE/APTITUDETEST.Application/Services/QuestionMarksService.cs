@@ -8,7 +8,7 @@ namespace AptitudeTest.Application.Services
     {
 
         #region Properties
-        IQuestionMarksRepository _repository;
+        readonly IQuestionMarksRepository _repository;
         #endregion
 
         #region Constructor

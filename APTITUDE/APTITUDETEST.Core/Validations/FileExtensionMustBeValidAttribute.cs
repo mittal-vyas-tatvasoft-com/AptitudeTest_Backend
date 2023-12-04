@@ -15,19 +15,16 @@ namespace AptitudeTest.Core.Validations
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (value is IFormFile file)
+            if (value is IFormFile file && file.Length > 0)
             {
-                if (file.Length > 0)
+                var fileExtension = Path.GetExtension(file.FileName);
+                if (!_allowedExtensions.Any(ext => ext.Equals(fileExtension, StringComparison.OrdinalIgnoreCase)))
                 {
-                    var fileExtension = Path.GetExtension(file.FileName);
-                    if (!_allowedExtensions.Any(ext => ext.Equals(fileExtension, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        return new ValidationResult($"File extension not allowed. Only {string.Join(", ", _allowedExtensions)} extensions are allowed.");
-                    }
+                    return new ValidationResult($"File extension not allowed. Only {string.Join(", ", _allowedExtensions)} extensions are allowed.");
                 }
             }
 
-            return ValidationResult.Success;
+            return ValidationResult.Success!;
         }
     }
 }
