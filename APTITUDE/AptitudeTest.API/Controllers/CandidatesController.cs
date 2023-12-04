@@ -60,18 +60,18 @@ namespace AptitudeTest.Controllers
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
-        [HttpGet("[action]/{questionId}/{userId}/{testId}")]
-        public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId, int testId)
+        [HttpGet("[action]/{questionId}/{userId}")]
+        public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId)
         {
-            return await _candidateService.GetCandidateTestQuestion(questionId, userId, testId);
+            return await _candidateService.GetCandidateTestQuestion(questionId, userId);
         }
 
-        [HttpGet("[action]/{userId}/{testId}")]
-        public async Task<JsonResult> GetQuestionsStatus(int userId, int testId)
+        [HttpGet("[action]/{userId}")]
+        public async Task<JsonResult> GetQuestionsStatus(int userId)
         {
-            return await _candidateService.GetQuestionsStatus(userId, testId);
+            return await _candidateService.GetQuestionsStatus(userId);
         }
-        
+
         /// <summary>
         /// saves the answer of test question given by user 
         /// </summary>

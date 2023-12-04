@@ -295,7 +295,7 @@ namespace AptitudeTest.Data.Data
                                 return new JsonResult(new ApiResponse<string>
                                 {
                                     Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TempUserTestResult),
-                                            Result = true,
+                                    Result = true,
                                     StatusCode = ResponseStatusCode.Success
                                 });
                             }
@@ -385,12 +385,12 @@ namespace AptitudeTest.Data.Data
             return false;
         }
 
-        public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId, int testId)
+        public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId)
         {
 
             try
             {
-                if ((questionId != (int)Enums.DefaultQuestionId.QuestionId && questionId < 1) || testId < 1 || (userId < 1))
+                if ((questionId != (int)Enums.DefaultQuestionId.QuestionId && questionId < 1) || (userId < 1))
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -402,6 +402,16 @@ namespace AptitudeTest.Data.Data
 
                 using (DbConnection connection = new DbConnection())
                 {
+                    int? testId = GetTestOfUser(userId)?.Id;
+                    if (testId == null || testId < 1)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.BadRequest,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
                     var data = await connection.Connection.QueryAsync<UserTestQuestionModelVM>("select * from getCandidateTestquestion(@question_id,@user_id,@test_id)", new { question_id = questionId, user_id = userId, test_id = testId });
                     if (data == null || data.Count() == 0)
                     {
@@ -485,11 +495,11 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> GetQuestionsStatus(int userId, int testId)
+        public async Task<JsonResult> GetQuestionsStatus(int userId)
         {
             try
             {
-                if (userId < 1 || testId < 1)
+                if (userId < 1)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -501,6 +511,17 @@ namespace AptitudeTest.Data.Data
 
                 using (DbConnection connection = new DbConnection())
                 {
+                    int testId = GetTestOfUser(userId).Id;
+                    if (testId < 1)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.BadRequest,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
+
                     int userTestId = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == testId).Select(x => x.Id).FirstOrDefault();
                     if (userTestId == null || userTestId == 0)
                     {
