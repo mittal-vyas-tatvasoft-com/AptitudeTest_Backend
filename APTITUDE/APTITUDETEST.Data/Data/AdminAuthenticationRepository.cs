@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Net.Mail;
+using System.Security.Claims;
 using System.Text;
+using static Dapper.SqlMapper;
 
 namespace AptitudeTest.Data.Data
 {
@@ -203,7 +205,7 @@ namespace AptitudeTest.Data.Data
                     string refreshToken = tokens.RefreshToken;
                     var principal = jwtHelper.GetPrincipleFromExpiredToken(accessToken);
                     var allClaims = principal.Claims.ToList();
-                    var email = allClaims[4].Value;
+                    var email = allClaims.Where(c => c.Type == "Email").Select(c => c.Value).SingleOrDefault();
                     var tokenssss = RefreshTokens.GetValueOrDefault(email);
                     var admin = await _context.Admins.FirstOrDefaultAsync(U => U.Email == email);
                     if (admin == null || RefreshTokens[email].RefreshToken != refreshToken || RefreshTokens[email].RefreshTokenExpiryTime <= DateTime.Now)
