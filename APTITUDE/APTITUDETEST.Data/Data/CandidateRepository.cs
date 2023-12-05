@@ -808,7 +808,7 @@ namespace AptitudeTest.Data.Data
                 if (groupId != null)
                 {
 
-                    Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.IsDeleted == false).FirstOrDefault();
+                    Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.Status == (int)TestStatus.Active && x.IsDeleted == false).FirstOrDefault();
                     DateTime dt = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
                     if (test != null && Convert.ToDateTime(test?.StartTime) >= DateTime.Now)
                     {
