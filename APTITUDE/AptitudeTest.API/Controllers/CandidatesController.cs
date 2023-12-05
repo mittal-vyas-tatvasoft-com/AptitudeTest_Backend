@@ -93,10 +93,10 @@ namespace AptitudeTest.Controllers
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{userId}")]
-        public async Task<JsonResult> GetInstructionsOfTheTestForUser(int userId)
+        [HttpGet("[action]/{userId}/{testStatus}")]
+        public async Task<JsonResult> GetInstructionsOfTheTestForUser(int userId, string testStatus)
         {
-            return await _candidateService.GetInstructionsOfTheTestForUser(userId);
+            return await _candidateService.GetInstructionsOfTheTestForUser(userId, testStatus);
         }
         /// <summary>
         /// end the test of candidate
