@@ -7,5 +7,7 @@
         public int Answered { get; set; }
         public int UnAnswered { get; set; }
         public int TimeLeft { get; set; }
+        public bool IsQuestionsMenu { get; set; }
+
     }
 }

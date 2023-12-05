@@ -430,8 +430,6 @@ namespace AptitudeTest.Data.Data
                     int nextQuestionId = 0;
                     int questionNumber = nextIndex;
 
-
-
                     if (nextIndex < questions.Length)
                     {
                         nextQuestionId = questions[nextIndex];
@@ -510,8 +508,9 @@ namespace AptitudeTest.Data.Data
 
                 using (DbConnection connection = new DbConnection())
                 {
-                    int testId = GetTestOfUser(userId).Id;
-                    if (testId < 1)
+                    Test test = GetTestOfUser(userId);
+                    int? testId = test?.Id;
+                    if (testId == null || testId < 1)
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -521,8 +520,8 @@ namespace AptitudeTest.Data.Data
                         });
                     }
                     
-                    TempUserTest test = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == testId).FirstOrDefault();
-                    if (test==null || test.Id == null || test.Id == 0)
+                    TempUserTest? tempTest = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == testId).FirstOrDefault();
+                    if (tempTest == null || tempTest?.Id == null || tempTest.Id == 0)
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -531,48 +530,53 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
-                    int userTestId = test.Id;
-                    int timeRemaining = test.TimeRemaining;
-                    var questions = _appDbContext.TempUserTestResult.Where(t => t.UserTestId == userTestId).OrderBy(X => X.Id).Select((x) => new TempQuestionStatusVM()
-                    {
-                        QuestionId = x.QuestionId,
-                        IsAttended = x.IsAttended,
-                        UserAnswers = x.UserAnswers
-                    }).ToList();
-
-                    if (questions.Count == 0)
-                    {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = ResponseMessages.NoRecordsFound,
-                            Result = false,
-                            StatusCode = ResponseStatusCode.BadRequest
-                        });
-                    }
-
+                    int userTestId = tempTest.Id;
+                    int timeRemaining = tempTest.TimeRemaining;
                     List<QuestionStatusVM> data = new List<QuestionStatusVM>();
                     int totalCount = 0;
                     int answered = 0;
                     int unAnswered = 0;
-                    foreach (var item in questions)
-                    {
-                        totalCount++;
-                        int status = 0;
-                        if (item.IsAttended && item.UserAnswers == null)
+                    bool isQuestionsMenu = (bool)test?.IsQuestionsMenu;
+                    if (isQuestionsMenu) {
+
+                        var questions = _appDbContext.TempUserTestResult.Where(t => t.UserTestId == userTestId).OrderBy(X => X.Id).Select((x) => new TempQuestionStatusVM()
                         {
-                            unAnswered++;
-                            status = (int)Enums.QuestionStatus.Skipped;
+                            QuestionId = x.QuestionId,
+                            IsAttended = x.IsAttended,
+                            UserAnswers = x.UserAnswers
+                        }).ToList();
+
+                        if (questions.Count == 0)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.NoRecordsFound,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.BadRequest
+                            });
                         }
-                        else if (item.IsAttended && item.UserAnswers != null)
+                        
+                        foreach (var item in questions)
                         {
-                            answered++;
-                            status = (int)Enums.QuestionStatus.Answered;
+                            totalCount++;
+                            int status = 0;
+                            if (item.IsAttended && item.UserAnswers == null)
+                            {
+                                unAnswered++;
+                                status = (int)Enums.QuestionStatus.Skipped;
+                            }
+                            else if (item.IsAttended && item.UserAnswers != null)
+                            {
+                                answered++;
+                                status = (int)Enums.QuestionStatus.Answered;
+                            }
+                            data.Add(new QuestionStatusVM()
+                            {
+                                QuestionId = item.QuestionId,
+                                Status = status,
+                            });
                         }
-                        data.Add(new QuestionStatusVM()
-                        {
-                            QuestionId = item.QuestionId,
-                            Status = status,
-                        });
+                        
                     }
                     CandidateQuestionsStatusVM candidateQuestionsStatusVM = new CandidateQuestionsStatusVM()
                     {
@@ -580,7 +584,8 @@ namespace AptitudeTest.Data.Data
                         Answered = answered,
                         TotalQuestion = totalCount,
                         UnAnswered = unAnswered,
-                        TimeLeft= timeRemaining
+                        TimeLeft = timeRemaining,
+                        IsQuestionsMenu = isQuestionsMenu
                     };
                     return new JsonResult(new ApiResponse<CandidateQuestionsStatusVM>
                     {
