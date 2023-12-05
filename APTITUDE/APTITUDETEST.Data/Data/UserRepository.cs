@@ -537,13 +537,13 @@ namespace AptitudeTest.Data.Data
                                 var viewModel = new UserImportVM
                                 {
 
-                                    firstname = GetValueForHeader(item, headers, "FirstName"),
-                                    lastname = GetValueForHeader(item, headers, "LastName"),
-                                    middlename = GetValueForHeader(item, headers, "MiddleName"),
+                                    firstname = GetValueForHeader(item, headers, "First Name"),
+                                    lastname = GetValueForHeader(item, headers, "Last Name"),
+                                    middlename = GetValueForHeader(item, headers, "Middle Name"),
                                     email = GetValueForHeader(item, headers, "Email"),
-                                    contactnumber = long.Parse(GetValueForHeader(item, headers, "ContactNumber")),
-                                    collegename = GetValueForHeader(item, headers, "CollegeName"),
-                                    groupname = GetValueForHeader(item, headers, "GroupName"),
+                                    contactnumber = long.Parse(GetValueForHeader(item, headers, "Contact Number")),
+                                    collegename = GetValueForHeader(item, headers, "College Name"),
+                                    groupname = GetValueForHeader(item, headers, "Group Name"),
                                     status = GetValueForHeader(item, headers, "Status(true/false)"),
                                     gender = GetValueForHeader(item, headers, "Gender(male/female)"),
 

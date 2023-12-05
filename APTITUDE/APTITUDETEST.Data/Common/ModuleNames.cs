@@ -25,13 +25,15 @@
 
         public readonly static string Admin = "Admin";
 
-        public readonly static string Group = "Group";
-        public readonly static string Operation = "Operation";
-        public readonly static string Test = "Test";
-        public readonly static string TestWithSameName = "Test with same name";
-        public readonly static string TestQuestions = "TestQuestions";
-        public readonly static string Candidate = "Candidate";
-        public readonly static string State = "State";
+        public static string Group = "Group";
+        public static string Operation = "Operation";
+        public static string Test = "Test";
+        public static string TestWithSameName = "Test with same name";
+        public static string TestQuestions = "TestQuestions";
+        public static string Candidate = "Candidate";
+        public static string State = "State";
+        public static string StartTest = "Start";
+        public static string EndTest = "End";
 
     }
 }

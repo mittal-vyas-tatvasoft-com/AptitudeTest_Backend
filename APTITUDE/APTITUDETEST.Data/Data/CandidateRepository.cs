@@ -684,7 +684,7 @@ namespace AptitudeTest.Data.Data
 
         }
 
-        public async Task<JsonResult> GetInstructionsOfTheTestForUser(int userId)
+        public async Task<JsonResult> GetInstructionsOfTheTestForUser(int userId,string testStatus)
         {
             try
             {
@@ -693,13 +693,24 @@ namespace AptitudeTest.Data.Data
                     Test? userTest = GetTestOfUser(userId);
                     if (userTest != null)
                     {
-                        return new JsonResult(new ApiResponse<Test>
+                        if (testStatus == ModuleNames.StartTest)
                         {
-                            Data = userTest,
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Data = userTest.MessaageAtStartOfTheTest,
+                                Message = ResponseMessages.Success,
+                                Result = true,
+                                StatusCode = ResponseStatusCode.Success
+                            });
+                        }
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Data = userTest.MessaageAtEndOfTheTest,
                             Message = ResponseMessages.Success,
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
                         });
+
                     }
                     else
                     {
