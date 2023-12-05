@@ -6,14 +6,14 @@ namespace AptitudeTest.Core.ViewModels
     public class UpdateTestVM
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         [TestDurationMusBeValid]
         public int TestDuration { get; set; }
         public DateTime Date { get; set; }
         [EndTimeGreaterThanStartTime]
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public int BasicPoint { get; set; }
         [Range(1, 3)]
         public int Status { get; set; }

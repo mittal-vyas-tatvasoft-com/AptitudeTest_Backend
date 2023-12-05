@@ -2,11 +2,11 @@
 
 namespace AptitudeTest.Data.Common
 {
-    public class Pagination<T>
+    public static class Pagination<T>
     {
         public static PaginationVM<T> Paginate(List<T> entityList, int? pageSize, int? currentPageIndex)
         {
-            int totalCount = entityList.Count();
+            int totalCount = entityList.Count;
             pageSize = pageSize ?? 10;
             if (pageSize == 0)
             {

@@ -32,9 +32,9 @@ namespace AptitudeTest.Core.Entities.Users
         public DateTime? UpdatedDate { get; set; }
         public int? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; } = false;
-        public virtual MasterDegree? MasterDegrees { get; set; }
-        public virtual User? Users { get; set; }
-        public virtual MasterStream? MasterStreams { get; set; }
+        public virtual MasterDegree MasterDegrees { get; set; }
+        public virtual User Users { get; set; }
+        public virtual MasterStream MasterStreams { get; set; }
 
     }
 }

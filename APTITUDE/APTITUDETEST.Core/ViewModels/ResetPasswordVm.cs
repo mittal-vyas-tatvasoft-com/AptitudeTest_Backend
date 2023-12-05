@@ -2,8 +2,8 @@
 {
     public class ResetPasswordVm
     {
-        public string NewPassword { get; set; }
-        public string EncryptedEmail { get; set; }
+        public string? NewPassword { get; set; }
+        public string? EncryptedEmail { get; set; }
 
     }
 }

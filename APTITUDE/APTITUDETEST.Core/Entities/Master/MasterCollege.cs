@@ -21,7 +21,7 @@ namespace AptitudeTest.Core.Entities.Master
         public DateTime? UpdatedDate { get; set; }
         public int? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; } = false;
-        public virtual MasterGroup? MasterGroups { get; set; }
+        public virtual MasterGroup MasterGroups { get; set; }
 
     }
 }

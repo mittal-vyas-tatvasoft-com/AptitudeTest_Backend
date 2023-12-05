@@ -6,7 +6,7 @@
         public string? Name { get; set; }
         public int NumberOfStudentsInGroup { get; set; }
         public bool IsDefault { get; set; }
-        public List<GroupedCollegeVM> CollegesUnderGroup { get; set; }
+        public List<GroupedCollegeVM>? CollegesUnderGroup { get; set; }
     }
 
     public class GroupedCollegeVM

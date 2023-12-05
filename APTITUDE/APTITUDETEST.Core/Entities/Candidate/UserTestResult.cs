@@ -22,7 +22,7 @@ namespace AptitudeTest.Core.Entities.CandidateSide
         public DateTime? UpdatedDate { get; set; }
         public int? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; } = false;
-        public virtual UserTest? UserTests { get; set; }
-        public virtual Question? Questions { get; set; }
+        public virtual UserTest UserTests { get; set; }
+        public virtual Question Questions { get; set; }
     }
 }

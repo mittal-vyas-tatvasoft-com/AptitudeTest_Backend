@@ -3,8 +3,8 @@
     public class TestsViewModel
     {
         public int Id { get; set; }
-        public string TestName { get; set; }
-        public string GroupName { get; set; }
+        public string? TestName { get; set; }
+        public string? GroupName { get; set; }
         public int TestTime { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }

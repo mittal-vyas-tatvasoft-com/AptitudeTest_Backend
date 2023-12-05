@@ -24,6 +24,6 @@ namespace AptitudeTest.Core.Entities.Test
         public int? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; } = false;
         public virtual Test? Tests { get; set; }
-        public virtual QuestionModule? QuestionModules { get; set; }
+        public virtual QuestionModule QuestionModules { get; set; }
     }
 }

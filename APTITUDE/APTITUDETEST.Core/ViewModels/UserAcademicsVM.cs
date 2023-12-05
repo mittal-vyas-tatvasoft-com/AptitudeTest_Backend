@@ -8,13 +8,13 @@
         public float Maths { get; set; }
         public float Physics { get; set; }
         public float Grade { get; set; }
-        public string University { get; set; }
+        public string? University { get; set; }
         public int DurationFromYear { get; set; }
         public int DurationFromMonth { get; set; }
         public int DurationToYear { get; set; }
         public int DurationToMonth { get; set; }
-        public string DegreeName { get; set; }
+        public string? DegreeName { get; set; }
         public int DegreeLevel { get; set; }
-        public string StreamName { get; set; }
+        public string? StreamName { get; set; }
     }
 }
