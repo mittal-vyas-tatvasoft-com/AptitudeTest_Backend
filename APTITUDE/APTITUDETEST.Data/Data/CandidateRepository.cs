@@ -521,9 +521,9 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
-
-                    int userTestId = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == testId).Select(x => x.Id).FirstOrDefault();
-                    if (userTestId == null || userTestId == 0)
+                    
+                    TempUserTest test = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == testId).FirstOrDefault();
+                    if (test==null || test.Id == null || test.Id == 0)
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -532,6 +532,8 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
+                    int userTestId = test.Id;
+                    int timeRemaining = test.TimeRemaining;
                     var questions = _appDbContext.TempUserTestResult.Where(t => t.UserTestId == userTestId).OrderBy(X => X.Id).Select((x) => new TempQuestionStatusVM()
                     {
                         QuestionId = x.QuestionId,
@@ -578,7 +580,8 @@ namespace AptitudeTest.Data.Data
                         questionStatusVMs = data,
                         Answered = answered,
                         TotalQuestion = totalCount,
-                        UnAnswered = unAnswered
+                        UnAnswered = unAnswered,
+                        TimeLeft= timeRemaining
                     };
                     return new JsonResult(new ApiResponse<CandidateQuestionsStatusVM>
                     {
