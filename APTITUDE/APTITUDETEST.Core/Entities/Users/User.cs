@@ -16,7 +16,7 @@ namespace APTITUDETEST.Core.Entities.Users
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
-        public string? FatherName { get; set; }
+        public string FatherName { get; set; }
         [Required]
         public string Email { get; set; }
         [Required]
@@ -49,10 +49,10 @@ namespace APTITUDETEST.Core.Entities.Users
         public DateTime? UpdatedDate { get; set; }
         public int? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; } = false;
-        public virtual MasterGroup? MasterGroups { get; set; }
-        public virtual MasterTechnology? MasterTechnologies { get; set; }
-        public virtual MasterCollege? MasterColleges { get; set; }
-        public virtual State? States { get; set; }
+        public virtual MasterGroup MasterGroups { get; set; }
+        public virtual MasterTechnology MasterTechnologies { get; set; }
+        public virtual MasterCollege MasterColleges { get; set; }
+        public virtual State States { get; set; }
 
     }
 }

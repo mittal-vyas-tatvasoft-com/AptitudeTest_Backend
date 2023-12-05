@@ -2,7 +2,7 @@
 {
     public class PaginationVM<T>
     {
-        public List<T> EntityList { get; set; }
+        public List<T>? EntityList { get; set; }
         public int CurrentPageIndex { get; set; }
         public bool IsPreviousPage { get; set; }
         public bool IsNextPage { get; set; }

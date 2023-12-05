@@ -4,6 +4,6 @@
     {
 
         public bool isValidate { get; set; } = true;
-        public List<string> validationMessage { get; set; }
+        public List<string>? validationMessage { get; set; }
     }
 }

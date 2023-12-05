@@ -28,7 +28,7 @@ namespace AptitudeTest.Core.Entities.Questions
         public string? Sequence { get; set; }
         [ForeignKey("Questions")]
         public int? ParentId { get; set; }
-        public virtual Question? Questions { get; set; }
+        public virtual Question Questions { get; set; }
 
     }
 }

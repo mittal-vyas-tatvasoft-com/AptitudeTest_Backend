@@ -52,7 +52,7 @@ namespace AptitudeTest.Data.Data
                     using (var connection = new NpgsqlConnection(connectionString))
                     {
                         connection.Open();
-                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getallUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, YearFilter = Year, SortField = sortField, SortOrder = sortOrder, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
+                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getallUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, CollegeId = (object)CollegeId!, GroupId = (object)GroupId!, Status = Status, YearFilter = Year, SortField = sortField, SortOrder = sortOrder, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
@@ -68,7 +68,7 @@ namespace AptitudeTest.Data.Data
                     using (var connection = new NpgsqlConnection(connectionString))
                     {
                         connection.Open();
-                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getallUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = "", CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, YearFilter = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
+                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getallUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = "", CollegeId = (object)CollegeId!, GroupId = (object)GroupId!, Status = Status, YearFilter = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
@@ -133,7 +133,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -177,7 +177,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -195,7 +195,16 @@ namespace AptitudeTest.Data.Data
             var password = RandomPasswordGenerator.GenerateRandomPassword(8);
             try
             {
-                User users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() && t.IsDeleted != true).FirstOrDefault();
+                if (user == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.BadRequest, ModuleNames.Candidate),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                User? users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() && t.IsDeleted != true).FirstOrDefault();
                 if (users != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -248,7 +257,7 @@ namespace AptitudeTest.Data.Data
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -317,7 +326,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -450,7 +459,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -486,7 +495,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -705,7 +714,7 @@ namespace AptitudeTest.Data.Data
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new JsonResult(new ApiResponse<string>
                 {

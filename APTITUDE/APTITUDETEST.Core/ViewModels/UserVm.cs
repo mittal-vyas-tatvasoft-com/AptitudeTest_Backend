@@ -41,9 +41,9 @@ namespace AptitudeTest.Core.ViewModels
         public int? UpdatedBy { get; set; }
 
         //[Required]
-        public List<DapperUserAcademicsVM> UserAcademicsVM { get; set; }
+        public List<DapperUserAcademicsVM>? UserAcademicsVM { get; set; }
         //[Required]
-        public List<DapperUserFamilyVM> UserFamilyVM { get; set; }
+        public List<DapperUserFamilyVM>? UserFamilyVM { get; set; }
 
     }
 }

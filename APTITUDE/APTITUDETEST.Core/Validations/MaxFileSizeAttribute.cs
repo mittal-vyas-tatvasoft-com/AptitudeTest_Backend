@@ -15,12 +15,9 @@ namespace AptitudeTest.Core.Validations
         object value, ValidationContext validationContext)
         {
             var file = value as IFormFile;
-            if (file != null)
+            if (file != null && file.Length > _maxFileSize)
             {
-                if (file.Length > _maxFileSize)
-                {
-                    return new ValidationResult(GetErrorMessage());
-                }
+                return new ValidationResult(GetErrorMessage());
             }
 
             return ValidationResult.Success;

@@ -25,6 +25,6 @@ namespace AptitudeTest.Core.Entities.Test
         public DateTime? UpdatedDate { get; set; }
         public int? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; } = false;
-        public virtual TestQuestions? TestQuestions { get; set; }
+        public virtual TestQuestions TestQuestions { get; set; }
     }
 }

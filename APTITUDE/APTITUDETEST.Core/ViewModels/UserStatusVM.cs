@@ -2,7 +2,7 @@
 {
     public class UserStatusVM
     {
-        public int[] UserIds { get; set; }
+        public int[]? UserIds { get; set; }
         public bool status { get; set; }
     }
 }

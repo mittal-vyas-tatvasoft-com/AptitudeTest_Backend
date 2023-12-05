@@ -7,8 +7,8 @@ namespace AptitudeTest.Common.Data
 {
     public class DapperAppDbContext : DbContext
     {
-        private IConfiguration _configuration;
-        private readonly string _connectionString;
+        private readonly IConfiguration _configuration;
+        private readonly string? _connectionString;
         public DapperAppDbContext(DbContextOptions<DapperAppDbContext> options, IConfiguration configuration) : base(options)
         {
             _configuration = configuration;

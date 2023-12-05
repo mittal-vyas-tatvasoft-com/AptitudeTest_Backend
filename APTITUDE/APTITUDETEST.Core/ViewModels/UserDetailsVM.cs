@@ -6,7 +6,7 @@
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? FatherName { get; set; }
-        public string Email { get; set; }
+        public string? Email { get; set; }
         public long? PhoneNumber { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? PermanentAddress1 { get; set; }
@@ -30,8 +30,8 @@
         public bool? Status { get; set; }
         public int? CreatedYear { get; set; }
 
-        public List<UserFamilyVM> FamilyDetails { get; set; }
-        public List<UserAcademicsVM> AcademicsDetails { get; set; }
+        public List<UserFamilyVM>? FamilyDetails { get; set; }
+        public List<UserAcademicsVM>? AcademicsDetails { get; set; }
 
     }
 }
