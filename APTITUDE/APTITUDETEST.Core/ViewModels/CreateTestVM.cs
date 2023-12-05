@@ -15,7 +15,7 @@ namespace AptitudeTest.Core.ViewModels
         [EndTimeGreaterThanStartTime]
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public string? Description { get; set; }
+        public string Description { get; set; }
         public int BasicPoint { get; set; }
         [Range(1, 3)]
         public int Status { get; set; }
