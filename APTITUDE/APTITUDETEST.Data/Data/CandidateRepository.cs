@@ -349,7 +349,6 @@ namespace AptitudeTest.Data.Data
             }
 
         }
-
         public bool AddTestQuestionsToUser(int userId, int userTestId, int testId)
         {
             List<RandomQuestionsVM> allQuestions = new();
@@ -684,6 +683,56 @@ namespace AptitudeTest.Data.Data
             }
 
         }
+
+        public async Task<JsonResult> GetInstructionsOfTheTestForUser(int userId)
+        {
+            try
+            {
+                if (userId != 0)
+                {
+                    Test? userTest = GetTestOfUser(userId);
+                    if (userTest != null)
+                    {
+                        return new JsonResult(new ApiResponse<Test>
+                        {
+                            Data = userTest,
+                            Message = ResponseMessages.Success,
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.BadRequest,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.BadRequest
+                });
+            }
+        }
+
         #endregion
 
         #region Helper Method
@@ -742,8 +791,10 @@ namespace AptitudeTest.Data.Data
                 int? groupId = _appDbContext.MasterCollege.Where(x => x.Id == collegeId && x.IsDeleted == false).Select(x => x.GroupId).FirstOrDefault();
                 if (groupId != null)
                 {
+
                     Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.IsDeleted == false).FirstOrDefault();
-                    if (test != null)
+                    DateTime dt = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
+                    if (test != null && Convert.ToDateTime(test?.StartTime) >= DateTime.Now)
                     {
                         return test;
                     }

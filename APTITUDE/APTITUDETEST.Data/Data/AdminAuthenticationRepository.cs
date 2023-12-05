@@ -9,9 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Net.Mail;
-using System.Security.Claims;
 using System.Text;
-using static Dapper.SqlMapper;
 
 namespace AptitudeTest.Data.Data
 {
