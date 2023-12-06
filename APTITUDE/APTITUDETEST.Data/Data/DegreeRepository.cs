@@ -11,7 +11,7 @@ namespace AptitudeTest.Data.Data
     public class DegreeRepository : IDegreeRepository
     {
         #region Properties
-        AppDbContext _context;
+        readonly AppDbContext _context;
         #endregion
 
         #region Constructor
@@ -77,7 +77,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -119,7 +119,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -145,7 +145,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                MasterDegree masterDegree = await Task.FromResult(_context.MasterDegree.Where(x => x.IsDeleted != true && x.Id == id).FirstOrDefault());
+                MasterDegree? masterDegree = await Task.FromResult(_context.MasterDegree.Where(x => x.IsDeleted != true && x.Id == id).FirstOrDefault());
                 if (masterDegree == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -178,7 +178,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -192,7 +192,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterDegree degrees = _context.MasterDegree.Where(d => d.Name.Trim().ToLower() == degree.Name.Trim().ToLower() && d.IsDeleted != true).FirstOrDefault();
+                MasterDegree? degrees = _context.MasterDegree.Where(d => d.Name.Trim().ToLower() == degree.Name.Trim().ToLower() && d.IsDeleted != true).FirstOrDefault();
                 if (degrees != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -224,7 +224,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -239,7 +239,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterDegree degrees = _context.MasterDegree.Where(d => d.Name.ToLower().Trim() == degree.Name.ToLower().Trim() && d.Id != degree.Id && d.IsDeleted != true).FirstOrDefault();
+                MasterDegree? degrees = _context.MasterDegree.Where(d => d.Name.ToLower().Trim() == degree.Name.ToLower().Trim() && d.Id != degree.Id && d.IsDeleted != true).FirstOrDefault();
                 if (degrees != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -250,7 +250,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                MasterDegree masterDegree = await Task.FromResult(_context.MasterDegree.AsNoTracking().Where(d => d.Id == degree.Id && d.IsDeleted != true).FirstOrDefault());
+                MasterDegree? masterDegree = await Task.FromResult(_context.MasterDegree.AsNoTracking().Where(d => d.Id == degree.Id && d.IsDeleted != true).FirstOrDefault());
                 if (masterDegree != null)
                 {
                     if (!(bool)masterDegree.IsEditable)
@@ -291,7 +291,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -306,7 +306,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterDegree degree = await Task.FromResult(_context.MasterDegree.Where(degree => degree.IsDeleted != true && degree.Id == status.Id).FirstOrDefault());
+                MasterDegree? degree = await Task.FromResult(_context.MasterDegree.Where(degree => degree.IsDeleted != true && degree.Id == status.Id).FirstOrDefault());
                 if (degree == null)
                 {
                     return new JsonResult(new ApiResponse<int>
@@ -329,7 +329,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -354,7 +354,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -379,7 +379,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                MasterDegree degree = await Task.FromResult(_context.MasterDegree.Where(d => d.Id == id && d.IsDeleted == false).FirstOrDefault());
+                MasterDegree? degree = await Task.FromResult(_context.MasterDegree.Where(d => d.Id == id && d.IsDeleted == false).FirstOrDefault());
                 if (degree != null)
                 {
                     degree.IsDeleted = true;
@@ -400,7 +400,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {

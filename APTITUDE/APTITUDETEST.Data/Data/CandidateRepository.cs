@@ -19,7 +19,7 @@ namespace AptitudeTest.Data.Data
         #region Properies
         private readonly AppDbContext _appDbContext;
         private readonly IConfiguration _config;
-        private readonly string connectionString;
+        private readonly string? connectionString;
 
         #endregion
 
@@ -461,6 +461,7 @@ namespace AptitudeTest.Data.Data
 
                     foreach (var item in data)
                     {
+
                         CandidateTestOptionsVM candidateTestOptionsVM = new CandidateTestOptionsVM()
                         {
                             OptionData = item.OptionData,
@@ -524,7 +525,7 @@ namespace AptitudeTest.Data.Data
 
                 using (DbConnection connection = new DbConnection())
                 {
-                    Test test = GetTestOfUser(userId);
+                    Test? test = GetTestOfUser(userId);
                     int? testId = test?.Id;
                     if (testId == null || testId < 1)
                     {
@@ -537,7 +538,7 @@ namespace AptitudeTest.Data.Data
                     }
 
                     TempUserTest? tempTest = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == testId).FirstOrDefault();
-                    if (tempTest == null || tempTest?.Id == null || tempTest.Id == 0)
+                    if (test == null || test.Id <= 0)
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -615,7 +616,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {

@@ -1,6 +1,6 @@
 ﻿namespace AptitudeTest.Data.Common
 {
-    public class ResponseMessages
+    public static class ResponseMessages
     {
 
         #region Common

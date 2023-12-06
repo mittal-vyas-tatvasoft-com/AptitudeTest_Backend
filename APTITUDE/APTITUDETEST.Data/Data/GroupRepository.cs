@@ -26,7 +26,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 MasterGroup group = new MasterGroup();
-                MasterGroup existingGroup = _context.MasterGroup.Where(g => g.Name.Trim().ToLower().Equals(groupToBeAdded.Name.ToLower()) && g.IsDeleted != true).FirstOrDefault();
+                MasterGroup? existingGroup = _context.MasterGroup.Where(g => g.Name.Trim().ToLower().Equals(groupToBeAdded.Name.ToLower()) && g.IsDeleted != true).FirstOrDefault();
                 if (existingGroup != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -36,7 +36,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-                if ((bool)groupToBeAdded.IsDefault)
+                if (groupToBeAdded.IsDefault)
                 {
                     foreach (var masterGroup in _context.MasterGroup)
                     {
@@ -56,7 +56,7 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.Success
                 });
             }
-            catch (Exception)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -80,7 +80,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                MasterGroup groupToBeDeleted = _context.MasterGroup.Where(group => group.Id == id && group.IsDeleted != true).FirstOrDefault();
+                MasterGroup? groupToBeDeleted = _context.MasterGroup.Where(group => group.Id == id && group.IsDeleted != true).FirstOrDefault();
                 if (groupToBeDeleted != null && groupToBeDeleted.IsDefault == false)
                 {
                     groupToBeDeleted.IsDeleted = true;
@@ -111,7 +111,7 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.NotFound
                 });
             }
-            catch (Exception)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -152,7 +152,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -175,7 +175,6 @@ namespace AptitudeTest.Data.Data
                 }
                 if (collegeId != null)
                 {
-                    // var user = _context.Users.FirstOrDefault(user => user.CollegeId == collegeId);
                     var users = _context.Users.Where(user => user.CollegeId == collegeId).ToList();
                     if (users.Count == 0)
                     {
@@ -192,7 +191,7 @@ namespace AptitudeTest.Data.Data
                         var userGroup = existingGroups.FirstOrDefault(group => group.Id == user.GroupId);
                         if (userGroup != null)
                         {
-                            var groupExists = filteredGroups.Any(group => group.Id == userGroup.Id);
+                            var groupExists = filteredGroups.Exists(group => group.Id == userGroup.Id);
                             if (!groupExists)
                             {
                                 filteredGroups.Add(userGroup);
@@ -201,7 +200,6 @@ namespace AptitudeTest.Data.Data
 
                     }
                     existingGroups = filteredGroups.OrderBy(group => group.Name).ToList();
-                    //existingGroups = existingGroups.Where(group => group.Id == user.GroupId).ToList();
                 }
 
                 List<GroupsResponseVM> groups = new List<GroupsResponseVM>();
@@ -221,7 +219,7 @@ namespace AptitudeTest.Data.Data
                         var college = _context.MasterCollege.FirstOrDefault(college => college.Id == user.CollegeId && college.IsDeleted != true);
                         if (college != null)
                         {
-                            bool collegeExists = groupItem.CollegesUnderGroup.Any(existedCollege => existedCollege.Name.Equals(college.Name));
+                            bool collegeExists = groupItem.CollegesUnderGroup.Exists(existedCollege => existedCollege.Name.Equals(college.Name));
                             if (!collegeExists)
                             {
                                 int students = _context.Users.Where(user => user.CollegeId == college.Id && user.IsDeleted != true).Count();
@@ -247,7 +245,7 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.Success
                 });
             }
-            catch (Exception)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -262,7 +260,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterGroup existingGroup = _context.MasterGroup.Where(group => group.Name.Equals(updatedGroup.Name) && group.Id != updatedGroup.Id && group.IsDeleted != true).FirstOrDefault();
+                MasterGroup? existingGroup = _context.MasterGroup.Where(group => group.Name.Equals(updatedGroup.Name) && group.Id != updatedGroup.Id && group.IsDeleted != true).FirstOrDefault();
                 if (existingGroup != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -272,7 +270,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-                MasterGroup groupToBeUpdated = await Task.FromResult(_context.MasterGroup.AsNoTracking().Where(group => group.Id == updatedGroup.Id && group.IsDeleted != true).FirstOrDefault());
+                MasterGroup? groupToBeUpdated = await Task.FromResult(_context.MasterGroup.AsNoTracking().Where(group => group.Id == updatedGroup.Id && group.IsDeleted != true).FirstOrDefault());
                 if (groupToBeUpdated != null)
                 {
                     groupToBeUpdated.Name = updatedGroup.Name.Trim();
@@ -307,7 +305,7 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.NotFound
                 });
             }
-            catch (Exception)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {

@@ -66,7 +66,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -109,7 +109,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -133,7 +133,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                MasterCollege masterCollege = await Task.FromResult(_context.MasterCollege.Where(x => x.IsDeleted != true && x.Id == id).FirstOrDefault());
+                MasterCollege? masterCollege = await Task.FromResult(_context.MasterCollege.Where(x => x.IsDeleted != true && x.Id == id).FirstOrDefault());
                 if (masterCollege == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -161,7 +161,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -179,7 +179,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 MasterCollege college = new MasterCollege();
-                MasterCollege masterCollege = _context.MasterCollege.Where(c => (c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() || c.Abbreviation.Trim().ToLower() == collegeToUpsert.Abbreviation.Trim().ToLower()) && c.IsDeleted != true).FirstOrDefault();
+                MasterCollege? masterCollege = _context.MasterCollege.Where(c => (c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() || c.Abbreviation.Trim().ToLower() == collegeToUpsert.Abbreviation.Trim().ToLower()) && c.IsDeleted != true).FirstOrDefault();
                 if (masterCollege != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -201,10 +201,10 @@ namespace AptitudeTest.Data.Data
                     Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.College),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
-                }); ;
+                });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -221,8 +221,7 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                MasterCollege college = new MasterCollege();
-                MasterCollege colleges = _context.MasterCollege.Where(c => (c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() || c.Abbreviation.Trim().ToLower() == collegeToUpsert.Abbreviation.Trim().ToLower()) && c.Id != collegeToUpsert.Id && c.IsDeleted != true).FirstOrDefault();
+                MasterCollege? colleges = _context.MasterCollege.Where(c => (c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() || c.Abbreviation.Trim().ToLower() == collegeToUpsert.Abbreviation.Trim().ToLower()) && c.Id != collegeToUpsert.Id && c.IsDeleted != true).FirstOrDefault();
                 if (colleges != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -233,7 +232,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                MasterCollege masterCollege = await Task.FromResult(_context.MasterCollege.AsNoTracking().Where(college => college.Id == collegeToUpsert.Id && college.IsDeleted != true).FirstOrDefault());
+                MasterCollege? masterCollege = await Task.FromResult(_context.MasterCollege.AsNoTracking().Where(college => college.Id == collegeToUpsert.Id && college.IsDeleted != true).FirstOrDefault());
                 if (masterCollege != null)
                 {
                     masterCollege.Status = collegeToUpsert.Status;
@@ -261,7 +260,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -277,7 +276,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterCollege college = await Task.FromResult(_context.MasterCollege.Where(college => college.IsDeleted != true && college.Id == status.Id).FirstOrDefault());
+                MasterCollege? college = await Task.FromResult(_context.MasterCollege.Where(college => college.IsDeleted != true && college.Id == status.Id).FirstOrDefault());
                 if (college == null)
                 {
                     return new JsonResult(new ApiResponse<int>
@@ -300,7 +299,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -325,7 +324,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                MasterCollege college = await Task.FromResult(_context.MasterCollege.Where(c => c.Id == id && c.IsDeleted == false).FirstOrDefault());
+                MasterCollege? college = await Task.FromResult(_context.MasterCollege.Where(c => c.Id == id && c.IsDeleted == false).FirstOrDefault());
                 if (college != null)
                 {
                     college.IsDeleted = true;
@@ -347,7 +346,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -373,7 +372,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {

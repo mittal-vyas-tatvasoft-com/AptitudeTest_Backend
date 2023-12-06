@@ -17,7 +17,7 @@ namespace AptitudeTest.Data.Data
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _config;
-        private readonly string connectionString;
+        private readonly string? connectionString;
 
         public TestRepository(AppDbContext context, IConfiguration config)
         {
@@ -37,7 +37,7 @@ namespace AptitudeTest.Data.Data
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
-                    List<TestsViewModel> data = connection.Query<TestsViewModel>("Select * from getalltests(@SearchQuery,@GroupId,@Status,@DateFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId, Status = Status, DateFilter = dateParameter.Value, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    List<TestsViewModel> data = connection.Query<TestsViewModel>("Select * from getalltests(@SearchQuery,@GroupId,@Status,@DateFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, Status = Status, DateFilter = dateParameter.Value, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                     connection.Close();
                     return new JsonResult(new ApiResponse<List<TestsViewModel>>
                     {
@@ -50,7 +50,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -63,31 +63,31 @@ namespace AptitudeTest.Data.Data
         }
 
 
-        public async Task<JsonResult> CreateTest(CreateTestVM test)
+        public async Task<JsonResult> CreateTest(CreateTestVM testVM)
         {
             try
             {
-                Test? testAlreadyExists = _context.Tests.Where(t => t.Name.Trim().ToLower() == test.Name.Trim().ToLower() && t.IsDeleted == false).FirstOrDefault();
+                Test? testAlreadyExists = _context.Tests.Where(t => t.Name.Trim().ToLower() == testVM.Name.Trim().ToLower() && t.IsDeleted == false).FirstOrDefault();
                 if (testAlreadyExists == null)
                 {
                     Test testToBeAdded = new Test()
                     {
-                        Name = test.Name.Trim(),
-                        Description = test.Description.Trim(),
-                        Date = test.Date,
-                        StartTime = test.StartTime.AddDays(1),
-                        EndTime = test.EndTime.AddDays(1),
-                        TestDuration = test.TestDuration,
-                        Status = test.Status,
-                        BasicPoint = test.BasicPoint,
-                        MessaageAtStartOfTheTest = test.MessaageAtStartOfTheTest,
-                        MessaageAtEndOfTheTest = test.MessaageAtEndOfTheTest,
-                        IsRandomQuestion = test.IsRandomQuestion,
-                        IsRandomAnswer = test.IsRandomAnswer,
-                        IsLogoutWhenTimeExpire = test.IsLogoutWhenTimeExpire,
-                        IsQuestionsMenu = test.IsQuestionsMenu,
+                        Name = testVM.Name.Trim(),
+                        Description = testVM.Description.Trim(),
+                        Date = testVM.Date,
+                        StartTime = testVM.StartTime.AddDays(1),
+                        EndTime = testVM.EndTime.AddDays(1),
+                        TestDuration = testVM.TestDuration,
+                        Status = testVM.Status,
+                        BasicPoint = testVM.BasicPoint,
+                        MessaageAtStartOfTheTest = testVM.MessaageAtStartOfTheTest,
+                        MessaageAtEndOfTheTest = testVM.MessaageAtEndOfTheTest,
+                        IsRandomQuestion = testVM.IsRandomQuestion,
+                        IsRandomAnswer = testVM.IsRandomAnswer,
+                        IsLogoutWhenTimeExpire = testVM.IsLogoutWhenTimeExpire,
+                        IsQuestionsMenu = testVM.IsQuestionsMenu,
                         CreatedDate = DateTime.UtcNow,
-                        CreatedBy = test.CreatedBy,
+                        CreatedBy = testVM.CreatedBy,
                     };
 
                     _context.Add(testToBeAdded);
@@ -112,7 +112,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -189,7 +189,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -243,7 +243,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -259,7 +259,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Test test = await Task.FromResult(_context.Tests.Where(t => t.Id == addTestQuestion.TestId && t.Status == (int)Common.Enums.TestStatus.Draft && t.IsDeleted == false).FirstOrDefault());
+                Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == addTestQuestion.TestId && t.Status == (int)Common.Enums.TestStatus.Draft && t.IsDeleted == false).FirstOrDefault());
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -292,7 +292,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                TestQuestions testQuestion = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == addTestQuestion.TestId && t.TopicId == addTestQuestion.TopicId && t.IsDeleted == false).FirstOrDefault());
+                TestQuestions? testQuestion = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == addTestQuestion.TestId && t.TopicId == addTestQuestion.TopicId && t.IsDeleted == false).FirstOrDefault());
                 if (testQuestion != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -341,7 +341,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -357,7 +357,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Test test = await Task.FromResult(_context.Tests.Where(t => t.Id == updateTestQuestion.TestId && t.IsDeleted == false).FirstOrDefault());
+                Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == updateTestQuestion.TestId && t.IsDeleted == false).FirstOrDefault());
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -390,7 +390,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                TestQuestions testQuestion = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == updateTestQuestion.TestId && t.TopicId == updateTestQuestion.TopicId && t.IsDeleted == false).FirstOrDefault());
+                TestQuestions? testQuestion = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == updateTestQuestion.TestId && t.TopicId == updateTestQuestion.TopicId && t.IsDeleted == false).FirstOrDefault());
                 if (testQuestion == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -408,7 +408,7 @@ namespace AptitudeTest.Data.Data
 
                 foreach (var testQuestionCount in updateTestQuestion.TestQuestionsCount)
                 {
-                    TestQuestionsCount testQuestionTypeWiseCountExists = await Task.FromResult(_context.TestQuestionsCount.Where(t => t.TestQuestionId == testQuestion.Id && t.QuestionType == testQuestionCount.QuestionType && t.IsDeleted == false).FirstOrDefault());
+                    TestQuestionsCount? testQuestionTypeWiseCountExists = await Task.FromResult(_context.TestQuestionsCount.Where(t => t.TestQuestionId == testQuestion.Id && t.QuestionType == testQuestionCount.QuestionType && t.IsDeleted == false).FirstOrDefault());
                     if (testQuestionTypeWiseCountExists != null)
                     {
                         testQuestionTypeWiseCountExists.OneMarks = testQuestionCount.OneMarkQuestion;
@@ -429,7 +429,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -457,7 +457,7 @@ namespace AptitudeTest.Data.Data
                         if (count == 1)
                         {
                             List<TestQuestionsCount> testQuestionsCountToBeDeleted = _context.TestQuestionsCount.Where(t => t.TestQuestionId == testQuestionToBeDeleted.Id && t.IsDeleted == false).ToList();
-                            if (testQuestionsCountToBeDeleted != null && testQuestionsCountToBeDeleted.Count > 0)
+                            if (testQuestionsCountToBeDeleted.Count > 0)
                             {
                                 foreach (var item in testQuestionsCountToBeDeleted)
                                 {
@@ -547,19 +547,16 @@ namespace AptitudeTest.Data.Data
                             testQuestion.IsDeleted = true;
                             testQuestion.UpdatedDate = DateTime.UtcNow;
                             _context.Update(testQuestion);
-                            int count = _context.SaveChanges();
+                            _context.SaveChanges();
 
-                            if (count == 1)
+                            List<TestQuestionsCount> testQuestionsCountToBeDeleted = _context.TestQuestionsCount.Where(t => t.TestQuestionId == testQuestion.Id && t.IsDeleted == false).ToList();
+                            if (testQuestionsCountToBeDeleted.Count > 0)
                             {
-                                List<TestQuestionsCount> testQuestionsCountToBeDeleted = _context.TestQuestionsCount.Where(t => t.TestQuestionId == testQuestion.Id && t.IsDeleted == false).ToList();
-                                if (testQuestionsCountToBeDeleted != null && testQuestionsCountToBeDeleted.Count > 0)
+                                foreach (var testQuestionCount in testQuestionsCountToBeDeleted)
                                 {
-                                    foreach (var testQuestionCount in testQuestionsCountToBeDeleted)
-                                    {
-                                        testQuestionCount.IsDeleted = true;
-                                        _context.Update(testQuestionCount);
-                                        count = _context.SaveChanges();
-                                    }
+                                    testQuestionCount.IsDeleted = true;
+                                    _context.Update(testQuestionCount);
+                                    _context.SaveChanges();
                                 }
                             }
                         }
@@ -612,7 +609,7 @@ namespace AptitudeTest.Data.Data
 
                         if (count == 1)
                         {
-                            var result = await DeleteAllTestQuestions(testId);
+                            await DeleteAllTestQuestions(testId);
                             return new JsonResult(new ApiResponse<string>
                             {
                                 Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.Test),
@@ -660,7 +657,7 @@ namespace AptitudeTest.Data.Data
                     var parameter = new
                     {
                         SearchQuery = searchQuery,
-                        CollegeId = (object)CollegeId,
+                        CollegeId = CollegeId,
                         GroupId = (object)GroupId,
                         PageNumber = currentPageIndex,
                         PageSize = pageSize,
@@ -715,12 +712,12 @@ namespace AptitudeTest.Data.Data
                             data.GroupBy(x => x.TopicId).Select(x =>
                             {
                                 var q = x.FirstOrDefault();
-                                TestQuestionCountMarksDataVM? multiAns = x.Where(x => x.QuestionType == (int)Enums.QuestionType.MultiAnswer).FirstOrDefault();
+                                TestQuestionCountMarksDataVM? multiAns = x.FirstOrDefault(x => x.QuestionType == (int)Enums.QuestionType.MultiAnswer);
                                 if (multiAns == null)
                                 {
                                     multiAns = new();
                                 }
-                                TestQuestionCountMarksDataVM? singleAns = x.Where(x => x.QuestionType == (int)Enums.QuestionType.SingleAnswer).FirstOrDefault();
+                                TestQuestionCountMarksDataVM? singleAns = x.FirstOrDefault(x => x.QuestionType == (int)Enums.QuestionType.SingleAnswer);
                                 if (singleAns == null)
                                 {
                                     singleAns = new();
@@ -786,22 +783,19 @@ namespace AptitudeTest.Data.Data
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     List<TestTopicWiseCountVM> data = connection.Query<TestTopicWiseCountVM>("Select * from gettopicwisequestionscount()").ToList();
-                    List<QuestionsCountMarksVM> questionsCountVM = new();
-                    if (data != null)
+                    List<QuestionsCountMarksVM> questionsCountVM;
+                    if (data != null && data.Count != 0)
                     {
 
-                        if (data.Count != 0)
-                        {
-                            questionsCountVM = FillQuestionsCountData(data);
+                        questionsCountVM = FillQuestionsCountData(data);
 
-                            return new JsonResult(new ApiResponse<List<QuestionsCountMarksVM>>
-                            {
-                                Data = questionsCountVM,
-                                Message = ResponseMessages.Success,
-                                Result = true,
-                                StatusCode = ResponseStatusCode.Success
-                            });
-                        }
+                        return new JsonResult(new ApiResponse<List<QuestionsCountMarksVM>>
+                        {
+                            Data = questionsCountVM,
+                            Message = ResponseMessages.Success,
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
                     }
 
                 }
