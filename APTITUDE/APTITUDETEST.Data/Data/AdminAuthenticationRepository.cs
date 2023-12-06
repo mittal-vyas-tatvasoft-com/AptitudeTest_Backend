@@ -42,10 +42,14 @@ namespace AptitudeTest.Data.Data
                 }
 
                 var jwtHelper = new JWTHelper(_appSettingConfiguration);
-                Admin? admin = _context.Admins.Where(u => u.Email == loginVm.Email && u.Password == loginVm.Password)?.FirstOrDefault();
+                Admin? admin = _context.Admins.Where(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false)?.FirstOrDefault();
                 if (admin == null)
                 {
                     return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredentials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
+                }
+                if (admin.Status == false)
+                {
+                    return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InActiveAccount, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
                 }
                 string newAccessToken = jwtHelper.GenerateJwtToken(null, admin);
                 string newRefreshToken = jwtHelper.CreateRefreshToken(admin.Email, RefreshTokens);
