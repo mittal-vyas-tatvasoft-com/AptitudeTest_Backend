@@ -204,7 +204,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                User? users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() || t.PhoneNumber == user.PhoneNumber && t.IsDeleted!= true).FirstOrDefault();
+                User? users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() || t.PhoneNumber == user.PhoneNumber && t.IsDeleted != true).FirstOrDefault();
                 if (users != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -556,7 +556,7 @@ namespace AptitudeTest.Data.Data
 
                         List<ImportCandidateVM> data = new List<ImportCandidateVM>();
                         ImportCandidateVM dataToBeAdd;
-                        
+
                         foreach (var item in records)
                         {
                             dataToBeAdd = new ImportCandidateVM();
