@@ -401,7 +401,8 @@ namespace AptitudeTest.Data.Data
 
                 using (DbConnection connection = new DbConnection())
                 {
-                    int? testId = GetTestOfUser(userId)?.Id;
+                    Test test = GetTestOfUser(userId);
+                    int? testId = test?.Id;
                     if (testId == null || testId < 1)
                     {
                         return new JsonResult(new ApiResponse<string>
@@ -482,10 +483,11 @@ namespace AptitudeTest.Data.Data
                         CandidateTestAnswerVM candidateTestAnswerVM = new CandidateTestAnswerVM() { OptionId = item.OptionId, isAnswer = isAnswer };
                         candidateTestAnswerVMList.Add(candidateTestAnswerVM);
                     }
+                    if (test.IsRandomAnswer==true)
+                    {
+                        Shuffle<CandidateTestOptionsVM>(candidateTestQuestionVM.Options);
+                    }
                     candidateTestQuestionVM.Answers = candidateTestAnswerVMList;
-
-
-
                     return new JsonResult(new ApiResponse<CandidateTestQuestionVM>
                     {
                         Data = candidateTestQuestionVM,
@@ -827,7 +829,7 @@ namespace AptitudeTest.Data.Data
 
                     Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.Status == (int)TestStatus.Active && x.IsDeleted == false).FirstOrDefault();
                     DateTime dt = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
-                    if (test != null && Convert.ToDateTime(test?.StartTime) >= DateTime.Now)
+                    if (test != null && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now)
                     {
                         return test;
                     }
@@ -887,6 +889,20 @@ namespace AptitudeTest.Data.Data
             }
 
             return selectedQuestions;
+        }
+
+        private  void Shuffle<T>(List<T> list)
+        {
+            Random random = new Random();
+
+            int n = list.Count;
+            for (int i = n - 1; i > 0; i--)
+            {
+                int j = random.Next(0, i + 1);
+                T temp = list[i];
+                list[i] = list[j];
+                list[j] = temp;
+            }
         }
         #endregion
     }
