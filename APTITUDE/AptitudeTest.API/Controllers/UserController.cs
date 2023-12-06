@@ -140,6 +140,21 @@ namespace AptitudeTest.API.Controllers
         }
         #endregion
 
+        #region ChangeUserPasswordByAdmin
+
+        [HttpPut("[action]")]
+        public async Task<JsonResult> ChangeUserPasswordByAdmin(LoginVm data)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _userService.ChangeUserPasswordByAdmin(data.Email, data.Password);
+            }
+
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+
+        #endregion
+
         #endregion
     }
 }

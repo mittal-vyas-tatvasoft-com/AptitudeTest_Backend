@@ -62,6 +62,12 @@ namespace AptitudeTest.Application.Services
         {
             return await _userRepository.RegisterUser(registerUserVM);
         }
+
+        public async Task<JsonResult> ChangeUserPasswordByAdmin(string? Email, string? Password)
+        {
+            return await _userRepository.ChangeUserPasswordByAdmin(Email, Password);
+        }
+
         #endregion
     }
 }
