@@ -204,7 +204,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                User? users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() && t.IsDeleted != true).FirstOrDefault();
+                User? users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() || t.PhoneNumber == user.PhoneNumber && t.IsDeleted!= true).FirstOrDefault();
                 if (users != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -344,7 +344,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                User? users = await Task.FromResult(_appDbContext.Users.Where(x => x.Email.Trim().ToLower() == registerUser.Email.Trim().ToLower() && x.IsDeleted != true).FirstOrDefault());
+                User? users = await Task.FromResult(_appDbContext.Users.Where(x => x.Email.Trim().ToLower() == registerUser.Email.Trim().ToLower() || x.PhoneNumber == registerUser.PhoneNumber && x.IsDeleted != true).FirstOrDefault());
                 if (users != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -536,17 +536,12 @@ namespace AptitudeTest.Data.Data
 
                                 var viewModel = new UserImportVM
                                 {
-
                                     firstname = GetValueForHeader(item, headers, "First Name"),
                                     lastname = GetValueForHeader(item, headers, "Last Name"),
                                     middlename = GetValueForHeader(item, headers, "Middle Name"),
                                     email = GetValueForHeader(item, headers, "Email"),
                                     contactnumber = long.Parse(GetValueForHeader(item, headers, "Contact Number")),
-                                    collegename = GetValueForHeader(item, headers, "College Name"),
-                                    groupname = GetValueForHeader(item, headers, "Group Name"),
                                     status = GetValueForHeader(item, headers, "Status(true/false)"),
-                                    gender = GetValueForHeader(item, headers, "Gender(male/female)"),
-
                                 };
                                 records.Add(viewModel);
                             }
@@ -561,59 +556,15 @@ namespace AptitudeTest.Data.Data
 
                         List<ImportCandidateVM> data = new List<ImportCandidateVM>();
                         ImportCandidateVM dataToBeAdd;
-                        var collagesInRecords = records.Select(x => x.collegename.Trim().ToLower()).Distinct().ToList();
-                        var groupsInRecords = records.Select(x => x.groupname.Trim().ToLower()).Distinct().ToList();
-                        List<MasterCollege> colleges = _appDbContext.MasterCollege.Where(college => collagesInRecords.Contains(college.Name.Trim().ToLower())).ToList();
-                        List<MasterGroup>? groups = _appDbContext.MasterGroup.Where(group => groupsInRecords.Contains(group.Name.Trim().ToLower())).ToList();
+                        
                         foreach (var item in records)
                         {
                             dataToBeAdd = new ImportCandidateVM();
-
-                            MasterCollege? college = colleges.Where(c => c.Name.ToLower().Trim() == item.collegename.ToLower()).FirstOrDefault();
                             dataToBeAdd.firstname = item.firstname;
+                            dataToBeAdd.lastname = item.lastname;
+                            dataToBeAdd.middlename = item.middlename;
                             dataToBeAdd.email = item.email;
                             dataToBeAdd.contactnumber = item.contactnumber;
-                            if (college != null)
-                            {
-                                dataToBeAdd.collegeid = college.Id;
-                            }
-                            else if (importUsers.CollegeId != null)
-                            {
-                                dataToBeAdd.collegeid = importUsers.CollegeId;
-                            }
-                            else
-                            {
-                                dataToBeAdd.collegeid = importUsers.CollegeId;
-                            }
-
-                            MasterGroup? group = groups.Where(g => g.Name.ToLower().Trim() == item.groupname.ToLower()).FirstOrDefault();
-                            if (group != null)
-                            {
-                                dataToBeAdd.groupid = group.Id;
-                            }
-                            else if (importUsers.GroupId != null)
-                            {
-                                dataToBeAdd.groupid = importUsers.GroupId;
-                            }
-                            else
-                            {
-                                dataToBeAdd.groupid = importUsers.GroupId;
-                            }
-
-
-                            if (item.gender.ToLower() == "male")
-                            {
-                                dataToBeAdd.gender = 0;
-                            }
-                            else if (item.gender.ToLower() == "female")
-                            {
-                                dataToBeAdd.gender = 1;
-                            }
-                            else
-                            {
-                                dataToBeAdd.gender = null;
-                            }
-
                             if (item.status.ToLower() == "true" || string.IsNullOrEmpty(item.status))
                             {
                                 dataToBeAdd.status = true;
@@ -678,6 +629,9 @@ namespace AptitudeTest.Data.Data
                                 foreach (var email in insertedEmails)
                                 {
                                     var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+                                    User user = _appDbContext.Users.Where(u => u.Email == email).FirstOrDefault();
+                                    user.Password = password;
+                                    _appDbContext.SaveChanges();
                                     var record = records.Where(r => r.email == email).FirstOrDefault();
                                     bool isMailSent = SendMailForPassword(record.firstname, email, password);
                                 }

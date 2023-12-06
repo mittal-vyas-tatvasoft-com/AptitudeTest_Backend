@@ -167,7 +167,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterGroup> existingGroups = await Task.FromResult(_context.MasterGroup.Where(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true).OrderBy(group => group.Name).ToList());
+                List<MasterGroup> existingGroups = await Task.FromResult(_context.MasterGroup.Where(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true).OrderByDescending(group => group.Id).ToList());
 
                 if (!searchGroup.IsNullOrEmpty())
                 {

@@ -14,10 +14,6 @@ namespace AptitudeTest.Core.ViewModels
         [Required]
         [Range(1000000000, 9999999999, ErrorMessage = "The PhoneNumber must be a 10-digit number.")]
         public long contactnumber { get; set; }
-        public int? collegeid { get; set; }
-        public int? groupid { get; set; }
-        [Range(1, 2)]
-        public int? gender { get; set; }
-        public bool? status { get; set; }
+        public bool status { get; set; } = true;
     }
 }
