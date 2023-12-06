@@ -5,6 +5,7 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
+using APTITUDETEST.Core.Entities.Users;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -274,7 +275,8 @@ namespace AptitudeTest.Data.Data
             {
                 if (userTestQuestionAnswer != null)
                 {
-                    TempUserTest? tempUserTest = _appDbContext.TempUserTests.Where(x => x.UserId == userTestQuestionAnswer.UserId && x.TestId == userTestQuestionAnswer.TestId && x.IsDeleted == false).FirstOrDefault();
+                    Test? test = GetTestOfUser(userTestQuestionAnswer.UserId);
+                    TempUserTest? tempUserTest = _appDbContext.TempUserTests.Where(x => x.UserId == userTestQuestionAnswer.UserId && x.TestId == test.Id && x.IsDeleted == false).FirstOrDefault();
                     if (tempUserTest != null)
                     {
                         tempUserTest.TimeRemaining = userTestQuestionAnswer.TimeRemaining;
