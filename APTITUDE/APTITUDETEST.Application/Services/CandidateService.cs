@@ -47,7 +47,7 @@ namespace AptitudeTest.Application.Services
 
         public async Task<JsonResult> GetInstructionsOfTheTestForUser(int userId, string testStatus)
         {
-            return await _candidateRepository.GetInstructionsOfTheTestForUser(userId,testStatus);
+            return await _candidateRepository.GetInstructionsOfTheTestForUser(userId, testStatus);
         }
 
         public async Task<JsonResult> EndTest(int userId)

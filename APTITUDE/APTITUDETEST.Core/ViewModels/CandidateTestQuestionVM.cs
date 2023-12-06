@@ -10,7 +10,7 @@
         public int NextQuestionId { get; set; }
         public int QuestionNumber { get; set; }
         public int TotalQuestions { get; set; }
-        public List<string> Options { get; set; } = new List<string>();
-        public bool[] Answers { get; set; } = new bool[] { false, false, false, false };
+        public List<CandidateTestOptionsVM> Options { get; set; } = new List<CandidateTestOptionsVM>();
+        public List<CandidateTestAnswerVM> Answers { get; set; } = new List<CandidateTestAnswerVM>();
     }
 }
