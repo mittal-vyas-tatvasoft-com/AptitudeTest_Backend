@@ -461,15 +461,31 @@ namespace AptitudeTest.Data.Data
 
                     foreach (var item in data)
                     {
-                        candidateTestQuestionVM.Options.Add(item.OptionData);
-                    }
-                    if (question.Answer != null)
-                    {
-                        foreach (var item in question.Answer)
+                        CandidateTestOptionsVM candidateTestOptionsVM = new CandidateTestOptionsVM()
                         {
-                            candidateTestQuestionVM.Answers[item - 1] = true;
-                        }
+                            OptionData = item.OptionData,
+                            OptionId = item.OptionId
+                        };
+                        candidateTestQuestionVM.Options.Add(candidateTestOptionsVM);
                     }
+
+                    List<CandidateTestAnswerVM> candidateTestAnswerVMList = new();
+
+                    foreach (var item in candidateTestQuestionVM.Options)
+                    {
+                        bool isAnswer = false;
+                        if (question.Answer != null)
+                        {
+                            isAnswer = Array.IndexOf(question.Answer, item.OptionId) > -1 ? true : false;
+                        }
+
+                        CandidateTestAnswerVM candidateTestAnswerVM = new CandidateTestAnswerVM() { OptionId = item.OptionId, isAnswer = isAnswer };
+                        candidateTestAnswerVMList.Add(candidateTestAnswerVM);
+                    }
+                    candidateTestQuestionVM.Answers = candidateTestAnswerVMList;
+
+
+
                     return new JsonResult(new ApiResponse<CandidateTestQuestionVM>
                     {
                         Data = candidateTestQuestionVM,
@@ -519,7 +535,7 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
-                    
+
                     TempUserTest? tempTest = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == testId).FirstOrDefault();
                     if (tempTest == null || tempTest?.Id == null || tempTest.Id == 0)
                     {
@@ -537,7 +553,8 @@ namespace AptitudeTest.Data.Data
                     int answered = 0;
                     int unAnswered = 0;
                     bool isQuestionsMenu = (bool)test?.IsQuestionsMenu;
-                    if (isQuestionsMenu) {
+                    if (isQuestionsMenu)
+                    {
 
                         var questions = _appDbContext.TempUserTestResult.Where(t => t.UserTestId == userTestId).OrderBy(X => X.Id).Select((x) => new TempQuestionStatusVM()
                         {
@@ -555,7 +572,7 @@ namespace AptitudeTest.Data.Data
                                 StatusCode = ResponseStatusCode.BadRequest
                             });
                         }
-                        
+
                         foreach (var item in questions)
                         {
                             totalCount++;
@@ -576,7 +593,7 @@ namespace AptitudeTest.Data.Data
                                 Status = status,
                             });
                         }
-                        
+
                     }
                     CandidateQuestionsStatusVM candidateQuestionsStatusVM = new CandidateQuestionsStatusVM()
                     {
@@ -689,7 +706,7 @@ namespace AptitudeTest.Data.Data
 
         }
 
-        public async Task<JsonResult> GetInstructionsOfTheTestForUser(int userId,string testStatus)
+        public async Task<JsonResult> GetInstructionsOfTheTestForUser(int userId, string testStatus)
         {
             try
             {
