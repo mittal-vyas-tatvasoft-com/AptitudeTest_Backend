@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Net.Mail;
 using System.Text;
-//using ResponseMessages = AptitudeTest.Data.Common.ResponseMessages;
 
 namespace AptitudeTest.Data.Data
 {
@@ -17,8 +16,8 @@ namespace AptitudeTest.Data.Data
     {
         #region Properies
         private readonly AppDbContext _context;
-        static IConfiguration _appSettingConfiguration;
-        public static Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
+        static IConfiguration? _appSettingConfiguration;
+        private readonly Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
         #endregion
 
         #region Constructor

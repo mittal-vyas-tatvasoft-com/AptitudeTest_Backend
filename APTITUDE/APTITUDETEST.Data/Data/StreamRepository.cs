@@ -11,7 +11,7 @@ namespace AptitudeTest.Data.Data
     public class StreamRepository : IStreamRepository
     {
         #region Properties
-        AppDbContext _context;
+        readonly AppDbContext _context;
         #endregion
 
         #region Constructor
@@ -45,7 +45,7 @@ namespace AptitudeTest.Data.Data
                     .Select(x => x.First())
                     .ToList();
 
-                if (distinctFilteredStreams != null && distinctFilteredStreams.Any())
+                if (distinctFilteredStreams.Count > 0)
                 {
                     return new JsonResult(new ApiResponse<IEnumerable<object>>
                     {
@@ -66,7 +66,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -128,7 +128,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -143,7 +143,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterStream streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.IsDeleted != true).FirstOrDefault();
+                MasterStream? streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.IsDeleted != true).FirstOrDefault();
                 if (streams != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -153,7 +153,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-                MasterDegree degree = _context.MasterDegree.Where(c => c.Id == stream.DegreeId && c.IsDeleted == false).FirstOrDefault();
+                MasterDegree? degree = _context.MasterDegree.Where(c => c.Id == stream.DegreeId && c.IsDeleted == false).FirstOrDefault();
                 if (degree == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -181,7 +181,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -196,7 +196,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterStream streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.Id != stream.Id && s.IsDeleted != true).FirstOrDefault();
+                MasterStream? streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.Id != stream.Id && s.IsDeleted != true).FirstOrDefault();
                 if (streams != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -206,7 +206,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-                MasterDegree degree = _context.MasterDegree.Where(c => c.Id == stream.DegreeId && c.IsDeleted == false).FirstOrDefault();
+                MasterDegree? degree = _context.MasterDegree.Where(c => c.Id == stream.DegreeId && c.IsDeleted == false).FirstOrDefault();
                 if (degree == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -217,7 +217,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                MasterStream masterStream = await Task.FromResult(_context.MasterStream.AsNoTracking().Where(l => l.Id == stream.Id && l.IsDeleted != true).FirstOrDefault());
+                MasterStream? masterStream = await Task.FromResult(_context.MasterStream.AsNoTracking().Where(l => l.Id == stream.Id && l.IsDeleted != true).FirstOrDefault());
                 if (masterStream != null)
                 {
                     masterStream.Status = stream.Status;
@@ -244,7 +244,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -269,7 +269,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -294,7 +294,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                MasterStream stream = await Task.FromResult(_context.MasterStream.Where(s => s.Id == id && s.IsDeleted == false).FirstOrDefault());
+                MasterStream? stream = await Task.FromResult(_context.MasterStream.Where(s => s.Id == id && s.IsDeleted == false).FirstOrDefault());
                 if (stream != null)
                 {
                     stream.IsDeleted = true;
@@ -315,7 +315,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {

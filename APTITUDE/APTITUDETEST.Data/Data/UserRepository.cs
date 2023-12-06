@@ -26,7 +26,7 @@ namespace AptitudeTest.Data.Data
         private readonly AppDbContext _appDbContext;
         private readonly DapperAppDbContext _dapperContext;
         private readonly IConfiguration _config;
-        private readonly string connectionString;
+        private readonly string? connectionString;
 
         #endregion
 
@@ -237,14 +237,14 @@ namespace AptitudeTest.Data.Data
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
                     if (userId > 0)
                     {
-                        bool isMailSent = SendMailForPassword(user.FirstName, user.Email, password);
+                        SendMailForPassword(user.FirstName, user.Email, password);
 
                         return new JsonResult(new ApiResponse<string>
                         {
                             Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Candidate),
                             Result = true,
                             StatusCode = ResponseStatusCode.Success
-                        }); ;
+                        });
                     }
                     else
                     {
@@ -253,7 +253,7 @@ namespace AptitudeTest.Data.Data
                             Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
                             Result = false,
                             StatusCode = ResponseStatusCode.RequestFailed
-                        }); ;
+                        });
                     }
                 }
             }

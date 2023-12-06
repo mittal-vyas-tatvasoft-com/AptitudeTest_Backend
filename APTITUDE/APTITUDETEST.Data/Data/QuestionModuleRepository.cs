@@ -11,7 +11,7 @@ namespace AptitudeTest.Data.Data
     public class QuestionModuleRepository : IQuestionModuleRepository
     {
         #region Properties
-        AppDbContext _context;
+        readonly AppDbContext _context;
         #endregion
 
         #region Constructor
@@ -64,7 +64,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -79,7 +79,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                QuestionModule questionModules = _context.QuestionModule.Where(m => m.Name.ToLower() == questionModuleVM.Name.ToLower() && m.IsDeleted != true).FirstOrDefault();
+                QuestionModule? questionModules = _context.QuestionModule.Where(m => m.Name.ToLower() == questionModuleVM.Name.ToLower() && m.IsDeleted != true).FirstOrDefault();
                 if (questionModules != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -110,7 +110,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -125,7 +125,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                QuestionModule questionModule = _context.QuestionModule.Where(s => s.Name.ToLower() == questionModuleVM.Name.ToLower() && s.Id != questionModuleVM.Id && s.IsDeleted != true).FirstOrDefault();
+                QuestionModule? questionModule = _context.QuestionModule.Where(s => s.Name.ToLower() == questionModuleVM.Name.ToLower() && s.Id != questionModuleVM.Id && s.IsDeleted != true).FirstOrDefault();
                 if (questionModule != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -162,7 +162,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -199,7 +199,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -224,7 +224,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                QuestionModule questionModule = await Task.FromResult(_context.QuestionModule.Where(s => s.Id == id && s.IsDeleted == false).FirstOrDefault());
+                QuestionModule? questionModule = await Task.FromResult(_context.QuestionModule.Where(s => s.Id == id && s.IsDeleted == false).FirstOrDefault());
                 if (questionModule != null)
                 {
                     questionModule.IsDeleted = true;
@@ -245,7 +245,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {

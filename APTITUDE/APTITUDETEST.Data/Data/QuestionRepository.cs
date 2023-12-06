@@ -19,10 +19,9 @@ namespace AptitudeTest.Data.Data
     public class QuestionRepository : IQuestionRepository
     {
         #region Properties
-        AppDbContext _context;
+        readonly AppDbContext _context;
         private readonly DapperAppDbContext _dapperContext;
         private readonly IConfiguration _config;
-        private readonly string connectionString;
         #endregion
 
         #region Constructor
@@ -31,7 +30,6 @@ namespace AptitudeTest.Data.Data
             _context = context;
             _dapperContext = dapperContext;
             _config = config;
-            connectionString = _config["ConnectionStrings:AptitudeTest"];
         }
         #endregion
 
@@ -66,17 +64,18 @@ namespace AptitudeTest.Data.Data
                     }
 
                     var question = data.FirstOrDefault();
-                    QuestionVM questionVM = new QuestionVM()
+                    QuestionVM questionVM = new QuestionVM();
+                    if (question != null)
                     {
-                        Id = question.QuestionId,
-                        TopicId = question.Topic,
-                        Difficulty = question.Difficulty,
-                        OptionType = question.OptionType,
-                        QuestionType = question.QuestionType,
-                        Status = question.Status,
-                        QuestionText = question.QuestionText,
-                        ParentId = question.ParentId
-                    };
+                        questionVM.Id = question.QuestionId;
+                        questionVM.TopicId = question.Topic;
+                        questionVM.Difficulty = question.Difficulty;
+                        questionVM.OptionType = question.OptionType;
+                        questionVM.QuestionType = question.QuestionType;
+                        questionVM.Status = question.Status;
+                        questionVM.QuestionText = question.QuestionText;
+                        questionVM.ParentId = question.ParentId;
+                    }
                     foreach (var item in data)
                     {
                         OptionVM optionVM = new OptionVM()
@@ -98,7 +97,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -133,7 +132,7 @@ namespace AptitudeTest.Data.Data
                     var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getallquestions(@filter_topic,@filter_status,@page_size,@page_index)", parameter);
                     if (data != null)
                     {
-                        List<QuestionVM> questionVMList = new List<QuestionVM>();
+                        List<QuestionVM> questionVMList;
                         questionVMList = data.GroupBy(question => question.QuestionId).Select(
                             x =>
                             {
@@ -206,7 +205,7 @@ namespace AptitudeTest.Data.Data
                 }
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -245,7 +244,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -270,7 +269,7 @@ namespace AptitudeTest.Data.Data
                 }
                 if (questionVM.DuplicateFromQuestionId != 0)
                 {
-                    Question duplicateQuestion = _context.Questions.Where(x => x.Id == questionVM.DuplicateFromQuestionId).FirstOrDefault();
+                    Question? duplicateQuestion = _context.Questions.Where(x => x.Id == questionVM.DuplicateFromQuestionId).FirstOrDefault();
                     if (duplicateQuestion == null || duplicateQuestion.OptionType != (int)Enums.OptionType.ImageType && questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateOptionImages(questionVM))
                     {
                         return new JsonResult(new ApiResponse<string>
@@ -302,7 +301,12 @@ namespace AptitudeTest.Data.Data
                 _context.Add(question);
                 _context.SaveChanges();
 
-                int questionId = _context.Questions.OrderByDescending(q => q.CreatedDate).FirstOrDefault().Id;
+                Question? lastCreadtedQuestion = _context.Questions.OrderByDescending(q => q.CreatedDate).FirstOrDefault();
+                int questionId = 0;
+                if (lastCreadtedQuestion != null)
+                {
+                    questionId = lastCreadtedQuestion.Id;
+                }
 
                 List<QuestionOptions> questionOptions = new List<QuestionOptions>();
 
@@ -311,7 +315,7 @@ namespace AptitudeTest.Data.Data
                     QuestionOptions options = new QuestionOptions();
                     options.QuestionId = questionId;
                     options.IsAnswer = option.IsAnswer;
-                    if (questionVM.OptionType == (int)Common.Enums.OptionType.TextType)
+                    if (questionVM.OptionType == (int)Common.Enums.OptionType.TextType && option.OptionValue != null)
                     {
                         options.OptionData = option.OptionValue;
                     }
@@ -331,7 +335,7 @@ namespace AptitudeTest.Data.Data
                         }
                         else
                         {
-                            options.OptionData = duplicateOptions.Where(x => x.Id == option.OptionId).FirstOrDefault().OptionData;
+                            options.OptionData = duplicateOptions.FirstOrDefault(x => x.Id == option.OptionId)!.OptionData;
                         }
 
                     }
@@ -347,7 +351,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -362,7 +366,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (questionVM.Id < 1 || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || questionVM.Options.Any(option => option.OptionId == 0))
+                if (questionVM.Id < 1 || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || questionVM.Options.Exists(option => option.OptionId == 0))
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -372,7 +376,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                Question question = await Task.FromResult(_context.Questions.Where(question => question.Id == questionVM.Id).FirstOrDefault());
+                Question? question = await Task.FromResult(_context.Questions.Where(question => question.Id == questionVM.Id).FirstOrDefault());
                 if (question == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -444,7 +448,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -459,7 +463,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Question question = await Task.FromResult(_context.Questions.Where(question => question.IsDeleted != true && question.Id == status.Id).FirstOrDefault());
+                Question? question = await Task.FromResult(_context.Questions.Where(question => question.IsDeleted != true && question.Id == status.Id).FirstOrDefault());
                 if (question == null)
                 {
                     return new JsonResult(new ApiResponse<int>
@@ -482,7 +486,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -507,7 +511,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                Question question = await Task.FromResult(_context.Questions.Where(d => d.Id == id && d.IsDeleted != true).FirstOrDefault());
+                Question? question = await Task.FromResult(_context.Questions.Where(d => d.Id == id && d.IsDeleted != true).FirstOrDefault());
                 if (question != null)
                 {
                     question.IsDeleted = true;
@@ -531,7 +535,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -607,7 +611,7 @@ namespace AptitudeTest.Data.Data
 
                 ValidateImportFileVM validateImportFileVM = await checkImportedData<ImportQuestionFieldsVM>(importQuestionFieldsVMList);
 
-                if (validateImportFileVM.isValidate == false)
+                if (!validateImportFileVM.isValidate)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -680,7 +684,7 @@ namespace AptitudeTest.Data.Data
                 }
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -697,9 +701,9 @@ namespace AptitudeTest.Data.Data
 
         private bool ValidateQuestion(QuestionVM questionVM)
         {
-            if (questionVM.Options.Count() == 4)
+            if (questionVM.Options.Count == 4)
             {
-                int answerCount = questionVM.Options.Where(option => option.IsAnswer == true).Count();
+                int answerCount = questionVM.Options.Where(option => option.IsAnswer).Count();
                 if (questionVM.QuestionType == (int)Common.Enums.QuestionType.SingleAnswer && answerCount == 1)
                 {
                     return true;
@@ -713,7 +717,7 @@ namespace AptitudeTest.Data.Data
             return false;
         }
 
-        private bool ValidateOptionText(QuestionVM questionVM)
+        private static bool ValidateOptionText(QuestionVM questionVM)
         {
             bool result = true;
             if (questionVM.OptionType == (int)Common.Enums.OptionType.TextType)
@@ -729,7 +733,7 @@ namespace AptitudeTest.Data.Data
             return result;
         }
 
-        private bool ValidateOptionImages(QuestionVM questionVM)
+        private static bool ValidateOptionImages(QuestionVM questionVM)
         {
             if (questionVM.OptionType == (int)Common.Enums.OptionType.ImageType)
             {

@@ -10,7 +10,7 @@ namespace AptitudeTest.Data.Data
     public class QuestionMarksRepository : IQuestionMarksRepository
     {
         #region Properties
-        AppDbContext _context;
+        readonly AppDbContext _context;
         #endregion
 
         #region Constructor
@@ -146,7 +146,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -191,7 +191,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {

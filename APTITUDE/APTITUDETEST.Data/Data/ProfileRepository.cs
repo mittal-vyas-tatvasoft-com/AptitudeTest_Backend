@@ -11,7 +11,7 @@ namespace AptitudeTest.Data.Data
     public class ProfileRepository : IProfileRepository
     {
         #region Properties
-        AppDbContext _context;
+        readonly AppDbContext _context;
         #endregion
 
         #region Constructor
@@ -54,7 +54,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -96,7 +96,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -111,7 +111,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterTechnology profiles = _context.MasterTechnology.Where(t => t.Name.Trim().ToLower() == profile.Name.Trim().ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
+                MasterTechnology? profiles = _context.MasterTechnology.Where(t => t.Name.Trim().ToLower() == profile.Name.Trim().ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
                 if (profiles != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -137,7 +137,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -152,7 +152,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                MasterTechnology profiles = _context.MasterTechnology.Where(t => t.Name.Trim().ToLower() == profile.Name.Trim().ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
+                MasterTechnology? profiles = _context.MasterTechnology.Where(t => t.Name.Trim().ToLower() == profile.Name.Trim().ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
                 if (profiles != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -163,7 +163,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                MasterTechnology MasterProfile = await Task.FromResult(_context.MasterTechnology.AsNoTracking().Where(t => t.Id == profile.Id && t.IsDeleted != true).FirstOrDefault());
+                MasterTechnology? MasterProfile = await Task.FromResult(_context.MasterTechnology.AsNoTracking().Where(t => t.Id == profile.Id && t.IsDeleted != true).FirstOrDefault());
                 if (MasterProfile != null)
                 {
                     MasterProfile.Status = profile.Status;
@@ -190,7 +190,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -215,7 +215,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -240,7 +240,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                MasterTechnology profile = await Task.FromResult(_context.MasterTechnology.Where(t => t.Id == id && t.IsDeleted == false).FirstOrDefault());
+                MasterTechnology? profile = await Task.FromResult(_context.MasterTechnology.Where(t => t.Id == id && t.IsDeleted == false).FirstOrDefault());
                 if (profile != null)
                 {
                     profile.IsDeleted = true;
@@ -261,7 +261,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -325,7 +325,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {

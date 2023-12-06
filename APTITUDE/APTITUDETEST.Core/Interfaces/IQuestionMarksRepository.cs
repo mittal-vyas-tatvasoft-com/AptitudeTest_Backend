@@ -7,7 +7,7 @@ namespace AptitudeTest.Core.Interfaces
     {
         public Task<JsonResult> GetAllQuestionMarks(string? searchQuery, int? currentPageIndex, int? pageSize);
         public Task<JsonResult> Create(QuestionMarks newMark);
-        public Task<JsonResult> Update(QuestionMarks questionModule);
+        public Task<JsonResult> Update(QuestionMarks updatedMark);
         public Task<JsonResult> Delete(int id);
     }
 }

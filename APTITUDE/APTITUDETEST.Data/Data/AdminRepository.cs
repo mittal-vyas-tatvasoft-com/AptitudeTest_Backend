@@ -1,5 +1,4 @@
-﻿using AptitudeTest.Common.Data;
-using AptitudeTest.Common.Helpers;
+﻿using AptitudeTest.Common.Helpers;
 using AptitudeTest.Core.Entities.Admin;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
@@ -17,17 +16,15 @@ namespace AptitudeTest.Data.Data
 
         #region Properies
         private readonly AppDbContext _appDbContext;
-        private readonly DapperAppDbContext _dapperContext;
         private readonly IConfiguration _config;
-        private readonly string connectionString;
-        private readonly string adminLoginUrl;
+        private readonly string? connectionString;
+        private readonly string? adminLoginUrl;
         #endregion
 
         #region Constructor
-        public AdminRepository(AppDbContext appDbContext, IConfiguration config, DapperAppDbContext dapperContext)
+        public AdminRepository(AppDbContext appDbContext, IConfiguration config)
         {
             _appDbContext = appDbContext;
-            _dapperContext = dapperContext;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
             adminLoginUrl = _config["EmailGeneration:AdminUrlForBody"];
