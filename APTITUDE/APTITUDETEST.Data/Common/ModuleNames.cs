@@ -205,6 +205,14 @@
                 return _EndTest;
             }
         }
+        public readonly static string _Setting = "Setting";
+        public static string Setting
+        {
+            get
+            {
+                return _Setting;
+            }
+        }
 
     }
 }

@@ -2,6 +2,7 @@
 using AptitudeTest.Core.Entities.CandidateSide;
 using AptitudeTest.Core.Entities.Master;
 using AptitudeTest.Core.Entities.Questions;
+using AptitudeTest.Core.Entities.Setting;
 using AptitudeTest.Core.Entities.Test;
 using AptitudeTest.Core.Entities.Users;
 using AptitudeTest.Core.ViewModels;
@@ -428,6 +429,15 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             });
+
+            modelBuilder.Entity<SettingConfigurations>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("settingconfigurations_pkey");
+                entity.ToTable("SettingConfigurations");
+                entity.Property(e => e.Id);
+                entity.Property(e => e.UserRegistration);
+                entity.Property(e => e.Camera);
+            });
         }
 
         public DbSet<User> Users { get; set; }
@@ -452,5 +462,6 @@ namespace APTITUDETEST.Common.Data
         public DbSet<UserTest> UserTests { get; set; }
         public DbSet<TempUserTestResult> TempUserTestResult { get; set; }
         public DbSet<UserTestResult> UserTestResult { get; set; }
+        public DbSet<SettingConfigurations> SettingConfigurations { get; set; }
     }
 }
