@@ -578,22 +578,20 @@ namespace AptitudeTest.Data.Data
                             var row = csvContent[i];
                             var viewModel = new ImportQuestionFieldsVM
                             {
-
+                                quetionnumber = Int32.Parse(GetValueForHeader(row, headers, "Quetion Number")),
+                                correctoption = Char.Parse(GetValueForHeader(row, headers, "Correct Option")),
                                 topic = GetValueForHeader(row, headers, "Topic"),
-
-                                difficulty = Int32.Parse(GetValueForHeader(row, headers, "Difficulty")),
-                                isanswer1 = bool.Parse(GetValueForHeader(row, headers, "Answer A")),
-                                isanswer2 = bool.Parse(GetValueForHeader(row, headers, "Answer B")),
-                                isanswer3 = bool.Parse(GetValueForHeader(row, headers, "Answer C")),
-                                isanswer4 = bool.Parse(GetValueForHeader(row, headers, "Answer D")),
+                                difficulty = Int32.Parse(GetValueForHeader(row, headers, "Marks")),
                                 optiondata1 = GetValueForHeader(row, headers, "Option A"),
                                 optiondata2 = GetValueForHeader(row, headers, "Option B"),
                                 optiondata3 = GetValueForHeader(row, headers, "Option C"),
                                 optiondata4 = GetValueForHeader(row, headers, "Option D"),
-                                optiontype = Int32.Parse(GetValueForHeader(row, headers, "OptionType")),
                                 questiontext = GetValueForHeader(row, headers, "Question"),
-                                questiontype = Int32.Parse(GetValueForHeader(row, headers, "QuestionType")),
                             };
+                            if (GetValueForHeader(row, headers, "Version") != null && GetValueForHeader(row, headers, "Version") != "")
+                            {
+                                viewModel.version = char.Parse(GetValueForHeader(row, headers, "Version"));
+                            }
                             importQuestionFieldsVMList.Add(viewModel);
                         }
                     }
@@ -609,20 +607,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                ValidateImportFileVM validateImportFileVM = await checkImportedData<ImportQuestionFieldsVM>(importQuestionFieldsVMList);
-
-                if (!validateImportFileVM.isValidate)
-                {
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.InsertProperData,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.BadRequest
-                    });
-                }
-
                 foreach (var item in importQuestionFieldsVMList)
                 {
+                    FillImportQuestionSequence(importQuestionFieldsVMList);
                     QuestionVM questionVM = new QuestionVM();
                     List<OptionVM> options = new List<OptionVM>();
                     questionVM.Options = options;
@@ -652,7 +639,19 @@ namespace AptitudeTest.Data.Data
                     }
 
                 }
-                FillImportQuestionSequence(importQuestionFieldsVMList);
+
+                ValidateImportFileVM validateImportFileVM = await checkImportedData<ImportQuestionFieldsVM>(importQuestionFieldsVMList);
+
+                if (!validateImportFileVM.isValidate)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.InsertProperData,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
                 int count = 0;
                 using (var connection = _dapperContext.CreateConnection())
                 {
@@ -828,11 +827,45 @@ namespace AptitudeTest.Data.Data
 
         private void FillImportQuestionSequence(List<ImportQuestionFieldsVM> questions)
         {
-            int start = getHighestSequence() + 1;
+            int start = getHighestSequence();
             questions.ForEach(q =>
             {
-                q.sequence = start.ToString();
-                start++;
+                q.questiontype = (int)Enums.QuestionType.SingleAnswer;
+                q.optiontype = (int)Enums.OptionType.TextType;
+                switch (q.correctoption.ToString().ToUpper())
+                {
+                    case "A":
+                        q.isanswer1 = true;
+                        break;
+
+                    case "B":
+                        q.isanswer2 = true;
+                        break;
+
+                    case "C":
+                        q.isanswer3 = true;
+                        break;
+
+                    case "D":
+                        q.isanswer4 = true;
+                        break;
+
+                    default:
+                        break;
+
+                }
+                if (q.version == null)
+                {
+                    start++;
+                    q.sequence = start.ToString();
+
+                }
+                else
+                {
+                    q.isparent = true;
+                    q.sequence = start.ToString() + " " + q.version;
+                }
+
             });
         }
 
