@@ -836,7 +836,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 var subject = "Credentials for login";
-                var body = $"<h4>Username:</h4>{email}" + "</br>"+ $"<h4>Password:</h4>{password}";
+                var body = $"<h4>Username:</h4>{email}" + "</br>" + $"<h4>Password:</h4>{password}";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
