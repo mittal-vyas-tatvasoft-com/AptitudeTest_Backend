@@ -353,7 +353,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                User? users = await Task.FromResult(_appDbContext.Users.Where(x => x.Email.Trim().ToLower() == registerUserVM.Email.Trim().ToLower() || x.PhoneNumber == registerUser.PhoneNumber && x.IsDeleted != true).FirstOrDefault());
                 if (registerUserVM == null)
                 {
                     return new JsonResult(new ApiResponse<int>
@@ -376,19 +375,19 @@ namespace AptitudeTest.Data.Data
                 var password = RandomPasswordGenerator.GenerateRandomPassword(8);
                 MasterCollege? masterCollege = await Task.FromResult(_appDbContext.MasterCollege.Where(x => x.Id == registerUserVM.CollegeId).FirstOrDefault());
 
-                if (registerUser.UserAcademicsVM == null)
+                if (registerUserVM.UserAcademicsVM == null)
                 {
-                    registerUser.UserAcademicsVM = new List<DapperUserAcademicsVM>();
+                    registerUserVM.UserAcademicsVM = new List<DapperUserAcademicsVM>();
                 }
-                if (registerUser.UserFamilyVM == null)
+                if (registerUserVM.UserFamilyVM == null)
                 {
-                    registerUser.UserFamilyVM = new List<DapperUserFamilyVM>();
+                    registerUserVM.UserFamilyVM = new List<DapperUserFamilyVM>();
                 }
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     var procedure = "register_user";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
-                    dateParameter.Value = registerUser.DateOfBirth;
+                    dateParameter.Value = registerUserVM.DateOfBirth;
                     var parameters = new DynamicParameters(
                     new
                     {
