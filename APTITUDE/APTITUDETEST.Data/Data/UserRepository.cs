@@ -16,6 +16,7 @@ using NpgsqlTypes;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace AptitudeTest.Data.Data
 {
@@ -204,7 +205,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                User? users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() || t.PhoneNumber == user.PhoneNumber && t.IsDeleted != true).FirstOrDefault();
+                User? users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() && t.PhoneNumber == user.PhoneNumber && t.IsDeleted != true).FirstOrDefault();
                 if (users != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -699,6 +700,58 @@ namespace AptitudeTest.Data.Data
         }
         #endregion
 
+        #region ChangeUserPasswordByAdmin
+        public async Task<JsonResult> ChangeUserPasswordByAdmin(string? Email, string? Password)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Password) || Regex.Match(Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!^#%*?&])[A-Za-z\\d@$!^#%*?&]{8,}$") == null)
+                {
+                    return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.InvalidCredentials, Result = false, StatusCode = ResponseStatusCode.NotAcceptable });
+                }
+                if (!string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Password))
+                {
+                    User? user = _appDbContext.Users.Where(u => u.Email == Email.Trim() && u.IsDeleted == false)?.FirstOrDefault();
+                    if (user != null)
+                    {
+                        user.Password = Password;
+                        user.UpdatedDate = DateTime.UtcNow;
+                        user.UpdatedBy = 1;
+                        int count = _appDbContext.SaveChanges();
+                        if (count == 1)
+                        {
+                            bool mailSent = SendMailAfterPasswordChangeByAdmin(user.FirstName, user.Email, user.Password);
+                            if (mailSent)
+                            {
+                                return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.PasswordUpdatedSuccess, Result = true, StatusCode = ResponseStatusCode.Success });
+                            }
+                            else
+                            {
+                                return new JsonResult(new ApiResponse<string>
+                                {
+                                    Message = ResponseMessages.InternalError,
+                                    Result = false,
+                                    StatusCode = ResponseStatusCode.RequestFailed
+                                });
+                            }
+                        }
+                    }
+                }
+                return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.RequestFailed
+                });
+            }
+
+        }
+        #endregion
+
         #region HelpingMethods
 
         private void FillUserData(UserDetailsVM userDetails, dynamic data)
@@ -714,6 +767,7 @@ namespace AptitudeTest.Data.Data
             userDetails.LastName = userData.lastname ?? "";
             userDetails.Gender = userData.gender ?? 0;
             userDetails.Email = userData.email ?? "";
+            userDetails.Password = userData.password ?? "";
             userDetails.PhoneNumber = userData.phonenumber ?? 0;
             userDetails.DateOfBirth = userData.dateofbirth ?? new DateTime();
             userDetails.PermanentAddress1 = userData.permanentaddress1 ?? "";
@@ -777,12 +831,28 @@ namespace AptitudeTest.Data.Data
         }
 
         #region SendEmail
+        private bool SendMailAfterPasswordChangeByAdmin(string firstName, string email, string password)
+        {
+            try
+            {
+                var subject = "Credentials for login";
+                var body = $"<h4>Username:</h4>{email}" + "</br>" + $"<h4>Password:</h4>{password}";
+                var emailHelper = new EmailHelper(_config);
+                var isEmailSent = emailHelper.SendEmail(email, subject, body);
+                return isEmailSent;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private bool SendMailForPassword(string firstName, string email, string password)
         {
             try
             {
-                var subject = "Credetials for login";
-                var body = $"<h3>Hello {firstName}</h3>,<br />we received registration request for you ,<br /><br /Here is your credetials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2>";
+                var subject = "Credentials for login";
+                var body = $"<h3>Hello {firstName}</h3>,<br />we received registration request for you ,<br /><br /Here is your credentials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2>";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
