@@ -5,7 +5,7 @@ namespace AptitudeTest.Core.ViewModels
     public class ImportQuestionFieldsVM
     {
         public string? sequence { get; set; }
-        public bool isparent { get; set; }=false;
+        public bool isparent { get; set; } = false;
         public int quetionnumber { get; set; }
         public char? version { get; set; }
         public char correctoption { get; set; }
@@ -29,7 +29,7 @@ namespace AptitudeTest.Core.ViewModels
         [Required]
         public bool isanswer1 { get; set; } = false;
         [Required]
-        public string optiondata2 { get; set; } 
+        public string optiondata2 { get; set; }
         [Required]
         public bool isanswer2 { get; set; } = false;
         [Required]

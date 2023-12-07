@@ -5,7 +5,6 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
-using APTITUDETEST.Core.Entities.Users;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -486,7 +485,7 @@ namespace AptitudeTest.Data.Data
                         CandidateTestAnswerVM candidateTestAnswerVM = new CandidateTestAnswerVM() { OptionId = item.OptionId, isAnswer = isAnswer };
                         candidateTestAnswerVMList.Add(candidateTestAnswerVM);
                     }
-                    if (test.IsRandomAnswer==true)
+                    if (test.IsRandomAnswer == true)
                     {
                         Shuffle<CandidateTestOptionsVM>(candidateTestQuestionVM.Options);
                     }
@@ -894,7 +893,7 @@ namespace AptitudeTest.Data.Data
             return selectedQuestions;
         }
 
-        private  void Shuffle<T>(List<T> list)
+        private void Shuffle<T>(List<T> list)
         {
             Random random = new Random();
 

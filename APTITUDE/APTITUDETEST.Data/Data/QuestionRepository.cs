@@ -9,7 +9,6 @@ using CsvHelper.Configuration;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
@@ -589,7 +588,8 @@ namespace AptitudeTest.Data.Data
                                 optiondata4 = GetValueForHeader(row, headers, "Option D"),
                                 questiontext = GetValueForHeader(row, headers, "Question"),
                             };
-                            if (GetValueForHeader(row, headers, "Version") != null && GetValueForHeader(row, headers, "Version") != "") {
+                            if (GetValueForHeader(row, headers, "Version") != null && GetValueForHeader(row, headers, "Version") != "")
+                            {
                                 viewModel.version = char.Parse(GetValueForHeader(row, headers, "Version"));
                             }
                             importQuestionFieldsVMList.Add(viewModel);
@@ -618,7 +618,7 @@ namespace AptitudeTest.Data.Data
                     options.Add(new OptionVM() { IsAnswer = item.isanswer2 });
                     options.Add(new OptionVM() { IsAnswer = item.isanswer3 });
                     options.Add(new OptionVM() { IsAnswer = item.isanswer4 });
-                    
+
                     if (!ValidateQuestion(questionVM))
                     {
                         return new JsonResult(new ApiResponse<string>
@@ -832,7 +832,8 @@ namespace AptitudeTest.Data.Data
             {
                 q.questiontype = (int)Enums.QuestionType.SingleAnswer;
                 q.optiontype = (int)Enums.OptionType.TextType;
-                switch (q.correctoption.ToString().ToUpper()) {
+                switch (q.correctoption.ToString().ToUpper())
+                {
                     case "A":
                         q.isanswer1 = true;
                         break;
@@ -851,19 +852,20 @@ namespace AptitudeTest.Data.Data
 
                     default:
                         break;
-                
+
                 }
-                if (q.version == null) {
+                if (q.version == null)
+                {
                     start++;
                     q.sequence = start.ToString();
-                   
+
                 }
                 else
                 {
                     q.isparent = true;
-                    q.sequence= start.ToString()+" "+q.version;
+                    q.sequence = start.ToString() + " " + q.version;
                 }
-                
+
             });
         }
 
