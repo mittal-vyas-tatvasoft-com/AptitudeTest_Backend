@@ -18,7 +18,7 @@ namespace AptitudeTest.Data.Data
     {
         #region Properies
         private readonly AppDbContext _appDbContext;
-        private readonly IConfiguration _config;
+        private readonly IConfiguration? _config;
         private readonly string? connectionString;
 
         #endregion
@@ -114,7 +114,7 @@ namespace AptitudeTest.Data.Data
                         TempUserTest? tempUserTestAlreadyExists = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && x.IsDeleted == false).FirstOrDefault();
                         if (tempUserTestAlreadyExists == null)
                         {
-                            TimeSpan difference = DateTime.UtcNow - (DateTime)test.StartTime;
+                            TimeSpan difference = DateTime.UtcNow - test.StartTime;
                             int timeRamining = test.TestDuration - (int)difference.TotalMinutes;
 
                             TempUserTest tempUserTestToBeAdded = new TempUserTest()
@@ -414,7 +414,7 @@ namespace AptitudeTest.Data.Data
                         });
                     }
                     var data = await connection.Connection.QueryAsync<UserTestQuestionModelVM>("select * from getCandidateTestquestion(@question_id,@user_id,@test_id)", new { question_id = questionId, user_id = userId, test_id = testId });
-                    if (data == null || data.Count() == 0)
+                    if (data == null || data.Any())
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -501,7 +501,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch (Exception ex)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -550,8 +550,12 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
-                    int userTestId = tempTest.Id;
-                    int timeRemaining = tempTest.TimeRemaining;
+                    int userTestId = 0, timeRemaining = 0;
+                    if (tempTest != null)
+                    {
+                        userTestId = tempTest.Id;
+                        timeRemaining = tempTest.TimeRemaining;
+                    }
                     List<QuestionStatusVM> data = new List<QuestionStatusVM>();
                     int totalCount = 0;
                     int answered = 0;
@@ -830,7 +834,6 @@ namespace AptitudeTest.Data.Data
                 {
 
                     Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.Status == (int)TestStatus.Active && x.IsDeleted == false).FirstOrDefault();
-                    DateTime dt = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
                     if (test != null && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now)
                     {
                         return test;
@@ -840,7 +843,7 @@ namespace AptitudeTest.Data.Data
             return null;
         }
 
-        private Dictionary<(int, QuestionType, int), int> setQuestionsConfig(List<TestWiseQuestionsCountVM> testWiseQuestionsCount)
+        private static Dictionary<(int, QuestionType, int), int> setQuestionsConfig(List<TestWiseQuestionsCountVM> testWiseQuestionsCount)
         {
             Dictionary<(int, QuestionType, int), int> questionsPerMarkTypeTopicId = new Dictionary<(int, QuestionType, int), int>();
 
@@ -870,7 +873,7 @@ namespace AptitudeTest.Data.Data
             return questionsPerMarkTypeTopicId;
         }
 
-        private List<RandomQuestionsVM> SelectRandomQuestions(List<RandomQuestionsVM> allQuestions, Dictionary<(int, QuestionType, int), int> questionsPerMarkTypeTopicId)
+        private static List<RandomQuestionsVM> SelectRandomQuestions(List<RandomQuestionsVM> allQuestions, Dictionary<(int, QuestionType, int), int> questionsPerMarkTypeTopicId)
         {
             // Group questions by their mark, type, and topic ID
             var groupedQuestions = allQuestions.GroupBy(q => (q.Difficulty, q.QuestionType, q.Topic));

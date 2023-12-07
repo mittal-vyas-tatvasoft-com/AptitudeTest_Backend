@@ -13,7 +13,7 @@ namespace AptitudeTest.Core.Validations
             _allowedExtensions = allowedExtensions;
         }
 
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
             if (value is IFormFile file && file.Length > 0)
             {
