@@ -205,7 +205,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                User? users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() || t.PhoneNumber == user.PhoneNumber && t.IsDeleted != true).FirstOrDefault();
+                User? users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() && t.PhoneNumber == user.PhoneNumber && t.IsDeleted != true).FirstOrDefault();
                 if (users != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -836,7 +836,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 var subject = "Credentials for login";
-                var body = $"<h3>Hello {firstName}</h3>,<br /Here is your new credentials for login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2>";
+                var body = $"<h4>Username:</h4>{email}" + "</br>"+ $"<h4>Password:</h4>{password}";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
