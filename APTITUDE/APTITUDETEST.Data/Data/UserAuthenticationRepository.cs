@@ -17,7 +17,7 @@ namespace AptitudeTest.Data.Data
         #region Properies
         private readonly AppDbContext _context;
         static IConfiguration? _appSettingConfiguration;
-        private readonly Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
+        public static Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
         #endregion
 
         #region Constructor
