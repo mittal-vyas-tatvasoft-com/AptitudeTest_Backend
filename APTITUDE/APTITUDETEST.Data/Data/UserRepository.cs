@@ -257,7 +257,7 @@ namespace AptitudeTest.Data.Data
                     }
                 }
             }
-            catch (Exception)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -274,6 +274,15 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                if (user == null)
+                {
+                    return new JsonResult(new ApiResponse<List<string>>
+                    {
+                        Message = ResponseMessages.InsertProperData,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
                 if (user.UserAcademicsVM == null)
                 {
                     user.UserAcademicsVM = new List<DapperUserAcademicsVM>();
@@ -314,7 +323,7 @@ namespace AptitudeTest.Data.Data
                         p_updatedby = user.UpdatedBy,
                         p_userfamilydata = user.UserFamilyVM.ToArray(),
                         p_useracademicsdata = user.UserAcademicsVM.ToArray()
-                    }); ;
+                    });
 
                     connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
 
@@ -340,11 +349,20 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Register
-        public async Task<JsonResult> RegisterUser(UserVM registerUser)
+        public async Task<JsonResult> RegisterUser(UserVM registerUserVM)
         {
             try
             {
-                User? users = await Task.FromResult(_appDbContext.Users.Where(x => x.Email.Trim().ToLower() == registerUser.Email.Trim().ToLower() || x.PhoneNumber == registerUser.PhoneNumber && x.IsDeleted != true).FirstOrDefault());
+                if (registerUserVM == null)
+                {
+                    return new JsonResult(new ApiResponse<int>
+                    {
+                        Message = string.Format(ResponseMessages.BadRequest),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                User? users = await Task.FromResult(_appDbContext.Users.Where(x => x.Email.Trim().ToLower() == registerUserVM.Email.Trim().ToLower() && x.IsDeleted != true).FirstOrDefault());
                 if (users != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -355,54 +373,54 @@ namespace AptitudeTest.Data.Data
                     });
                 }
                 var password = RandomPasswordGenerator.GenerateRandomPassword(8);
-                MasterCollege? masterCollege = await Task.FromResult(_appDbContext.MasterCollege.Where(x => x.Id == registerUser.CollegeId).FirstOrDefault());
+                MasterCollege? masterCollege = await Task.FromResult(_appDbContext.MasterCollege.Where(x => x.Id == registerUserVM.CollegeId).FirstOrDefault());
 
-                if (registerUser.UserAcademicsVM == null)
+                if (registerUserVM.UserAcademicsVM == null)
                 {
-                    registerUser.UserAcademicsVM = new List<DapperUserAcademicsVM>();
+                    registerUserVM.UserAcademicsVM = new List<DapperUserAcademicsVM>();
                 }
-                if (registerUser.UserFamilyVM == null)
+                if (registerUserVM.UserFamilyVM == null)
                 {
-                    registerUser.UserFamilyVM = new List<DapperUserFamilyVM>();
+                    registerUserVM.UserFamilyVM = new List<DapperUserFamilyVM>();
                 }
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     var procedure = "register_user";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
-                    dateParameter.Value = registerUser.DateOfBirth;
+                    dateParameter.Value = registerUserVM.DateOfBirth;
                     var parameters = new DynamicParameters(
                     new
                     {
                         p_groupid = masterCollege.GroupId,
-                        p_collegeid = registerUser.CollegeId,
+                        p_collegeid = registerUserVM.CollegeId,
                         p_status = true,
-                        p_firstname = registerUser.FirstName,
-                        p_lastname = registerUser.LastName,
-                        p_fathername = registerUser.FatherName,
+                        p_firstname = registerUserVM.FirstName,
+                        p_lastname = registerUserVM.LastName,
+                        p_fathername = registerUserVM.FatherName,
                         p_password = password,
-                        p_gender = registerUser.Gender,
+                        p_gender = registerUserVM.Gender,
                         p_dateofbirth = dateParameter.Value,
-                        p_email = registerUser.Email,
-                        p_phonenumber = registerUser.PhoneNumber,
-                        p_appliedthrough = registerUser.AppliedThrough,
-                        p_technologyinterestedin = registerUser.TechnologyInterestedIn,
-                        p_permanentaddress1 = registerUser.PermanentAddress1,
-                        p_permanentaddress2 = registerUser.PermanentAddress2,
-                        p_pincode = registerUser.Pincode,
-                        p_city = registerUser.City,
-                        p_stateid = registerUser.State,
-                        p_acpcmeritrank = registerUser.ACPCMeritRank,
-                        p_gujcetscore = registerUser.GUJCETScore,
-                        p_jeescore = registerUser.JEEScore,
-                        p_userfamilydata = registerUser.UserFamilyVM.ToArray(),
-                        p_useracademicsdata = registerUser.UserAcademicsVM.ToArray(),
+                        p_email = registerUserVM.Email,
+                        p_phonenumber = registerUserVM.PhoneNumber,
+                        p_appliedthrough = registerUserVM.AppliedThrough,
+                        p_technologyinterestedin = registerUserVM.TechnologyInterestedIn,
+                        p_permanentaddress1 = registerUserVM.PermanentAddress1,
+                        p_permanentaddress2 = registerUserVM.PermanentAddress2,
+                        p_pincode = registerUserVM.Pincode,
+                        p_city = registerUserVM.City,
+                        p_stateid = registerUserVM.State,
+                        p_acpcmeritrank = registerUserVM.ACPCMeritRank,
+                        p_gujcetscore = registerUserVM.GUJCETScore,
+                        p_jeescore = registerUserVM.JEEScore,
+                        p_userfamilydata = registerUserVM.UserFamilyVM.ToArray(),
+                        p_useracademicsdata = registerUserVM.UserAcademicsVM.ToArray(),
                         next_id = 0
                     });
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
 
                     if (userId > 0)
                     {
-                        bool isMailSent = SendMailForPassword(registerUser.FirstName, registerUser.Email, password);
+                        SendMailForPassword(registerUserVM.FirstName, registerUserVM.Email, password);
 
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -418,11 +436,11 @@ namespace AptitudeTest.Data.Data
                             Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
                             Result = false,
                             StatusCode = ResponseStatusCode.RequestFailed
-                        }); ;
+                        });
                     }
                 }
             }
-            catch (Exception)
+            catch
             {
                 return new JsonResult(new ApiResponse<string>
                 {

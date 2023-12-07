@@ -18,9 +18,9 @@ namespace AptitudeTest.Application.Services
         #endregion
 
         #region Methods
-        public async Task<JsonResult> Create(QuestionVM question)
+        public async Task<JsonResult> Create(QuestionVM questionVM)
         {
-            return await _repository.Create(question);
+            return await _repository.Create(questionVM);
         }
 
         public async Task<JsonResult> Get(int id)
@@ -43,9 +43,9 @@ namespace AptitudeTest.Application.Services
             return await _repository.UpdateStatus(status);
         }
 
-        public async Task<JsonResult> Update(QuestionVM question)
+        public async Task<JsonResult> Update(QuestionVM questionVM)
         {
-            return await _repository.Update(question);
+            return await _repository.Update(questionVM);
         }
 
         public async Task<JsonResult> Delete(int id)

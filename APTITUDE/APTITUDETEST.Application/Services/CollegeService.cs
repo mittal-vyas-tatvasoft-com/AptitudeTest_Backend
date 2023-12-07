@@ -34,14 +34,14 @@ namespace AptitudeTest.Application.Services
             return await _repository.Get(id);
 
         }
-        public async Task<JsonResult> Create(CollegeVM college)
+        public async Task<JsonResult> Create(CollegeVM collegeToUpsert)
         {
-            return await _repository.Create(college);
+            return await _repository.Create(collegeToUpsert);
         }
 
-        public async Task<JsonResult> Update(CollegeVM college)
+        public async Task<JsonResult> Update(CollegeVM collegeToUpsert)
         {
-            return await _repository.Update(college);
+            return await _repository.Update(collegeToUpsert);
         }
 
         public async Task<JsonResult> UpdateStatus(StatusVM status)

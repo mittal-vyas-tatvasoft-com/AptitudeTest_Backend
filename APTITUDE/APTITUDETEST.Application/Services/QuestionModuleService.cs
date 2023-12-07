@@ -23,13 +23,13 @@ namespace AptitudeTest.Application.Services
             return await _repository.GetQuestionModules(searchQuery, filter, currentPageIndex, pageSize);
         }
 
-        public async Task<JsonResult> Create(QuestionModuleVM questionModule)
+        public async Task<JsonResult> Create(QuestionModuleVM questionModuleVM)
         {
-            return await _repository.Create(questionModule);
+            return await _repository.Create(questionModuleVM);
         }
-        public async Task<JsonResult> Update(QuestionModuleVM questionModule)
+        public async Task<JsonResult> Update(QuestionModuleVM questionModuleVM)
         {
-            return await _repository.Update(questionModule);
+            return await _repository.Update(questionModuleVM);
         }
 
         public async Task<JsonResult> Get(int id)
