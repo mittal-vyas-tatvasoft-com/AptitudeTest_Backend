@@ -7,7 +7,7 @@ namespace AptitudeTest.Data.Common
     {
         public NpgsqlConnection Connection { get; set; }
 
-        IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+        readonly IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
 
         public DbConnection()
         {
@@ -24,6 +24,7 @@ namespace AptitudeTest.Data.Common
         public void Dispose()
         {
             Connection.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         ~DbConnection()

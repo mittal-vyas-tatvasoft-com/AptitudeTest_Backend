@@ -17,8 +17,8 @@ namespace AptitudeTest.Data.Data
     {
         #region Properies
         private readonly AppDbContext _context;
-        static IConfiguration _appSettingConfiguration;
-        public static Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
+        static IConfiguration? _appSettingConfiguration;
+        public static readonly Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
         #endregion
 
         #region Constructor
@@ -42,7 +42,7 @@ namespace AptitudeTest.Data.Data
                 }
 
                 var jwtHelper = new JWTHelper(_appSettingConfiguration);
-                Admin? admin = _context.Admins.Where(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false)?.FirstOrDefault();
+                Admin? admin = _context.Admins.FirstOrDefault(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false);
                 if (admin == null)
                 {
                     return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredentials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
@@ -208,7 +208,7 @@ namespace AptitudeTest.Data.Data
                     var principal = jwtHelper.GetPrincipleFromExpiredToken(accessToken);
                     var allClaims = principal.Claims.ToList();
                     var email = allClaims.Where(c => c.Type == "Email").Select(c => c.Value).SingleOrDefault();
-                    var tokenssss = RefreshTokens.GetValueOrDefault(email);
+                    RefreshTokens.GetValueOrDefault(email);
                     var admin = await _context.Admins.FirstOrDefaultAsync(U => U.Email == email);
                     if (admin == null || RefreshTokens[email].RefreshToken != refreshToken || RefreshTokens[email].RefreshTokenExpiryTime <= DateTime.Now)
                     {
@@ -240,7 +240,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region SendEmail
-        private bool SendMailForResetPassword(string firstName, string email)
+        private static bool SendMailForResetPassword(string firstName, string email)
         {
             try
             {
