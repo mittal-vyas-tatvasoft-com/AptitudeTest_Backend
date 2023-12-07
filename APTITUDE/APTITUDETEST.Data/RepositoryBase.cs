@@ -7,7 +7,7 @@ namespace AptitudeTest.Data
     public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
         protected readonly AppDbContext _context;
-        public RepositoryBase(AppDbContext context)
+        protected RepositoryBase(AppDbContext context)
         {
             _context = context;
         }
