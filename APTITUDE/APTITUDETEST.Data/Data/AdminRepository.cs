@@ -170,7 +170,7 @@ namespace AptitudeTest.Data.Data
                         CreatedBy = admin.CreatedBy,
                     };
 
-                    Admin? adminAlreadyExists = _appDbContext.Admins.Where(ad => ad.Email == admin.Email).FirstOrDefault();
+                    Admin? adminAlreadyExists = _appDbContext.Admins.Where(ad => ad.Email.Trim() == admin.Email.Trim() && ad.PhoneNumber == admin.PhoneNumber && ad.IsDeleted == false).FirstOrDefault();
                     if (adminAlreadyExists == null)
                     {
                         bool isEmailSent;
