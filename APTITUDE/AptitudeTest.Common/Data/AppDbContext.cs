@@ -279,6 +279,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.IsRandomAnswer).HasDefaultValue(true);
                 entity.Property(e => e.IsLogoutWhenTimeExpire).HasDefaultValue(true);
                 entity.Property(e => e.IsQuestionsMenu).HasDefaultValue(true);
+                entity.Property(e => e.NegativeMarkingPercentage).HasDefaultValue(0);
 
             });
             modelBuilder.Entity<TestQuestions>(entity =>
