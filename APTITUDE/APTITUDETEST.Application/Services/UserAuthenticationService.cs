@@ -27,6 +27,13 @@ namespace AptitudeTest.Application.Services
         }
         #endregion
 
+        #region Logout
+        public async Task<JsonResult> Logout(string email)
+        {
+            return await _userAuthenticationRepository.Logout(email);
+        }
+        #endregion
+
         #region ForgetPassword
         public async Task<JsonResult> ForgetPassword(string email)
         {

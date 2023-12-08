@@ -45,6 +45,10 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredentials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
                 }
+                if (user.IsLoggedIn == true)
+                {
+                    return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.UserAlreadyLoggedIn, StatusCode = ResponseStatusCode.BadRequest, Result = false });
+                }
                 if (user.Status == false)
                 {
                     return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InActiveAccount, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
@@ -71,8 +75,37 @@ namespace AptitudeTest.Data.Data
                 {
                     RefreshTokens.Add(user.Email, tokenPayload);
                 }
+                user.IsLoggedIn = true;
+                _context.Update(user);
+                _context.SaveChanges();
                 return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
 
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
+            }
+        }
+        #endregion
+
+        #region Logout
+        public async Task<JsonResult> Logout(string email)
+        {
+            try
+            {
+                User? user = await Task.FromResult(_context.Users.Where(u => u.Email == email && u.IsLoggedIn == true).FirstOrDefault());
+                if (user != null)
+                {
+                    RefreshTokens.Remove(user.Email);
+                    user.IsLoggedIn = false;
+                    _context.Update(user);
+                    _context.SaveChanges();
+                    return new JsonResult(new ApiResponse<TokenVm> { Message = ResponseMessages.LogoutSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
+                }
             }
             catch
             {

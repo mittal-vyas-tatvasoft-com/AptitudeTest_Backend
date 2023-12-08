@@ -35,6 +35,21 @@ namespace AptitudeTest.Controllers
 
         #endregion
 
+        #region Logout
+        /// <summary>
+        /// Logout request
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>no data return onl mail sent</returns>
+        [HttpPost("[action]")]
+
+        public async Task<JsonResult> Logout(string email)
+        {
+            return await _userAuthenticationService.Logout(email);
+        }
+
+        #endregion
+
         #region ForgetPassword
         /// <summary>
         /// Forget password request
