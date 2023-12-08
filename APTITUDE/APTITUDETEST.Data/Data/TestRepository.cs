@@ -79,6 +79,7 @@ namespace AptitudeTest.Data.Data
                         EndTime = testVM.EndTime.AddDays(1),
                         TestDuration = testVM.TestDuration,
                         Status = testVM.Status,
+                        NegativeMarkingPercentage = testVM.NegativeMarkingPercentage,
                         BasicPoint = testVM.BasicPoint,
                         MessaageAtStartOfTheTest = testVM.MessaageAtStartOfTheTest,
                         MessaageAtEndOfTheTest = testVM.MessaageAtEndOfTheTest,
@@ -150,6 +151,7 @@ namespace AptitudeTest.Data.Data
                     test.TestDuration = testVM.TestDuration;
                     test.Status = testVM.Status;
                     test.BasicPoint = testVM.BasicPoint;
+                    test.NegativeMarkingPercentage = testVM.NegativeMarkingPercentage;
                     test.MessaageAtStartOfTheTest = testVM.MessaageAtStartOfTheTest;
                     test.MessaageAtEndOfTheTest = testVM.MessaageAtEndOfTheTest;
                     test.IsRandomQuestion = testVM.IsRandomQuestion;
