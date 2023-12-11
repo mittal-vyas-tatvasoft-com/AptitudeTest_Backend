@@ -49,7 +49,7 @@ namespace AptitudeTest.Data.Data
                 using (DbConnection connection = new DbConnection())
                 {
                     var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getQuestionbyid(@question_id)", new { question_id = id });
-                    if (data.Any())
+                    if (data.Count()==0)
                     {
                         return new JsonResult(new ApiResponse<UserDetailsVM>
                         {
@@ -770,7 +770,7 @@ namespace AptitudeTest.Data.Data
             }
             else
             {
-                string? temp = _context.Questions.Where(q => q.ParentId == duplicateId && q.IsDeleted != true).Select(x => x.Sequence)
+                string? temp = _context.Questions.Where(q => q.ParentId == duplicateId && q.IsDeleted != true).Select(x => x.Sequence).ToList()
                .OrderByDescending(s => s)
                .FirstOrDefault();
                 if (temp == null)
@@ -833,7 +833,7 @@ namespace AptitudeTest.Data.Data
 
         private int getHighestSequence()
         {
-            return _context.Questions.Select(x => x.Sequence)
+            return _context.Questions.Select(x => x.Sequence).ToList()
                .OrderBy(s => int.Parse(new string(s.TakeWhile(char.IsDigit).ToArray())))
                .ThenBy(s => s)
                .Select(s => int.Parse(new string(s.TakeWhile(char.IsDigit).ToArray())))
