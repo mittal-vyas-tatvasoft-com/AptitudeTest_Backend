@@ -277,7 +277,7 @@ namespace AptitudeTest.Data.Data
                     {
                         Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
                         Result = true,
-                        StatusCode = ResponseStatusCode.OK
+                        StatusCode = ResponseStatusCode.NotFound
                     });
                 }
 
