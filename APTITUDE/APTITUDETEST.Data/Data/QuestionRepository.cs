@@ -770,7 +770,7 @@ namespace AptitudeTest.Data.Data
             }
             else
             {
-                string temp = _context.Questions.Where(q => q.ParentId == duplicateId && q.IsDeleted != true).Select(x => x.Sequence)
+                string? temp = _context.Questions.Where(q => q.ParentId == duplicateId && q.IsDeleted != true).Select(x => x.Sequence)
                .OrderByDescending(s => s)
                .FirstOrDefault();
                 if (temp == null)

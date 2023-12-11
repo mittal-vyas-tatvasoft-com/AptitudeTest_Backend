@@ -275,7 +275,16 @@ namespace AptitudeTest.Data.Data
                 if (userTestQuestionAnswer != null)
                 {
                     Test? test = GetTestOfUser(userTestQuestionAnswer.UserId);
-                    TempUserTest? tempUserTest = _appDbContext.TempUserTests.Where(x => x.UserId == userTestQuestionAnswer.UserId && x.TestId == test.Id && x.IsDeleted == false).FirstOrDefault();
+                    if (test == null)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+                    TempUserTest? tempUserTest = _appDbContext.TempUserTests.FirstOrDefault(x => x.UserId == userTestQuestionAnswer.UserId && x.TestId == test.Id && x.IsDeleted == false);
                     if (tempUserTest != null)
                     {
                         tempUserTest.TimeRemaining = userTestQuestionAnswer.TimeRemaining;
@@ -402,7 +411,7 @@ namespace AptitudeTest.Data.Data
 
                 using (DbConnection connection = new DbConnection())
                 {
-                    Test test = GetTestOfUser(userId);
+                    Test? test = GetTestOfUser(userId);
                     int? testId = test?.Id;
                     if (testId == null || testId < 1)
                     {
@@ -489,7 +498,7 @@ namespace AptitudeTest.Data.Data
                         CandidateTestAnswerVM candidateTestAnswerVM = new CandidateTestAnswerVM() { OptionId = item.OptionId, isAnswer = isAnswer };
                         candidateTestAnswerVMList.Add(candidateTestAnswerVM);
                     }
-                    if (test.IsRandomAnswer == true)
+                    if (test != null && test.IsRandomAnswer == true)
                     {
                         Shuffle<CandidateTestOptionsVM>(candidateTestQuestionVM.Options);
                     }
