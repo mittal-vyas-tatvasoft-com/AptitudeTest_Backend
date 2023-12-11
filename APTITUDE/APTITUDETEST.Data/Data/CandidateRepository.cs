@@ -424,11 +424,15 @@ namespace AptitudeTest.Data.Data
                         });
                     }
                     int[] questions = data.FirstOrDefault().Questions;
-                    if (questionId == (int)Enums.DefaultQuestionId.QuestionId)
+                    if (questionId == (int)Enums.DefaultQuestionId.QuestionId && questions.Length > 0)
                     {
                         questionId = questions.FirstOrDefault();
                     }
-                    int nextIndex = Array.IndexOf(questions, questionId) + 1;
+                    int nextIndex = 0;
+                    if (questions.Length > 0)
+                    {
+                        nextIndex = Array.IndexOf(questions, questionId) + 1;
+                    }
                     int nextQuestionId = 0;
                     int questionNumber = nextIndex;
 

@@ -10,17 +10,16 @@ using System.Text;
 
 namespace AptitudeTest.Common.Helpers
 {
-    public class JWTHelper
+    public class JwtHelper
     {
         private readonly IConfiguration _config;
 
-        public JWTHelper(IConfiguration config)
+        public JwtHelper(IConfiguration config)
         {
             _config = config;
         }
         #region 
         private static string TokenExpired = "Token has been expired please login again";
-        private static string TokenInvalid = "token is invalid";
         #endregion
 
         #region JwtGenerateToken
