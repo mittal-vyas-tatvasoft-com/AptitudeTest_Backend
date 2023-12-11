@@ -1,5 +1,6 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Controllers
@@ -25,6 +26,7 @@ namespace AptitudeTest.Controllers
             return await _service.Get();
         }
 
+        [Authorize]
         [HttpPut("[action]")]
         public async Task<JsonResult> Update(UpdateSettingsVM updateSettingsVM)
         {
