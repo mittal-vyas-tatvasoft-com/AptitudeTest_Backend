@@ -27,6 +27,15 @@ namespace AptitudeTest.Data.Data
             try
             {
                 List<QuestionModule> questionModuleslist = await Task.FromResult(_context.QuestionModule.Where(s => s.IsDeleted == null || s.IsDeleted == false).ToList());
+                if (questionModuleslist.Count == 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, "Module"),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
 
                 if (searchQuery != null)
                 {

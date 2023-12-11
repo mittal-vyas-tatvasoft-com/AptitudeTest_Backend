@@ -261,6 +261,15 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                if (addTestQuestion == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.BadRequest),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
                 Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == addTestQuestion.TestId && t.Status == (int)Common.Enums.TestStatus.Draft && t.IsDeleted == false).FirstOrDefault());
                 if (test == null)
                 {
@@ -786,7 +795,7 @@ namespace AptitudeTest.Data.Data
                 {
                     List<TestTopicWiseCountVM> data = connection.Query<TestTopicWiseCountVM>("Select * from gettopicwisequestionscount()").ToList();
                     List<QuestionsCountMarksVM> questionsCountVM;
-                    if (data != null && data.Count != 0)
+                    if (data.Any())
                     {
 
                         questionsCountVM = FillQuestionsCountData(data);
@@ -913,7 +922,7 @@ namespace AptitudeTest.Data.Data
             return (true, 0, null);
         }
 
-        private int GetQuestionDetails(IGrouping<int, TestTopicWiseCountVM> x, int questionType, int difficulty)
+        private static int GetQuestionDetails(IGrouping<int, TestTopicWiseCountVM> x, int questionType, int difficulty)
         {
             return x.Where(x => x.QuestionType == questionType && x.Difficulty == difficulty).Select(x => x.CountOfQuestions).FirstOrDefault();
         }

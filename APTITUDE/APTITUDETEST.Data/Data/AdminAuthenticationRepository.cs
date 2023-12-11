@@ -8,7 +8,6 @@ using APTITUDETEST.Core.Entities.Users;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Net.Mail;
 using System.Text;
 
 namespace AptitudeTest.Data.Data
@@ -41,7 +40,7 @@ namespace AptitudeTest.Data.Data
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
 
-                var jwtHelper = new JWTHelper(_appSettingConfiguration);
+                var jwtHelper = new JwtHelper(_appSettingConfiguration);
                 Admin? admin = _context.Admins.FirstOrDefault(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false);
                 if (admin == null)
                 {
@@ -202,7 +201,7 @@ namespace AptitudeTest.Data.Data
                 }
                 else
                 {
-                    var jwtHelper = new JWTHelper(_appSettingConfiguration);
+                    var jwtHelper = new JwtHelper(_appSettingConfiguration);
                     string accessToken = tokens.AccessToken;
                     string refreshToken = tokens.RefreshToken;
                     var principal = jwtHelper.GetPrincipleFromExpiredToken(accessToken);
@@ -253,7 +252,6 @@ namespace AptitudeTest.Data.Data
                 builder.Query = "&email=" + encryptedEmail;
                 var resetLink = builder.ToString();
 
-                var toAddress = new MailAddress(email);
                 var subject = "Password reset request";
                 var body = $"<h3>Hello {firstName}</h3>,<br />we received password reset request from your side,<br /><br />Please click on the following link to reset your password <br /><br /><a href='{resetLink}'><h3>Click here</h3></a>";
 
