@@ -10,7 +10,6 @@ namespace AptitudeTest.Core.ViewModels
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
-        [Required]
         public string MiddleName { get; set; }
         [Required]
         [RegularExpression(@"^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$", ErrorMessage = "Invalid email format.")]

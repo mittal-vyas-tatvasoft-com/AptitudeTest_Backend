@@ -8,7 +8,6 @@ namespace AptitudeTest.Core.ViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        [TestDurationMusBeValid]
         public int TestDuration { get; set; }
         [DateMustBeValid]
         public DateTime Date { get; set; }
@@ -16,6 +15,8 @@ namespace AptitudeTest.Core.ViewModels
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string Description { get; set; }
+        [Range(0, 100)]
+        public int NegativeMarkingPercentage { get; set; }
         public int BasicPoint { get; set; }
         [Range(1, 3)]
         public int Status { get; set; }

@@ -22,6 +22,7 @@ namespace AptitudeTest.Core.Entities.Test
 
         [ForeignKey("MasterGroup")]
         public int? GroupId { get; set; }
+        public int NegativeMarkingPercentage { get; set; }
         public int BasicPoint { get; set; }
         public string? MessaageAtStartOfTheTest { get; set; }
         public string? MessaageAtEndOfTheTest { get; set; }

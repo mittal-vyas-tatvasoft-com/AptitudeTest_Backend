@@ -8,7 +8,6 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
@@ -21,15 +20,13 @@ namespace AptitudeTest.Data.Data
         #region Properties
         readonly AppDbContext _context;
         private readonly DapperAppDbContext _dapperContext;
-        private readonly IConfiguration _config;
         #endregion
 
         #region Constructor
-        public QuestionRepository(AppDbContext context, IConfiguration config, DapperAppDbContext dapperContext)
+        public QuestionRepository(AppDbContext context, DapperAppDbContext dapperContext)
         {
             _context = context;
             _dapperContext = dapperContext;
-            _config = config;
         }
         #endregion
 
@@ -52,7 +49,7 @@ namespace AptitudeTest.Data.Data
                 using (DbConnection connection = new DbConnection())
                 {
                     var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getQuestionbyid(@question_id)", new { question_id = id });
-                    if (data.Count() == 0)
+                    if (data.Any())
                     {
                         return new JsonResult(new ApiResponse<UserDetailsVM>
                         {
@@ -335,7 +332,7 @@ namespace AptitudeTest.Data.Data
                         }
                         else
                         {
-                            options.OptionData = duplicateOptions.FirstOrDefault(x => x.Id == option.OptionId)!.OptionData;
+                            options.OptionData = duplicateOptions.Find(x => x.Id == option.OptionId)!.OptionData;
                         }
 
                     }
@@ -698,7 +695,7 @@ namespace AptitudeTest.Data.Data
 
         #region Helper Method
 
-        private bool ValidateQuestion(QuestionVM questionVM)
+        private static bool ValidateQuestion(QuestionVM questionVM)
         {
             if (questionVM.Options.Count == 4)
             {
@@ -736,49 +733,14 @@ namespace AptitudeTest.Data.Data
         {
             if (questionVM.OptionType == (int)Common.Enums.OptionType.ImageType)
             {
-                return !questionVM.Options.Any(option => option.OptionImage == null);
+                return !questionVM.Options.Exists(option => option.OptionImage == null);
             }
             return true;
         }
 
-        private bool DoesQuestionExists(QuestionVM questionVM)
+
+        private static bool ValidateTopics(ImportQuestionFieldsVM question)
         {
-            Question question = _context.Questions.Where(question => question.Topic == questionVM.TopicId && question.Difficulty == questionVM.Difficulty && question.QuestionText.Trim().ToLower() == questionVM.QuestionText.Trim().ToLower() && question.QuestionType == questionVM.QuestionType && question.OptionType == questionVM.OptionType && question.IsDeleted != true).FirstOrDefault();
-            if (question != null)
-            {
-                if (questionVM.OptionType == (long)Common.Enums.QuestionType.MultiAnswer)
-                {
-                    if (questionVM.DuplicateFromQuestionId != 0 && questionVM.Options.Where(option => option.OptionImage != null).Count() == 0)
-                    {
-                        return true;
-                    }
-                    return false;
-                }
-
-                List<QuestionOptions> options = _context.QuestionOptions.Where(option => option.QuestionId == question.Id).OrderBy(option => option.Id).ToList();
-                bool[] flag = new bool[] { false, false, false, false };
-                for (int i = 0; i < 4; i++)
-                {
-                    var option = options[i];
-                    foreach (var questionOption in questionVM.Options)
-                    {
-                        if (questionOption.IsAnswer == option.IsAnswer && questionOption.OptionValue?.Trim().ToLower() == option.OptionData.Trim().ToLower())
-                        {
-                            flag[i] = true;
-                            break;
-                        }
-                    }
-                    if (flag[i] == false) { break; }
-
-                }
-                return flag.All(x => x);
-            }
-            return false;
-        }
-
-        private bool ValidateTopics(ImportQuestionFieldsVM question)
-        {
-
             string topic = question.topic.Trim().ToLower();
             switch (topic)
             {
@@ -808,7 +770,7 @@ namespace AptitudeTest.Data.Data
             }
             else
             {
-                string temp = _context.Questions.Where(q => q.ParentId == duplicateId && q.IsDeleted != true).Select(x => x.Sequence).ToList()
+                string temp = _context.Questions.Where(q => q.ParentId == duplicateId && q.IsDeleted != true).Select(x => x.Sequence)
                .OrderByDescending(s => s)
                .FirstOrDefault();
                 if (temp == null)
@@ -871,20 +833,20 @@ namespace AptitudeTest.Data.Data
 
         private int getHighestSequence()
         {
-            return _context.Questions.Select(x => x.Sequence).ToList()
+            return _context.Questions.Select(x => x.Sequence)
                .OrderBy(s => int.Parse(new string(s.TakeWhile(char.IsDigit).ToArray())))
                .ThenBy(s => s)
                .Select(s => int.Parse(new string(s.TakeWhile(char.IsDigit).ToArray())))
                .LastOrDefault();
         }
 
-        private string GetValueForHeader(string[] row, string[] headers, string headerName)
+        private static string? GetValueForHeader(string[] row, string[] headers, string headerName)
         {
             var index = Array.IndexOf(headers, headerName);
             return index >= 0 && index < row.Length ? row[index] : null;
         }
 
-        private async Task<ValidateImportFileVM> checkImportedData<T>(List<T> records)
+        private static async Task<ValidateImportFileVM> checkImportedData<T>(List<T> records)
         {
             ValidateImportFileVM validate = new();
 

@@ -2,7 +2,7 @@
 
 namespace AptitudeTest.Common.Helpers
 {
-    public class RandomPasswordGenerator
+    public static class RandomPasswordGenerator
     {
         private static readonly string lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
         private static readonly string uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

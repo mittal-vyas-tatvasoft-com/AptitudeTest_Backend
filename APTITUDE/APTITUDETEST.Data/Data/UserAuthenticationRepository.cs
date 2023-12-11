@@ -7,7 +7,7 @@ using APTITUDETEST.Core.Entities.Users;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Net.Mail;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace AptitudeTest.Data.Data
@@ -17,7 +17,7 @@ namespace AptitudeTest.Data.Data
         #region Properies
         private readonly AppDbContext _context;
         static IConfiguration? _appSettingConfiguration;
-        public static Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
+        private readonly Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
         #endregion
 
         #region Constructor
@@ -39,7 +39,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
-                var jwtHelper = new JWTHelper(_appSettingConfiguration);
+                var jwtHelper = new JwtHelper(_appSettingConfiguration);
                 User? user = _context.Users.Where(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false)?.FirstOrDefault();
                 if (user == null)
                 {
@@ -220,13 +220,18 @@ namespace AptitudeTest.Data.Data
                 }
                 else
                 {
-                    var jwtHelper = new JWTHelper(_appSettingConfiguration);
-                    string accessToken = tokens.AccessToken;
-                    string refreshToken = tokens.RefreshToken;
-                    var principal = jwtHelper.GetPrincipleFromExpiredToken(accessToken);
-                    var allClaims = principal.Claims.ToList();
-                    var email = allClaims[4].Value;
-                    var tokenssss = RefreshTokens.GetValueOrDefault(email);
+                    string email = string.Empty;
+                    var jwtHelper = new JwtHelper(_appSettingConfiguration);
+                    string? accessToken = tokens.AccessToken;
+                    string? refreshToken = tokens.RefreshToken;
+                    if (!accessToken.IsNullOrEmpty())
+                    {
+                        var principal = jwtHelper.GetPrincipleFromExpiredToken(accessToken);
+                        var allClaims = principal.Claims.ToList();
+                        email = allClaims[4].Value;
+                    }
+
+                    RefreshTokens.GetValueOrDefault(email);
                     var user = await _context.Users.FirstOrDefaultAsync(U => U.Email == email);
                     if (user == null || RefreshTokens[email].RefreshToken != refreshToken || RefreshTokens[email].RefreshTokenExpiryTime <= DateTime.Now)
                     {
@@ -256,7 +261,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region SendEmail
-        private bool SendMailForResetPassword(string firstName, string email)
+        private static bool SendMailForResetPassword(string firstName, string email)
         {
             try
             {
@@ -269,7 +274,6 @@ namespace AptitudeTest.Data.Data
                 builder.Query = "&email=" + encryptedEmail;
                 var resetLink = builder.ToString();
 
-                var toAddress = new MailAddress(email);
                 var subject = "Password reset request";
                 var body = $"<h3>Hello {firstName}</h3>,<br />we received password reset request from your side,<br /><br />Please click on the following link to reset your password <br /><br /><a href='{resetLink}'><h3>Click here</h3></a>";
 

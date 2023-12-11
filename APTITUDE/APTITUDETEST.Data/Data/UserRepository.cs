@@ -11,6 +11,7 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using NpgsqlTypes;
 using System.ComponentModel.DataAnnotations;
@@ -326,7 +327,7 @@ namespace AptitudeTest.Data.Data
                         p_useracademicsdata = user.UserAcademicsVM.ToArray()
                     });
 
-                    connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                    connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure);
 
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -468,7 +469,7 @@ namespace AptitudeTest.Data.Data
                         p_status = userStatusVM.status
                     });
 
-                    connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                    connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure);
 
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -504,7 +505,7 @@ namespace AptitudeTest.Data.Data
                         p_userids = userIds.ToArray()
                     });
 
-                    connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                    connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure);
 
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -540,9 +541,12 @@ namespace AptitudeTest.Data.Data
                     var csvContent = new List<string[]>();
                     while (!reader.EndOfStream)
                     {
-                        var line = reader.ReadLine();
-                        var values = line.Split(',');
-                        csvContent.Add(values);
+                        string? line = reader.ReadLine();
+                        if (!line.IsNullOrEmpty())
+                        {
+                            var values = line!.Split(',');
+                            csvContent.Add(values);
+                        }
 
                     }
                     var headers = csvContent.FirstOrDefault();
@@ -597,7 +601,7 @@ namespace AptitudeTest.Data.Data
                         }
 
 
-                        if (checkData.isValidate == false)
+                        if (!checkData.isValidate)
                         {
                             return new JsonResult(new ApiResponse<List<string>>
                             {
@@ -635,7 +639,7 @@ namespace AptitudeTest.Data.Data
 
                                 result = connection.Query<ImportCandidateResponseVM>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
 
-                                if (result.candidates_added_count == 0)
+                                if (result != null && result.candidates_added_count == 0)
                                 {
                                     return new JsonResult(new ApiResponse<int>
                                     {
@@ -648,11 +652,17 @@ namespace AptitudeTest.Data.Data
                                 foreach (var email in insertedEmails)
                                 {
                                     var password = RandomPasswordGenerator.GenerateRandomPassword(8);
-                                    User user = _appDbContext.Users.Where(u => u.Email == email).FirstOrDefault();
-                                    user.Password = password;
+                                    User? user = _appDbContext.Users.FirstOrDefault(u => u.Email == email);
+                                    if (user != null)
+                                    {
+                                        user.Password = password;
+                                    }
                                     _appDbContext.SaveChanges();
-                                    var record = records.Where(r => r.email == email).FirstOrDefault();
-                                    bool isMailSent = SendMailForPassword(record.firstname, email, password);
+                                    var record = records.FirstOrDefault(r => r.email == email);
+                                    if (record != null)
+                                    {
+                                        SendMailForPassword(record.firstname, email, password);
+                                    }
                                 }
                             }
 
@@ -754,7 +764,7 @@ namespace AptitudeTest.Data.Data
 
         #region HelpingMethods
 
-        private void FillUserData(UserDetailsVM userDetails, dynamic data)
+        private static void FillUserData(UserDetailsVM userDetails, dynamic data)
         {
             var userData = data[0];
             userDetails.UserId = userData.userid ?? 0;
@@ -769,7 +779,7 @@ namespace AptitudeTest.Data.Data
             userDetails.Email = userData.email ?? "";
             userDetails.Password = userData.password ?? "";
             userDetails.PhoneNumber = userData.phonenumber ?? 0;
-            userDetails.DateOfBirth = userData.dateofbirth ?? new DateTime();
+            userDetails.DateOfBirth = userData.dateofbirth ?? DateTimeKind.Utc;
             userDetails.PermanentAddress1 = userData.permanentaddress1 ?? "";
             userDetails.PermanentAddress2 = userData.permanentaddress ?? "";
             userDetails.Pincode = userData.pincode ?? 0;
@@ -786,7 +796,7 @@ namespace AptitudeTest.Data.Data
             userDetails.CreatedYear = userData.createdyear ?? 0;
         }
 
-        private void FillAcademicAndFamilyData(dynamic data, UserDetailsVM userDetails, List<int> acadamicIds, List<int> familyIds)
+        private static void FillAcademicAndFamilyData(dynamic data, UserDetailsVM userDetails, List<int> acadamicIds, List<int> familyIds)
         {
             foreach (var entity in data)
             {
@@ -864,7 +874,7 @@ namespace AptitudeTest.Data.Data
         }
 
         #region validationImportedUsers
-        private async Task<ValidateImportFileVM> checkImportedData(List<UserImportVM> records)
+        private static async Task<ValidateImportFileVM> checkImportedData(List<UserImportVM> records)
         {
 
             ValidateImportFileVM validate = new();
@@ -888,7 +898,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
 
-        private string GetValueForHeader(string[] row, string[] headers, string headerName)
+        private static string GetValueForHeader(string[] row, string[] headers, string headerName)
         {
             var index = Array.IndexOf(headers, headerName);
             return index >= 0 && index < row.Length ? row[index] : null;
