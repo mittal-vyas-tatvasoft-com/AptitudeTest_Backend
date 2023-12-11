@@ -206,7 +206,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Test testAlreadyExists = _context.Tests.Where(t => t.Id != updateTest.TestId && t.GroupId == updateTest.GroupId && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
+                Test? testAlreadyExists = _context.Tests.Where(t => t.Id != updateTest.TestId && t.GroupId == updateTest.GroupId && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
                 if (testAlreadyExists != null)
                 {
                     testAlreadyExists.GroupId = updateTest.GroupId;
@@ -880,7 +880,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Helper Method
-        private (bool, int, string) doesQuestionsAvailableInDB(TestQuestionsVM addTestQuestion)
+        private (bool, int, string?) doesQuestionsAvailableInDB(TestQuestionsVM addTestQuestion)
         {
             var questions = _context.Questions.Where(t => t.Topic == addTestQuestion.TopicId && t.IsDeleted == false).ToList();
             Func<TestQuestionsCountVM, int> func = x => x.OneMarkQuestion;

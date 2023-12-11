@@ -26,7 +26,7 @@ namespace AptitudeTest.Data.Data
             try
             {
 
-                SettingConfigurations settingConfigurations = await Task.FromResult(_context.SettingConfigurations.FirstOrDefault());
+                SettingConfigurations? settingConfigurations = await Task.FromResult(_context.SettingConfigurations.FirstOrDefault());
                 return new JsonResult(new ApiResponse<SettingConfigurations>
                 {
                     Data = settingConfigurations,
@@ -52,7 +52,16 @@ namespace AptitudeTest.Data.Data
             try
             {
 
-                SettingConfigurations settingConfigurations = await Task.FromResult(_context.SettingConfigurations.FirstOrDefault());
+                SettingConfigurations? settingConfigurations = await Task.FromResult(_context.SettingConfigurations.FirstOrDefault());
+                if (settingConfigurations == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Setting),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
                 settingConfigurations.UserRegistration = updateSettingsVM.UserRegistration;
                 settingConfigurations.Camera = updateSettingsVM.Camera;
                 settingConfigurations.ScreenCapture = updateSettingsVM.ScreenCapture;

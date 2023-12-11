@@ -730,7 +730,7 @@ namespace AptitudeTest.Data.Data
                         int count = _appDbContext.SaveChanges();
                         if (count == 1)
                         {
-                            bool mailSent = SendMailAfterPasswordChangeByAdmin(user.FirstName, user.Email, user.Password);
+                            bool mailSent = SendMailAfterPasswordChangeByAdmin(user.Email, user.Password);
                             if (mailSent)
                             {
                                 return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.PasswordUpdatedSuccess, Result = true, StatusCode = ResponseStatusCode.Success });
@@ -841,7 +841,7 @@ namespace AptitudeTest.Data.Data
         }
 
         #region SendEmail
-        private bool SendMailAfterPasswordChangeByAdmin(string firstName, string email, string password)
+        private bool SendMailAfterPasswordChangeByAdmin(string email, string password)
         {
             try
             {
