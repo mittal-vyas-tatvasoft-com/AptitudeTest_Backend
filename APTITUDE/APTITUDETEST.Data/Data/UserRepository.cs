@@ -779,7 +779,7 @@ namespace AptitudeTest.Data.Data
             userDetails.Email = userData.email ?? "";
             userDetails.Password = userData.password ?? "";
             userDetails.PhoneNumber = userData.phonenumber ?? 0;
-            userDetails.DateOfBirth = userData.dateofbirth ?? DateTimeKind.Utc;
+            userDetails.DateOfBirth = userData.dateofbirth ?? "";
             userDetails.PermanentAddress1 = userData.permanentaddress1 ?? "";
             userDetails.PermanentAddress2 = userData.permanentaddress ?? "";
             userDetails.Pincode = userData.pincode ?? 0;
