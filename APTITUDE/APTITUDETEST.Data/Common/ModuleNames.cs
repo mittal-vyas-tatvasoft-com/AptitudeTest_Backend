@@ -109,7 +109,7 @@
         {
             get
             {
-                return _Degree;
+                return _TempUserTestResult;
             }
         }
 
