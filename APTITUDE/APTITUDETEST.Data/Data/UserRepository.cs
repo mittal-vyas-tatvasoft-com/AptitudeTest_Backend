@@ -721,33 +721,33 @@ namespace AptitudeTest.Data.Data
                 }
                 if (!string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Password))
                 {
-                    User? user = _appDbContext.Users.Where(u => u.Email == Email.Trim() && u.IsDeleted == false).FirstOrDefault();
-                    if (user == null)
+                    User? user = _appDbContext.Users.Where(u => u.Email == Email.Trim() && u.IsDeleted == false)?.FirstOrDefault();
+                    if (user != null)
                     {
-                        return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
-                    }
-                    user.Password = Password;
-                    user.UpdatedDate = DateTime.UtcNow;
-                    user.UpdatedBy = 1;
-                    int count = _appDbContext.SaveChanges();
-                    if (count == 1)
-                    {
-                        bool mailSent = SendMailAfterPasswordChangeByAdmin(user.Email, user.Password);
-                        if (mailSent)
+                        user.Password = Password;
+                        user.UpdatedDate = DateTime.UtcNow;
+                        user.UpdatedBy = 1;
+                        int count = _appDbContext.SaveChanges();
+                        if (count == 1)
                         {
-                            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.PasswordUpdatedSuccess, Result = true, StatusCode = ResponseStatusCode.Success });
-                        }
-                        else
-                        {
-                            return new JsonResult(new ApiResponse<string>
+                            bool mailSent = SendMailAfterPasswordChangeByAdmin(user.Email, user.Password);
+                            if (mailSent)
                             {
-                                Message = ResponseMessages.InternalError,
-                                Result = false,
-                                StatusCode = ResponseStatusCode.RequestFailed
-                            });
+                                return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.PasswordUpdatedSuccess, Result = true, StatusCode = ResponseStatusCode.Success });
+                            }
+                            else
+                            {
+                                return new JsonResult(new ApiResponse<string>
+                                {
+                                    Message = ResponseMessages.InternalError,
+                                    Result = false,
+                                    StatusCode = ResponseStatusCode.RequestFailed
+                                });
+                            }
                         }
                     }
                 }
+                return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
             }
             catch
             {
