@@ -54,7 +54,7 @@ namespace AptitudeTest.Data.Data
                     using (var connection = new NpgsqlConnection(connectionString))
                     {
                         connection.Open();
-                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getallUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, CollegeId = (object)CollegeId!, GroupId = (object)GroupId!, Status = Status, YearFilter = Year, SortField = sortField, SortOrder = sortOrder, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
+                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getallUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, YearFilter = Year, SortField = sortField, SortOrder = sortOrder, PageNumber = currentPageIndex, PageSize = pageSize }).ToList();
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
@@ -70,7 +70,7 @@ namespace AptitudeTest.Data.Data
                     using (var connection = new NpgsqlConnection(connectionString))
                     {
                         connection.Open();
-                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getallUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = "", CollegeId = (object)CollegeId!, GroupId = (object)GroupId!, Status = Status, YearFilter = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
+                        List<UserViewModel> data = connection.Query<UserViewModel>("Select * from getallUsers(@SearchQuery,@CollegeId,@GroupId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = "", CollegeId = (object)CollegeId, GroupId = (object)GroupId, Status = Status, YearFilter = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                         connection.Close();
                         return new JsonResult(new ApiResponse<List<UserViewModel>>
                         {
@@ -721,33 +721,33 @@ namespace AptitudeTest.Data.Data
                 }
                 if (!string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Password))
                 {
-                    User? user = _appDbContext.Users.Where(u => u.Email == Email.Trim() && u.IsDeleted == false)?.FirstOrDefault();
-                    if (user != null)
+                    User? user = _appDbContext.Users.Where(u => u.Email == Email.Trim() && u.IsDeleted == false).FirstOrDefault();
+                    if (user == null)
                     {
-                        user.Password = Password;
-                        user.UpdatedDate = DateTime.UtcNow;
-                        user.UpdatedBy = 1;
-                        int count = _appDbContext.SaveChanges();
-                        if (count == 1)
+                        return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+                    }
+                    user.Password = Password;
+                    user.UpdatedDate = DateTime.UtcNow;
+                    user.UpdatedBy = 1;
+                    int count = _appDbContext.SaveChanges();
+                    if (count == 1)
+                    {
+                        bool mailSent = SendMailAfterPasswordChangeByAdmin(user.Email, user.Password);
+                        if (mailSent)
                         {
-                            bool mailSent = SendMailAfterPasswordChangeByAdmin(user.Email, user.Password);
-                            if (mailSent)
+                            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.PasswordUpdatedSuccess, Result = true, StatusCode = ResponseStatusCode.Success });
+                        }
+                        else
+                        {
+                            return new JsonResult(new ApiResponse<string>
                             {
-                                return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.PasswordUpdatedSuccess, Result = true, StatusCode = ResponseStatusCode.Success });
-                            }
-                            else
-                            {
-                                return new JsonResult(new ApiResponse<string>
-                                {
-                                    Message = ResponseMessages.InternalError,
-                                    Result = false,
-                                    StatusCode = ResponseStatusCode.RequestFailed
-                                });
-                            }
+                                Message = ResponseMessages.InternalError,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.RequestFailed
+                            });
                         }
                     }
                 }
-                return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
             }
             catch
             {
