@@ -6,7 +6,7 @@ namespace AptitudeTest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+     [Authorize]
     public class ResultsController : ControllerBase
     {
         #region Properties
@@ -33,6 +33,23 @@ namespace AptitudeTest.Controllers
         public async Task<JsonResult> Get(int id, int marks, int pageSize, int pageIndex)
         {
             return await _service.Get(id, marks, pageSize, pageIndex);
+        }
+
+        /// <summary>
+        /// Get All Tests
+        /// </summary>
+        /// <param name="searchQuery"></param>
+        /// <param name="testId"></param>
+        /// <param name="groupId"></param>
+        /// <param name="collegeId"></param>
+        /// <param name="year"></param>
+        /// <param name="currentPageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        [HttpGet("{currentPageIndex:int}/{pageSize:int}")]
+        public async Task<JsonResult> GetResults(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
+        {
+            return await _service.GetResults(searchQuery, testId, groupId, collegeId, year, currentPageIndex, pageSize, sortField, sortOrder);
         }
         #endregion
     }
