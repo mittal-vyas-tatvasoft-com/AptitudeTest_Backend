@@ -423,7 +423,7 @@ namespace AptitudeTest.Data.Data
                         });
                     }
                     var data = await connection.Connection.QueryAsync<UserTestQuestionModelVM>("select * from getCandidateTestquestion(@question_id,@user_id,@test_id)", new { question_id = questionId, user_id = userId, test_id = testId });
-                    if (data == null || data.Any())
+                    if (data == null || !data.Any())
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
