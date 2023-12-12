@@ -3,6 +3,9 @@
     public class ResultsVM
     {
         public int UserId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime StartTime { get; set; }
         public int Points { get; set; }
         public int CorrectMarks { get; set; }
         public int CorrectCount { get; set; }
