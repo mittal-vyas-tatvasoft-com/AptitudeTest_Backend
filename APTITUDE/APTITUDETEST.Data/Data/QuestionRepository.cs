@@ -49,7 +49,7 @@ namespace AptitudeTest.Data.Data
                 using (DbConnection connection = new DbConnection())
                 {
                     var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getQuestionbyid(@question_id)", new { question_id = id });
-                    if (data.Count()==0)
+                    if (data.Count() == 0)
                     {
                         return new JsonResult(new ApiResponse<UserDetailsVM>
                         {
