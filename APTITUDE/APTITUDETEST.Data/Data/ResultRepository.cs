@@ -12,15 +12,13 @@ namespace AptitudeTest.Data.Data
     public class ResultRepository : IResultRepository
     {
         #region Properties
-        private readonly AppDbContext _context;
-        private readonly IConfiguration _config;
         private readonly string? connectionString;
         #endregion
 
         #region Constructor
         public ResultRepository(AppDbContext context, IConfiguration config)
         {
-            _context = context;
+            IConfiguration _config;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
         }
