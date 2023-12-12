@@ -49,7 +49,7 @@ namespace APTITUDETEST.Core.Entities.Users
         public DateTime? UpdatedDate { get; set; }
         public int? UpdatedBy { get; set; }
         public bool? IsDeleted { get; set; } = false;
-        public bool? IsLoggedIn { get; set; } = false;
+        public string? SessionId { get; set; }
         public virtual MasterGroup MasterGroups { get; set; }
         public virtual MasterTechnology MasterTechnologies { get; set; }
         public virtual MasterCollege MasterColleges { get; set; }
