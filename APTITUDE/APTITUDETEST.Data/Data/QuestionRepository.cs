@@ -49,7 +49,7 @@ namespace AptitudeTest.Data.Data
                 using (DbConnection connection = new DbConnection())
                 {
                     var data = await connection.Connection.QueryAsync<QuestionDataVM>("select * from getQuestionbyid(@question_id)", new { question_id = id });
-                    if (data.Count()==0)
+                    if (data.Count() == 0)
                     {
                         return new JsonResult(new ApiResponse<UserDetailsVM>
                         {
@@ -167,9 +167,9 @@ namespace AptitudeTest.Data.Data
                         {
                             PageCount = (int)temp?.TotalPages;
                             totalItemsCount = (int)temp?.TotalRecords;
-                            isNextPage = temp?.NextPage == null ? false : true;
+                            isNextPage = IsNextPage(temp);
                         }
-                        bool isPreviousPage = pageIndex == (int)Enums.Pagination.DefaultIndex ? false : true;
+                        bool isPreviousPage = IsPreviousPage(pageIndex);
 
                         PaginationVM<QuestionVM> pagination = new PaginationVM<QuestionVM>()
                         {
@@ -864,6 +864,16 @@ namespace AptitudeTest.Data.Data
                 }
             }
             return validate;
+        }
+
+        private bool IsNextPage(QuestionDataVM temp)
+        {
+            return temp?.NextPage == null ? false : true;
+        }
+
+        private bool IsPreviousPage(int pageIndex)
+        {
+            return pageIndex == (int)Enums.Pagination.DefaultIndex ? false : true;
         }
 
         #endregion

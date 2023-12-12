@@ -37,7 +37,7 @@ namespace AptitudeTest.Data.Data
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
-                    List<TestsViewModel> data = connection.Query<TestsViewModel>("Select * from getalltests(@SearchQuery,@GroupId,@Status,@DateFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, Status = Status, DateFilter = dateParameter.Value, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    List<TestsViewModel> data = connection.Query<TestsViewModel>("Select * from getalltests(@SearchQuery,@GroupId,@Status,@DateFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId, Status = Status, DateFilter = dateParameter.Value, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                     connection.Close();
                     return new JsonResult(new ApiResponse<List<TestsViewModel>>
                     {
