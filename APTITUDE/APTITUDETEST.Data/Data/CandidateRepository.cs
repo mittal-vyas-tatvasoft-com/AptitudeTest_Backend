@@ -106,89 +106,80 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (userId != 0)
+                if (userId <= 0)
                 {
-                    Test? test = GetTestOfUser(userId);
-                    if (test != null)
+                    return new JsonResult(new ApiResponse<string>
                     {
-                        TempUserTest? tempUserTestAlreadyExists = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && x.IsDeleted == false).FirstOrDefault();
-                        if (tempUserTestAlreadyExists == null)
-                        {
-                            TimeSpan difference = DateTime.UtcNow - test.StartTime;
-                            int timeRamining = test.TestDuration - (int)difference.TotalMinutes;
-
-                            TempUserTest tempUserTestToBeAdded = new TempUserTest()
-                            {
-                                UserId = userId,
-                                TestId = test.Id,
-                                Status = true,
-                                TimeRemaining = timeRamining,
-                                IsAdminApproved = false,
-                                IsFinished = false,
-                                CreatedBy = userId,
-                            };
-
-                            _appDbContext.Add(tempUserTestToBeAdded);
-                            int count = _appDbContext.SaveChanges();
-                            if (count == 1)
-                            {
-                                bool result = AddTestQuestionsToUser(userId, tempUserTestToBeAdded.Id, test.Id);
-                                if (result)
-                                {
-                                    return new JsonResult(new ApiResponse<string>
-                                    {
-                                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.TempUserTest) + string.Format(ResponseMessages.AddSuccess, ModuleNames.TestQuestions),
-                                        Result = true,
-                                        StatusCode = ResponseStatusCode.OK
-                                    });
-                                }
-                                else
-                                {
-                                    return new JsonResult(new ApiResponse<string>
-                                    {
-                                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.TempUserTest) + string.Format(ResponseMessages.InternalErrorForAddingQuestionsToTest),
-                                        Result = true,
-                                        StatusCode = ResponseStatusCode.OK
-                                    });
-                                }
-
-                            }
-                            else
-                            {
-                                return new JsonResult(new ApiResponse<string>
-                                {
-                                    Message = ResponseMessages.InternalError,
-                                    Result = false,
-                                    StatusCode = ResponseStatusCode.InternalServerError
-                                });
-                            }
-                        }
-                        else
-                        {
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.TempUserTest),
-                                Result = false,
-                                StatusCode = ResponseStatusCode.AlreadyExist
-                            });
-                        }
-                    }
-                    else
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                Test? test = GetTestOfUser(userId);
+                if (test == null)
+                {
+                    return new JsonResult(new ApiResponse<Admin>
                     {
-                        return new JsonResult(new ApiResponse<Admin>
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                TempUserTest? tempUserTestAlreadyExists = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && x.IsDeleted == false).FirstOrDefault();
+                if (tempUserTestAlreadyExists != null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.TempUserTest),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+                TimeSpan difference = DateTime.UtcNow - test.StartTime;
+                int timeRamining = test.TestDuration - (int)difference.TotalMinutes;
+
+                TempUserTest tempUserTestToBeAdded = new TempUserTest()
+                {
+                    UserId = userId,
+                    TestId = test.Id,
+                    Status = true,
+                    TimeRemaining = timeRamining,
+                    IsAdminApproved = false,
+                    IsFinished = false,
+                    CreatedBy = userId,
+                };
+
+                _appDbContext.Add(tempUserTestToBeAdded);
+                int count = _appDbContext.SaveChanges();
+                if (count == 1)
+                {
+                    bool result = AddTestQuestionsToUser(userId, tempUserTestToBeAdded.Id, test.Id);
+                    if (!result)
+                    {
+                        return new JsonResult(new ApiResponse<string>
                         {
-                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.NotFound
+                            Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.TempUserTest) + string.Format(ResponseMessages.InternalErrorForAddingQuestionsToTest),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.OK
                         });
                     }
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.TempUserTest) + string.Format(ResponseMessages.AddSuccess, ModuleNames.TestQuestions),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
+
                 }
-                return new JsonResult(new ApiResponse<string>
+                else
                 {
-                    Message = ResponseMessages.BadRequest,
-                    Result = false,
-                    StatusCode = ResponseStatusCode.BadRequest
-                });
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.InternalError,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.InternalServerError
+                    });
+                }
             }
             catch
             {
@@ -272,81 +263,73 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (userTestQuestionAnswer != null)
+                if (userTestQuestionAnswer == null)
                 {
-                    Test? test = GetTestOfUser(userTestQuestionAnswer.UserId);
-                    if (test == null)
+                    return new JsonResult(new ApiResponse<string>
                     {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.NotFound
-                        });
-                    }
-                    TempUserTest? tempUserTest = _appDbContext.TempUserTests.FirstOrDefault(x => x.UserId == userTestQuestionAnswer.UserId && x.TestId == test.Id && x.IsDeleted == false);
-                    if (tempUserTest != null)
-                    {
-                        tempUserTest.TimeRemaining = userTestQuestionAnswer.TimeRemaining;
-                        _appDbContext.SaveChanges();
-
-                        TempUserTestResult? tempUserTestQuestion = _appDbContext.TempUserTestResult.Where(x => x.UserTestId == tempUserTest.Id && x.QuestionId == userTestQuestionAnswer.QuestionId && x.IsDeleted == false).FirstOrDefault();
-
-                        if (tempUserTestQuestion != null)
-                        {
-                            tempUserTestQuestion.UserAnswers = userTestQuestionAnswer.UserAnswers?.Length != 0 ? userTestQuestionAnswer.UserAnswers : null;
-                            tempUserTestQuestion.IsAttended = userTestQuestionAnswer.IsAttended;
-                            tempUserTestQuestion.UpdatedDate = DateTime.UtcNow;
-                            tempUserTestQuestion.UpdatedBy = userTestQuestionAnswer.UserId;
-
-                            int count = _appDbContext.SaveChanges();
-                            if (count == 1)
-                            {
-                                return new JsonResult(new ApiResponse<string>
-                                {
-                                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TempUserTestResult),
-                                    Result = true,
-                                    StatusCode = ResponseStatusCode.Success
-                                });
-                            }
-                            else
-                            {
-                                return new JsonResult(new ApiResponse<string>
-                                {
-                                    Message = ResponseMessages.InternalError,
-                                    Result = false,
-                                    StatusCode = ResponseStatusCode.InternalServerError
-                                });
-                            }
-                        }
-                        else
-                        {
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = string.Format(ResponseMessages.NotFound, ModuleNames.UserTestResult),
-                                Result = false,
-                                StatusCode = ResponseStatusCode.NotFound
-                            });
-                        }
-
-                    }
-                    else
-                    {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.UserTest),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.NotFound
-                        });
-                    }
-
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
                 }
-                return new JsonResult(new ApiResponse<string>
+                Test? test = GetTestOfUser(userTestQuestionAnswer.UserId);
+                if (test == null)
                 {
-                    Message = ResponseMessages.BadRequest,
-                    Result = false,
-                    StatusCode = ResponseStatusCode.BadRequest
-                });
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                TempUserTest? tempUserTest = _appDbContext.TempUserTests.FirstOrDefault(x => x.UserId == userTestQuestionAnswer.UserId && x.TestId == test.Id && x.IsDeleted == false);
+                if (tempUserTest == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.UserTest),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                tempUserTest.TimeRemaining = userTestQuestionAnswer.TimeRemaining;
+                _appDbContext.SaveChanges();
+
+                TempUserTestResult? tempUserTestQuestion = _appDbContext.TempUserTestResult.Where(x => x.UserTestId == tempUserTest.Id && x.QuestionId == userTestQuestionAnswer.QuestionId && x.IsDeleted == false).FirstOrDefault();
+                if (tempUserTestQuestion == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.UserTestResult),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                tempUserTestQuestion.UserAnswers = userTestQuestionAnswer.UserAnswers?.Length != 0 ? userTestQuestionAnswer.UserAnswers : null;
+                tempUserTestQuestion.IsAttended = userTestQuestionAnswer.IsAttended;
+                tempUserTestQuestion.UpdatedDate = DateTime.UtcNow;
+                tempUserTestQuestion.UpdatedBy = userTestQuestionAnswer.UserId;
+
+                int count = _appDbContext.SaveChanges();
+                if (count == 1)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TempUserTestResult),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.InternalError,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.InternalServerError
+                    });
+                }
+
             }
             catch
             {
@@ -396,10 +379,9 @@ namespace AptitudeTest.Data.Data
 
         public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId)
         {
-
             try
             {
-                if ((questionId != (int)Enums.DefaultQuestionId.QuestionId && questionId < 1) || (userId < 1))
+                if (IsQuestionIdAndUserIdInvalid(questionId, userId))
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -412,7 +394,7 @@ namespace AptitudeTest.Data.Data
                 using (DbConnection connection = new DbConnection())
                 {
                     Test? test = GetTestOfUser(userId);
-                    int? testId = test?.Id;
+                    int? testId = test.Id;
                     if (testId == null || testId < 1)
                     {
                         return new JsonResult(new ApiResponse<string>
@@ -433,10 +415,8 @@ namespace AptitudeTest.Data.Data
                         });
                     }
                     int[] questions = data.FirstOrDefault().Questions;
-                    if (questionId == (int)Enums.DefaultQuestionId.QuestionId && questions.Length > 0)
-                    {
-                        questionId = questions.FirstOrDefault();
-                    }
+                    questionId = SetQuestionId(questionId, questions);
+
                     int nextIndex = 0;
                     if (questions.Length > 0)
                     {
@@ -492,7 +472,7 @@ namespace AptitudeTest.Data.Data
                         bool isAnswer = false;
                         if (question.Answer != null)
                         {
-                            isAnswer = Array.IndexOf(question.Answer, item.OptionId) > -1 ? true : false;
+                            isAnswer = IsAnswer(question, item);
                         }
 
                         CandidateTestAnswerVM candidateTestAnswerVM = new CandidateTestAnswerVM() { OptionId = item.OptionId, isAnswer = isAnswer };
@@ -524,6 +504,8 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+
 
         public async Task<JsonResult> GetQuestionsStatus(int userId)
         {
@@ -598,16 +580,9 @@ namespace AptitudeTest.Data.Data
                         {
                             totalCount++;
                             int status = 0;
-                            if (item.IsAttended && item.UserAnswers == null)
-                            {
-                                unAnswered++;
-                                status = (int)Enums.QuestionStatus.Skipped;
-                            }
-                            else if (item.IsAttended && item.UserAnswers != null)
-                            {
-                                answered++;
-                                status = (int)Enums.QuestionStatus.Answered;
-                            }
+                            unAnswered = unAnswered + IsQuestionUnanswered(item);
+                            answered = answered + IsQuestionAnswered(item);
+                            status = GetStatusOfQuestion(item);
                             data.Add(new QuestionStatusVM()
                             {
                                 QuestionId = item.QuestionId,
@@ -647,6 +622,8 @@ namespace AptitudeTest.Data.Data
             }
 
         }
+
+
 
         public async Task<JsonResult> EndTest(int userId)
         {
@@ -922,6 +899,66 @@ namespace AptitudeTest.Data.Data
                 list[j] = temp;
             }
         }
+
+        private static bool IsQuestionIdAndUserIdInvalid(int questionId, int userId)
+        {
+            if ((questionId != (int)Enums.DefaultQuestionId.QuestionId && questionId < 1) || (userId < 1))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private static int SetQuestionId(int questionId, int[]? questions)
+        {
+            if (questionId == (int)Enums.DefaultQuestionId.QuestionId && questions.Length > 0)
+            {
+                questionId = questions.FirstOrDefault();
+            }
+            return questionId;
+        }
+
+        private static bool IsAnswer(UserTestQuestionModelVM question, CandidateTestOptionsVM item)
+        {
+            if (Array.IndexOf(question.Answer, item.OptionId) > -1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private static int GetStatusOfQuestion(TempQuestionStatusVM item)
+        {
+            int status = 0;
+            if (item.IsAttended && item.UserAnswers == null)
+            {
+                status = (int)Enums.QuestionStatus.Skipped;
+            }
+            else if (item.IsAttended && item.UserAnswers != null)
+            {
+                status = (int)Enums.QuestionStatus.Answered;
+            }
+            return status;
+        }
+
+        private static int IsQuestionAnswered(TempQuestionStatusVM item)
+        {
+            if (item.IsAttended && item.UserAnswers != null)
+            {
+                return 1;
+            }
+            return 0;
+        }
+
+        private int IsQuestionUnanswered(TempQuestionStatusVM item)
+        {
+            if (item.IsAttended && item.UserAnswers == null)
+            {
+                return 1;
+            }
+            return 0;
+        }
+
         #endregion
     }
 }
