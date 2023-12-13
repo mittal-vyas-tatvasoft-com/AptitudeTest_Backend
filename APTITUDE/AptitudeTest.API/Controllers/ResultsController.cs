@@ -6,7 +6,7 @@ namespace AptitudeTest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-     [Authorize]
+    [Authorize]
     public class ResultsController : ControllerBase
     {
         #region Properties
@@ -36,7 +36,7 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
-        /// Get All Tests
+        /// Get All TestResults
         /// </summary>
         /// <param name="searchQuery"></param>
         /// <param name="testId"></param>
@@ -50,6 +50,23 @@ namespace AptitudeTest.Controllers
         public async Task<JsonResult> GetResults(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
         {
             return await _service.GetResults(searchQuery, testId, groupId, collegeId, year, currentPageIndex, pageSize, sortField, sortOrder);
+        }
+
+        /// <summary>
+        /// Get All TestResults Statistics
+        /// </summary>
+        /// <param name="searchQuery"></param>
+        /// <param name="testId"></param>
+        /// <param name="groupId"></param>
+        /// <param name="collegeId"></param>
+        /// <param name="year"></param>
+        /// <param name="currentPageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        [HttpGet("{currentPageIndex}")]
+        public async Task<JsonResult> GetResultStatistics(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year, int? currentPageIndex, string? sortField, string? sortOrder)
+        {
+            return await _service.GetResultStatistics(searchQuery, testId, groupId, collegeId, year, currentPageIndex, sortField, sortOrder);
         }
         #endregion
     }
