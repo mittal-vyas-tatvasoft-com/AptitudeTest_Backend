@@ -71,6 +71,8 @@ builder.Services.AddTransient<ISettingsService, SettingsService>();
 builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
 builder.Services.AddTransient<IResultService, ResultService>();
 builder.Services.AddScoped<IResultRepository, ResultRepository>();
+builder.Services.AddTransient<IScreenCaptureService, ScreenCaptureService>();
+builder.Services.AddScoped<IScreenCaptureRepository, ScreenCaptureRepository>();
 
 builder.Services.AddTransient<ISessionIdHelperInMemoryService, SessionIdHelperInMemoryService>();
 
