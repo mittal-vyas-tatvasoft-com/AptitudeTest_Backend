@@ -539,154 +539,11 @@ namespace AptitudeTest.Data.Data
                     List<UserImportVM> records = new List<UserImportVM>();
 
                     var csvContent = new List<string[]>();
-                    while (!reader.EndOfStream)
-                    {
-                        string? line = reader.ReadLine();
-                        if (!line.IsNullOrEmpty())
-                        {
-                            var values = line!.Split(',');
-                            csvContent.Add(values);
-                        }
-
-                    }
+                    csvContent = GetCsvContent(reader);
                     var headers = csvContent.FirstOrDefault();
-                    if (headers != null)
-                    {
-                        foreach (var item in csvContent.Skip(1))
-                        {
-                            if (item.Length > 1)
-                            {
+                    records = GetRecords(headers, csvContent);
 
-                                var viewModel = new UserImportVM
-                                {
-                                    firstname = GetValueForHeader(item, headers, "First Name"),
-                                    lastname = GetValueForHeader(item, headers, "Last Name"),
-                                    middlename = GetValueForHeader(item, headers, "Middle Name"),
-                                    email = GetValueForHeader(item, headers, "Email"),
-                                    contactnumber = long.Parse(GetValueForHeader(item, headers, "Contact Number")),
-                                    status = GetValueForHeader(item, headers, "Status(true/false)"),
-                                };
-                                records.Add(viewModel);
-                            }
-
-                        }
-                    }
-
-                    if (records.Count > 0)
-                    {
-
-                        ValidateImportFileVM checkData = await checkImportedData(records);
-
-                        List<ImportCandidateVM> data = new List<ImportCandidateVM>();
-                        ImportCandidateVM dataToBeAdd;
-
-                        foreach (var item in records)
-                        {
-                            dataToBeAdd = new ImportCandidateVM();
-                            dataToBeAdd.firstname = item.firstname;
-                            dataToBeAdd.lastname = item.lastname;
-                            dataToBeAdd.middlename = item.middlename;
-                            dataToBeAdd.email = item.email;
-                            dataToBeAdd.contactnumber = item.contactnumber;
-                            if (item.status.ToLower() == "true" || string.IsNullOrEmpty(item.status))
-                            {
-                                dataToBeAdd.status = true;
-                            }
-                            else
-                            {
-                                dataToBeAdd.status = false;
-                            }
-
-                            data.Add(dataToBeAdd);
-                        }
-
-
-                        if (!checkData.isValidate)
-                        {
-                            return new JsonResult(new ApiResponse<List<string>>
-                            {
-                                Data = checkData.validationMessage,
-                                Message = ResponseMessages.InsertProperData,
-                                Result = false,
-                                StatusCode = ResponseStatusCode.BadRequest
-                            });
-                        }
-
-                        if (records.Count <= 0)
-                        {
-                            return new JsonResult(new ApiResponse<int>
-                            {
-                                Message = string.Format(ResponseMessages.BadRequest),
-                                Result = false,
-                                StatusCode = ResponseStatusCode.BadRequest
-                            });
-                        }
-
-                        if (records != null)
-                        {
-                            ImportCandidateResponseVM? result;
-                            using (var connection = _dapperContext.CreateConnection())
-                            {
-                                var procedure = "import_users";
-                                var parameters = new DynamicParameters();
-                                parameters.Add("p_import_user_data", data, DbType.Object, ParameterDirection.Input);
-                                parameters.Add("groupid", importUsers.GroupId, DbType.Int32, ParameterDirection.Input);
-                                parameters.Add("collegeid", importUsers.CollegeId, DbType.Int32, ParameterDirection.Input);
-                                parameters.Add("candidates_added_count", ParameterDirection.Output);
-                                parameters.Add("inserted_emails", DbType.Object, direction: ParameterDirection.Output);
-
-                                // Execute the stored procedure
-
-                                result = connection.Query<ImportCandidateResponseVM>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
-
-                                if (result != null && result.candidates_added_count == 0)
-                                {
-                                    return new JsonResult(new ApiResponse<int>
-                                    {
-                                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.AllCandidates),
-                                        Result = true,
-                                        StatusCode = ResponseStatusCode.AlreadyExist
-                                    });
-                                }
-                                string[] insertedEmails = parameters.Get<string[]>("inserted_emails");
-                                foreach (var email in insertedEmails)
-                                {
-                                    var password = RandomPasswordGenerator.GenerateRandomPassword(8);
-                                    User? user = _appDbContext.Users.FirstOrDefault(u => u.Email == email);
-                                    if (user != null)
-                                    {
-                                        user.Password = password;
-                                    }
-                                    _appDbContext.SaveChanges();
-                                    var record = records.FirstOrDefault(r => r.email == email);
-                                    if (record != null)
-                                    {
-                                        SendMailForPassword(record.firstname, email, password);
-                                    }
-                                }
-                            }
-
-                            return new JsonResult(new ApiResponse<int>
-                            {
-                                Data = result.candidates_added_count,
-                                Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Candidates),
-                                Result = true,
-                                StatusCode = ResponseStatusCode.Success
-                            });
-                        }
-                        else
-                        {
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = ResponseMessages.InsertSomeData,
-                                Result = false,
-                                StatusCode = ResponseStatusCode.BadRequest
-                            });
-                        }
-
-                    }
-
-                    else
+                    if (records.Count <= 0 || records == null)
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -695,6 +552,92 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
+
+                    ValidateImportFileVM checkData = await checkImportedData(records);
+
+                    List<ImportCandidateVM> data = new List<ImportCandidateVM>();
+                    ImportCandidateVM dataToBeAdd;
+
+                    foreach (var item in records)
+                    {
+                        dataToBeAdd = new ImportCandidateVM();
+                        dataToBeAdd.firstname = item.firstname;
+                        dataToBeAdd.lastname = item.lastname;
+                        dataToBeAdd.middlename = item.middlename;
+                        dataToBeAdd.email = item.email;
+                        dataToBeAdd.contactnumber = item.contactnumber;
+                        if (IsStatusTrue(item.status))
+                        {
+                            dataToBeAdd.status = true;
+                        }
+                        else
+                        {
+                            dataToBeAdd.status = false;
+                        }
+
+                        data.Add(dataToBeAdd);
+                    }
+
+
+                    if (!checkData.isValidate)
+                    {
+                        return new JsonResult(new ApiResponse<List<string>>
+                        {
+                            Data = checkData.validationMessage,
+                            Message = ResponseMessages.InsertProperData,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
+
+                    ImportCandidateResponseVM? result;
+                    using (var connection = _dapperContext.CreateConnection())
+                    {
+                        var procedure = "import_users";
+                        var parameters = new DynamicParameters();
+                        parameters.Add("p_import_user_data", data, DbType.Object, ParameterDirection.Input);
+                        parameters.Add("groupid", importUsers.GroupId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("collegeid", importUsers.CollegeId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("candidates_added_count", ParameterDirection.Output);
+                        parameters.Add("inserted_emails", DbType.Object, direction: ParameterDirection.Output);
+
+                        // Execute the stored procedure
+
+                        result = connection.Query<ImportCandidateResponseVM>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                        if (DoesResultExists(result))
+                        {
+                            return new JsonResult(new ApiResponse<int>
+                            {
+                                Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.AllCandidates),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.AlreadyExist
+                            });
+                        }
+                        string[] insertedEmails = parameters.Get<string[]>("inserted_emails");
+                        foreach (var email in insertedEmails)
+                        {
+                            var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+                            User? user = _appDbContext.Users.FirstOrDefault(u => u.Email == email);
+                            if (user != null)
+                            {
+                                user.Password = password;
+                            }
+                            _appDbContext.SaveChanges();
+                            var record = records.Find(r => r.email == email);
+                            if (record != null)
+                            {
+                                SendMailForPassword(record.firstname, email, password);
+                            }
+                        }
+                    }
+
+                    return new JsonResult(new ApiResponse<int>
+                    {
+                        Data = result.candidates_added_count,
+                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Candidates),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
                 }
             }
             catch (Exception)
@@ -708,6 +651,7 @@ namespace AptitudeTest.Data.Data
             }
 
         }
+
         #endregion
 
         #region ChangeUserPasswordByAdmin
@@ -735,15 +679,12 @@ namespace AptitudeTest.Data.Data
                             {
                                 return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.PasswordUpdatedSuccess, Result = true, StatusCode = ResponseStatusCode.Success });
                             }
-                            else
+                            return new JsonResult(new ApiResponse<string>
                             {
-                                return new JsonResult(new ApiResponse<string>
-                                {
-                                    Message = ResponseMessages.InternalError,
-                                    Result = false,
-                                    StatusCode = ResponseStatusCode.RequestFailed
-                                });
-                            }
+                                Message = ResponseMessages.InternalError,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.RequestFailed
+                            });
                         }
                     }
                 }
@@ -904,6 +845,66 @@ namespace AptitudeTest.Data.Data
             return index >= 0 && index < row.Length ? row[index] : null;
         }
         #endregion
+
+        private static List<string[]> GetCsvContent(StreamReader reader)
+        {
+            var csvContent = new List<string[]>();
+            while (!reader.EndOfStream)
+            {
+                string? line = reader.ReadLine();
+                if (!line.IsNullOrEmpty())
+                {
+                    var values = line!.Split(',');
+                    csvContent.Add(values);
+                }
+            }
+            return csvContent;
+        }
+
+        private static List<UserImportVM> GetRecords(string[]? headers, List<string[]> csvContent)
+        {
+            List<UserImportVM> records = new List<UserImportVM>();
+            if (headers != null)
+            {
+                foreach (var item in csvContent.Skip(1))
+                {
+                    if (item.Length > 1)
+                    {
+
+                        var viewModel = new UserImportVM
+                        {
+                            firstname = GetValueForHeader(item, headers, "First Name"),
+                            lastname = GetValueForHeader(item, headers, "Last Name"),
+                            middlename = GetValueForHeader(item, headers, "Middle Name"),
+                            email = GetValueForHeader(item, headers, "Email"),
+                            contactnumber = long.Parse(GetValueForHeader(item, headers, "Contact Number")),
+                            status = GetValueForHeader(item, headers, "Status(true/false)"),
+                        };
+                        records.Add(viewModel);
+                    }
+
+                }
+            }
+            return records;
+        }
+
+        private static bool IsStatusTrue(string status)
+        {
+            if (status.ToLower() == "true" || string.IsNullOrEmpty(status))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private static bool DoesResultExists(ImportCandidateResponseVM? result)
+        {
+            if (result != null && result.candidates_added_count == 0)
+            {
+                return true;
+            }
+            return false;
+        }
 
         #endregion
 

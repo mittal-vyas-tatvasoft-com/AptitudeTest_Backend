@@ -3,6 +3,7 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
+using APTITUDETEST.Core.Entities.Users;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -167,12 +168,9 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<MasterGroup> existingGroups = await Task.FromResult(_context.MasterGroup.Where(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true).OrderByDescending(group => group.Id).ToList());
+                List<MasterGroup> existingGroups = GetExistingGroups();
+                existingGroups = GetSearchedGroupFromExistingGroups(existingGroups, searchGroup);
 
-                if (!searchGroup.IsNullOrEmpty())
-                {
-                    existingGroups = existingGroups.Where(group => group.Name.ToLower().Contains(searchGroup.ToLower())).ToList();
-                }
                 if (collegeId != null)
                 {
                     var users = _context.Users.Where(user => user.CollegeId == collegeId).ToList();
@@ -185,21 +183,7 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.NotFound
                         });
                     }
-                    List<MasterGroup> filteredGroups = new List<MasterGroup>();
-                    foreach (var user in users)
-                    {
-                        var userGroup = existingGroups.FirstOrDefault(group => group.Id == user.GroupId);
-                        if (userGroup != null)
-                        {
-                            var groupExists = filteredGroups.Exists(group => group.Id == userGroup.Id);
-                            if (!groupExists)
-                            {
-                                filteredGroups.Add(userGroup);
-                            }
-                        }
-
-                    }
-                    existingGroups = filteredGroups.OrderBy(group => group.Name).ToList();
+                    existingGroups = GetFilteredGroups(users, existingGroups);
                 }
 
                 List<GroupsResponseVM> groups = new List<GroupsResponseVM>();
@@ -213,25 +197,7 @@ namespace AptitudeTest.Data.Data
                         IsDefault = (bool)group.IsDefault,
                         CollegesUnderGroup = new List<GroupedCollegeVM>()
                     };
-                    var users = _context.Users.Where(user => user.GroupId == group.Id && user.IsDeleted != true).ToList();
-                    foreach (var user in users)
-                    {
-                        var college = _context.MasterCollege.FirstOrDefault(college => college.Id == user.CollegeId && college.IsDeleted != true);
-                        if (college != null)
-                        {
-                            bool collegeExists = groupItem.CollegesUnderGroup.Exists(existedCollege => existedCollege.Name.Equals(college.Name));
-                            if (!collegeExists)
-                            {
-                                int students = _context.Users.Where(user => user.CollegeId == college.Id && user.IsDeleted != true).Count();
-                                groupItem.CollegesUnderGroup.Add(new GroupedCollegeVM()
-                                {
-                                    Name = college.Name,
-                                    NumberOfStudentsInCollege = students,
-                                });
-                            }
-                        }
-                    }
-
+                    groupItem.CollegesUnderGroup = GetCollegesUnderGroup(group);
                     groupItem.NumberOfStudentsInGroup = groupItem.CollegesUnderGroup.Sum(x => x.NumberOfStudentsInCollege);
                     var sortedColleges = groupItem.CollegesUnderGroup.OrderBy(college => college.Name).ToList();
                     groupItem.CollegesUnderGroup = sortedColleges;
@@ -255,6 +221,8 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+
 
         public async Task<JsonResult> Update(GroupsQueryVM updatedGroup)
         {
@@ -314,6 +282,64 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.InternalServerError
                 });
             }
+        }
+        #endregion
+
+        #region Helper Methods
+        private List<MasterGroup> GetExistingGroups()
+        {
+            return _context.MasterGroup.Where(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true).OrderByDescending(group => group.Id).ToList();
+        }
+
+        private static List<MasterGroup> GetSearchedGroupFromExistingGroups(List<MasterGroup> existingGroups, string? searchGroup)
+        {
+            if (!searchGroup.IsNullOrEmpty())
+            {
+                existingGroups = existingGroups.Where(group => group.Name.ToLower().Contains(searchGroup.ToLower())).ToList();
+            }
+            return existingGroups;
+        }
+
+        private static List<MasterGroup> GetFilteredGroups(List<User> users, List<MasterGroup> existingGroups)
+        {
+            List<MasterGroup> filteredGroups = new List<MasterGroup>();
+            foreach (var user in users)
+            {
+                var userGroup = existingGroups.FirstOrDefault(group => group.Id == user.GroupId);
+                if (userGroup != null)
+                {
+                    var groupExists = filteredGroups.Exists(group => group.Id == userGroup.Id);
+                    if (!groupExists)
+                    {
+                        filteredGroups.Add(userGroup);
+                    }
+                }
+
+            }
+            return filteredGroups.OrderBy(group => group.Name).ToList();
+        }
+        private List<GroupedCollegeVM> GetCollegesUnderGroup(MasterGroup group)
+        {
+            List<GroupedCollegeVM> collegesUnderGivenGroup = new List<GroupedCollegeVM>();
+            var users = _context.Users.Where(user => user.GroupId == group.Id && user.IsDeleted != true).ToList();
+            foreach (var user in users)
+            {
+                var college = _context.MasterCollege.FirstOrDefault(college => college.Id == user.CollegeId && college.IsDeleted != true);
+                if (college != null)
+                {
+                    bool collegeExists = collegesUnderGivenGroup.Exists(existedCollege => existedCollege.Name.Equals(college.Name));
+                    if (!collegeExists)
+                    {
+                        int students = _context.Users.Where(user => user.CollegeId == college.Id && user.IsDeleted != true).Count();
+                        collegesUnderGivenGroup.Add(new GroupedCollegeVM()
+                        {
+                            Name = college.Name,
+                            NumberOfStudentsInCollege = students,
+                        });
+                    }
+                }
+            }
+            return collegesUnderGivenGroup;
         }
         #endregion
     }

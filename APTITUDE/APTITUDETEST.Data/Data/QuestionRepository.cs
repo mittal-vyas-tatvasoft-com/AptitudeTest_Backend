@@ -260,14 +260,14 @@ namespace AptitudeTest.Data.Data
             {
                 List<int> duplicateOptionIds = new List<int>();
                 List<QuestionOptions> duplicateOptions = new List<QuestionOptions>();
-                if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || (questionVM.DuplicateFromQuestionId == 0 && !ValidateOptionImages(questionVM)))
+                if (IsQuestionVMInvalid(questionVM))
                 {
                     return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
                 }
                 if (questionVM.DuplicateFromQuestionId != 0)
                 {
                     Question? duplicateQuestion = _context.Questions.Where(x => x.Id == questionVM.DuplicateFromQuestionId).FirstOrDefault();
-                    if (duplicateQuestion == null || duplicateQuestion.OptionType != (int)Enums.OptionType.ImageType && questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateOptionImages(questionVM))
+                    if (IsDuplicateQuestionInvalid(duplicateQuestion, questionVM))
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -312,7 +312,7 @@ namespace AptitudeTest.Data.Data
                     QuestionOptions options = new QuestionOptions();
                     options.QuestionId = questionId;
                     options.IsAnswer = option.IsAnswer;
-                    if (questionVM.OptionType == (int)Common.Enums.OptionType.TextType && option.OptionValue != null)
+                    if (IsOptionValid(questionVM, option))
                     {
                         options.OptionData = option.OptionValue;
                     }
@@ -332,7 +332,7 @@ namespace AptitudeTest.Data.Data
                         }
                         else
                         {
-                            options.OptionData = duplicateOptions.Find(x => x.Id == option.OptionId)!.OptionData;
+                            options.OptionData = duplicateOptions.Find(x => x.Id == option.OptionId).OptionData;
                         }
 
                     }
@@ -358,6 +358,8 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+
 
         public async Task<JsonResult> Update(QuestionVM questionVM)
         {
@@ -559,13 +561,7 @@ namespace AptitudeTest.Data.Data
                 using (var csv = new CsvReader(reader, config))
                 {
                     var csvContent = new List<string[]>();
-                    while (!reader.EndOfStream)
-                    {
-                        var line = reader.ReadLine();
-                        var values = line.Split(',');
-                        csvContent.Add(values);
-
-                    }
+                    csvContent = GetCsvContent(reader);
                     var headers = csvContent.FirstOrDefault();
                     if (headers != null)
                     {
@@ -585,7 +581,7 @@ namespace AptitudeTest.Data.Data
                                 optiondata4 = GetValueForHeader(row, headers, "Option D"),
                                 questiontext = GetValueForHeader(row, headers, "Question"),
                             };
-                            if (GetValueForHeader(row, headers, "Version") != null && GetValueForHeader(row, headers, "Version") != "")
+                            if (IsHeaderValid(row, headers))
                             {
                                 viewModel.version = char.Parse(GetValueForHeader(row, headers, "Version"));
                             }
@@ -669,15 +665,12 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                else
+                return new JsonResult(new ApiResponse<string>
                 {
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.InternalError,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.InternalServerError
-                    });
-                }
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
             }
 
             catch
@@ -694,6 +687,51 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Helper Method
+
+        private static bool IsHeaderValid(string[] row, string[] headers)
+        {
+            if (GetValueForHeader(row, headers, "Version") != null && GetValueForHeader(row, headers, "Version") != "")
+            {
+                return true;
+            }
+            return false;
+        }
+        private static List<string[]> GetCsvContent(StreamReader reader)
+        {
+            var csvContent = new List<string[]>();
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                var values = line.Split(',');
+                csvContent.Add(values);
+            }
+            return csvContent;
+        }
+        private static bool IsOptionValid(QuestionVM questionVM, OptionVM option)
+        {
+            if (questionVM.OptionType == (int)Common.Enums.OptionType.TextType && option.OptionValue != null)
+            {
+                return true;
+            }
+            return false;
+        }
+        private static bool IsQuestionVMInvalid(QuestionVM questionVM)
+        {
+            if (questionVM.Id != 0 || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || (questionVM.DuplicateFromQuestionId == 0 && !ValidateOptionImages(questionVM)))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private static bool IsDuplicateQuestionInvalid(Question? duplicateQuestion, QuestionVM questionVM)
+        {
+            if (duplicateQuestion == null || duplicateQuestion.OptionType != (int)Enums.OptionType.ImageType && questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateOptionImages(questionVM))
+            {
+                return true;
+            }
+            return false;
+        }
 
         private static bool ValidateQuestion(QuestionVM questionVM)
         {
@@ -866,12 +904,12 @@ namespace AptitudeTest.Data.Data
             return validate;
         }
 
-        private bool IsNextPage(QuestionDataVM temp)
+        private static bool IsNextPage(QuestionDataVM temp)
         {
             return temp?.NextPage == null ? false : true;
         }
 
-        private bool IsPreviousPage(int pageIndex)
+        private static bool IsPreviousPage(int pageIndex)
         {
             return pageIndex == (int)Enums.Pagination.DefaultIndex ? false : true;
         }
