@@ -206,7 +206,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Test? testAlreadyExists = _context.Tests.Where(t => t.Id != updateTest.TestId && t.GroupId == updateTest.GroupId && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
+                Test? testAlreadyExists = _context.Tests.Where(t => t.Id == updateTest.TestId  && t.IsDeleted == false).FirstOrDefault();
                 if (testAlreadyExists != null)
                 {
                     testAlreadyExists.GroupId = updateTest.GroupId;
@@ -220,29 +220,16 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.OK
                     });
                 }
-
-                Test? test = _context.Tests.Where(t => t.Id == updateTest.TestId && t.IsDeleted == false).FirstOrDefault();
-
-                if (test != null)
+                else
                 {
-                    test.GroupId = updateTest.GroupId;
-                    test.UpdatedBy = updateTest.UpdatedBy;
-                    test.UpdatedDate = DateTime.UtcNow;
-                    _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Group),
-                        Result = true,
-                        StatusCode = ResponseStatusCode.OK
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
                     });
                 }
 
-                return new JsonResult(new ApiResponse<string>
-                {
-                    Message = ResponseMessages.InternalError,
-                    Result = false,
-                    StatusCode = ResponseStatusCode.InternalServerError
-                });
             }
 
             catch
