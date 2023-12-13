@@ -37,7 +37,7 @@ namespace AptitudeTest.Data.Data
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
-                    List<TestsViewModel> data = connection.Query<TestsViewModel>("Select * from getalltests(@SearchQuery,@GroupId,@Status,@DateFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, Status = Status, DateFilter = dateParameter.Value, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    List<TestsViewModel> data = connection.Query<TestsViewModel>("Select * from getalltests(@SearchQuery,@GroupId,@Status,@DateFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId, Status = Status, DateFilter = dateParameter.Value, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                     connection.Close();
                     return new JsonResult(new ApiResponse<List<TestsViewModel>>
                     {
@@ -206,7 +206,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Test? testAlreadyExists = _context.Tests.Where(t => t.Id != updateTest.TestId && t.GroupId == updateTest.GroupId && t.Status == (int)Common.Enums.TestStatus.Active && t.IsDeleted == false).FirstOrDefault();
+                Test? testAlreadyExists = _context.Tests.Where(t => t.Id == updateTest.TestId  && t.IsDeleted == false).FirstOrDefault();
                 if (testAlreadyExists != null)
                 {
                     testAlreadyExists.GroupId = updateTest.GroupId;
@@ -220,29 +220,16 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.OK
                     });
                 }
-
-                Test? test = _context.Tests.Where(t => t.Id == updateTest.TestId && t.IsDeleted == false).FirstOrDefault();
-
-                if (test != null)
+                else
                 {
-                    test.GroupId = updateTest.GroupId;
-                    test.UpdatedBy = updateTest.UpdatedBy;
-                    test.UpdatedDate = DateTime.UtcNow;
-                    _context.SaveChanges();
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Group),
-                        Result = true,
-                        StatusCode = ResponseStatusCode.OK
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
                     });
                 }
 
-                return new JsonResult(new ApiResponse<string>
-                {
-                    Message = ResponseMessages.InternalError,
-                    Result = false,
-                    StatusCode = ResponseStatusCode.InternalServerError
-                });
             }
 
             catch
@@ -456,74 +443,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (testId != 0 && topicId != 0)
-                {
-                    TestQuestions? testQuestionToBeDeleted = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == testId && t.TopicId == topicId && t.IsDeleted == false).FirstOrDefault());
-                    if (testQuestionToBeDeleted != null)
-                    {
-                        testQuestionToBeDeleted.IsDeleted = true;
-                        _context.Update(testQuestionToBeDeleted);
-                        int count = _context.SaveChanges();
-
-                        if (count == 1)
-                        {
-                            List<TestQuestionsCount> testQuestionsCountToBeDeleted = _context.TestQuestionsCount.Where(t => t.TestQuestionId == testQuestionToBeDeleted.Id && t.IsDeleted == false).ToList();
-                            if (testQuestionsCountToBeDeleted.Count > 0)
-                            {
-                                foreach (var item in testQuestionsCountToBeDeleted)
-                                {
-                                    item.IsDeleted = true;
-                                    _context.Update(item);
-                                    count = _context.SaveChanges();
-                                }
-
-                                if (count == 1)
-                                {
-                                    return new JsonResult(new ApiResponse<string>
-                                    {
-                                        Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.TestQuestions),
-                                        Result = true,
-                                        StatusCode = ResponseStatusCode.Success
-                                    });
-                                }
-                                return new JsonResult(new ApiResponse<string>
-                                {
-                                    Message = ResponseMessages.InternalError,
-                                    Result = false,
-                                    StatusCode = ResponseStatusCode.InternalServerError
-                                });
-                            }
-                            else
-                            {
-                                return new JsonResult(new ApiResponse<string>
-                                {
-                                    Message = string.Format(ResponseMessages.TestTopicQuestionsNotFound),
-                                    Result = false,
-                                    StatusCode = ResponseStatusCode.NotFound
-                                });
-                            }
-                        }
-                        else
-                        {
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = ResponseMessages.InternalError,
-                                Result = false,
-                                StatusCode = ResponseStatusCode.InternalServerError
-                            });
-                        }
-                    }
-                    else
-                    {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.TestQuestions),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.NotFound
-                        });
-                    }
-                }
-                else
+                if (testId <= 0 && topicId <= 0)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -532,6 +452,60 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
+                TestQuestions? testQuestionToBeDeleted = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == testId && t.TopicId == topicId && t.IsDeleted == false).FirstOrDefault());
+                if (testQuestionToBeDeleted == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.TestQuestions),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                testQuestionToBeDeleted.IsDeleted = true;
+                _context.Update(testQuestionToBeDeleted);
+                int count = _context.SaveChanges();
+                if (count != 1)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.InternalError,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.InternalServerError
+                    });
+                }
+                List<TestQuestionsCount> testQuestionsCountToBeDeleted = _context.TestQuestionsCount.Where(t => t.TestQuestionId == testQuestionToBeDeleted.Id && t.IsDeleted == false).ToList();
+                if (testQuestionsCountToBeDeleted.Count <= 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.TestTopicQuestionsNotFound),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                foreach (var item in testQuestionsCountToBeDeleted)
+                {
+                    item.IsDeleted = true;
+                    _context.Update(item);
+                    count = _context.SaveChanges();
+                }
+
+                if (count == 1)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.TestQuestions),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
             }
             catch
             {
@@ -548,51 +522,48 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                if (testId != 0)
+                if (testId <= 0)
                 {
-                    List<TestQuestions> testQuestionsToBeDeleted = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == testId && t.IsDeleted == false).ToList());
-                    if (testQuestionsToBeDeleted != null && testQuestionsToBeDeleted.Count > 0)
+                    return new JsonResult(new ApiResponse<string>
                     {
-                        foreach (var testQuestion in testQuestionsToBeDeleted)
-                        {
-                            testQuestion.IsDeleted = true;
-                            testQuestion.UpdatedDate = DateTime.UtcNow;
-                            _context.Update(testQuestion);
-                            _context.SaveChanges();
+                        Message = string.Format(ResponseMessages.BadRequest),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                List<TestQuestions> testQuestionsToBeDeleted = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == testId && t.IsDeleted == false).ToList());
+                if (testQuestionsToBeDeleted == null && testQuestionsToBeDeleted.Count <= 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.TestQuestions),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                foreach (var testQuestion in testQuestionsToBeDeleted)
+                {
+                    testQuestion.IsDeleted = true;
+                    testQuestion.UpdatedDate = DateTime.UtcNow;
+                    _context.Update(testQuestion);
+                    _context.SaveChanges();
 
-                            List<TestQuestionsCount> testQuestionsCountToBeDeleted = _context.TestQuestionsCount.Where(t => t.TestQuestionId == testQuestion.Id && t.IsDeleted == false).ToList();
-                            if (testQuestionsCountToBeDeleted.Count > 0)
-                            {
-                                foreach (var testQuestionCount in testQuestionsCountToBeDeleted)
-                                {
-                                    testQuestionCount.IsDeleted = true;
-                                    _context.Update(testQuestionCount);
-                                    _context.SaveChanges();
-                                }
-                            }
-                        }
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.TestQuestions),
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                        });
-                    }
-                    else
+                    List<TestQuestionsCount> testQuestionsCountToBeDeleted = _context.TestQuestionsCount.Where(t => t.TestQuestionId == testQuestion.Id && t.IsDeleted == false).ToList();
+                    if (testQuestionsCountToBeDeleted.Count > 0)
                     {
-                        return new JsonResult(new ApiResponse<string>
+                        foreach (var testQuestionCount in testQuestionsCountToBeDeleted)
                         {
-                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.TestQuestions),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.NotFound
-                        });
+                            testQuestionCount.IsDeleted = true;
+                            _context.Update(testQuestionCount);
+                            _context.SaveChanges();
+                        }
                     }
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.BadRequest),
-                    Result = false,
-                    StatusCode = ResponseStatusCode.BadRequest
+                    Message = string.Format(ResponseMessages.DeleteSuccess, ModuleNames.TestQuestions),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
                 });
             }
             catch
@@ -927,7 +898,7 @@ namespace AptitudeTest.Data.Data
             return x.Where(x => x.QuestionType == questionType && x.Difficulty == difficulty).Select(x => x.CountOfQuestions).FirstOrDefault();
         }
 
-        private List<QuestionsCountMarksVM> FillQuestionsCountData(List<TestTopicWiseCountVM> data)
+        private static List<QuestionsCountMarksVM> FillQuestionsCountData(List<TestTopicWiseCountVM> data)
         {
             if (data.Count != 0)
             {

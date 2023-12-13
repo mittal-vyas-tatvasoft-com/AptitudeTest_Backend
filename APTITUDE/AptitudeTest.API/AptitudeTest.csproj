@@ -7,20 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.11" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-	  <PackageReference Include="CsvHelper" Version="30.0.1" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.11" />
 	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.11" />
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	  
   </ItemGroup>
@@ -31,7 +21,8 @@
     <ProjectReference Include="..\APTITUDETEST.Core\AptitudeTest.Core.csproj" />
     <ProjectReference Include="..\APTITUDETEST.Data\AptitudeTest.Data.csproj" />
   </ItemGroup>
-<ItemGroup>
-	<Folder Include="wwwroot\Files\"/>
-	</ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
 </Project>
