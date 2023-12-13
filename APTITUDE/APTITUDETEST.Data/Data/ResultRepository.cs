@@ -133,9 +133,7 @@ namespace AptitudeTest.Data.Data
                 searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
-                    connection.Open();
-                    List<ResultsVM> data = connection.Query<ResultsVM>("Select * from getallresults(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
-                    connection.Close();
+                    List<ResultsVM> data = connection.Query<ResultsVM>("Select * from getallresults_3(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                     return new JsonResult(new ApiResponse<List<ResultsVM>>
                     {
                         Data = data,
@@ -147,6 +145,35 @@ namespace AptitudeTest.Data.Data
 
             }
 
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
+
+        public async Task<JsonResult> GetResultStatistics(string? searchQuery, int? TestId, int? GroupId, int? CollegeId, int? Year, int? currentPageIndex, string? sortField, string? sortOrder)
+        {
+            try
+            {
+                searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    List<ResultStatisticsVM> data = connection.Query<ResultStatisticsVM>("Select * from getstatisticsresult(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    return new JsonResult(new ApiResponse<List<ResultStatisticsVM>>
+                    {
+                        Data = data,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
             catch
             {
                 return new JsonResult(new ApiResponse<string>
