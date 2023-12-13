@@ -2,6 +2,7 @@
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace AptitudeTest.Controllers
 {
@@ -101,5 +102,9 @@ namespace AptitudeTest.Controllers
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
         #endregion
+
+
+       
+
     }
 }
