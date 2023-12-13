@@ -1,12 +1,14 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace AptitudeTest.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ScreenCaptureController : ControllerBase
@@ -24,21 +26,12 @@ namespace AptitudeTest.Controllers
 
         #region Methods
 
-        #region CameraTest
+        #region CameraCapture
 
         [HttpPost("[action]")]
-        public async Task<JsonResult> CameraTest([FromForm] ScreenCaptureVM data)
+        public async Task<JsonResult> CameraCapture([FromForm] ScreenCaptureVM data)
         {
-            string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/ScreenShots");
-            string fileName = Guid.NewGuid().ToString() + "_" + 1 +".jpeg";
-            string filePath = Path.Combine(uploadFolder, fileName);
-            string type = data.file.ContentType;
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                data.file.CopyTo(fileStream);
-            }
-
-            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+            return await _screenCaptureService.CameraCapture(data);
         }
 
         #endregion
