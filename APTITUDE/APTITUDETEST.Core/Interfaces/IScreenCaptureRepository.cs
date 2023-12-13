@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AptitudeTest.Core.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +10,6 @@ namespace AptitudeTest.Core.Interfaces
 {
     public interface IScreenCaptureRepository
     {
+        Task<JsonResult> CameraCapture([FromForm] ScreenCaptureVM data);
     }
 }
