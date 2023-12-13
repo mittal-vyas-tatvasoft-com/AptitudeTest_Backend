@@ -42,7 +42,7 @@ namespace AptitudeTest.Data.Data
 
                 using (DbConnection connection = new DbConnection())
                 {
-                    var data = await connection.Connection.QueryAsync<UserTestResultDataVM>("select * from getUserResults(@userId,@testId)", new { userId = 234, testId = 100 });
+                    var data = await connection.Connection.QueryAsync<UserTestResultDataVM>("select * from getUserResults(@userId,@testId)", new { userId = userId, testId = testId });
                     if (!data.Any())
                     {
                         return new JsonResult(new ApiResponse<UserDetailsVM>
