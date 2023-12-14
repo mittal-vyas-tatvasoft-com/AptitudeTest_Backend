@@ -1,19 +1,14 @@
-﻿using AptitudeTest.Common.Data;
-using AptitudeTest.Core.Interfaces;
+﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace AptitudeTest.Data.Data
 {
-    public class ScreenCaptureRepository:IScreenCaptureRepository
+    public class ScreenCaptureRepository : IScreenCaptureRepository
     {
         #region Properies
 
@@ -32,24 +27,52 @@ namespace AptitudeTest.Data.Data
 
         public async Task<JsonResult> CameraCapture([FromForm] ScreenCaptureVM data)
         {
-            string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/ScreenShots");
-            string fileName = Guid.NewGuid().ToString() + "_" + 1 + ".jpeg";
-            string filePath = Path.Combine(uploadFolder, fileName);
-            string uploadFolder1 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files");
-            string fileName1 = Guid.NewGuid().ToString() + "_" + 1 + ".jpeg";
-            string filePath1 = Path.Combine(uploadFolder1, fileName1);
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            try
             {
-                data.file.CopyTo(fileStream);
-            }
-            using (var fileStream = new FileStream(filePath1, FileMode.Create))
-            {
-                data.screenShot.CopyTo(fileStream);
-            }
+                if (data.file != null)
+                {
+                    using (var image = Image.FromStream(data.file.OpenReadStream()))
+                    using (var thumbnail = CreateThumbnail((Bitmap)image.Clone(), 500))
+                    {
+                        string wwwrootPath = "wwwroot/UserFaceCamShots";
+                        string thumbnailFileName = Guid.NewGuid().ToString() + "---" + data.userId + "---" + DateTime.Now.ToString().Replace(' ', '_').Replace(':', '_').Replace('-', '_') + ".jpeg";
+                        string thumbnailPath = Path.Combine(wwwrootPath, thumbnailFileName);
+                        thumbnail.Save(thumbnailPath, ImageFormat.Jpeg);
+                    }
+                }
 
-            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+                if (data.screenShot != null)
+                {
+                    using (var image = Image.FromStream(data.screenShot.OpenReadStream()))
+                    using (var thumbnail = CreateThumbnail((Bitmap)image.Clone(), 500))
+                    {
+                        string wwwrootPath = "wwwroot/ScreenShots";
+                        string thumbnailFileName = Guid.NewGuid().ToString() + "---" + data.userId + "---" + DateTime.Now.ToString().Replace(' ', '_').Replace(':', '_').Replace('-', '_') + ".jpeg";
+                        string thumbnailPath = Path.Combine(wwwrootPath, thumbnailFileName);
+                        thumbnail.Save(thumbnailPath, ImageFormat.Jpeg);
+                    }
+                }
+                return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.Success });
+            }
+            catch
+            {
+
+                return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.InternalError, Result = false, StatusCode = ResponseStatusCode.InternalServerError });
+            }
         }
 
+
         #endregion
+
+        #region helper
+
+        private Bitmap CreateThumbnail(Image original, int width)
+        {
+            int height = (int)(width * ((float)original.Height / original.Width));
+            var thumbnail = new Bitmap(original, new Size(width, height));
+            return new Bitmap(thumbnail);
+        }
+        #endregion
+
     }
 }
