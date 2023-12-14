@@ -1,6 +1,7 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
+using AptitudeTest.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace AptitudeTest.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(SessionIdCheckFilterAttribute))]
     public class CandidatesController : ControllerBase
     {
         #region Properties

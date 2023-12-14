@@ -4,6 +4,7 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Data;
+using AptitudeTest.Filters;
 using APTITUDETEST.Common.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ builder.Services.AddDbContext<DapperAppDbContext>(item =>
     item.UseNpgsql(dataSource);
 
 });
-
+builder.Services.AddMemoryCache();
 
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUserAuthenticationService, UserAuthenticationService>();
@@ -72,6 +73,14 @@ builder.Services.AddTransient<IResultService, ResultService>();
 builder.Services.AddScoped<IResultRepository, ResultRepository>();
 builder.Services.AddTransient<IScreenCaptureService, ScreenCaptureService>();
 builder.Services.AddScoped<IScreenCaptureRepository, ScreenCaptureRepository>();
+
+builder.Services.AddTransient<ISessionIdHelperInMemoryService, SessionIdHelperInMemoryService>();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<SessionIdCheckFilterAttribute>();
+
+builder.Services.AddScoped<ISessionIdHelperInDbRepository, SessionIdHelperInDbRepository>();
+builder.Services.AddScoped<ISessionIdHelperInDbService, SessionIdHelperInDbService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

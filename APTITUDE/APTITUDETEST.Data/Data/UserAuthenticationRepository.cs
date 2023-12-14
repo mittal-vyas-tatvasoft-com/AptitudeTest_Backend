@@ -1,9 +1,13 @@
-﻿using AptitudeTest.Common.Helpers;
+﻿using AptitudeTest.Application.Services;
+using AptitudeTest.Common.Helpers;
+using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using APTITUDETEST.Core.Entities.Users;
+using Azure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,13 +22,18 @@ namespace AptitudeTest.Data.Data
         private readonly AppDbContext _context;
         static IConfiguration? _appSettingConfiguration;
         private Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ISessionIdHelperInMemoryService _sessionIdHelperInMemoryService;
         #endregion
 
         #region Constructor
-        public UserAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration)
+        public UserAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration, IHttpContextAccessor httpContextAccessor
+            , ISessionIdHelperInMemoryService sessionIdHelperInMemoryService)
         {
             _context = context;
             _appSettingConfiguration = appSettingConfiguration;
+            _httpContextAccessor = httpContextAccessor;
+            _sessionIdHelperInMemoryService = sessionIdHelperInMemoryService;
         }
         #endregion
 
@@ -56,6 +65,14 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
+                
+                string sessionId = GenerateSessionId();
+
+                user.SessionId = sessionId;
+
+                _context.Update(user);
+                _context.SaveChanges();
+                _sessionIdHelperInMemoryService.AddSessionId(sessionId, user.Email);
 
                 TokenVm tokenPayload = new TokenVm()
                 {
@@ -71,7 +88,16 @@ namespace AptitudeTest.Data.Data
                 {
                     RefreshTokens.Add(user.Email, tokenPayload);
                 }
-                return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
+
+                TokenWithSidVm tokenWithSidVmPayload = new TokenWithSidVm()
+                {
+                    AccessToken = tokenPayload.AccessToken,
+                    RefreshToken = tokenPayload.RefreshToken,
+                    RefreshTokenExpiryTime = tokenPayload.RefreshTokenExpiryTime,
+                    Sid = sessionId
+                };
+
+                return new JsonResult(new ApiResponse<TokenWithSidVm> { Data = tokenWithSidVmPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
 
             }
             catch
@@ -255,6 +281,16 @@ namespace AptitudeTest.Data.Data
         }
 
         #endregion
+
+        #endregion
+
+        #region Helpers
+
+        private string GenerateSessionId()
+        {
+            Guid guid = Guid.NewGuid();
+            return guid.ToString();
+        }
 
         #endregion
     }
