@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AptitudeTest.Core.ViewModels
+﻿namespace AptitudeTest.Core.ViewModels
 {
     public class UserResultsVM
     {
@@ -23,6 +17,6 @@ namespace AptitudeTest.Core.ViewModels
         public int Marks5QuestionCount { get; set; }
         public int Marks5CorrectQuestionCount { get; set; }
 
-        public PaginationVM<UserResultQuestionVM> PaginatedData { get; set; }=new PaginationVM<UserResultQuestionVM>();
+        public PaginationVM<UserResultQuestionVM> PaginatedData { get; set; } = new PaginationVM<UserResultQuestionVM>();
     }
 }

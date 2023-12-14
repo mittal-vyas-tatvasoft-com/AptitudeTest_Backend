@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AptitudeTest.Core.Entities.Users;
+﻿using AptitudeTest.Core.Enums;
 using AptitudeTest.Core.Interfaces;
-using AptitudeTest.Core.ViewModels;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.AspNetCore.Mvc;
-using AptitudeTest.Core.Enums;
 
 namespace AptitudeTest.Application.Services
 {

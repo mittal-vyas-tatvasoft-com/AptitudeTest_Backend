@@ -30,9 +30,9 @@ namespace AptitudeTest.Controllers
         /// <param name="pageIndex"></param>
         /// <returns></returns>
         [HttpGet("[action]/{id:int}/{testId:int}/{marks:int}/{pageSize:int}/{pageIndex:int}")]
-        public async Task<JsonResult> Get(int id,int testId,int marks, int pageSize, int pageIndex)
+        public async Task<JsonResult> Get(int id, int testId, int marks, int pageSize, int pageIndex)
         {
-            return await _service.Get(id, testId,marks, pageSize, pageIndex);
+            return await _service.Get(id, testId, marks, pageSize, pageIndex);
 
         }
 

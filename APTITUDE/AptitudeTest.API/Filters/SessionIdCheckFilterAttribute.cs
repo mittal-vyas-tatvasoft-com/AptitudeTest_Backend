@@ -1,19 +1,9 @@
-﻿using AptitudeTest.Core.Interfaces;
-using APTITUDETEST.Common.Data;
-using AptitudeTest.Core.ViewModels;
+﻿using AptitudeTest.Core.Enums;
+using AptitudeTest.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Net;
-using System.Net.Http;
-using System.Web;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using AptitudeTest.Core.Enums;
-using Microsoft.AspNetCore.Mvc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Globalization;
-using AptitudeTest.Application.Services;
 
 namespace AptitudeTest.Filters
 {

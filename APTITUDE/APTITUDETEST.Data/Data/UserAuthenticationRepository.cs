@@ -1,12 +1,10 @@
-﻿using AptitudeTest.Application.Services;
-using AptitudeTest.Common.Helpers;
+﻿using AptitudeTest.Common.Helpers;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using APTITUDETEST.Core.Entities.Users;
-using Azure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -65,7 +63,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
-                
+
                 string sessionId = GenerateSessionId();
 
                 user.SessionId = sessionId;

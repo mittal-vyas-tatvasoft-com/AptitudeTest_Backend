@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AptitudeTest.Core.Enums;
+﻿using AptitudeTest.Core.Enums;
 
 namespace AptitudeTest.Core.Interfaces
 {

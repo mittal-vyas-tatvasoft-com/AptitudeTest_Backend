@@ -1,17 +1,8 @@
-﻿using AptitudeTest.Common.Helpers;
-using AptitudeTest.Core.Entities.Admin;
-using AptitudeTest.Core.Interfaces;
+﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
-using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using APTITUDETEST.Core.Entities.Users;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Npgsql;
-using System.Drawing.Printing;
-using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AptitudeTest.Data.Data
 {
