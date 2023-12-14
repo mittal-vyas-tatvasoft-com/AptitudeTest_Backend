@@ -18,5 +18,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> GetQuestionsMarksCount(int testId);
         public Task<JsonResult> GetTopicWiseQuestionsCount();
         public Task<JsonResult> GetTestById(int testId);
+        public Task<JsonResult> CheckTestName(string testName);
     }
 }

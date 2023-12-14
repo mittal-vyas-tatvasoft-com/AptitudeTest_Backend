@@ -72,6 +72,11 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.GetTestById(testId);
         }
+
+        public Task<JsonResult> CheckTestName(string testName)
+        {
+            return _repository.CheckTestName(testName);
+        }
         #endregion
     }
 }

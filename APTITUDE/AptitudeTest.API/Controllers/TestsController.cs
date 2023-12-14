@@ -167,6 +167,17 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
+        /// This method checks if the test with same name exists or not
+        /// </summary>
+        /// <param name="testName"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{testName}")]
+        public async Task<JsonResult> CheckTestName(string testName)
+        {
+            return await _service.CheckTestName(testName);
+        }
+
+        /// <summary>
         /// This method gives test details by test id
         /// </summary>
         /// <returns></returns>

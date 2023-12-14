@@ -206,7 +206,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Test? testAlreadyExists = _context.Tests.Where(t => t.Id == updateTest.TestId  && t.IsDeleted == false).FirstOrDefault();
+                Test? testAlreadyExists = _context.Tests.Where(t => t.Id == updateTest.TestId && t.IsDeleted == false).FirstOrDefault();
                 if (testAlreadyExists != null)
                 {
                     testAlreadyExists.GroupId = updateTest.GroupId;
@@ -827,6 +827,49 @@ namespace AptitudeTest.Data.Data
                         });
                     }
 
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+        public async Task<JsonResult> CheckTestName(string testName)
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(testName))
+                {
+                    bool doesTestExists = _context.Tests.Any(test => test.Name.ToLower().Equals(testName.ToLower()));
+                    if (doesTestExists)
+                    {
+                        return new JsonResult(new ApiResponse<Admin>
+                        {
+                            Message = string.Format(ResponseMessages.TestWithSameName, ModuleNames.Test),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.AlreadyExist
+                        });
+                    }
+                    return new JsonResult(new ApiResponse<Admin>
+                    {
+                        Message = string.Format(ResponseMessages.Success, ModuleNames.Test),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.OK
+                    });
                 }
                 else
                 {

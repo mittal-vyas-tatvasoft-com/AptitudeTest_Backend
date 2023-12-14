@@ -42,6 +42,7 @@
         public readonly static string TestTopicAlreadyExists = "Questions for this topic already exists";
         public readonly static string NoOfQuestions = "Please enter correct no of questions";
         public readonly static string TestTopicQuestionsNotFound = "Questions for this topic does not found for this test";
+        public readonly static string TestWithSameName = "Test with same name exists";
         #endregion
 
         #region AdminAuthentication
