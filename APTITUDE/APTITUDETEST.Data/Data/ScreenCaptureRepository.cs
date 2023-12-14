@@ -52,7 +52,7 @@ namespace AptitudeTest.Data.Data
                         thumbnail.Save(thumbnailPath, ImageFormat.Jpeg);
                     }
                 }
-                return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.Success });
+                return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
             }
             catch
             {
