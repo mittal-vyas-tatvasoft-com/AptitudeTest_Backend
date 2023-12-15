@@ -31,6 +31,10 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.GetResultStatistics(searchQuery, TestId, GroupId, CollegeId, Year, currentPageIndex, sortField, sortOrder);
         }
+        public Task<JsonResult> GetResultExportData(string? searchQuery, int? TestId, int? GroupId, int? CollegeId, int? Year, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
+        {
+            return _repository.GetResultExportData(searchQuery, TestId, GroupId, CollegeId, Year, currentPageIndex, pageSize, sortField, sortOrder);
+        }
         #endregion
     }
 }

@@ -47,8 +47,8 @@ namespace AptitudeTest.Controllers
         /// <param name="currentPageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        [HttpGet("{currentPageIndex:int}/{pageSize:int}")]
-        public async Task<JsonResult> GetResults(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
+        [HttpGet("[action]")]
+        public async Task<JsonResult> GetResults(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year,  string? sortField, string? sortOrder, int? currentPageIndex=0, int? pageSize=10)
         {
             return await _service.GetResults(searchQuery, testId, groupId, collegeId, year, currentPageIndex, pageSize, sortField, sortOrder);
         }
@@ -64,10 +64,28 @@ namespace AptitudeTest.Controllers
         /// <param name="currentPageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        [HttpGet("{currentPageIndex}")]
-        public async Task<JsonResult> GetResultStatistics(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year, int? currentPageIndex, string? sortField, string? sortOrder)
+        [HttpGet("[action]")]
+        public async Task<JsonResult> GetResultStatistics(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year, string? sortField, string? sortOrder,int? currentPageIndex=0)
         {
             return await _service.GetResultStatistics(searchQuery, testId, groupId, collegeId, year, currentPageIndex, sortField, sortOrder);
+        }
+
+
+        /// <summary>
+        /// Get Test Results Data For Export
+        /// </summary>
+        /// <param name="searchQuery"></param>
+        /// <param name="testId"></param>
+        /// <param name="groupId"></param>
+        /// <param name="collegeId"></param>
+        /// <param name="year"></param>
+        /// <param name="currentPageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<JsonResult> GetResultExportData(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year,string? sortField, string? sortOrder, int? currentPageIndex=0, int? pageSize=10)
+        {
+            return await _service.GetResultExportData(searchQuery, testId, groupId, collegeId, year, currentPageIndex, pageSize, sortField, sortOrder);
         }
         #endregion
     }
