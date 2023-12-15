@@ -186,6 +186,34 @@ namespace AptitudeTest.Data.Data
 
         }
 
+        public async Task<JsonResult> GetResultExportData(string? searchQuery, int? TestId, int? GroupId, int? CollegeId, int? Year, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)
+        {
+            try
+            {
+                searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    List<ResultExportDataVM> data = connection.Query<ResultExportDataVM>("Select * from getallresultsexport(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    return new JsonResult(new ApiResponse<List<ResultExportDataVM>>
+                    {
+                        Data = data,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
         #endregion
 
         #region Helper Methods
