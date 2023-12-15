@@ -206,12 +206,12 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                User? users = _appDbContext.Users.Where(t => t.Email.Trim().ToLower() == user.Email.Trim().ToLower() && t.PhoneNumber == user.PhoneNumber && t.IsDeleted != true).FirstOrDefault();
+                User? users = _appDbContext.Users.Where(t => (t.Email.Trim().ToLower() == user.Email.Trim().ToLower() || t.PhoneNumber == user.PhoneNumber) && t.IsDeleted != true).FirstOrDefault();
                 if (users != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Candidate),
+                        Message =  ModuleNames.EmailNumberAlreadyExists,
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
