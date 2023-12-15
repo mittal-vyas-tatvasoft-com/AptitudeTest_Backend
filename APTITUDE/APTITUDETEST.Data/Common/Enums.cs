@@ -47,5 +47,10 @@
             Answered = 1,
             Skipped = 2
         }
+
+        public enum FieldsCount
+        {
+            ImportQuestionFieldsCount=10
+        }
     }
 }

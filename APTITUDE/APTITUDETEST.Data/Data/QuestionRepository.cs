@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using static AptitudeTest.Data.Common.Enums;
 
 namespace AptitudeTest.Data.Data
@@ -554,6 +555,7 @@ namespace AptitudeTest.Data.Data
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     HasHeaderRecord = true,
+                    Delimiter = ",",
                 };
                 config.HeaderValidated = null;
                 config.MissingFieldFound = null;
@@ -569,6 +571,15 @@ namespace AptitudeTest.Data.Data
                         for (int i = 1; i < csvContent.Count; i++)
                         {
                             var row = csvContent[i];
+                            if (row.Count()!= (int)FieldsCount.ImportQuestionFieldsCount)
+                            {
+                                return new JsonResult(new ApiResponse<string>
+                                {
+                                    Message = ResponseMessages.InvalidFormat,
+                                    Result = false,
+                                    StatusCode = ResponseStatusCode.BadRequest
+                                });
+                            }
                             var viewModel = new ImportQuestionFieldsVM
                             {
                                 quetionnumber = Int32.Parse(GetValueForHeader(row, headers, "Quetion Number")),
@@ -579,7 +590,7 @@ namespace AptitudeTest.Data.Data
                                 optiondata2 = GetValueForHeader(row, headers, "Option B"),
                                 optiondata3 = GetValueForHeader(row, headers, "Option C"),
                                 optiondata4 = GetValueForHeader(row, headers, "Option D"),
-                                questiontext = GetValueForHeader(row, headers, "Question"),
+                                questiontext = GetValueForHeader(row, headers, "Question").Trim('"'),
                             };
                             if (IsHeaderValid(row, headers))
                             {
@@ -699,12 +710,23 @@ namespace AptitudeTest.Data.Data
         private static List<string[]> GetCsvContent(StreamReader reader)
         {
             var csvContent = new List<string[]>();
+            var regex = new Regex("(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)", RegexOptions.Compiled);
+
             while (!reader.EndOfStream)
             {
                 var line = reader.ReadLine();
-                var values = line.Split(',');
-                csvContent.Add(values);
+
+                var matches = regex.Matches(line);
+                List<string> values = new List<string>();
+
+                foreach (Match match in matches)
+                {
+                    values.Add(match.Groups[1].Value.Trim(' ', ','));
+                }
+
+                csvContent.Add(values.ToArray());
             }
+
             return csvContent;
         }
         private static bool IsOptionValid(QuestionVM questionVM, OptionVM option)
