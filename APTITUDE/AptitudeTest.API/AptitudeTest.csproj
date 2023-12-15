@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\ScreenShots - Copy\**" />
+    <Compile Remove="wwwroot\UserFaceCamShots - Copy\**" />
+    <Content Remove="wwwroot\ScreenShots - Copy\**" />
+    <Content Remove="wwwroot\UserFaceCamShots - Copy\**" />
+    <EmbeddedResource Remove="wwwroot\ScreenShots - Copy\**" />
+    <EmbeddedResource Remove="wwwroot\UserFaceCamShots - Copy\**" />
+    <None Remove="wwwroot\ScreenShots - Copy\**" />
+    <None Remove="wwwroot\UserFaceCamShots - Copy\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.11" />
@@ -23,6 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\ScreenShots\" />
+    <Folder Include="wwwroot\UserFaceCamShots\" />
   </ItemGroup>
 </Project>

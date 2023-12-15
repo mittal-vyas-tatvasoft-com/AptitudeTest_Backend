@@ -131,6 +131,15 @@
             }
         }
 
+        private readonly static string _EmailNumberAlreadyExists = "Email or mobile number already exists";
+        public static string EmailNumberAlreadyExists
+        {
+            get
+            {
+                return _EmailNumberAlreadyExists;
+            }
+        }
+
         private readonly static string _Group = "Group";
         public static string Group
         {
