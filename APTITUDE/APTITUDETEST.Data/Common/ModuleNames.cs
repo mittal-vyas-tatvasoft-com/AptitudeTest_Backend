@@ -29,6 +29,15 @@
                 return _College;
             }
         }
+
+        private readonly static string _Abbreviation = "Abbreviation";
+        public static string Abbreviation
+        {
+            get
+            {
+                return _Abbreviation;
+            }
+        }
         private readonly static string _Stream = "Stream";
         public static string Stream
         {
