@@ -13,6 +13,7 @@
         public readonly static string InvalidTopics = "Invalid Topics";
         public readonly static string NoChanges = "No Changes were made";
         public readonly static string InvalidFormat = "Please insert data in valid format";
+        public readonly static string InvalidOptions = "Two options can not be same";
 
         public readonly static string NotFound = "{0} does not exists";
         public readonly static string AlreadyExists = "{0} already exists";

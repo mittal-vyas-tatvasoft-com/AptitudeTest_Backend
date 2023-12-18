@@ -259,6 +259,16 @@ namespace AptitudeTest.Data.Data
 
             try
             {
+                if (CheckOptions(questionVM.Options))
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.InvalidOptions,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
                 List<int> duplicateOptionIds = new List<int>();
                 List<QuestionOptions> duplicateOptions = new List<QuestionOptions>();
                 if (IsQuestionVMInvalid(questionVM))
@@ -366,6 +376,16 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                if (CheckOptions(questionVM.Options))
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.InvalidOptions,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
                 if (questionVM.Id < 1 || !ValidateQuestion(questionVM) || !ValidateOptionText(questionVM) || questionVM.Options.Exists(option => option.OptionId == 0))
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -637,6 +657,15 @@ namespace AptitudeTest.Data.Data
                         return new JsonResult(new ApiResponse<string>
                         {
                             Message = ResponseMessages.InvalidTopics,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
+                    if (CheckOptions(questionVM.Options))
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.InvalidOptions,
                             Result = false,
                             StatusCode = ResponseStatusCode.BadRequest
                         });
@@ -935,7 +964,29 @@ namespace AptitudeTest.Data.Data
         {
             return pageIndex == (int)Enums.Pagination.DefaultIndex ? false : true;
         }
-
+        private static bool CheckOptions(List<OptionVM> options)
+        {
+            List<string> optionValues=options.Select(x=>x.OptionValue).ToList();
+            if(optionValues != null)
+            {
+            for (int i = 0; i < 4; i++)
+            {
+                string option = optionValues[i];
+                if (option != "")
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        if (i != j && optionValues[i] == optionValues[j])
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            }
+            return false;
+        }
+        
         #endregion
     }
 }
