@@ -179,7 +179,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 MasterCollege college = new MasterCollege();
-                MasterCollege? masterCollege = _context.MasterCollege.Where(c => (c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() || c.Abbreviation.Trim().ToLower() == collegeToUpsert.Abbreviation.Trim().ToLower()) && c.IsDeleted != true).FirstOrDefault();
+                MasterCollege? masterCollege = _context.MasterCollege.Where(c => c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() && c.IsDeleted != true).FirstOrDefault();
                 if (masterCollege != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -189,6 +189,18 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
+                MasterCollege? masterCollegeWithSameAbbreviation = _context.MasterCollege.Where(c => c.Abbreviation.Trim().ToLower() == collegeToUpsert.Abbreviation.Trim().ToLower() && c.IsDeleted != true).FirstOrDefault();
+
+                if (masterCollegeWithSameAbbreviation != null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Abbreviation),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+
                 var defaultGroupId = _context.MasterGroup.FirstOrDefault(x => x.IsDefault)?.Id;
                 college.GroupId = defaultGroupId;
                 college.Status = collegeToUpsert.Status;
