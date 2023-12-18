@@ -439,6 +439,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.UserRegistration);
                 entity.Property(e => e.Camera);
                 entity.Property(e => e.IntervalForScreenCapture).HasDefaultValue(10);
+                entity.Property(e => e.CutOff).HasDefaultValue(0);
             });
         }
 

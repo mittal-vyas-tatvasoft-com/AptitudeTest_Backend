@@ -10,5 +10,6 @@ namespace AptitudeTest.Core.Entities.Setting
         public bool Camera { get; set; }
         public bool ScreenCapture { get; set; }
         public int IntervalForScreenCapture { get; set; }
+        public int CutOff { get; set; }
     }
 }

@@ -66,6 +66,7 @@ namespace AptitudeTest.Data.Data
                 settingConfigurations.Camera = updateSettingsVM.Camera;
                 settingConfigurations.ScreenCapture = updateSettingsVM.ScreenCapture;
                 settingConfigurations.IntervalForScreenCapture = updateSettingsVM.IntervalForScreenCapture;
+                settingConfigurations.CutOff = updateSettingsVM.CutOff;
                 _context.Update(settingConfigurations);
                 _context.SaveChanges();
                 return new JsonResult(new ApiResponse<string>
