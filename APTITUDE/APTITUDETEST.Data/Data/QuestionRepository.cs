@@ -155,7 +155,7 @@ namespace AptitudeTest.Data.Data
                                             OptionId = x.OptionId,
                                             OptionValue = x.OptionData
                                         };
-                                    }).ToList()
+                                    }).OrderBy(option => option.OptionId).ToList()
                                 };
                             }
                             ).ToList();
