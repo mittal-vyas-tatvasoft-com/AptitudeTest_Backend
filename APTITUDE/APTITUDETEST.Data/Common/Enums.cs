@@ -50,7 +50,7 @@
 
         public enum FieldsCount
         {
-            ImportQuestionFieldsCount=10
+            ImportQuestionFieldsCount = 10
         }
     }
 }

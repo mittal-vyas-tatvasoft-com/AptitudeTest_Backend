@@ -571,7 +571,7 @@ namespace AptitudeTest.Data.Data
                         for (int i = 1; i < csvContent.Count; i++)
                         {
                             var row = csvContent[i];
-                            if (row.Count()!= (int)FieldsCount.ImportQuestionFieldsCount)
+                            if (row.Count() != (int)FieldsCount.ImportQuestionFieldsCount)
                             {
                                 return new JsonResult(new ApiResponse<string>
                                 {

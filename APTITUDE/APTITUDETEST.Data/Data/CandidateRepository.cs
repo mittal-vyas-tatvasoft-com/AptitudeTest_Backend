@@ -715,9 +715,9 @@ namespace AptitudeTest.Data.Data
                     {
                         if (testStatus == ModuleNames.StartTest)
                         {
-                            return new JsonResult(new ApiResponse<string>
+                            return new JsonResult(new ApiResponse<StartTestVM>
                             {
-                                Data = userTest.MessaageAtStartOfTheTest,
+                                Data = new StartTestVM() { EndTime = userTest.EndTime, MessageAtStartOfTheTest = userTest.MessaageAtStartOfTheTest },
                                 Message = ResponseMessages.Success,
                                 Result = true,
                                 StatusCode = ResponseStatusCode.Success
