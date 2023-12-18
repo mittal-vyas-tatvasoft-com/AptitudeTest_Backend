@@ -653,7 +653,7 @@ namespace AptitudeTest.Data.Data
                             int count = _appDbContext.SaveChanges();
                             if (count == 1)
                             {
-                                return await AddUserTempResultToUserTestResult(tempUserTest.Id);
+                                return await AddUserTempResultToUserTestResult(tempUserTest.Id, userTestToBeAdded.Id);
                             }
                             else
                             {
@@ -767,50 +767,62 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Helper Method
-        private async Task<JsonResult> AddUserTempResultToUserTestResult(int userTestId)
+        private async Task<JsonResult> AddUserTempResultToUserTestResult(int tempUserTestId, int userTestId)
         {
-            List<TempUserTestResult>? tempUserTestResultList = _appDbContext.TempUserTestResult.Where(x => x.UserTestId == userTestId).ToList();
-            if (tempUserTestResultList != null && tempUserTestResultList.Count > 0)
+            try
             {
-                List<UserTestResult>? UserTestResultList = tempUserTestResultList.Select(x => new UserTestResult()
+                List<TempUserTestResult>? tempUserTestResultList = _appDbContext.TempUserTestResult.Where(x => x.UserTestId == tempUserTestId).ToList();
+                if (tempUserTestResultList != null && tempUserTestResultList.Count > 0)
                 {
-                    UserTestId = x.UserTestId,
-                    QuestionId = x.QuestionId,
-                    UserAnswers = x.UserAnswers,
-                    IsAttended = x.IsAttended,
-                    CreatedBy = x.CreatedBy,
-                }).ToList();
-
-                tempUserTestResultList.ForEach(x => x.IsDeleted = true);
-
-                _appDbContext.UserTestResult.AddRange(UserTestResultList);
-                int result = _appDbContext.SaveChanges();
-                if (result > 0)
-                {
-                    return new JsonResult(new ApiResponse<string>
+                    List<UserTestResult>? UserTestResultList = tempUserTestResultList.Select(x => new UserTestResult()
                     {
-                        Message = string.Format(ResponseMessages.EndTest),
-                        Result = true,
-                        StatusCode = ResponseStatusCode.OK
-                    });
+                        UserTestId = userTestId,
+                        QuestionId = x.QuestionId,
+                        UserAnswers = x.UserAnswers,
+                        IsAttended = x.IsAttended,
+                        CreatedBy = x.CreatedBy,
+                    }).ToList();
+
+                    tempUserTestResultList.ForEach(x => x.IsDeleted = true);
+
+                    _appDbContext.UserTestResult.AddRange(UserTestResultList);
+                    int result = _appDbContext.SaveChanges();
+                    if (result > 0)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.EndTest),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.OK
+                        });
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.InternalError,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.InternalServerError
+                        });
+                    }
                 }
                 else
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = ResponseMessages.InternalError,
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.TempUserTestResult),
                         Result = false,
-                        StatusCode = ResponseStatusCode.InternalServerError
+                        StatusCode = ResponseStatusCode.NotFound
                     });
                 }
             }
-            else
+            catch(Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.TempUserTestResult),
+                    Message = ResponseMessages.InternalError,
                     Result = false,
-                    StatusCode = ResponseStatusCode.NotFound
+                    StatusCode = ResponseStatusCode.InternalServerError
                 });
             }
         }
