@@ -14,14 +14,16 @@ namespace AptitudeTest.Controllers
         private readonly IUserService _userService;
         private readonly IStreamService _streamService;
         private readonly IDegreeService _degreeService;
+        private readonly ITestService _testService;
 
-        public CommonController(ICollegeService collegeService, IProfileService profileService, IUserService userService, IStreamService streamService, IDegreeService degreeService)
+        public CommonController(ICollegeService collegeService, IProfileService profileService, IUserService userService, IStreamService streamService, IDegreeService degreeService, ITestService testService)
         {
             _collegeService = collegeService;
             _profileService = profileService;
             _userService = userService;
             _streamService = streamService;
             _degreeService = degreeService;
+            _testService = testService;
         }
 
         #region GetActiveColleges
@@ -99,6 +101,18 @@ namespace AptitudeTest.Controllers
             }
 
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+        #endregion
+
+        #region GetActiveColleges
+        /// <summary>
+        /// Get all tests for dropdown.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<JsonResult> GetTestForDropdown()
+        {
+            return await _testService.GetTestsForDropdown();
         }
         #endregion
 

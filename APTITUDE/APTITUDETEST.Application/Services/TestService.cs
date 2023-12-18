@@ -77,6 +77,11 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.CheckTestName(testName);
         }
-        #endregion
+
+        public Task<JsonResult> GetTestsForDropdown()
+        {
+            return _repository.GetTestsForDropdown();
+        }
+        #endregion 
     }
 }
