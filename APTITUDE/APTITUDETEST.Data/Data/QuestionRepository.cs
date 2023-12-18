@@ -638,10 +638,10 @@ namespace AptitudeTest.Data.Data
                     List<OptionVM> options = new List<OptionVM>();
                     questionVM.Options = options;
                     questionVM.QuestionType = item.questiontype;
-                    options.Add(new OptionVM() { IsAnswer = item.isanswer1 });
-                    options.Add(new OptionVM() { IsAnswer = item.isanswer2 });
-                    options.Add(new OptionVM() { IsAnswer = item.isanswer3 });
-                    options.Add(new OptionVM() { IsAnswer = item.isanswer4 });
+                    options.Add(new OptionVM() { IsAnswer = item.isanswer1,OptionValue=item.optiondata1 });
+                    options.Add(new OptionVM() { IsAnswer = item.isanswer2 , OptionValue = item.optiondata2 });
+                    options.Add(new OptionVM() { IsAnswer = item.isanswer3, OptionValue = item.optiondata3 });
+                    options.Add(new OptionVM() { IsAnswer = item.isanswer4, OptionValue = item.optiondata4 });
 
                     if (!ValidateQuestion(questionVM))
                     {
@@ -661,7 +661,7 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
-                    if (CheckOptions(questionVM.Options))
+                    if (CheckOptions(options))
                     {
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -972,7 +972,7 @@ namespace AptitudeTest.Data.Data
             for (int i = 0; i < 4; i++)
             {
                 string option = optionValues[i];
-                if (option != "")
+                if (option != "" && option !=null)
                 {
                     for (int j = 0; j < 4; j++)
                     {
