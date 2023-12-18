@@ -29,6 +29,7 @@ namespace AptitudeTest.Data.Data
         private readonly DapperAppDbContext _dapperContext;
         private readonly IConfiguration _config;
         private readonly string? connectionString;
+        private readonly string? userLoginUrl;
 
         #endregion
 
@@ -39,6 +40,7 @@ namespace AptitudeTest.Data.Data
             _dapperContext = dapperContext;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
+            userLoginUrl = _config["EmailGeneration:UserUrlForBody"];
         }
         #endregion
 
@@ -239,7 +241,7 @@ namespace AptitudeTest.Data.Data
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
                     if (userId > 0)
                     {
-                        SendMailForPassword(user.FirstName, user.Email, password);
+                        SendMailForPassword(user.FirstName, user.LastName, user.Email, password);
 
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -422,7 +424,7 @@ namespace AptitudeTest.Data.Data
 
                     if (userId > 0)
                     {
-                        SendMailForPassword(registerUserVM.FirstName, registerUserVM.Email, password);
+                        SendMailForPassword(registerUserVM.FirstName, registerUserVM.LastName, registerUserVM.Email, password);
 
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -626,7 +628,7 @@ namespace AptitudeTest.Data.Data
                             var record = records.Find(r => r.email == email);
                             if (record != null)
                             {
-                                SendMailForPassword(record.firstname, email, password);
+                                SendMailForPassword(record.firstname, record.lastname, email, password);
                             }
                         }
                     }
@@ -798,12 +800,12 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        private bool SendMailForPassword(string firstName, string email, string password)
+        private bool SendMailForPassword(string firstName, string lastName, string email, string password)
         {
             try
             {
-                var subject = "Credentials for login";
-                var body = $"<h3>Hello {firstName}</h3>,<br />we received registration request for you ,<br /><br /Here is your credentials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2>";
+                var subject = "Confirm new user sign-up in Tatvasoft Aptitude Test Portal";
+                var body = $"<h3>Welcome {firstName} {lastName},</h3>We have received registration request for you,<br/>Here are your credentials to login!!<br /><h4>User name: {email}</h4><h4>Password: {password}</h4><a href = {userLoginUrl}><button btn-primary>Login</button></a>";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
