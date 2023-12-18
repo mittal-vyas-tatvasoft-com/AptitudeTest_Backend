@@ -194,6 +194,17 @@ namespace AptitudeTest.Data.Data
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     List<ResultExportDataVM> data = connection.Query<ResultExportDataVM>("Select * from getallresultsexport(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    if (!data.Any())
+                    {
+                        return new JsonResult(new ApiResponse<List<ResultExportDataVM>>
+                        {
+                            Data = data,
+                            Message = ResponseMessages.NoRecordsFound,
+                            Result = true,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+
                     return new JsonResult(new ApiResponse<List<ResultExportDataVM>>
                     {
                         Data = data,

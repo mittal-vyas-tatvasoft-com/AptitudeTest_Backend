@@ -48,7 +48,7 @@ namespace AptitudeTest.Controllers
         /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<JsonResult> GetResults(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year,  string? sortField, string? sortOrder, int? currentPageIndex=0, int? pageSize=10)
+        public async Task<JsonResult> GetResults(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year, string? sortField, string? sortOrder, int? currentPageIndex = 0, int? pageSize = 10)
         {
             return await _service.GetResults(searchQuery, testId, groupId, collegeId, year, currentPageIndex, pageSize, sortField, sortOrder);
         }
@@ -65,7 +65,7 @@ namespace AptitudeTest.Controllers
         /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<JsonResult> GetResultStatistics(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year, string? sortField, string? sortOrder,int? currentPageIndex=0)
+        public async Task<JsonResult> GetResultStatistics(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year, string? sortField, string? sortOrder, int? currentPageIndex = 0)
         {
             return await _service.GetResultStatistics(searchQuery, testId, groupId, collegeId, year, currentPageIndex, sortField, sortOrder);
         }
@@ -83,7 +83,7 @@ namespace AptitudeTest.Controllers
         /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<JsonResult> GetResultExportData(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year,string? sortField, string? sortOrder, int? currentPageIndex=0, int? pageSize=10)
+        public async Task<JsonResult> GetResultExportData(string? searchQuery, int? testId, int? groupId, int? collegeId, int? year, string? sortField, string? sortOrder, int? currentPageIndex = 0, int? pageSize = 10)
         {
             return await _service.GetResultExportData(searchQuery, testId, groupId, collegeId, year, currentPageIndex, pageSize, sortField, sortOrder);
         }

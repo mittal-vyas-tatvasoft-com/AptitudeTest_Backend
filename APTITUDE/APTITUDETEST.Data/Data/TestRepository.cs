@@ -891,6 +891,48 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+        public async Task<JsonResult> GetTestsForDropdown()
+        {
+
+            try
+            {
+                var testList = await Task.FromResult(_context.Tests
+                .Where(x => x.IsDeleted != true)
+                .Select(x => new { Id = x.Id, Name = x.Name }).OrderBy(x => x.Id)
+                .ToList());
+
+                if (testList != null)
+                {
+                    return new JsonResult(new ApiResponse<IEnumerable<object>>
+                    {
+                        Data = testList,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Data = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
         #endregion
 
         #region Helper Method
