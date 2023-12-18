@@ -211,7 +211,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message =  ModuleNames.EmailNumberAlreadyExists,
+                        Message = ModuleNames.EmailNumberAlreadyExists,
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
