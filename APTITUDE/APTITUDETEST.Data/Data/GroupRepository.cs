@@ -330,7 +330,7 @@ namespace AptitudeTest.Data.Data
                     bool collegeExists = collegesUnderGivenGroup.Exists(existedCollege => existedCollege.Name.Equals(college.Name));
                     if (!collegeExists)
                     {
-                        int students = _context.Users.Where(user => user.CollegeId == college.Id && user.IsDeleted != true).Count();
+                        int students = _context.Users.Where(user => user.CollegeId == college.Id && user.GroupId == group.Id && user.IsDeleted != true).Count();
                         collegesUnderGivenGroup.Add(new GroupedCollegeVM()
                         {
                             Name = college.Name,
