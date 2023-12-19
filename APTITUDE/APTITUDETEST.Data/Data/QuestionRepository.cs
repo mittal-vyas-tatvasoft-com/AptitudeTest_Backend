@@ -638,8 +638,8 @@ namespace AptitudeTest.Data.Data
                     List<OptionVM> options = new List<OptionVM>();
                     questionVM.Options = options;
                     questionVM.QuestionType = item.questiontype;
-                    options.Add(new OptionVM() { IsAnswer = item.isanswer1,OptionValue=item.optiondata1 });
-                    options.Add(new OptionVM() { IsAnswer = item.isanswer2 , OptionValue = item.optiondata2 });
+                    options.Add(new OptionVM() { IsAnswer = item.isanswer1, OptionValue = item.optiondata1 });
+                    options.Add(new OptionVM() { IsAnswer = item.isanswer2, OptionValue = item.optiondata2 });
                     options.Add(new OptionVM() { IsAnswer = item.isanswer3, OptionValue = item.optiondata3 });
                     options.Add(new OptionVM() { IsAnswer = item.isanswer4, OptionValue = item.optiondata4 });
 
@@ -966,27 +966,27 @@ namespace AptitudeTest.Data.Data
         }
         private static bool CheckOptions(List<OptionVM> options)
         {
-            List<string> optionValues=options.Select(x=>x.OptionValue).ToList();
-            if(optionValues != null)
+            List<string> optionValues = options.Select(x => x.OptionValue).ToList();
+            if (optionValues != null)
             {
-            for (int i = 0; i < 4; i++)
-            {
-                string option = optionValues[i];
-                if (option != "" && option !=null)
+                for (int i = 0; i < 4; i++)
                 {
-                    for (int j = 0; j < 4; j++)
+                    string option = optionValues[i];
+                    if (option != "" && option != null)
                     {
-                        if (i != j && optionValues[i] == optionValues[j])
+                        for (int j = 0; j < 4; j++)
                         {
-                            return true;
+                            if (i != j && optionValues[i] == optionValues[j])
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
             }
-            }
             return false;
         }
-        
+
         #endregion
     }
 }
