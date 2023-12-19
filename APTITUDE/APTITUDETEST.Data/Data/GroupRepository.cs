@@ -333,6 +333,7 @@ namespace AptitudeTest.Data.Data
                         int students = _context.Users.Where(user => user.CollegeId == college.Id && user.GroupId == group.Id && user.IsDeleted != true).Count();
                         collegesUnderGivenGroup.Add(new GroupedCollegeVM()
                         {
+                            Id=college.Id,
                             Name = college.Name,
                             NumberOfStudentsInCollege = students,
                         });
