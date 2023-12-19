@@ -12,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Web;
 using static AptitudeTest.Data.Common.Enums;
 
 namespace AptitudeTest.Data.Data
@@ -71,7 +72,7 @@ namespace AptitudeTest.Data.Data
                         questionVM.OptionType = question.OptionType;
                         questionVM.QuestionType = question.QuestionType;
                         questionVM.Status = question.Status;
-                        questionVM.QuestionText = question.QuestionText;
+                        questionVM.QuestionText = HttpUtility.HtmlEncode(question.QuestionText);
                         questionVM.ParentId = question.ParentId;
                     }
                     foreach (var item in data)
@@ -142,7 +143,7 @@ namespace AptitudeTest.Data.Data
                                     Id = q.QuestionId,
                                     Difficulty = q.Difficulty,
                                     OptionType = q.OptionType,
-                                    QuestionText = q.QuestionText,
+                                    QuestionText = HttpUtility.HtmlDecode(q.QuestionText),
                                     QuestionType = q.QuestionType,
                                     Status = q.Status,
                                     TopicId = q.Topic,
@@ -153,7 +154,7 @@ namespace AptitudeTest.Data.Data
                                         {
                                             IsAnswer = x.IsAnswer,
                                             OptionId = x.OptionId,
-                                            OptionValue = x.OptionData
+                                            OptionValue = HttpUtility.HtmlDecode( x.OptionData)
                                         };
                                     }).OrderBy(option => option.OptionId).ToList()
                                 };
@@ -293,7 +294,7 @@ namespace AptitudeTest.Data.Data
 
                 }
                 Question question = new Question();
-                question.QuestionText = questionVM.QuestionText.Trim();
+                question.QuestionText = HttpUtility.HtmlEncode(questionVM.QuestionText.Trim());
                 question.Status = questionVM.Status;
                 question.Difficulty = questionVM.Difficulty;
                 question.Topic = questionVM.TopicId;
@@ -325,7 +326,7 @@ namespace AptitudeTest.Data.Data
                     options.IsAnswer = option.IsAnswer;
                     if (IsOptionValid(questionVM, option))
                     {
-                        options.OptionData = option.OptionValue;
+                        options.OptionData = HttpUtility.HtmlEncode(option.OptionValue);
                     }
                     else
                     {
