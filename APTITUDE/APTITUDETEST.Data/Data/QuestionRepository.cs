@@ -602,7 +602,7 @@ namespace AptitudeTest.Data.Data
                             }
                             var viewModel = new ImportQuestionFieldsVM
                             {
-                                quetionnumber = Int32.Parse(GetValueForHeader(row, headers, "Quetion Number")),
+                                quetionnumber = Int32.Parse(GetValueForHeader(row, headers, "Question Number")),
                                 correctoption = Char.Parse(GetValueForHeader(row, headers, "Correct Option")),
                                 topic = GetValueForHeader(row, headers, "Topic"),
                                 difficulty = Int32.Parse(GetValueForHeader(row, headers, "Marks")),
