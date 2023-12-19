@@ -17,9 +17,8 @@ namespace AptitudeTest.Core.ViewModels
         public int GroupId { get; set; }
         [Required]
         public int CollegeId { get; set; }
-        public int Gender { get; set; }
-        public bool Status { get; set; }
-        [Required]
+        public int? Gender { get; set; }
+        public bool? Status { get; set; }
         public int? CreatedBy { get; set; }
 
     }
