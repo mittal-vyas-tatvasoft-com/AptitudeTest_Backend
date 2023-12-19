@@ -234,8 +234,8 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                MasterCollege? colleges = _context.MasterCollege.Where(c => (c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() || c.Abbreviation.Trim().ToLower() == collegeToUpsert.Abbreviation.Trim().ToLower()) && c.Id != collegeToUpsert.Id && c.IsDeleted != true).FirstOrDefault();
-                if (colleges != null)
+                MasterCollege? masterCollege = _context.MasterCollege.Where(c => c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() && c.Id != collegeToUpsert.Id && c.IsDeleted != true).FirstOrDefault();
+                if (masterCollege != null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
@@ -245,15 +245,27 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                MasterCollege? masterCollege = await Task.FromResult(_context.MasterCollege.AsNoTracking().Where(college => college.Id == collegeToUpsert.Id && college.IsDeleted != true).FirstOrDefault());
-                if (masterCollege != null)
+                MasterCollege? masterCollegeWithSameAbbreviation = _context.MasterCollege.Where(c => c.Abbreviation.Trim().ToLower() == collegeToUpsert.Abbreviation.Trim().ToLower() && c.Id != collegeToUpsert.Id && c.IsDeleted != true).FirstOrDefault();
+
+                if (masterCollegeWithSameAbbreviation != null)
                 {
-                    masterCollege.Status = collegeToUpsert.Status;
-                    masterCollege.Name = collegeToUpsert.Name.Trim();
-                    masterCollege.Abbreviation = collegeToUpsert.Abbreviation.Trim();
-                    masterCollege.UpdatedBy = collegeToUpsert.UpdatedBy;
-                    masterCollege.UpdatedDate = DateTime.UtcNow;
-                    _context.Update(masterCollege);
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.Abbreviation),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.AlreadyExist
+                    });
+                }
+
+                MasterCollege? masterCollegeToBeUpdate = await Task.FromResult(_context.MasterCollege.AsNoTracking().Where(college => college.Id == collegeToUpsert.Id && college.IsDeleted != true).FirstOrDefault());
+                if (masterCollegeToBeUpdate != null)
+                {
+                    masterCollegeToBeUpdate.Status = collegeToUpsert.Status;
+                    masterCollegeToBeUpdate.Name = collegeToUpsert.Name.Trim();
+                    masterCollegeToBeUpdate.Abbreviation = collegeToUpsert.Abbreviation.Trim();
+                    masterCollegeToBeUpdate.UpdatedBy = collegeToUpsert.UpdatedBy;
+                    masterCollegeToBeUpdate.UpdatedDate = DateTime.UtcNow;
+                    _context.Update(masterCollegeToBeUpdate);
                     _context.SaveChanges();
 
                     return new JsonResult(new ApiResponse<string>

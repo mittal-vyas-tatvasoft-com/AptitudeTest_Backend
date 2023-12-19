@@ -816,7 +816,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
