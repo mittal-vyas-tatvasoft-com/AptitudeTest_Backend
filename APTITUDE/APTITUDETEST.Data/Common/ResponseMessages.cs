@@ -33,6 +33,7 @@
         public readonly static string SessionRefresh = "Session has been refressed successfully";
         public readonly static string PasswordUpdatedSuccess = "Password has been changed successfully";
         public readonly static string InvalidCredentials = "Please enter valid credentials";
+        public readonly static string UserDoesNotExist = "User does not exist";
         public readonly static string InActiveAccount = "This Acoount is InActive";
         public readonly static string MailSentForForgetPassword = "Your password reset request has been granted and we sent you mail for new password!!";
         public readonly static string TokenExpired = "Token has been expired please login again";
