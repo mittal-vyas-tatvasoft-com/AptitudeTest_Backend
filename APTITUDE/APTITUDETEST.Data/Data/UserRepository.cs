@@ -676,7 +676,7 @@ namespace AptitudeTest.Data.Data
                         int count = _appDbContext.SaveChanges();
                         if (count == 1)
                         {
-                            bool mailSent = SendMailAfterPasswordChangeByAdmin(user.Email, user.Password);
+                            bool mailSent = SendMailAfterPasswordChangeByAdmin(user.Email, user.Password, user.FirstName, user.LastName);
                             if (mailSent)
                             {
                                 return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.PasswordUpdatedSuccess, Result = true, StatusCode = ResponseStatusCode.Success });
@@ -784,12 +784,12 @@ namespace AptitudeTest.Data.Data
         }
 
         #region SendEmail
-        private bool SendMailAfterPasswordChangeByAdmin(string email, string password)
+        private bool SendMailAfterPasswordChangeByAdmin(string email, string password, string firstName, string lastName)
         {
             try
             {
-                var subject = "Credentials for login";
-                var body = $"<h4>Username:</h4>{email}" + "</br>" + $"<h4>Password:</h4>{password}";
+                var subject = "Password change request for Aptitude Test Portal";
+                var body = $"<h3>Welcome {firstName} {lastName},</h3>We have received password change request for you,<br/>Here are your new credentials!!<br /><h4>User name: {email}</h4><h4>Password: {password}</h4>";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
