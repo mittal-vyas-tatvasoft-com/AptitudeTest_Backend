@@ -4,6 +4,7 @@ namespace AptitudeTest.Core.ViewModels
 {
     public class ImportQuestionFieldsVM
     {
+
         public string? sequence { get; set; }
         public bool isparent { get; set; } = false;
         public int quetionnumber { get; set; }

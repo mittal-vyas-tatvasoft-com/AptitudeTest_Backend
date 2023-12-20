@@ -7,11 +7,11 @@ using APTITUDETEST.Common.Data;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Dapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
-using System.Text.RegularExpressions;
 using System.Web;
 using static AptitudeTest.Data.Common.Enums;
 
@@ -572,56 +572,31 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<ImportQuestionFieldsVM> importQuestionFieldsVMList = new List<ImportQuestionFieldsVM>();
-                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                List<ImportQuestionCsvVM> data = ReadCsvFile(importQuestionVM.File);
+                if (data == null || !data.Any())
                 {
-                    HasHeaderRecord = true,
-                    Delimiter = ",",
-                };
-                config.HeaderValidated = null;
-                config.MissingFieldFound = null;
-                using (var reader = new StreamReader(importQuestionVM.File.OpenReadStream()))
-                using (var csv = new CsvReader(reader, config))
-                {
-                    var csvContent = new List<string[]>();
-                    csvContent = GetCsvContent(reader);
-                    var headers = csvContent.FirstOrDefault();
-                    if (headers != null)
+                    return new JsonResult(new ApiResponse<string>
                     {
-                        importQuestionFieldsVMList = new List<ImportQuestionFieldsVM>();
-                        for (int i = 1; i < csvContent.Count; i++)
-                        {
-                            var row = csvContent[i];
-                            if (row.Count() != (int)FieldsCount.ImportQuestionFieldsCount)
-                            {
-                                return new JsonResult(new ApiResponse<string>
-                                {
-                                    Message = ResponseMessages.InvalidFormat,
-                                    Result = false,
-                                    StatusCode = ResponseStatusCode.BadRequest
-                                });
-                            }
-                            var viewModel = new ImportQuestionFieldsVM
-                            {
-                                quetionnumber = Int32.Parse(GetValueForHeader(row, headers, "Question Number")),
-                                correctoption = Char.Parse(GetValueForHeader(row, headers, "Correct Option")),
-                                topic = GetValueForHeader(row, headers, "Topic"),
-                                difficulty = Int32.Parse(GetValueForHeader(row, headers, "Marks")),
-                                optiondata1 = GetValueForHeader(row, headers, "Option A"),
-                                optiondata2 = GetValueForHeader(row, headers, "Option B"),
-                                optiondata3 = GetValueForHeader(row, headers, "Option C"),
-                                optiondata4 = GetValueForHeader(row, headers, "Option D"),
-                                questiontext = GetValueForHeader(row, headers, "Question").Trim('"'),
-                            };
-                            if (IsHeaderValid(row, headers))
-                            {
-                                viewModel.version = char.Parse(GetValueForHeader(row, headers, "Version"));
-                            }
-                            importQuestionFieldsVMList.Add(viewModel);
-                        }
-                    }
+                        Message = string.Format(ResponseMessages.InvalidFormat
+                        ),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
                 }
-
+                List<ImportQuestionFieldsVM> importQuestionFieldsVMList = new List<ImportQuestionFieldsVM>();
+                importQuestionFieldsVMList = data.Select(x => new ImportQuestionFieldsVM
+                {
+                    correctoption = x.correctoption,
+                    difficulty = x.difficulty,
+                    optiondata1 = x.optiondata1,
+                    optiondata2 = x.optiondata2,
+                    optiondata3 = x.optiondata3,
+                    optiondata4 = x.optiondata4,
+                    questiontext = x.questiontext,
+                    quetionnumber = x.quetionnumber,
+                    version = x.version,
+                    topic = x.topic,
+                }).ToList();
                 if (importQuestionFieldsVMList.Count == 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -729,35 +704,22 @@ namespace AptitudeTest.Data.Data
 
         #region Helper Method
 
-        private static bool IsHeaderValid(string[] row, string[] headers)
+        static List<ImportQuestionCsvVM> ReadCsvFile(IFormFile file)
         {
-            if (GetValueForHeader(row, headers, "Version") != null && GetValueForHeader(row, headers, "Version") != "")
+            try
             {
-                return true;
-            }
-            return false;
-        }
-        private static List<string[]> GetCsvContent(StreamReader reader)
-        {
-            var csvContent = new List<string[]>();
-            var regex = new Regex("(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)", RegexOptions.Compiled);
-
-            while (!reader.EndOfStream)
-            {
-                var line = reader.ReadLine();
-
-                var matches = regex.Matches(line);
-                List<string> values = new List<string>();
-
-                foreach (Match match in matches)
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
                 {
-                    values.Add(match.Groups[1].Value.Trim(' ', ','));
+                    return csv.GetRecords<ImportQuestionCsvVM>().ToList();
                 }
-
-                csvContent.Add(values.ToArray());
             }
 
-            return csvContent;
+            catch
+            {
+                return null;
+            }
+
         }
         private static bool IsOptionValid(QuestionVM questionVM, OptionVM option)
         {
