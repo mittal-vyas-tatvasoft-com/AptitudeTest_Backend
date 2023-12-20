@@ -130,7 +130,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.TempUserTest),
+                        Message = ResponseMessages.TestAlreadySubmitted,
                         Result = false,
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
@@ -638,6 +638,7 @@ namespace AptitudeTest.Data.Data
                         if (tempUserTest != null)
                         {
                             tempUserTest.IsDeleted = true;
+                            tempUserTest.IsFinished = true;
                             _appDbContext.SaveChanges();
 
                             UserTest userTestToBeAdded = new UserTest()

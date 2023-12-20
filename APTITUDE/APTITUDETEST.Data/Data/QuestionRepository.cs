@@ -154,7 +154,7 @@ namespace AptitudeTest.Data.Data
                                         {
                                             IsAnswer = x.IsAnswer,
                                             OptionId = x.OptionId,
-                                            OptionValue = HttpUtility.HtmlDecode( x.OptionData)
+                                            OptionValue = HttpUtility.HtmlDecode(x.OptionData)
                                         };
                                     }).OrderBy(option => option.OptionId).ToList()
                                 };
