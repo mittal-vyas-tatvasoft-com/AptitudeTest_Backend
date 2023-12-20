@@ -100,6 +100,7 @@ namespace AptitudeTest.Controllers
         {
             return await _candidateService.GetInstructionsOfTheTestForUser(userId, testStatus);
         }
+
         /// <summary>
         /// end the test of candidate
         /// </summary>
