@@ -129,7 +129,7 @@ namespace AptitudeTest.Data.Data
             {
                 var collegeList = await Task.FromResult(_context.MasterGroup
                                             .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
-                                            .Select(x => new { Id = x.Id, Name = x.Name })
+                                            .Select(x => new { Id = x.Id, Name = x.Name, IsDefault = x.IsDefault })
                                             .ToList());
 
                 if (collegeList != null)
@@ -288,7 +288,13 @@ namespace AptitudeTest.Data.Data
         #region Helper Methods
         private List<MasterGroup> GetExistingGroups()
         {
-            return _context.MasterGroup.Where(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true).OrderByDescending(group => group.Id).ToList();
+            List<MasterGroup> existingGroups = new List<MasterGroup>();
+            MasterGroup? defaultGroup = _context.MasterGroup.FirstOrDefault(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true && group.IsDefault);
+            List<MasterGroup> nonDefaultGroups = _context.MasterGroup.Where(group => (group.IsDeleted == null || group.IsDeleted == false) && group.Status == true && !group.IsDefault).OrderByDescending(group => group.Id).ToList();
+            existingGroups.Add(defaultGroup);
+            existingGroups.AddRange(nonDefaultGroups);
+            return existingGroups;
+
         }
 
         private static List<MasterGroup> GetSearchedGroupFromExistingGroups(List<MasterGroup> existingGroups, string? searchGroup)
