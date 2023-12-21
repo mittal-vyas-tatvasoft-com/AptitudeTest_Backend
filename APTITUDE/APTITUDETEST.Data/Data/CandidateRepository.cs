@@ -125,7 +125,8 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.NotFound
                     });
                 }
-                TempUserTest? tempUserTestAlreadyExists = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && x.IsDeleted == false).FirstOrDefault();
+                TempUserTest? tempUserTestAlreadyExists = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && x.IsDeleted != false).FirstOrDefault();
+
                 if (tempUserTestAlreadyExists != null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -829,20 +830,17 @@ namespace AptitudeTest.Data.Data
         }
         private Test? GetTestOfUser(int userId)
         {
-            int? collegeId = _appDbContext.Users.Where(x => x.Id == userId && x.IsDeleted == false).Select(x => x.CollegeId).FirstOrDefault();
-            if (collegeId != null)
+            int? groupId = _appDbContext.Users.Where(x => x.Id == userId).Select(x => x.GroupId).FirstOrDefault();
+            if (groupId != null)
             {
-                int? groupId = _appDbContext.MasterCollege.Where(x => x.Id == collegeId && x.IsDeleted == false).Select(x => x.GroupId).FirstOrDefault();
-                if (groupId != null)
-                {
 
-                    Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.Status == (int)TestStatus.Active && x.IsDeleted == false).FirstOrDefault();
-                    if (test != null && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now)
-                    {
-                        return test;
-                    }
+                Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.Status == (int)TestStatus.Active && x.IsDeleted == false).FirstOrDefault();
+                if (test != null && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now)
+                {
+                    return test;
                 }
             }
+
             return null;
         }
 
