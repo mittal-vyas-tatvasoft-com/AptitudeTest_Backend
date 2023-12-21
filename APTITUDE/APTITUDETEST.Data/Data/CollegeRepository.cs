@@ -201,7 +201,6 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                var defaultGroupId = _context.MasterGroup.FirstOrDefault(x => x.IsDefault)?.Id;
                 college.Status = collegeToUpsert.Status;
                 college.Name = collegeToUpsert.Name.Trim();
                 college.Abbreviation = collegeToUpsert.Abbreviation.Trim();
