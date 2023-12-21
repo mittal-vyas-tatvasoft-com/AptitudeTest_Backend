@@ -1,11 +1,11 @@
-﻿using AptitudeTest.Core.Entities.Admin;
+﻿using AptitudeTest.Common.Helpers;
+using AptitudeTest.Core.Entities.Admin;
 using AptitudeTest.Core.Entities.CandidateSide;
 using AptitudeTest.Core.Entities.Test;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
-using AptitudeTest.Common.Helpers;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +26,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Constructor
-        public CandidateRepository(AppDbContext appDbContext, IConfiguration config,UserActiveTestHelper userActiveTestHelper)
+        public CandidateRepository(AppDbContext appDbContext, IConfiguration config, UserActiveTestHelper userActiveTestHelper)
         {
             _appDbContext = appDbContext;
             _config = config;
@@ -721,9 +721,20 @@ namespace AptitudeTest.Data.Data
                     {
                         if (testStatus == ModuleNames.StartTest)
                         {
+                            StartTestVM startTestDetails = new StartTestVM()
+                            {
+                                EndTime = userTest.EndTime,
+                                MessageAtStartOfTheTest = userTest.MessaageAtStartOfTheTest,
+                                TestName = userTest.Name,
+                                StartTime = userTest.StartTime,
+                                TestDate = userTest.Date,
+                                TestDurationInMinutes = userTest.TestDuration,
+                                NegativeMarkingPoints = userTest.NegativeMarkingPercentage,
+                                BasicPoints = userTest.BasicPoint
+                            };
                             return new JsonResult(new ApiResponse<StartTestVM>
                             {
-                                Data = new StartTestVM() { EndTime = userTest.EndTime, MessageAtStartOfTheTest = userTest.MessaageAtStartOfTheTest },
+                                Data = startTestDetails,
                                 Message = ResponseMessages.Success,
                                 Result = true,
                                 StatusCode = ResponseStatusCode.Success
