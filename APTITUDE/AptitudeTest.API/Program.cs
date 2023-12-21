@@ -1,5 +1,6 @@
 using AptitudeTest.Application.Services;
 using AptitudeTest.Common.Data;
+using AptitudeTest.Common.Helpers;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
@@ -78,6 +79,7 @@ builder.Services.AddTransient<ISessionIdHelperInMemoryService, SessionIdHelperIn
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<SessionIdCheckFilterAttribute>();
+builder.Services.AddScoped<UserActiveTestHelper>();
 
 builder.Services.AddScoped<ISessionIdHelperInDbRepository, SessionIdHelperInDbRepository>();
 builder.Services.AddScoped<ISessionIdHelperInDbService, SessionIdHelperInDbService>();
