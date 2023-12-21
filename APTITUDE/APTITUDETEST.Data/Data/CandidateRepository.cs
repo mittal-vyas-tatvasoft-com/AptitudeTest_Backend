@@ -9,6 +9,7 @@ using APTITUDETEST.Common.Data;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Npgsql;
 using System.Data;
 using static AptitudeTest.Data.Common.Enums;
@@ -636,60 +637,17 @@ namespace AptitudeTest.Data.Data
             {
                 if (userId != 0)
                 {
-                    Test? test = _userActiveTestHelper.GetTestOfUser(userId);
-                    if (test != null)
-                    {
-                        TempUserTest? tempUserTest = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && x.IsDeleted == false).FirstOrDefault();
-                        if (tempUserTest != null)
-                        {
-                            tempUserTest.IsDeleted = true;
-                            tempUserTest.IsFinished = true;
-                            _appDbContext.SaveChanges();
 
-                            UserTest userTestToBeAdded = new UserTest()
-                            {
-                                UserId = userId,
-                                TestId = test.Id,
-                                Status = true,
-                                IsFinished = true,
-                                CreatedBy = userId,
-                            };
-
-                            _appDbContext.Add(userTestToBeAdded);
-                            int count = _appDbContext.SaveChanges();
-                            if (count == 1)
-                            {
-                                return await AddUserTempResultToUserTestResult(tempUserTest.Id, userTestToBeAdded.Id);
-                            }
-                            else
-                            {
-                                return new JsonResult(new ApiResponse<string>
-                                {
-                                    Message = ResponseMessages.InternalError,
-                                    Result = false,
-                                    StatusCode = ResponseStatusCode.InternalServerError
-                                });
-                            }
-                        }
-                        else
-                        {
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = string.Format(ResponseMessages.NotFound, ModuleNames.TempUserTest),
-                                Result = false,
-                                StatusCode = ResponseStatusCode.NotFound
-                            });
-                        }
-                    }
-                    else
+                    using (var connection = new NpgsqlConnection(connectionString))
                     {
-                        return new JsonResult(new ApiResponse<Admin>
-                        {
-                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.NotFound
-                        });
+                        connection.Open();
+                        var result = connection.Query("Select * from endtest(@user_id)", new { user_id = userId }).FirstOrDefault();
+                        string jsonResult = result?.endtest;
+                        connection.Close();
+                        ApiResponse<string> response = JsonConvert.DeserializeObject<ApiResponse<string>>(jsonResult);
+                        return new JsonResult(response);
                     }
+
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -784,64 +742,20 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Helper Method
-        private async Task<JsonResult> AddUserTempResultToUserTestResult(int tempUserTestId, int userTestId)
+        private Test? GetTestOfUser(int userId)
         {
-            try
+            int? groupId = _appDbContext.Users.Where(x => x.Id == userId).Select(x => x.GroupId).FirstOrDefault();
+            if (groupId != null)
             {
-                List<TempUserTestResult>? tempUserTestResultList = _appDbContext.TempUserTestResult.Where(x => x.UserTestId == tempUserTestId).ToList();
-                if (tempUserTestResultList != null && tempUserTestResultList.Count > 0)
-                {
-                    List<UserTestResult>? UserTestResultList = tempUserTestResultList.Select(x => new UserTestResult()
-                    {
-                        UserTestId = userTestId,
-                        QuestionId = x.QuestionId,
-                        UserAnswers = x.UserAnswers,
-                        IsAttended = x.IsAttended,
-                        CreatedBy = x.CreatedBy,
-                    }).ToList();
 
-                    tempUserTestResultList.ForEach(x => x.IsDeleted = true);
-
-                    _appDbContext.UserTestResult.AddRange(UserTestResultList);
-                    int result = _appDbContext.SaveChanges();
-                    if (result > 0)
-                    {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = string.Format(ResponseMessages.EndTest),
-                            Result = true,
-                            StatusCode = ResponseStatusCode.OK
-                        });
-                    }
-                    else
-                    {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = ResponseMessages.InternalError,
-                            Result = false,
-                            StatusCode = ResponseStatusCode.InternalServerError
-                        });
-                    }
-                }
-                else
+                Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.Status == (int)TestStatus.Active && x.IsDeleted == false).FirstOrDefault();
+                if (test != null && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now)
                 {
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.TempUserTestResult),
-                        Result = false,
-                        StatusCode = ResponseStatusCode.NotFound
-                    });
+                    return test;
                 }
             }
-            catch (Exception ex)
-            {
-                return new JsonResult(new ApiResponse<string>
-                {
-                    Message = ResponseMessages.InternalError,
-                    Result = false,
-                    StatusCode = ResponseStatusCode.InternalServerError
-                });
-            }
+
+            return null;
         }
 
         private static Dictionary<(int, QuestionType, int), int> setQuestionsConfig(List<TestWiseQuestionsCountVM> testWiseQuestionsCount)
