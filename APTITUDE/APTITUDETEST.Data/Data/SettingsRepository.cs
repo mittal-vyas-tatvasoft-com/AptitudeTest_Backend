@@ -64,6 +64,7 @@ namespace AptitudeTest.Data.Data
                 }
                 settingConfigurations.UserRegistration = updateSettingsVM.UserRegistration;
                 settingConfigurations.Camera = updateSettingsVM.Camera;
+                settingConfigurations.ClearResponseButton = updateSettingsVM.ClearResponseButton;
                 settingConfigurations.ScreenCapture = updateSettingsVM.ScreenCapture;
                 settingConfigurations.IntervalForScreenCapture = updateSettingsVM.IntervalForScreenCapture;
                 settingConfigurations.CutOff = updateSettingsVM.CutOff;

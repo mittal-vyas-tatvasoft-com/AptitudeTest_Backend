@@ -28,20 +28,15 @@ namespace AptitudeTest.Common.Helpers
         #region Methods
         public Test? GetTestOfUser(int userId)
         {
-            int? collegeId = _context.Users.Where(x => x.Id == userId && x.IsDeleted == false).Select(x => x.CollegeId).FirstOrDefault();
-            if (collegeId != null)
-            {
-                int? groupId = _context.MasterCollege.Where(x => x.Id == collegeId && x.IsDeleted == false).Select(x => x.GroupId).FirstOrDefault();
+                int? groupId = _context.Users.Where(x => x.Id == userId && x.IsDeleted == false).Select(x => x.GroupId).FirstOrDefault();
                 if (groupId != null)
                 {
-
                     Test? test = _context.Tests.Where(x => x.GroupId == groupId && x.Status == (int)TestStatus.Active && x.IsDeleted == false).FirstOrDefault();
                     if (test != null && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now)
                     {
                         return test;
                     }
                 }
-            }
             return null;
         }
         #endregion
