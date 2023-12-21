@@ -8,7 +8,6 @@ using AptitudeTest.Filters;
 using APTITUDETEST.Common.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql;
@@ -112,7 +111,7 @@ builder.Services.AddSwaggerGen(opt =>
             },
             new string[]{}
         }
-    }); 
+    });
     opt.OperationFilter<AddXIdSwagggerFilter>();
 });
 builder.Services.AddCors(option =>

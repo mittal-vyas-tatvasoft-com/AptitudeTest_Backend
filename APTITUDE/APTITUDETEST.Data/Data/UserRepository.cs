@@ -1,6 +1,5 @@
 ﻿using AptitudeTest.Common.Data;
 using AptitudeTest.Common.Helpers;
-using AptitudeTest.Core.Entities.Master;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
@@ -377,7 +376,6 @@ namespace AptitudeTest.Data.Data
                     });
                 }
                 var password = RandomPasswordGenerator.GenerateRandomPassword(8);
-                MasterCollege? masterCollege = await Task.FromResult(_appDbContext.MasterCollege.Where(x => x.Id == registerUserVM.CollegeId).FirstOrDefault());
 
                 if (registerUserVM.UserAcademicsVM == null)
                 {
@@ -389,13 +387,14 @@ namespace AptitudeTest.Data.Data
                 }
                 using (var connection = _dapperContext.CreateConnection())
                 {
+                    int DefaultGroupId = _appDbContext.MasterGroup.Where(g => g.IsDefault == true).Select(g => g.Id).FirstOrDefault();
                     var procedure = "register_user";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
                     dateParameter.Value = registerUserVM.DateOfBirth;
                     var parameters = new DynamicParameters(
                     new
                     {
-                        p_groupid = masterCollege.GroupId,
+                        p_groupid = DefaultGroupId,
                         p_collegeid = registerUserVM.CollegeId,
                         p_status = true,
                         p_firstname = registerUserVM.FirstName,
