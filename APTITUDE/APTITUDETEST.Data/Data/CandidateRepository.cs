@@ -5,6 +5,7 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
+using AptitudeTest.Common.Helpers;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -20,15 +21,17 @@ namespace AptitudeTest.Data.Data
         private readonly AppDbContext _appDbContext;
         private readonly IConfiguration? _config;
         private readonly string? connectionString;
+        private readonly UserActiveTestHelper _userActiveTestHelper;
 
         #endregion
 
         #region Constructor
-        public CandidateRepository(AppDbContext appDbContext, IConfiguration config)
+        public CandidateRepository(AppDbContext appDbContext, IConfiguration config,UserActiveTestHelper userActiveTestHelper)
         {
             _appDbContext = appDbContext;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
+            _userActiveTestHelper = userActiveTestHelper;
         }
         #endregion
 
@@ -115,7 +118,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                Test? test = GetTestOfUser(userId);
+                Test? test = _userActiveTestHelper.GetTestOfUser(userId);
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<Admin>
@@ -273,7 +276,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                Test? test = GetTestOfUser(userTestQuestionAnswer.UserId);
+                Test? test = _userActiveTestHelper.GetTestOfUser(userTestQuestionAnswer.UserId);
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -394,7 +397,7 @@ namespace AptitudeTest.Data.Data
 
                 using (DbConnection connection = new DbConnection())
                 {
-                    Test? test = GetTestOfUser(userId);
+                    Test? test = _userActiveTestHelper.GetTestOfUser(userId);
                     int? testId = test.Id;
                     if (testId == null || testId < 1)
                     {
@@ -524,7 +527,7 @@ namespace AptitudeTest.Data.Data
 
                 using (DbConnection connection = new DbConnection())
                 {
-                    Test? test = GetTestOfUser(userId);
+                    Test? test = _userActiveTestHelper.GetTestOfUser(userId);
                     int? testId = test?.Id;
                     if (testId == null || testId < 1)
                     {
@@ -632,7 +635,7 @@ namespace AptitudeTest.Data.Data
             {
                 if (userId != 0)
                 {
-                    Test? test = GetTestOfUser(userId);
+                    Test? test = _userActiveTestHelper.GetTestOfUser(userId);
                     if (test != null)
                     {
                         TempUserTest? tempUserTest = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && x.IsDeleted == false).FirstOrDefault();
@@ -712,7 +715,7 @@ namespace AptitudeTest.Data.Data
             {
                 if (userId != 0)
                 {
-                    Test? userTest = GetTestOfUser(userId);
+                    Test? userTest = _userActiveTestHelper.GetTestOfUser(userId);
                     if (userTest != null)
                     {
                         if (testStatus == ModuleNames.StartTest)
@@ -827,21 +830,6 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.InternalServerError
                 });
             }
-        }
-        private Test? GetTestOfUser(int userId)
-        {
-            int? groupId = _appDbContext.Users.Where(x => x.Id == userId).Select(x => x.GroupId).FirstOrDefault();
-            if (groupId != null)
-            {
-
-                Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.Status == (int)TestStatus.Active && x.IsDeleted == false).FirstOrDefault();
-                if (test != null && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now)
-                {
-                    return test;
-                }
-            }
-
-            return null;
         }
 
         private static Dictionary<(int, QuestionType, int), int> setQuestionsConfig(List<TestWiseQuestionsCountVM> testWiseQuestionsCount)
