@@ -120,7 +120,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.NotFound, ModuleNames.User), StatusCode = ResponseStatusCode.NotFound, Result = false });
                 }
-                var sent = SendMailForResetPassword(user.FirstName, user.Email);
+                var sent = SendMailForResetPassword(user.FirstName, user.LastName, user.Email);
                 if (sent)
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.MailSentForForgetPassword, StatusCode = ResponseStatusCode.OK, Result = true });
@@ -257,7 +257,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region SendEmail
-        private static bool SendMailForResetPassword(string firstName, string email)
+        private static bool SendMailForResetPassword(string firstName, string lastName, string email)
         {
             try
             {
@@ -271,7 +271,7 @@ namespace AptitudeTest.Data.Data
                 var resetLink = builder.ToString();
 
                 var subject = "Password reset request";
-                var body = $"<h3>Hello {firstName}</h3>,<br />we received password reset request from your side,<br /><br />Please click on the following link to reset your password <br /><br /><a href='{resetLink}'><h3>Click here</h3></a>";
+                var body = $"<h3>Hello {firstName} {lastName},</h3>We have received Password reset request from you,<br />Please click on the following link to reset your password.<br /><a href='{resetLink}'>Reset Password</a>";
 
                 var emailHelper = new EmailHelper(_appSettingConfiguration);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
