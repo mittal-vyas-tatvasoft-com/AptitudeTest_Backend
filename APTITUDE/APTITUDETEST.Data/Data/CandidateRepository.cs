@@ -115,6 +115,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
+
                 Test? test = GetTestOfUser(userId);
                 if (test == null)
                 {
@@ -125,6 +126,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.NotFound
                     });
                 }
+
                 TempUserTest? tempUserTestAlreadyExists = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && (bool)x.IsDeleted).FirstOrDefault();
 
                 if (tempUserTestAlreadyExists != null)
