@@ -1,4 +1,6 @@
 ﻿using AptitudeTest.Common.Helpers;
+using AptitudeTest.Core.Entities.CandidateSide;
+using AptitudeTest.Core.Entities.Test;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
@@ -22,16 +24,18 @@ namespace AptitudeTest.Data.Data
         private Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISessionIdHelperInMemoryService _sessionIdHelperInMemoryService;
+        private readonly UserActiveTestHelper _userActiveTestHelper;
         #endregion
 
         #region Constructor
         public UserAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration, IHttpContextAccessor httpContextAccessor
-            , ISessionIdHelperInMemoryService sessionIdHelperInMemoryService)
+            , ISessionIdHelperInMemoryService sessionIdHelperInMemoryService, UserActiveTestHelper userActiveTestHelper)
         {
             _context = context;
             _appSettingConfiguration = appSettingConfiguration;
             _httpContextAccessor = httpContextAccessor;
             _sessionIdHelperInMemoryService = sessionIdHelperInMemoryService;
+            _userActiveTestHelper = userActiveTestHelper;
         }
         #endregion
 
@@ -63,6 +67,13 @@ namespace AptitudeTest.Data.Data
                 }
                 string newAccessToken = jwtHelper.GenerateJwtToken(user, null);
                 string newRefreshToken = jwtHelper.CreateRefreshToken(user.Email, RefreshTokens);
+
+                Test? test = _userActiveTestHelper.GetTestOfUser(user.Id);
+                UserTest? userTest = new UserTest();
+                if (test != null)
+                {
+                   userTest  = _context.UserTests.Where(x => x.TestId == test.Id).FirstOrDefault();
+                }
 
                 if (string.IsNullOrEmpty(newAccessToken) && string.IsNullOrEmpty(newRefreshToken))
                 {
@@ -97,7 +108,8 @@ namespace AptitudeTest.Data.Data
                     AccessToken = tokenPayload.AccessToken,
                     RefreshToken = tokenPayload.RefreshToken,
                     RefreshTokenExpiryTime = tokenPayload.RefreshTokenExpiryTime,
-                    Sid = sessionId
+                    Sid = sessionId,
+                    IsSubmitted = userTest?.UserId != null ? userTest.IsFinished : false
                 };
 
                 return new JsonResult(new ApiResponse<TokenWithSidVm> { Data = tokenWithSidVmPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
