@@ -72,7 +72,7 @@ namespace AptitudeTest.Data.Data
                 UserTest? userTest = new UserTest();
                 if (test != null)
                 {
-                    userTest = _context.UserTests.Where(x => x.TestId == test.Id).FirstOrDefault();
+                    userTest = _context.UserTests.Where(x => x.TestId == test.Id && x.UserId == user.Id).FirstOrDefault();
                 }
 
                 if (string.IsNullOrEmpty(newAccessToken) && string.IsNullOrEmpty(newRefreshToken))
