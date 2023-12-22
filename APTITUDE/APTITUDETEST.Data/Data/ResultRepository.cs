@@ -1,4 +1,5 @@
-﻿using AptitudeTest.Core.Interfaces;
+﻿using AptitudeTest.Core.Entities.CandidateSide;
+using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
@@ -13,6 +14,7 @@ namespace AptitudeTest.Data.Data
     {
         #region Properties
         private readonly string? connectionString;
+        private AppDbContext _context;
         #endregion
 
         #region Constructor
@@ -21,6 +23,7 @@ namespace AptitudeTest.Data.Data
             IConfiguration _config;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
+            _context = context;
         }
         #endregion
 
@@ -225,6 +228,61 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> ApproveResumeTest(int userId, int testId, bool isApprove)
+        {
+            try
+            {
+                if (userId < 1 || testId < 1)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
+                TempUserTest tempUserTest = _context.TempUserTests.Where(t => t.UserId == userId && t.TestId == testId).FirstOrDefault();
+                if (tempUserTest == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.UserTest),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                if (tempUserTest.IsFinished)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.TestSubmitted,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.RequestFailed
+                    });
+                }
+
+                tempUserTest.IsAdminApproved = isApprove;
+                _context.Update(tempUserTest);
+                _context.SaveChanges();
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.StatusUpdateSuccess, ModuleNames.Approval),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
         #endregion
 
         #region Helper Methods

@@ -231,6 +231,14 @@
                 return _Setting;
             }
         }
+        public readonly static string _Approval = "Approval";
+        public static string Approval
+        {
+            get
+            {
+                return _Approval;
+            }
+        }
 
     }
 }
