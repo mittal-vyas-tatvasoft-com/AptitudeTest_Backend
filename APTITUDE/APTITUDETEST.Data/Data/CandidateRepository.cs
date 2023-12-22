@@ -130,26 +130,49 @@ namespace AptitudeTest.Data.Data
                     });
                 }
 
-                TempUserTest? tempUserTestAlreadyExists = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && (bool)x.IsDeleted).FirstOrDefault();
+                TempUserTest? tempUserTestAlreadyExists = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id).FirstOrDefault();
 
                 if (tempUserTestAlreadyExists != null)
                 {
-                    return new JsonResult(new ApiResponse<string>
+                    if ((bool)tempUserTestAlreadyExists.IsDeleted)
                     {
-                        Message = ResponseMessages.TestAlreadySubmitted,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.AlreadyExist
-                    });
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.TestAlreadySubmitted,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.AlreadyExist
+                        });
+                    }
+                    else
+                    {
+                        if (tempUserTestAlreadyExists.IsAdminApproved)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.ResumeTest,
+                                Result = true,
+                                StatusCode = ResponseStatusCode.OK
+                            });
+                        }
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.TestAlreadySubmitted,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.AlreadyExist
+                        });
+                    }
                 }
-                TimeSpan difference = DateTime.UtcNow - test.StartTime;
-                int timeRamining = test.TestDuration - (int)difference.TotalMinutes;
+
+                TimeSpan difference = test.EndTime - DateTime.Now;
+                int differenceInMinutes = (int)difference.TotalMinutes;
+                int timeRemaining = differenceInMinutes < test.TestDuration ? differenceInMinutes : test.TestDuration;
 
                 TempUserTest tempUserTestToBeAdded = new TempUserTest()
                 {
                     UserId = userId,
                     TestId = test.Id,
                     Status = true,
-                    TimeRemaining = timeRamining,
+                    TimeRemaining = timeRemaining,
                     IsAdminApproved = false,
                     IsFinished = false,
                     CreatedBy = userId,

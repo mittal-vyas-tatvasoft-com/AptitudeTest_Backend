@@ -70,9 +70,11 @@ namespace AptitudeTest.Data.Data
 
                 Test? test = _userActiveTestHelper.GetTestOfUser(user.Id);
                 UserTest? userTest = new UserTest();
+                TempUserTest? tempUserTest = new TempUserTest();
                 if (test != null)
                 {
                     userTest = _context.UserTests.Where(x => x.TestId == test.Id && x.UserId == user.Id).FirstOrDefault();
+                    tempUserTest = _context.TempUserTests.Where(x => x.TestId == test.Id && x.UserId == user.Id).FirstOrDefault();
                 }
 
                 if (string.IsNullOrEmpty(newAccessToken) && string.IsNullOrEmpty(newRefreshToken))
@@ -81,9 +83,7 @@ namespace AptitudeTest.Data.Data
                 }
 
                 string sessionId = GenerateSessionId();
-
                 user.SessionId = sessionId;
-
                 _context.Update(user);
                 _context.SaveChanges();
                 _sessionIdHelperInMemoryService.AddSessionId(sessionId, user.Email);
@@ -103,13 +103,29 @@ namespace AptitudeTest.Data.Data
                     RefreshTokens.Add(user.Email, tokenPayload);
                 }
 
+                bool isSubmitted;
+                if (tempUserTest == null)
+                {
+                    isSubmitted = false;
+                }
+                else
+                {
+                    if (tempUserTest.IsAdminApproved && userTest == null)
+                    {
+                        isSubmitted = false;
+                    }
+                    else
+                    {
+                        isSubmitted = true;
+                    }
+                }
                 TokenWithSidVm tokenWithSidVmPayload = new TokenWithSidVm()
                 {
                     AccessToken = tokenPayload.AccessToken,
                     RefreshToken = tokenPayload.RefreshToken,
                     RefreshTokenExpiryTime = tokenPayload.RefreshTokenExpiryTime,
                     Sid = sessionId,
-                    IsSubmitted = userTest?.UserId != null ? userTest.IsFinished : false
+                    IsSubmitted = isSubmitted
                 };
 
                 return new JsonResult(new ApiResponse<TokenWithSidVm> { Data = tokenWithSidVmPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });

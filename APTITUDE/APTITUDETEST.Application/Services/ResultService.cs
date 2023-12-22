@@ -35,6 +35,10 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.GetResultExportData(searchQuery, TestId, GroupId, CollegeId, Year, currentPageIndex, pageSize, sortField, sortOrder);
         }
+        public Task<JsonResult> ApproveResumeTest(int userId, int testId, bool isApprove)
+        {
+            return _repository.ApproveResumeTest(userId, testId, isApprove);
+        }
         #endregion
     }
 }

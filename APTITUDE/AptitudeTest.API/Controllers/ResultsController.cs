@@ -87,6 +87,19 @@ namespace AptitudeTest.Controllers
         {
             return await _service.GetResultExportData(searchQuery, testId, groupId, collegeId, year, currentPageIndex, pageSize, sortField, sortOrder);
         }
+
+        /// <summary>
+        /// This method allows admin to approve resume test
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="testId"></param>
+        /// <param name="isApprove"></param>
+        /// <returns></returns>
+        [HttpPut("[action]/{userId:int}/{testId:int}/{isApprove:bool}")]
+        public async Task<JsonResult> ApproveResumeTest(int userId, int testId, bool isApprove)
+        {
+            return await _service.ApproveResumeTest(userId, testId, isApprove);
+        }
         #endregion
     }
 }

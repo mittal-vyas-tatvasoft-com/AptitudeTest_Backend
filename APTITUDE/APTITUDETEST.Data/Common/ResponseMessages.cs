@@ -56,6 +56,9 @@
         #region Candidate
         public readonly static string InternalErrorForAddingQuestionsToTest = "Internal error for adding questions to test";
         public readonly static string EndTest = "End test successfully";
+        public readonly static string ResumeTest = "Test resumed successfully";
+        public readonly static string ContactAdmin = "Please contact admin to resume test";
+        public readonly static string TestSubmitted = "Test Already Submitted";
         #endregion
 
     }
