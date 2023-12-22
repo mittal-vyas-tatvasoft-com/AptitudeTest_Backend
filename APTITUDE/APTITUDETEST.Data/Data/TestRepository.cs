@@ -131,6 +131,17 @@ namespace AptitudeTest.Data.Data
             {
 
                 Test? test = _context.Tests.Where(t => t.Id == testVM.Id && t.IsDeleted == false).FirstOrDefault();
+
+                if (test != null && test.Status == (int)TestStatus.Active && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test.StartTime) <= DateTime.Now)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.CantUpdateTestBecauseActive,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.RequestFailed
+                    });
+                }
+
                 if (test != null)
                 {
                     Test? testNameExist = _context.Tests.Where(t => t.Name.Trim().ToLower() == testVM.Name.Trim().ToLower() && t.Id != testVM.Id && t.IsDeleted == false).FirstOrDefault();
@@ -207,6 +218,18 @@ namespace AptitudeTest.Data.Data
             try
             {
                 Test? testAlreadyExists = _context.Tests.Where(t => t.Id == updateTest.TestId && t.IsDeleted == false).FirstOrDefault();
+
+
+                if (testAlreadyExists != null && testAlreadyExists.Status == (int)TestStatus.Active && Convert.ToDateTime(testAlreadyExists?.EndTime) >= DateTime.Now && Convert.ToDateTime(testAlreadyExists.StartTime) <= DateTime.Now)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.CantChangeStatusBecauseActive,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.RequestFailed
+                    });
+                }
+
                 if (testAlreadyExists != null)
                 {
                     testAlreadyExists.GroupId = updateTest.GroupId;
@@ -257,16 +280,20 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
+
                 Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == addTestQuestion.TestId && t.Status == (int)Common.Enums.TestStatus.Draft && t.IsDeleted == false).FirstOrDefault());
+
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<string>
                     {
-                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
-                        Result = true,
-                        StatusCode = ResponseStatusCode.NotFound
+                        Message = ResponseMessages.CantAddQuestionsBecauseActive,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.RequestFailed
                     });
                 }
+
+
 
                 int totalQuestionsCount = addTestQuestion.TestQuestionsCount.Sum(x => x.OneMarkQuestion + x.TwoMarkQuestion + x.ThreeMarkQuestion + x.FourMarkQuestion + x.FiveMarkQuestion);
                 if (totalQuestionsCount != addTestQuestion.NoOfQuestions)
@@ -355,7 +382,9 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+
                 Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == updateTestQuestion.TestId && t.IsDeleted == false).FirstOrDefault());
+
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -363,6 +392,16 @@ namespace AptitudeTest.Data.Data
                         Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
                         Result = true,
                         StatusCode = ResponseStatusCode.OK
+                    });
+                }
+
+                if (test != null && test.Status == (int)TestStatus.Active && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test.StartTime) <= DateTime.Now)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.CantChangeGroupBecauseActive,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.RequestFailed
                     });
                 }
 
@@ -443,6 +482,18 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == testId && t.IsDeleted == false).FirstOrDefault());
+
+                if (test != null && test.Status == (int)TestStatus.Active && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test.StartTime) <= DateTime.Now)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.CanDeleteQuestionsBecauseActive,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.RequestFailed
+                    });
+                }
+
                 if (testId <= 0 && topicId <= 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -522,6 +573,18 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == testId && t.IsDeleted == false).FirstOrDefault());
+
+                if (test != null && test.Status == (int)TestStatus.Active && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test.StartTime) <= DateTime.Now)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.CanDeleteQuestionsBecauseActive,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.RequestFailed
+                    });
+                }
+
                 if (testId <= 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -532,6 +595,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
                 List<TestQuestions> testQuestionsToBeDeleted = await Task.FromResult(_context.TestQuestions.Where(t => t.TestId == testId && t.IsDeleted == false).ToList());
+
                 if (testQuestionsToBeDeleted == null && testQuestionsToBeDeleted.Count <= 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -584,6 +648,17 @@ namespace AptitudeTest.Data.Data
                 if (testId != 0)
                 {
                     Test? testToBeDeleted = await Task.FromResult(_context.Tests.Where(t => t.Id == testId && t.IsDeleted == false).FirstOrDefault());
+
+                    if (testToBeDeleted != null && testToBeDeleted.Status == (int)TestStatus.Active && Convert.ToDateTime(testToBeDeleted?.EndTime) >= DateTime.Now && Convert.ToDateTime(testToBeDeleted.StartTime) <= DateTime.Now)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.CanDeleteTestBecauseActive,
+                            Result = true,
+                            StatusCode = ResponseStatusCode.RequestFailed
+                        });
+                    }
+
                     if (testToBeDeleted != null)
                     {
                         testToBeDeleted.IsDeleted = true;
@@ -920,6 +995,52 @@ namespace AptitudeTest.Data.Data
                         Message = ResponseMessages.Success,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> UpdateTestStatus(TestStatusVM status)
+        {
+            try
+            {
+                Test? testStatusToBeUpdated = _context.Tests.Where(t => t.Id == status.Id).FirstOrDefault();
+                if (testStatusToBeUpdated != null && testStatusToBeUpdated.Status == (int)TestStatus.Active && Convert.ToDateTime(testStatusToBeUpdated?.EndTime) >= DateTime.Now && Convert.ToDateTime(testStatusToBeUpdated.StartTime) <= DateTime.Now)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.CantChangeStatusBecauseActive,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.RequestFailed
+                    });
+                }
+                else
+                {
+                    testStatusToBeUpdated.Status = status.Status;
+                    int count = _context.SaveChanges();
+                    if (count == 1)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TestStatus),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.OK
+                        });
+                    }
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
             }

@@ -8,6 +8,7 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> GetTests(string? searchQuery, int? GroupId, int? Status, DateOnly? Date, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder);
         public Task<JsonResult> CreateTest(CreateTestVM testVM);
         public Task<JsonResult> UpdateTestGroup(UpdateTestGroupVM updateTest);
+        public Task<JsonResult> UpdateTestStatus(TestStatusVM statusVM);
         public Task<JsonResult> AddTestQuestions(TestQuestionsVM addTestQuestion);
         public Task<JsonResult> UpdateTestQuestions(TestQuestionsVM updateTestQuestion);
         public Task<JsonResult> DeleteTopicWiseTestQuestions(int testId, int topicId);

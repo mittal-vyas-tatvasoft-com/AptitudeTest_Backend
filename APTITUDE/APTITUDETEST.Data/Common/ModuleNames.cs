@@ -240,5 +240,14 @@
             }
         }
 
+        public readonly static string _TestStatus = "TestStatus";
+        public static string TestStatus
+        {
+            get
+            {
+                return _TestStatus;
+            }
+        }
+
     }
 }

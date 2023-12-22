@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Npgsql;
 using System.Data;
+using System.Web;
 using static AptitudeTest.Data.Common.Enums;
 
 namespace AptitudeTest.Data.Data
@@ -477,7 +478,7 @@ namespace AptitudeTest.Data.Data
                         Difficulty = question.Difficulty,
                         OptionType = question.OptionType,
                         QuestionType = question.QuestionType,
-                        QuestionText = question.QuestionText,
+                        QuestionText = HttpUtility.HtmlDecode(question.QuestionText),
                         NextQuestionId = nextQuestionId,
                         QuestionNumber = questionNumber,
                         TotalQuestions = questions.Length

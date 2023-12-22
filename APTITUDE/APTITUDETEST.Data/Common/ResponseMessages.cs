@@ -47,6 +47,12 @@
         public readonly static string TestTopicQuestionsNotFound = "Questions for this topic does not found for this test";
         public readonly static string TestWithSameName = "Test with same name exists";
         public readonly static string TestAlreadySubmitted = "Your test is already submitted";
+        public readonly static string CantChangeStatusBecauseActive = "Your can't change status of the test because it is currently active...!";
+        public readonly static string CantChangeGroupBecauseActive = "Your can't change group of the test because it is currently active...!";
+        public readonly static string CantUpdateTestBecauseActive = "Your can't update data of the test because it is currently active...!";
+        public readonly static string CantAddQuestionsBecauseActive = "Your can't add questions of the test because it is currently active...!";
+        public readonly static string CanDeleteQuestionsBecauseActive = "Your can't delete questions of the test because it is currently active...!";
+        public readonly static string CanDeleteTestBecauseActive = "Your can't delete test because it is currently active...!";
         #endregion
 
         #region AdminAuthentication
