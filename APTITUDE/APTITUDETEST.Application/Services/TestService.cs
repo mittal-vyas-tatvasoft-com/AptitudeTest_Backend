@@ -82,6 +82,11 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.GetTestsForDropdown();
         }
+
+        public Task<JsonResult> UpdateTestStatus(TestStatusVM status)
+        {
+            return _repository.UpdateTestStatus(status);
+        }
         #endregion 
     }
 }

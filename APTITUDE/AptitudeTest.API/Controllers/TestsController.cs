@@ -187,6 +187,16 @@ namespace AptitudeTest.Controllers
             return await _service.GetTestById(testId);
         }
 
+        /// <summary>
+        /// This method update the status of test
+        /// </summary>
+        /// <param name="updateTest"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> UpdateTestStatus(TestStatusVM status)
+        {
+            return await _service.UpdateTestStatus(status);
+        }
 
         #endregion
     }
