@@ -391,6 +391,8 @@ namespace AptitudeTest.Data.Data
 
             // Randomly select questions for each mark, type, and topic Id
             List<RandomQuestionsVM> selectedQuestions = SelectRandomQuestions(allQuestions, questionsPerMarkTypeTopicId);
+
+
             if (selectedQuestions.Count != 0)
             {
                 var tempUserTestResults = selectedQuestions.Select(ques => new TempUserTestResult()
