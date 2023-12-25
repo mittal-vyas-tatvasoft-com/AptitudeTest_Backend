@@ -228,7 +228,84 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> ApproveResumeTest(int userId, int testId, bool isApprove)
+        public async Task<JsonResult> ApproveResumeTest(TestApproveVM testApproveVM)
+        {
+            try
+            {
+                if (testApproveVM.UserId < 1 || testApproveVM.TestId < 1)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+
+                TempUserTest tempUserTest = _context.TempUserTests.Where(t => t.UserId == testApproveVM.UserId && t.TestId == testApproveVM.TestId).FirstOrDefault();
+                if (tempUserTest == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.UserTest),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                if (tempUserTest.IsFinished)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.TestSubmitted,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.RequestFailed
+                    });
+                }
+                int duration = _context.Tests.Where(t => t.Id == testApproveVM.TestId).Select(t => t.TestDuration).FirstOrDefault();
+                if (duration != 0)
+                {
+                    if (testApproveVM.RemainingTimeInMinutes <= duration)
+                    {
+                        tempUserTest.IsAdminApproved = true;
+                        tempUserTest.TimeRemaining = testApproveVM.RemainingTimeInMinutes;
+                        _context.Update(tempUserTest);
+                        _context.SaveChanges();
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.StatusUpdateSuccess, ModuleNames.Approval),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
+                    }
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.DurationExceeds,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotAcceptable
+                    });
+
+                }
+
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
+            }
+
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> GetApproveTestData(int userId, int testId)
         {
             try
             {
@@ -261,18 +338,25 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.RequestFailed
                     });
                 }
+                int duration = _context.Tests.Where(t => t.Id == testId).Select(t => t.TestDuration).FirstOrDefault();
+                if (duration != 0)
+                {
+                    return new JsonResult(new ApiResponse<TestApproveVM>
+                    {
+                        Data = new TestApproveVM() { duration = duration, RemainingTimeInMinutes = tempUserTest.TimeRemaining, UserId = userId, TestId = testId },
+                        Message = string.Format(ResponseMessages.StatusUpdateSuccess, ModuleNames.Approval),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
 
-                tempUserTest.IsAdminApproved = isApprove;
-                _context.Update(tempUserTest);
-                _context.SaveChanges();
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.StatusUpdateSuccess, ModuleNames.Approval),
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
                     Result = true,
-                    StatusCode = ResponseStatusCode.Success
+                    StatusCode = ResponseStatusCode.NotFound
                 });
             }
-
             catch
             {
                 return new JsonResult(new ApiResponse<string>

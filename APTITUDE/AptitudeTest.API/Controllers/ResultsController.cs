@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.Interfaces;
+using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -95,10 +96,22 @@ namespace AptitudeTest.Controllers
         /// <param name="testId"></param>
         /// <param name="isApprove"></param>
         /// <returns></returns>
-        [HttpPut("[action]/{userId:int}/{testId:int}/{isApprove:bool}")]
-        public async Task<JsonResult> ApproveResumeTest(int userId, int testId, bool isApprove)
+        [HttpPut("[action]")]
+        public async Task<JsonResult> ApproveResumeTest(TestApproveVM testApproveVM)
         {
-            return await _service.ApproveResumeTest(userId, testId, isApprove);
+            return await _service.ApproveResumeTest(testApproveVM);
+        }
+
+        /// <summary>
+        /// This methods returns data related to test
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="testId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{userId:int}/{testId:int}")]
+        public async Task<JsonResult> GetApproveTestData(int userId, int testId)
+        {
+            return await _service.GetApproveTestData(userId, testId);
         }
         #endregion
     }
