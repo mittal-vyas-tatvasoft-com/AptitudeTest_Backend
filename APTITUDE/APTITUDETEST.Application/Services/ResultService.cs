@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.Interfaces;
+using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
@@ -35,9 +36,13 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.GetResultExportData(searchQuery, TestId, GroupId, CollegeId, Year, currentPageIndex, pageSize, sortField, sortOrder);
         }
-        public Task<JsonResult> ApproveResumeTest(int userId, int testId, bool isApprove)
+        public Task<JsonResult> ApproveResumeTest(TestApproveVM testApproveVM)
         {
-            return _repository.ApproveResumeTest(userId, testId, isApprove);
+            return _repository.ApproveResumeTest(testApproveVM);
+        }
+        public Task<JsonResult> GetApproveTestData(int userId, int testId)
+        {
+            return _repository.GetApproveTestData(userId, testId);
         }
         #endregion
     }

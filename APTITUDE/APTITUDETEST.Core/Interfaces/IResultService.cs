@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AptitudeTest.Core.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Core.Interfaces
 {
@@ -8,6 +9,7 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> GetResults(string? searchQuery, int? TestId, int? GroupId, int? CollegeId, int? Year, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder);
         public Task<JsonResult> GetResultStatistics(string? searchQuery, int? TestId, int? GroupId, int? CollegeId, int? Year, int? currentPageIndex, string? sortField, string? sortOrder);
         public Task<JsonResult> GetResultExportData(string? searchQuery, int? TestId, int? GroupId, int? CollegeId, int? Year, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder);
-        public Task<JsonResult> ApproveResumeTest(int userId, int testId, bool isApprove);
+        public Task<JsonResult> ApproveResumeTest(TestApproveVM testApproveVM);
+        public Task<JsonResult> GetApproveTestData(int userId, int testId);
     }
 }

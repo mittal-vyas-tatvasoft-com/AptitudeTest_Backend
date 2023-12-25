@@ -53,6 +53,7 @@
         public readonly static string CantAddQuestionsBecauseActive = "Your can't add questions of the test because it is currently active...!";
         public readonly static string CanDeleteQuestionsBecauseActive = "Your can't delete questions of the test because it is currently active...!";
         public readonly static string CanDeleteTestBecauseActive = "Your can't delete test because it is currently active...!";
+        public readonly static string DurationExceeds = "Time can not exceed test duration";
         #endregion
 
         #region AdminAuthentication
