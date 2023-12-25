@@ -24,5 +24,7 @@ namespace AptitudeTest.Core.ViewModels
         public string optiondata4 { get; set; }
         [Name("Correct Option")]
         public char correctoption { get; set; }
+        [Name("Status")]
+        public bool status { get; set; }
     }
 }
