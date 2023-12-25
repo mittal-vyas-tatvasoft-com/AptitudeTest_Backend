@@ -240,7 +240,7 @@
             }
         }
 
-        public readonly static string _TestStatus = "TestStatus";
+        public readonly static string _TestStatus = "Test status";
         public static string TestStatus
         {
             get
