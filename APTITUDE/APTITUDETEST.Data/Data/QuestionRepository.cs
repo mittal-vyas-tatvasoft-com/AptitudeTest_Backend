@@ -596,7 +596,7 @@ namespace AptitudeTest.Data.Data
                     quetionnumber = x.quetionnumber,
                     version = x.version,
                     topic = x.topic,
-                    status=x.status
+                    status = x.status
                 }).ToList();
                 if (importQuestionFieldsVMList.Count == 0)
                 {
