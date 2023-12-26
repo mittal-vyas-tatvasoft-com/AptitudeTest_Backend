@@ -1,4 +1,5 @@
-﻿using AptitudeTest.Core.Entities.Admin;
+﻿using AptitudeTest.Common.Helpers;
+using AptitudeTest.Core.Entities.Admin;
 using AptitudeTest.Core.Entities.Test;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
@@ -10,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
 using static AptitudeTest.Data.Common.Enums;
-
 namespace AptitudeTest.Data.Data
 {
     public class TestRepository : ITestRepository
@@ -18,12 +18,15 @@ namespace AptitudeTest.Data.Data
         private readonly AppDbContext _context;
         private readonly IConfiguration _config;
         private readonly string? connectionString;
+        private readonly string? userLoginUrl;
 
         public TestRepository(AppDbContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
+            userLoginUrl = _config["EmailGeneration:UserUrlForBody"];
+
         }
 
         #region Methods
@@ -50,7 +53,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -113,7 +116,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -129,7 +132,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-
                 Test? test = _context.Tests.Where(t => t.Id == testVM.Id && t.IsDeleted == false).FirstOrDefault();
 
                 if (test != null && test.Status == (int)TestStatus.Active && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test.StartTime) <= DateTime.Now)
@@ -202,7 +204,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -236,6 +238,7 @@ namespace AptitudeTest.Data.Data
                     testAlreadyExists.UpdatedBy = updateTest.UpdatedBy;
                     testAlreadyExists.UpdatedDate = DateTime.UtcNow;
                     _context.SaveChanges();
+                    SendTestMailToCandidates(testAlreadyExists.GroupId, testAlreadyExists);
                     return new JsonResult(new ApiResponse<string>
                     {
                         Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Group),
@@ -255,7 +258,7 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -266,6 +269,8 @@ namespace AptitudeTest.Data.Data
             }
 
         }
+
+
 
         public async Task<JsonResult> AddTestQuestions(TestQuestionsVM addTestQuestion)
         {
@@ -366,7 +371,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -382,7 +387,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-
                 Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == updateTestQuestion.TestId && t.IsDeleted == false).FirstOrDefault());
 
                 if (test == null)
@@ -466,7 +470,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -558,7 +562,7 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.InternalServerError
                 });
             }
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -630,7 +634,7 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.Success
                 });
             }
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -693,7 +697,7 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.BadRequest
                 });
             }
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -733,7 +737,7 @@ namespace AptitudeTest.Data.Data
 
 
             }
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -748,7 +752,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
@@ -822,7 +825,7 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.BadRequest
                 });
             }
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -864,7 +867,7 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.BadRequest
                 });
             }
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -913,7 +916,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -956,7 +959,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -998,7 +1001,7 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -1143,6 +1146,22 @@ namespace AptitudeTest.Data.Data
                 return new List<QuestionsCountMarksVM>();
             }
         }
+
+        private void SendTestMailToCandidates(int? groupId, Test test)
+        {
+            var candidates = _context.Users.Where(user => user.GroupId == groupId && !(bool)user.IsDeleted).ToList();
+            var emailHelper = new EmailHelper(_config);
+            string subject = "Test Details";
+            if (candidates.Count > 0)
+            {
+                foreach (var candidate in candidates)
+                {
+                    string body = $"<h3>Hello {candidate.FirstName} {candidate.LastName}, </h3>Your test has been generated successfully.<br/>You have to appear for the test on {test.Date} at {test.StartTime}.<br/>Your test will end at {test.EndTime}.<br/>Kindly login from below link to appear for the test<a href={userLoginUrl}>{userLoginUrl}</a><br/><br/>Regards<br/>Tatvasoft";
+                    emailHelper.SendEmail(candidate.Email, subject, body);
+                }
+            }
+        }
+
         #endregion
     }
 }
