@@ -13,11 +13,13 @@ namespace AptitudeTest.Data.Data
     public class GroupRepository : IGroupRepository
     {
         private readonly AppDbContext _context;
+        private readonly ILoggerManager _logger;
 
 
-        public GroupRepository(AppDbContext context)
+        public GroupRepository(AppDbContext context, ILoggerManager logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         #region Methods
@@ -57,8 +59,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.Success
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in GroupRepository.Create: {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -112,8 +115,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.NotFound
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in GroupRepository.Delete: {ex} for Id:{id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -153,8 +157,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in GroupRepository.GetActiveGroups:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -211,8 +216,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.Success
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in GroupRepository.GetGroups:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -273,8 +279,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.NotFound
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in GroupRepository.Update: {ex} for id:{updatedGroup.Id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

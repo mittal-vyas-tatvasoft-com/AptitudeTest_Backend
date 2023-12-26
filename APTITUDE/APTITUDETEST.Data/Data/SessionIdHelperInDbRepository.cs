@@ -11,12 +11,14 @@ namespace AptitudeTest.Data.Data
         #region Properies
         private readonly AppDbContext _context;
         public static Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public SessionIdHelperInDbRepository(AppDbContext context, IConfiguration appSettingConfiguration)
+        public SessionIdHelperInDbRepository(AppDbContext context, IConfiguration appSettingConfiguration, ILoggerManager logger)
         {
             _context = context;
+            _logger = logger;
         }
         #endregion
 
@@ -34,8 +36,9 @@ namespace AptitudeTest.Data.Data
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in SessionIdHelperInDbRepository.CheckSessionId:{ex}");
                 return false;
             }
         }

@@ -7,22 +7,23 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
-
 namespace AptitudeTest.Data.Data
 {
     public class ResultRepository : IResultRepository
     {
         #region Properties
         private readonly string? connectionString;
+        private readonly ILoggerManager _logger;
         private AppDbContext _context;
         #endregion
 
         #region Constructor
-        public ResultRepository(AppDbContext context, IConfiguration config)
+        public ResultRepository(AppDbContext context, IConfiguration config, ILoggerManager logger)
         {
             IConfiguration _config;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
+            _logger = logger;
             _context = context;
         }
         #endregion
@@ -32,6 +33,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+
                 if (userId < 1)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -41,7 +43,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-
                 using (DbConnection connection = new DbConnection())
                 {
                     var data = await connection.Connection.QueryAsync<UserTestResultDataVM>("select * from getUserResults(@userId,@testId)", new { userId = userId, testId = testId });
@@ -118,8 +119,9 @@ namespace AptitudeTest.Data.Data
                 }
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ResultRepository.Get:{ex} for userId: {userId}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -148,8 +150,9 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ResultRepository.GetResults:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -177,8 +180,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ResultRepository.GetResultStatistics:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -217,8 +221,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ResultRepository.GetResultExportData:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -294,8 +299,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ResultRepository.ApproveResumeTest:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -357,8 +363,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.NotFound
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

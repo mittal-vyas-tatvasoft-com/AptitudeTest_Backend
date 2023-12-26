@@ -12,11 +12,13 @@ namespace AptitudeTest.Data.Data
     {
 
         private readonly AppDbContext _context;
+        private readonly ILoggerManager _logger;
 
 
-        public CollegeRepository(AppDbContext context)
+        public CollegeRepository(AppDbContext context, ILoggerManager logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         #region Methods
@@ -66,8 +68,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CollegeRepository.GetColleges: {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -109,8 +112,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CollegeRepository.GetActiveColleges: {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -161,8 +165,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CollegeRepository.Get :{ex} for id:{id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -214,9 +219,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.Success
                 });
             }
-
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CollegeRepository.Create: {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -283,8 +288,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CollegeRepository.Update:{ex} for Id: {collegeToUpsert.Id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -322,8 +328,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CollegeRepository.UpdateStatus : {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -369,8 +376,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CollegeRepository.Delete: {ex} for Id: {id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -395,8 +403,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CollegeRepository.CheckUncheckAll:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

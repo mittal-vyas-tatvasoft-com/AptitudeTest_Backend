@@ -11,12 +11,14 @@ namespace AptitudeTest.Data.Data
     {
         #region Properties
         readonly AppDbContext _context;
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public SettingsRepository(AppDbContext context)
+        public SettingsRepository(AppDbContext context, ILoggerManager logger)
         {
             _context = context;
+            _logger = logger;
         }
         #endregion
 
@@ -25,7 +27,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-
                 SettingConfigurations? settingConfigurations = await Task.FromResult(_context.SettingConfigurations.FirstOrDefault());
                 return new JsonResult(new ApiResponse<SettingConfigurations>
                 {
@@ -36,8 +37,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in SettingsRepository.Get:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -51,7 +53,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-
                 SettingConfigurations? settingConfigurations = await Task.FromResult(_context.SettingConfigurations.FirstOrDefault());
                 if (settingConfigurations == null)
                 {
@@ -78,8 +79,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in SettingsRepository.Update:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

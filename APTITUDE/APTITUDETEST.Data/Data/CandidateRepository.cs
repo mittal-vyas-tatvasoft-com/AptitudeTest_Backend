@@ -24,16 +24,18 @@ namespace AptitudeTest.Data.Data
         private readonly IConfiguration? _config;
         private readonly string? connectionString;
         private readonly UserActiveTestHelper _userActiveTestHelper;
+        private readonly ILoggerManager _logger;
 
         #endregion
 
         #region Constructor
-        public CandidateRepository(AppDbContext appDbContext, IConfiguration config, UserActiveTestHelper userActiveTestHelper)
+        public CandidateRepository(AppDbContext appDbContext, IConfiguration config, UserActiveTestHelper userActiveTestHelper, ILoggerManager logger)
         {
             _appDbContext = appDbContext;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
             _userActiveTestHelper = userActiveTestHelper;
+            _logger = logger;
         }
         #endregion
 
@@ -70,6 +72,7 @@ namespace AptitudeTest.Data.Data
                         }
                         else
                         {
+                            _logger.LogError($"Error occurred in CandidateRepository.CreateUserTest while adding user test");
                             return new JsonResult(new ApiResponse<string>
                             {
                                 Message = ResponseMessages.InternalError,
@@ -96,8 +99,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.BadRequest
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CandidateRepository.CreateUserTest:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -203,6 +207,7 @@ namespace AptitudeTest.Data.Data
                 }
                 else
                 {
+                    _logger.LogError($"Error occurred in CandidateRepository.CreateTempUserTest for userId:{userId} while adding temp user test");
                     return new JsonResult(new ApiResponse<string>
                     {
                         Message = ResponseMessages.InternalError,
@@ -211,8 +216,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CandidateRepository.CreateTempUserTest:{ex} for userId:{userId}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -252,6 +258,7 @@ namespace AptitudeTest.Data.Data
                         }
                         else
                         {
+                            _logger.LogError($"Error occurred in CandidateRepository.CreateUserTestResult while adding user test result");
                             return new JsonResult(new ApiResponse<string>
                             {
                                 Message = ResponseMessages.InternalError,
@@ -278,8 +285,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.BadRequest
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CandidateRepository.CreateUserTestResult:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -352,6 +360,7 @@ namespace AptitudeTest.Data.Data
                 }
                 else
                 {
+                    _logger.LogError($"Error occurred in CandidateRepository.SaveTestQuestionAnswer while adding test question answer");
                     return new JsonResult(new ApiResponse<string>
                     {
                         Message = ResponseMessages.InternalError,
@@ -361,8 +370,9 @@ namespace AptitudeTest.Data.Data
                 }
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CandidateRepository.SaveTestQuestionAnswer:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -422,7 +432,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-
                 using (DbConnection connection = new DbConnection())
                 {
                     Test? test = _userActiveTestHelper.GetTestOfUser(userId);
@@ -526,8 +535,9 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CandidateRepository.GetCandidateTestQuestion:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -552,7 +562,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-
                 using (DbConnection connection = new DbConnection())
                 {
                     Test? test = _userActiveTestHelper.GetTestOfUser(userId);
@@ -643,8 +652,9 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CandidateRepository.GetQuestionsStatus:{ex} for userId:{userId}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -682,8 +692,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.BadRequest
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CandidateRepository.EndTest:{ex} for userId:{userId}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -754,8 +765,9 @@ namespace AptitudeTest.Data.Data
                 }
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in CandidateRepository.GetInstructionsOfTheTestForUser:{ex} for userId:{userId}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.BadRequest,

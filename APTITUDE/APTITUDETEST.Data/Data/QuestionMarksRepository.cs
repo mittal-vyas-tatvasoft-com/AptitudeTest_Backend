@@ -11,12 +11,14 @@ namespace AptitudeTest.Data.Data
     {
         #region Properties
         readonly AppDbContext _context;
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public QuestionMarksRepository(AppDbContext context)
+        public QuestionMarksRepository(AppDbContext context, ILoggerManager logger)
         {
             _context = context;
+            _logger = logger;
         }
         #endregion
 
@@ -43,8 +45,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.Success
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionMarksRepository.GetAllQuestionMarks : {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -94,8 +97,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionMarksRepository.Create : {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -146,8 +150,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionMarksRepository.Update : {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -191,8 +196,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionMarksRepository.Delete : {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

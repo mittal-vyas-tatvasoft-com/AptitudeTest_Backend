@@ -29,17 +29,19 @@ namespace AptitudeTest.Data.Data
         private readonly IConfiguration _config;
         private readonly string? connectionString;
         private readonly string? userLoginUrl;
+        private readonly ILoggerManager _logger;
 
         #endregion
 
         #region Constructor
-        public UserRepository(AppDbContext appDbContext, IConfiguration config, DapperAppDbContext dapperContext)
+        public UserRepository(AppDbContext appDbContext, IConfiguration config, DapperAppDbContext dapperContext, ILoggerManager logger)
         {
             _appDbContext = appDbContext;
             _dapperContext = dapperContext;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
             userLoginUrl = _config["EmailGeneration:UserUrlForBody"];
+            _logger = logger;
         }
         #endregion
 
@@ -85,8 +87,9 @@ namespace AptitudeTest.Data.Data
 
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserRepository.GetAllUsers:{ex}");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -136,8 +139,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"UserRepository.GetUserById:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -180,8 +184,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserRepository.GetAllStates:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -260,8 +265,9 @@ namespace AptitudeTest.Data.Data
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserRepository.Create:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
@@ -338,8 +344,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserRepository.Update:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
@@ -443,8 +450,9 @@ namespace AptitudeTest.Data.Data
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserRepository.RegisterUser:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
@@ -480,8 +488,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserRepository.ActiveInActiveUsers:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
@@ -516,8 +525,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserRepository.DeleteUsers:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
@@ -641,8 +651,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserRepository.ImportUsers:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -691,8 +702,9 @@ namespace AptitudeTest.Data.Data
                 }
                 return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserRepository.ChangeUserPasswordByAdmin:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

@@ -12,12 +12,14 @@ namespace AptitudeTest.Data.Data
     {
         #region Properties
         readonly AppDbContext _context;
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public QuestionModuleRepository(AppDbContext context)
+        public QuestionModuleRepository(AppDbContext context, ILoggerManager logger)
         {
             _context = context;
+            _logger = logger;
         }
         #endregion
 
@@ -73,8 +75,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionModuleRepository.GetQuestionModules:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -119,8 +122,9 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionModuleRepository.Create:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -171,8 +175,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionModuleRepository.Update: {ex} for questionModuleId:{questionModuleVM.Id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -208,8 +213,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionModuleRepository.Get: {ex} for Id:{id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -254,8 +260,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionModuleRepository.Delete: {ex} for Id:{id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -287,8 +294,9 @@ namespace AptitudeTest.Data.Data
                 });
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionModuleRepository.GetAllQuestionMarks:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -337,8 +345,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionModuleRepository.AddQuestionMarks:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

@@ -12,12 +12,14 @@ namespace AptitudeTest.Data.Data
     {
         #region Properties
         readonly AppDbContext _context;
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public ProfileRepository(AppDbContext context)
+        public ProfileRepository(AppDbContext context, ILoggerManager logger)
         {
             _context = context;
+            _logger = logger;
         }
         #endregion
 
@@ -54,8 +56,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.GetProfiles:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -96,8 +99,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.GetActiveProfiles:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -137,8 +141,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.Create:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -190,8 +195,9 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.Update:{ex} for Id:{profile.Id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -215,8 +221,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.CheckUncheckAll: {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -261,8 +268,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.Delete: {ex} for id: {id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -287,8 +295,9 @@ namespace AptitudeTest.Data.Data
                     return new JsonResult(new ApiResponse<MasterTechnology> { Message = string.Format(ResponseMessages.NotFound, "Technology"), StatusCode = ResponseStatusCode.NotFound, Result = false });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.GetProfileById: {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -325,8 +334,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.UpdateStatus:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

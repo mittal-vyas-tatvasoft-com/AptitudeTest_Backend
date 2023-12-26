@@ -18,13 +18,15 @@ namespace AptitudeTest.Data.Data
         private readonly AppDbContext _context;
         static IConfiguration? _appSettingConfiguration;
         public static Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public AdminAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration)
+        public AdminAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration, ILoggerManager logger)
         {
             _context = context;
             _appSettingConfiguration = appSettingConfiguration;
+            _logger = logger;
         }
         #endregion
 
@@ -73,8 +75,9 @@ namespace AptitudeTest.Data.Data
                 }
                 return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminAuthenticationRepository.Login : {ex} for email:{loginVm.Email}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -105,8 +108,9 @@ namespace AptitudeTest.Data.Data
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminAuthenticationRepository.ForgetPassword : {ex} for : {email}");
                 return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
 
             }
@@ -144,8 +148,9 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.PasswordUpdatedSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminAuthenticationRepository.ResetPassword: {ex}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -182,8 +187,9 @@ namespace AptitudeTest.Data.Data
 
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminAuthenticationRepository.ChangePassword: {ex}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -194,7 +200,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-
                 if (tokens is null)
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
@@ -231,8 +236,9 @@ namespace AptitudeTest.Data.Data
 
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminAuthenticationRepository.RefreshToken: {ex}");
                 return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -259,7 +265,7 @@ namespace AptitudeTest.Data.Data
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
             }
-            catch
+            catch (Exception ex)
             {
                 return false;
             }

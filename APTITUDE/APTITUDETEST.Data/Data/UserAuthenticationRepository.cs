@@ -24,17 +24,19 @@ namespace AptitudeTest.Data.Data
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISessionIdHelperInMemoryService _sessionIdHelperInMemoryService;
         private readonly UserActiveTestHelper _userActiveTestHelper;
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
         public UserAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration, IHttpContextAccessor httpContextAccessor
-            , ISessionIdHelperInMemoryService sessionIdHelperInMemoryService, UserActiveTestHelper userActiveTestHelper)
+            , ISessionIdHelperInMemoryService sessionIdHelperInMemoryService, UserActiveTestHelper userActiveTestHelper, ILoggerManager logger)
         {
             _context = context;
             _appSettingConfiguration = appSettingConfiguration;
             _httpContextAccessor = httpContextAccessor;
             _sessionIdHelperInMemoryService = sessionIdHelperInMemoryService;
             _userActiveTestHelper = userActiveTestHelper;
+            _logger = logger;
         }
         #endregion
 
@@ -130,8 +132,9 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<TokenWithSidVm> { Data = tokenWithSidVmPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.Login:{ex} for Email:{loginVm.Email}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -158,8 +161,9 @@ namespace AptitudeTest.Data.Data
                 }
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.ForgetPassword:{ex} for Email:{email}");
                 return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
 
             }
@@ -192,8 +196,9 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.PasswordUpdatedSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.ResetPassword:{ex}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -225,8 +230,9 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Password), StatusCode = ResponseStatusCode.OK, Result = true });
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.ChangePassword:{ex}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -276,8 +282,9 @@ namespace AptitudeTest.Data.Data
 
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.RefreshToken:{ex}");
                 return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }

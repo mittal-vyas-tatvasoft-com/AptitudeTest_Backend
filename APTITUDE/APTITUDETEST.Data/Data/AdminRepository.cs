@@ -19,15 +19,17 @@ namespace AptitudeTest.Data.Data
         private readonly IConfiguration _config;
         private readonly string? connectionString;
         private readonly string? adminLoginUrl;
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public AdminRepository(AppDbContext appDbContext, IConfiguration config)
+        public AdminRepository(AppDbContext appDbContext, IConfiguration config, ILoggerManager logger)
         {
             _appDbContext = appDbContext;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
             adminLoginUrl = _config["EmailGeneration:AdminUrlForBody"];
+            _logger = logger;
         }
         #endregion
 
@@ -90,8 +92,9 @@ namespace AptitudeTest.Data.Data
 
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminRepository.GetAllAdmin: {ex}");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -139,8 +142,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"AdminRepository.GetAdminById : {ex}");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -190,6 +194,7 @@ namespace AptitudeTest.Data.Data
                             }
                             else
                             {
+                                _logger.LogError($"Error occurred in AdminRepository.Create while adding admin");
                                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                                 {
                                     Message = ResponseMessages.InternalError,
@@ -219,8 +224,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.BadRequest
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminRepository.Create : {ex}");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -235,7 +241,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-
                 if (admin != null)
                 {
                     Admin? adminAlreadyExists = _appDbContext.Admins.Where(ad => ad.Email == admin.Email && ad.Id != admin.Id).FirstOrDefault();
@@ -284,6 +289,7 @@ namespace AptitudeTest.Data.Data
                             }
                             else
                             {
+                                _logger.LogError($"Error occurred in AdminRepository.Update for Id : {admin.Id}");
                                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                                 {
                                     Message = ResponseMessages.InternalError,
@@ -326,8 +332,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminRepository.Update : {ex} for Id : {admin.Id}");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -362,6 +369,7 @@ namespace AptitudeTest.Data.Data
                         }
                         else
                         {
+                            _logger.LogError($"Error occurred in AdminRepository.ActiveInActiveAdmin");
                             return new JsonResult(new ApiResponse<List<UserViewModel>>
                             {
                                 Message = ResponseMessages.InternalError,
@@ -390,8 +398,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminRepository.ActiveInActiveAdmin: {ex}");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -425,6 +434,7 @@ namespace AptitudeTest.Data.Data
                         }
                         else
                         {
+                            _logger.LogError($"Error occurred in AdminRepository.Delete for Id: {id}");
                             return new JsonResult(new ApiResponse<List<UserViewModel>>
                             {
                                 Message = ResponseMessages.InternalError,
@@ -453,8 +463,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminRepository.Delete:{ex} for Id: {id}");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,

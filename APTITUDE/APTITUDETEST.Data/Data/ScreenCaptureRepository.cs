@@ -13,13 +13,15 @@ namespace AptitudeTest.Data.Data
         #region Properies
 
         private readonly AppDbContext _appDbContext;
+        private readonly ILoggerManager _logger;
 
         #endregion
 
         #region Constructor
-        public ScreenCaptureRepository(AppDbContext appDbContext)
+        public ScreenCaptureRepository(AppDbContext appDbContext, ILoggerManager logger)
         {
             _appDbContext = appDbContext;
+            _logger = logger;
         }
         #endregion
 
@@ -54,9 +56,9 @@ namespace AptitudeTest.Data.Data
                 }
                 return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
             }
-            catch
+            catch (Exception ex)
             {
-
+                _logger.LogError($"Error occurred in ScreenCaptureRepository.CameraCapture:{ex}");
                 return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.InternalError, Result = false, StatusCode = ResponseStatusCode.InternalServerError });
             }
         }

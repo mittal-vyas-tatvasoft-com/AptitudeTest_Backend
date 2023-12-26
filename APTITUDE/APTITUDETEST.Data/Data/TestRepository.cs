@@ -19,14 +19,15 @@ namespace AptitudeTest.Data.Data
         private readonly IConfiguration _config;
         private readonly string? connectionString;
         private readonly string? userLoginUrl;
+        private readonly ILoggerManager _logger;
 
-        public TestRepository(AppDbContext context, IConfiguration config)
+        public TestRepository(AppDbContext context, IConfiguration config, ILoggerManager logger)
         {
             _context = context;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
             userLoginUrl = _config["EmailGeneration:UserUrlForBody"];
-
+            _logger = logger;
         }
 
         #region Methods
@@ -55,6 +56,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetTests:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -118,6 +120,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.CreateTest:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -186,6 +189,7 @@ namespace AptitudeTest.Data.Data
                     }
                     else
                     {
+                        _logger.LogError($"Error occurred in TestRepository.UpdateTest for Id:{testVM.Id} while adding new test");
                         return new JsonResult(new ApiResponse<string>
                         {
                             Message = ResponseMessages.InternalError,
@@ -206,6 +210,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.UpdateTest:{ex} for Id:{testVM.Id} while adding new test");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -260,6 +265,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
+                _logger.LogError($"TestRepository.UpdateTestGroup:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -373,6 +379,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.AddTestQuestions:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -472,6 +479,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.UpdateTestQuestions:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -522,6 +530,7 @@ namespace AptitudeTest.Data.Data
                 int count = _context.SaveChanges();
                 if (count != 1)
                 {
+                    _logger.LogError($"Error occurred in TestRepository.DeleteTopicWiseTestQuestions,while deleting topic wise test question");
                     return new JsonResult(new ApiResponse<string>
                     {
                         Message = ResponseMessages.InternalError,
@@ -555,6 +564,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
+                _logger.LogError($"Error occurred in TestRepository.DeleteTopicWiseTestQuestions,while deleting topic wise test question");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -564,6 +574,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.DeleteTopicWiseTestQuestions:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -636,6 +647,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.DeleteAllTestQuestions:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -699,6 +711,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.DeleteTest:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -739,6 +752,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetAllTestCandidates:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -827,6 +841,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetQuestionsMarksCount:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -869,6 +884,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetTopicWiseQuestionsCount:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -918,6 +934,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetTestById:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -961,6 +978,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.CheckTestName:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -1003,6 +1021,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetTestsForDropdown:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -1047,8 +1066,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.UpdateTestStatus:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
