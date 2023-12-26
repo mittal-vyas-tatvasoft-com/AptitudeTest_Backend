@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AptitudeTest.Core.Entities.CandidateSide
+namespace AptitudeTest.Core.Entities.Candidate
 {
     public class UserTest
     {

@@ -2,7 +2,6 @@ using AptitudeTest.Application.Services;
 using AptitudeTest.Common.Data;
 using AptitudeTest.Common.Helpers;
 using AptitudeTest.Core.Interfaces;
-using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Data;
 using AptitudeTest.Filters;

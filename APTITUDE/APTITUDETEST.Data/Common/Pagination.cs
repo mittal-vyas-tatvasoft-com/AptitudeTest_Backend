@@ -19,7 +19,7 @@ namespace AptitudeTest.Data.Common
             int totalPages = 0;
             if (totalCount != 0)
             {
-                totalPages = (int)Math.Ceiling((totalCount / (double)pageSize));
+                totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             }
             currentPageIndex ??= 0;
             int pageIndex = 0;

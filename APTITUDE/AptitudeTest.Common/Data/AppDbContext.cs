@@ -1,5 +1,5 @@
 ﻿using AptitudeTest.Core.Entities.Admin;
-using AptitudeTest.Core.Entities.CandidateSide;
+using AptitudeTest.Core.Entities.Candidate;
 using AptitudeTest.Core.Entities.Master;
 using AptitudeTest.Core.Entities.Questions;
 using AptitudeTest.Core.Entities.Setting;

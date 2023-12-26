@@ -1,4 +1,4 @@
-﻿using AptitudeTest.Core.Interfaces.UserAuthentication;
+﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 

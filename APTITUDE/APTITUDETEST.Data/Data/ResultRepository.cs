@@ -1,4 +1,4 @@
-﻿using AptitudeTest.Core.Entities.CandidateSide;
+﻿using AptitudeTest.Core.Entities.Candidate;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
@@ -447,7 +447,7 @@ namespace AptitudeTest.Data.Data
                 return true;
             }
 
-            bool result = (list1.Count == list2.Count);
+            bool result = list1.Count == list2.Count;
             if (result)
             {
                 foreach (var item in list1)

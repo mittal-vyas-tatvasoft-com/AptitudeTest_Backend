@@ -1,6 +1,6 @@
 ﻿using AptitudeTest.Common.Helpers;
 using AptitudeTest.Core.Entities.Admin;
-using AptitudeTest.Core.Entities.CandidateSide;
+using AptitudeTest.Core.Entities.Candidate;
 using AptitudeTest.Core.Entities.Test;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;

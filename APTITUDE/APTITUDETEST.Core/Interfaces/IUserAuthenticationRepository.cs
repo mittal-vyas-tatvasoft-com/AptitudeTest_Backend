@@ -1,7 +1,7 @@
 ﻿using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AptitudeTest.Core.Interfaces.UserAuthentication
+namespace AptitudeTest.Core.Interfaces
 {
     public interface IUserAuthenticationRepository
     {

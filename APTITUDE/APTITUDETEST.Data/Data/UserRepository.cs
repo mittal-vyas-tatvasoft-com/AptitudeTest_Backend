@@ -155,7 +155,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 var stateList = await Task.FromResult(_appDbContext.States
-                .Where(x => (x.IsDeleted == null || x.IsDeleted == false))
+                .Where(x => x.IsDeleted == null || x.IsDeleted == false)
                 .Select(x => new { Id = x.Id, Name = x.name })
                 .ToList());
 

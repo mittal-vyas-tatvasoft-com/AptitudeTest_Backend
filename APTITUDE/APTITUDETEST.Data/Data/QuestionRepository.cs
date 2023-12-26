@@ -741,7 +741,7 @@ namespace AptitudeTest.Data.Data
 
         private static bool IsDuplicateQuestionInvalid(Question? duplicateQuestion, QuestionVM questionVM)
         {
-            if (duplicateQuestion == null || duplicateQuestion.OptionType != (int)Enums.OptionType.ImageType && questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateOptionImages(questionVM))
+            if (duplicateQuestion == null || (duplicateQuestion.OptionType != (int)Enums.OptionType.ImageType && questionVM.OptionType == (int)Enums.OptionType.ImageType && !ValidateOptionImages(questionVM)))
             {
                 return true;
             }

@@ -1,8 +1,7 @@
 ﻿using AptitudeTest.Common.Helpers;
-using AptitudeTest.Core.Entities.CandidateSide;
+using AptitudeTest.Core.Entities.Candidate;
 using AptitudeTest.Core.Entities.Test;
 using AptitudeTest.Core.Interfaces;
-using AptitudeTest.Core.Interfaces.UserAuthentication;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
