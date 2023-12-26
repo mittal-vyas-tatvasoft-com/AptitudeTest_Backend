@@ -19,14 +19,15 @@ namespace AptitudeTest.Data.Data
         private readonly IConfiguration _config;
         private readonly string? connectionString;
         private readonly string? userLoginUrl;
+        private readonly ILoggerManager _logger;
 
-        public TestRepository(AppDbContext context, IConfiguration config)
+        public TestRepository(AppDbContext context, IConfiguration config, ILoggerManager logger)
         {
             _context = context;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
             userLoginUrl = _config["EmailGeneration:UserUrlForBody"];
-
+            _logger = logger;
         }
 
         #region Methods
@@ -34,6 +35,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.GetTests");
                 searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
                 var dateParameter = new NpgsqlParameter("datefilter", NpgsqlDbType.Date);
                 dateParameter.Value = Date;
@@ -55,6 +57,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetTests:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -70,6 +73,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.CreateTest");
                 Test? testAlreadyExists = _context.Tests.Where(t => t.Name.Trim().ToLower() == testVM.Name.Trim().ToLower() && t.IsDeleted == false).FirstOrDefault();
                 if (testAlreadyExists == null)
                 {
@@ -118,6 +122,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.CreateTest:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -132,6 +137,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.UpdateTest for Id:{testVM.Id}");
                 Test? test = _context.Tests.Where(t => t.Id == testVM.Id && t.IsDeleted == false).FirstOrDefault();
 
                 if (test != null && test.Status == (int)TestStatus.Active && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test.StartTime) <= DateTime.Now)
@@ -186,6 +192,7 @@ namespace AptitudeTest.Data.Data
                     }
                     else
                     {
+                        _logger.LogError($"Error occurred in TestRepository.UpdateTest for Id:{testVM.Id} while adding new test");
                         return new JsonResult(new ApiResponse<string>
                         {
                             Message = ResponseMessages.InternalError,
@@ -206,6 +213,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.UpdateTest:{ex} for Id:{testVM.Id} while adding new test");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -219,6 +227,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.UpdateTestGroup");
                 Test? testAlreadyExists = _context.Tests.Where(t => t.Id == updateTest.TestId && t.IsDeleted == false).FirstOrDefault();
 
 
@@ -260,6 +269,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
+                _logger.LogError($"TestRepository.UpdateTestGroup:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -276,6 +286,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.AddTestQuestions");
                 if (addTestQuestion == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -373,6 +384,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.AddTestQuestions:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -387,6 +399,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.UpdateTestQuestions");
                 Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == updateTestQuestion.TestId && t.IsDeleted == false).FirstOrDefault());
 
                 if (test == null)
@@ -472,6 +485,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.UpdateTestQuestions:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -486,6 +500,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.DeleteTopicWiseTestQuestions");
                 Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == testId && t.IsDeleted == false).FirstOrDefault());
 
                 if (test != null && test.Status == (int)TestStatus.Active && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test.StartTime) <= DateTime.Now)
@@ -522,6 +537,7 @@ namespace AptitudeTest.Data.Data
                 int count = _context.SaveChanges();
                 if (count != 1)
                 {
+                    _logger.LogError($"Error occurred in TestRepository.DeleteTopicWiseTestQuestions,while deleting topic wise test question");
                     return new JsonResult(new ApiResponse<string>
                     {
                         Message = ResponseMessages.InternalError,
@@ -555,6 +571,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
+                _logger.LogError($"Error occurred in TestRepository.DeleteTopicWiseTestQuestions,while deleting topic wise test question");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -564,6 +581,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.DeleteTopicWiseTestQuestions:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -577,6 +595,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.DeleteAllTestQuestions");
                 Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == testId && t.IsDeleted == false).FirstOrDefault());
 
                 if (test != null && test.Status == (int)TestStatus.Active && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test.StartTime) <= DateTime.Now)
@@ -636,6 +655,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.DeleteAllTestQuestions:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -649,6 +669,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.DeleteTest");
                 if (testId != 0)
                 {
                     Test? testToBeDeleted = await Task.FromResult(_context.Tests.Where(t => t.Id == testId && t.IsDeleted == false).FirstOrDefault());
@@ -699,6 +720,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.DeleteTest:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -713,6 +735,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.GetAllTestCandidates");
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     var parameter = new
@@ -739,6 +762,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetAllTestCandidates:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -752,6 +776,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.GetQuestionsMarksCount");
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
@@ -827,6 +852,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetQuestionsMarksCount:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -840,6 +866,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.GetTopicWiseQuestionsCount");
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     List<TestTopicWiseCountVM> data = connection.Query<TestTopicWiseCountVM>("Select * from gettopicwisequestionscount()").ToList();
@@ -869,6 +896,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetTopicWiseQuestionsCount:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -882,6 +910,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.GetTestById");
                 if (testId != 0)
                 {
                     Test? test = _context.Tests.Where(x => x.Id == testId && x.IsDeleted == false).FirstOrDefault();
@@ -918,6 +947,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetTestById:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -930,6 +960,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.CheckTestName");
                 if (!String.IsNullOrEmpty(testName))
                 {
                     bool doesTestExists = _context.Tests.Any(test => test.Name.ToLower().Equals(testName.ToLower()));
@@ -961,6 +992,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.CheckTestName:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -975,6 +1007,7 @@ namespace AptitudeTest.Data.Data
 
             try
             {
+                _logger.LogInfo($"TestRepository.GetTestsForDropdown");
                 var testList = await Task.FromResult(_context.Tests
                 .Where(x => x.IsDeleted != true)
                 .Select(x => new { Id = x.Id, Name = x.Name }).OrderBy(x => x.Id)
@@ -1003,6 +1036,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.GetTestsForDropdown:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -1016,6 +1050,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"TestRepository.UpdateTestStatus");
                 Test? testStatusToBeUpdated = _context.Tests.Where(t => t.Id == status.Id).FirstOrDefault();
                 if (testStatusToBeUpdated != null && testStatusToBeUpdated.Status == (int)TestStatus.Active && Convert.ToDateTime(testStatusToBeUpdated?.EndTime) >= DateTime.Now && Convert.ToDateTime(testStatusToBeUpdated.StartTime) <= DateTime.Now)
                 {
@@ -1047,8 +1082,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in TestRepository.UpdateTestStatus:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

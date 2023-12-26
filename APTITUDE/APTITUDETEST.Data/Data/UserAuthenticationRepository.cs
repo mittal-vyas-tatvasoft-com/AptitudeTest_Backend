@@ -25,17 +25,19 @@ namespace AptitudeTest.Data.Data
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISessionIdHelperInMemoryService _sessionIdHelperInMemoryService;
         private readonly UserActiveTestHelper _userActiveTestHelper;
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
         public UserAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration, IHttpContextAccessor httpContextAccessor
-            , ISessionIdHelperInMemoryService sessionIdHelperInMemoryService, UserActiveTestHelper userActiveTestHelper)
+            , ISessionIdHelperInMemoryService sessionIdHelperInMemoryService, UserActiveTestHelper userActiveTestHelper, ILoggerManager logger)
         {
             _context = context;
             _appSettingConfiguration = appSettingConfiguration;
             _httpContextAccessor = httpContextAccessor;
             _sessionIdHelperInMemoryService = sessionIdHelperInMemoryService;
             _userActiveTestHelper = userActiveTestHelper;
+            _logger = logger;
         }
         #endregion
 
@@ -50,6 +52,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
+                _logger.LogInfo($"UserAuthenticationRepository.Login for Email:{loginVm.Email}");
                 var jwtHelper = new JwtHelper(_appSettingConfiguration);
                 User? user = _context.Users.Where(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == true)?.FirstOrDefault();
                 if (user != null)
@@ -131,8 +134,9 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<TokenWithSidVm> { Data = tokenWithSidVmPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.Login:{ex} for Email:{loginVm.Email}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -143,6 +147,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"UserAuthenticationRepository.ForgetPassword for email:{email}");
                 User? user = _context.Users.Where(u => u.Email == email).FirstOrDefault();
                 if (user == null)
                 {
@@ -159,8 +164,9 @@ namespace AptitudeTest.Data.Data
                 }
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.ForgetPassword:{ex} for Email:{email}");
                 return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
 
             }
@@ -173,6 +179,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"UserAuthenticationRepository.ResetPassword");
                 if (string.IsNullOrEmpty(resetPassword.EncryptedEmail) || string.IsNullOrEmpty(resetPassword.NewPassword))
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
@@ -193,8 +200,9 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.PasswordUpdatedSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.ResetPassword:{ex}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -205,6 +213,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"UserAuthenticationRepository.ChangePassword");
                 User? user = await Task.FromResult(_context.Users.Where(x => x.Email.Equals(changePassword.Email) && x.Password.Equals(changePassword.CurrentPassword)).FirstOrDefault());
                 if (user == null)
                 {
@@ -226,8 +235,9 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Password), StatusCode = ResponseStatusCode.OK, Result = true });
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.ChangePassword:{ex}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -238,6 +248,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"UserAuthenticationRepository.RefreshToken");
                 if (tokens is null)
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
@@ -277,8 +288,9 @@ namespace AptitudeTest.Data.Data
 
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.RefreshToken:{ex}");
                 return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }

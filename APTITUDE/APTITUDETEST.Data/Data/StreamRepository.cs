@@ -12,12 +12,14 @@ namespace AptitudeTest.Data.Data
     {
         #region Properties
         readonly AppDbContext _context;
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public StreamRepository(AppDbContext context)
+        public StreamRepository(AppDbContext context, ILoggerManager logger)
         {
             _context = context;
+            _logger = logger;
         }
         #endregion
 
@@ -28,6 +30,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"StreamRepository.GetAllActiveStreams");
                 var distinctStreams = await Task.FromResult(_context.MasterStream
                 .Join(_context.MasterDegree, ms => ms.DegreeId, md => md.Id, (ms, md) => new { ms, md })
                 .Where(x => (x.ms.IsDeleted == null || x.ms.IsDeleted == false) && x.ms.Status == true
@@ -66,8 +69,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in StreamRepository.GetAllActive Streams:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -82,6 +86,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"StreamRepository.GetStreams");
                 List<MasterStream> streamlist = await Task.FromResult(_context.MasterStream.Where(s => s.IsDeleted == null || s.IsDeleted == false).Include(s => s.MasterDegrees).ToList());
 
                 if (searchQuery != null)
@@ -128,8 +133,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in StreamRepository.GetStreams:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -143,6 +149,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"StreamRepository.Create");
                 MasterStream? streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.IsDeleted != true).FirstOrDefault();
                 if (streams != null)
                 {
@@ -181,8 +188,9 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in StreamRepository.Create:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -196,6 +204,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"StreamRepository.Update");
                 MasterStream? streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.Id != stream.Id && s.IsDeleted != true).FirstOrDefault();
                 if (streams != null)
                 {
@@ -244,8 +253,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in StreamRepository.Update:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -259,6 +269,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"StreamRepository.CheckUncheckAll");
                 int rowsEffected = _context.MasterStream.Where(stream => stream.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(stream => stream.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
@@ -269,8 +280,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in StreamRepository.CheckUncheckAll:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -293,7 +305,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-
+                _logger.LogInfo($"StreamRepository.Delete for Id: {id}");
                 MasterStream? stream = await Task.FromResult(_context.MasterStream.Where(s => s.Id == id && s.IsDeleted == false).FirstOrDefault());
                 if (stream != null)
                 {
@@ -315,8 +327,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in StreamRepository.Delete:{ex} for Id:{id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

@@ -13,11 +13,13 @@ namespace AptitudeTest.Data.Data
     public class GroupRepository : IGroupRepository
     {
         private readonly AppDbContext _context;
+        private readonly ILoggerManager _logger;
 
 
-        public GroupRepository(AppDbContext context)
+        public GroupRepository(AppDbContext context, ILoggerManager logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         #region Methods
@@ -26,6 +28,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"GroupRepository.Create");
                 MasterGroup group = new MasterGroup();
                 MasterGroup? existingGroup = _context.MasterGroup.Where(g => g.Name.Trim().ToLower().Equals(groupToBeAdded.Name.ToLower()) && g.IsDeleted != true).FirstOrDefault();
                 if (existingGroup != null)
@@ -57,8 +60,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.Success
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in GroupRepository.Create: {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -72,6 +76,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"GroupRepository.Delete for Id:{id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -112,8 +117,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.NotFound
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in GroupRepository.Delete: {ex} for Id:{id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -127,6 +133,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"GroupRepository.GetActiveGroups");
                 var collegeList = await Task.FromResult(_context.MasterGroup
                                             .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
                                             .Select(x => new { Id = x.Id, Name = x.Name, IsDefault = x.IsDefault })
@@ -153,8 +160,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in GroupRepository.GetActiveGroups:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -168,6 +176,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"GroupRepository.GetGroups");
                 List<MasterGroup> existingGroups = GetExistingGroups();
                 existingGroups = GetSearchedGroupFromExistingGroups(existingGroups, searchGroup);
 
@@ -211,8 +220,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.Success
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in GroupRepository.GetGroups:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -228,6 +238,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"GroupRepository.Update for id:{updatedGroup.Id}");
                 MasterGroup? existingGroup = _context.MasterGroup.Where(group => group.Name.Equals(updatedGroup.Name) && group.Id != updatedGroup.Id && group.IsDeleted != true).FirstOrDefault();
                 if (existingGroup != null)
                 {
@@ -273,8 +284,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.NotFound
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in GroupRepository.Update: {ex} for id:{updatedGroup.Id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

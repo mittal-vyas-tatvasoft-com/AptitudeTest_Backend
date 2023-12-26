@@ -12,12 +12,15 @@ namespace AptitudeTest.Data.Data
     {
         #region Properties
         readonly AppDbContext _context;
+        private readonly ILoggerManager _logger;
+
         #endregion
 
         #region Constructor
-        public DegreeRepository(AppDbContext context)
+        public DegreeRepository(AppDbContext context, ILoggerManager logger)
         {
             _context = context;
+            _logger = logger;
         }
         #endregion
 
@@ -26,6 +29,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"DegreeRepository.GetDegrees");
                 List<MasterDegree> degreelist = await Task.FromResult(_context.MasterDegree.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(degree => degree.CreatedDate).ToList());
                 List<MasterStream> masterStreams = await Task.FromResult(_context.MasterStream.ToList());
                 List<DegreeVM> degreeData = degreelist.Select(degree => new DegreeVM()
@@ -77,8 +81,10 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in DegreeRepository.GetDegrees:{ex}");
+
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -93,6 +99,7 @@ namespace AptitudeTest.Data.Data
 
             try
             {
+                _logger.LogInfo($"DegreeRepository.GetActiveDegrees");
                 var DegreeList = await Task.FromResult(_context.MasterDegree
                 .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
                 .Select(x => new { Id = x.Id, Name = x.Name, Level = x.Level })
@@ -119,8 +126,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in DegreeRepository.GetActiveDegrees");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -136,6 +144,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"DegreeRepository.Get for Id: {id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -178,8 +187,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in DegreeRepository.Get: {ex} for Id: {id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -192,6 +202,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"DegreeRepository.Create");
                 MasterDegree? degrees = _context.MasterDegree.Where(d => d.Name.Trim().ToLower() == degree.Name.Trim().ToLower() && d.IsDeleted != true).FirstOrDefault();
                 if (degrees != null)
                 {
@@ -224,8 +235,9 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in DegreeRepository.Create:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -239,6 +251,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"DegreeRepository.Update for DegreeId:{degree.Id}");
                 MasterDegree? degrees = _context.MasterDegree.Where(d => d.Name.ToLower().Trim() == degree.Name.ToLower().Trim() && d.Id != degree.Id && d.IsDeleted != true).FirstOrDefault();
                 if (degrees != null)
                 {
@@ -291,8 +304,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in DegreeRepository.Update:{ex} for DegreeId:{degree.Id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -306,6 +320,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"DegreeRepository.UpdateStatus");
                 MasterDegree? degree = await Task.FromResult(_context.MasterDegree.Where(degree => degree.IsDeleted != true && degree.Id == status.Id).FirstOrDefault());
                 if (degree == null)
                 {
@@ -329,8 +344,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in DegreeRepository.UpdateStatus : {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -344,6 +360,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"DegreeRepository.CheckUncheckAll");
                 int rowsEffected = _context.MasterDegree.Where(degree => degree.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(degree => degree.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
@@ -354,8 +371,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in DegreeRepository.CheckUncheckAll : {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -369,6 +387,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"DegreeRepository.Delete for Id:{id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -400,8 +419,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in DegreeRepository.Delete+: {ex} for Id:{id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

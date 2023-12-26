@@ -22,13 +22,15 @@ namespace AptitudeTest.Data.Data
         #region Properties
         readonly AppDbContext _context;
         private readonly DapperAppDbContext _dapperContext;
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public QuestionRepository(AppDbContext context, DapperAppDbContext dapperContext)
+        public QuestionRepository(AppDbContext context, DapperAppDbContext dapperContext, ILoggerManager logger)
         {
             _context = context;
             _dapperContext = dapperContext;
+            _logger = logger;
         }
         #endregion
 
@@ -38,6 +40,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"QuestionRepository.Get");
                 if (id < 1)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -96,8 +99,9 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionRepository.Get:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -111,6 +115,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"QuestionRepository.GetQuestions");
                 using (DbConnection connection = new DbConnection())
                 {
                     if (pageSize < 1)
@@ -204,8 +209,9 @@ namespace AptitudeTest.Data.Data
                 }
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionRepository.GetQuestions:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -219,6 +225,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo("QuestionRepository.GetQuestionCount");
                 QuestionCountVM questionCount = new QuestionCountVM();
                 if (status == null)
                 {
@@ -243,8 +250,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionRepository.GetQUestionCount:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -260,6 +268,7 @@ namespace AptitudeTest.Data.Data
 
             try
             {
+                _logger.LogInfo($"QuestionRepository.Create");
                 if (CheckOptions(questionVM.Options))
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -360,8 +369,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionRepository.Create:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -396,7 +406,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-
+                _logger.LogInfo($"QuestionRepository.Update for Id:{questionVM.Id}");
                 Question? question = await Task.FromResult(_context.Questions.Where(question => question.Id == questionVM.Id).FirstOrDefault());
                 if (question == null)
                 {
@@ -469,8 +479,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionRepository.Update:{ex} for Id:{questionVM.Id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -484,6 +495,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"QuestionRepository.UpdateStatus");
                 Question? question = await Task.FromResult(_context.Questions.Where(question => question.IsDeleted != true && question.Id == status.Id).FirstOrDefault());
                 if (question == null)
                 {
@@ -507,8 +519,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionRepository.UpdateStatus:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -531,7 +544,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-
+                _logger.LogInfo($"QuestionRepository.Delete for Id:{id}");
                 Question? question = await Task.FromResult(_context.Questions.Where(d => d.Id == id && d.IsDeleted != true).FirstOrDefault());
                 if (question != null)
                 {
@@ -556,8 +569,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionRepository.Delete:{ex} for Id:{id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -572,6 +586,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"QuestionRepository.ImportQuestions");
                 List<ImportQuestionCsvVM> data = ReadCsvFile(importQuestionVM.File);
                 if (data == null || !data.Any())
                 {
@@ -690,8 +705,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in QuestionRepository.ImportQuestions:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

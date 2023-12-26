@@ -18,13 +18,15 @@ namespace AptitudeTest.Data.Data
         private readonly AppDbContext _context;
         static IConfiguration? _appSettingConfiguration;
         public static Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public AdminAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration)
+        public AdminAuthenticationRepository(AppDbContext context, IConfiguration appSettingConfiguration, ILoggerManager logger)
         {
             _context = context;
             _appSettingConfiguration = appSettingConfiguration;
+            _logger = logger;
         }
         #endregion
 
@@ -39,6 +41,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
+                _logger.LogInfo($"AdminAuthenticationRepository.Login for email :{loginVm.Email}");
 
                 var jwtHelper = new JwtHelper(_appSettingConfiguration);
                 Admin? admin = _context.Admins.FirstOrDefault(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false);
@@ -73,8 +76,9 @@ namespace AptitudeTest.Data.Data
                 }
                 return new JsonResult(new ApiResponse<TokenVm> { Data = tokenPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminAuthenticationRepository.Login : {ex} for email:{loginVm.Email}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -85,6 +89,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"AdminAuthenticationRepository.ForgetPassword for: {email}");
                 Admin? admin = _context.Admins.Where(u => u.Email == email).FirstOrDefault();
 
                 if (admin == null)
@@ -105,8 +110,9 @@ namespace AptitudeTest.Data.Data
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminAuthenticationRepository.ForgetPassword : {ex} for : {email}");
                 return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
 
             }
@@ -119,6 +125,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"AdminAuthenticationRepository.ResetPassword");
                 if (string.IsNullOrEmpty(resetPassword.EncryptedEmail) || string.IsNullOrEmpty(resetPassword.NewPassword))
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
@@ -144,8 +151,9 @@ namespace AptitudeTest.Data.Data
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.PasswordUpdatedSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminAuthenticationRepository.ResetPassword: {ex}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -156,6 +164,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"AdminAuthenticationRepository.ChangePassword");
                 Admin? admin = await Task.FromResult(_context.Admins.Where(x => x.Email.Equals(changePassword.Email) && x.Password.Equals(changePassword.CurrentPassword)).FirstOrDefault());
                 if (admin == null)
                 {
@@ -182,8 +191,9 @@ namespace AptitudeTest.Data.Data
 
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminAuthenticationRepository.ChangePassword: {ex}");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -194,7 +204,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-
+                _logger.LogInfo($"AdminAuthenticationRepository.RefreshToken");
                 if (tokens is null)
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
@@ -231,8 +241,9 @@ namespace AptitudeTest.Data.Data
 
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in AdminAuthenticationRepository.RefreshToken: {ex}");
                 return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -259,7 +270,7 @@ namespace AptitudeTest.Data.Data
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
             }
-            catch
+            catch (Exception ex)
             {
                 return false;
             }

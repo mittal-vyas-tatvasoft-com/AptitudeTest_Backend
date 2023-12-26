@@ -12,12 +12,14 @@ namespace AptitudeTest.Data.Data
     {
         #region Properties
         readonly AppDbContext _context;
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public ProfileRepository(AppDbContext context)
+        public ProfileRepository(AppDbContext context, ILoggerManager logger)
         {
             _context = context;
+            _logger = logger;
         }
         #endregion
 
@@ -26,6 +28,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"ProfileRepository.GetProfiles");
                 List<MasterTechnology> profilelist = await Task.FromResult(_context.MasterTechnology.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(x => x.CreatedDate).ToList());
 
                 List<ProfileVM> profileData = profilelist.Select(profile => new ProfileVM()
@@ -54,8 +57,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.GetProfiles:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -70,6 +74,7 @@ namespace AptitudeTest.Data.Data
 
             try
             {
+                _logger.LogInfo($"ProfileRepository.GetActiveProfiles");
                 var ProfileList = await Task.FromResult(_context.MasterTechnology
                 .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
                 .Select(x => new { Id = x.Id, Name = x.Name })
@@ -96,8 +101,9 @@ namespace AptitudeTest.Data.Data
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.GetActiveProfiles:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -111,6 +117,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"ProfileRepository.Create");
                 MasterTechnology? profiles = _context.MasterTechnology.Where(t => t.Name.Trim().ToLower() == profile.Name.Trim().ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
                 if (profiles != null)
                 {
@@ -137,8 +144,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.Create:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -152,6 +160,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"ProfileRepository.Update for Id:{profile.Id}");
                 MasterTechnology? profiles = _context.MasterTechnology.Where(t => t.Name.Trim().ToLower() == profile.Name.Trim().ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
                 if (profiles != null)
                 {
@@ -190,8 +199,9 @@ namespace AptitudeTest.Data.Data
 
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.Update:{ex} for Id:{profile.Id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -205,6 +215,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"ProfileRepository.CheckUncheckAll");
                 int rowsEffected = _context.MasterStream.Where(profile => profile.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(profile => profile.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
@@ -215,8 +226,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.CheckUncheckAll: {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -230,6 +242,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"ProfileRepository.Delete for id: {id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -261,8 +274,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.Delete: {ex} for id: {id}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -276,6 +290,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"ProfileRepository.GetProfileById");
                 MasterTechnology? Technology = _context.MasterTechnology.Where(mt => mt.Id == id).FirstOrDefault();
 
                 if (Technology != null)
@@ -287,8 +302,9 @@ namespace AptitudeTest.Data.Data
                     return new JsonResult(new ApiResponse<MasterTechnology> { Message = string.Format(ResponseMessages.NotFound, "Technology"), StatusCode = ResponseStatusCode.NotFound, Result = false });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.GetProfileById: {ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -302,6 +318,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                _logger.LogInfo($"ProfileRepository.UpdateStatus");
                 MasterTechnology? profile = await Task.FromResult(_context.MasterTechnology.Where(mt => mt.IsDeleted == false && mt.Id == status.Id).FirstOrDefault());
                 if (profile == null)
                 {
@@ -325,8 +342,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ProfileRepository.UpdateStatus:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
