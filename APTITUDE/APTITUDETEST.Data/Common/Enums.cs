@@ -52,5 +52,12 @@
         {
             ImportQuestionFieldsCount = 10
         }
+
+        public enum ImageType
+        {
+            ScreenShot = 1,
+            FaceCam = 2
+        }
+
     }
 }

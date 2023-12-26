@@ -1,12 +1,11 @@
 ﻿using AptitudeTest.Core.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ReportsController : ControllerBase
     {
         #region Properties
@@ -21,10 +20,10 @@ namespace AptitudeTest.Controllers
         #endregion
 
         #region Methods
-        [HttpGet("[action]/{userId:int}/{testId:int}")]
-        public async Task<JsonResult> GetScreenShots(int userId, int testId)
+        [HttpGet("[action]/{userId:int}/{testId:int}/{imageType:int}")]
+        public async Task<JsonResult> GetScreenShots(int userId, int testId, int imageType)
         {
-            return await _service.GetScreenShots(userId, testId);
+            return await _service.GetScreenShots(userId, testId, imageType);
         }
 
         [HttpGet("[action]")]
@@ -37,6 +36,12 @@ namespace AptitudeTest.Controllers
         public async Task<JsonResult> GetUsers(int testId)
         {
             return await _service.GetUsers(testId);
+        }
+
+        [HttpGet("[action]/{userId:int}/{testId:int}")]
+        public async Task<JsonResult> GetUserDirectories(int userId, int testId)
+        {
+            return await _service.GetUserDirectories(userId, testId);
         }
         #endregion
     }

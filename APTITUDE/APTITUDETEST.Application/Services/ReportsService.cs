@@ -17,9 +17,9 @@ namespace AptitudeTest.Application.Services
         #endregion
 
         #region Methods
-        public async Task<JsonResult> GetScreenShots(int userId, int testId)
+        public async Task<JsonResult> GetScreenShots(int userId, int testId, int imageType)
         {
-            return await _repository.GetScreenShots(userId, testId);
+            return await _repository.GetScreenShots(userId, testId, imageType);
         }
 
         public async Task<JsonResult> GetTests()
@@ -30,6 +30,11 @@ namespace AptitudeTest.Application.Services
         public async Task<JsonResult> GetUsers(int testId)
         {
             return await _repository.GetUsers(testId);
+        }
+
+        public async Task<JsonResult> GetUserDirectories(int userId, int testId)
+        {
+            return await _repository.GetUserDirectories(userId, testId);
         }
         #endregion
     }
