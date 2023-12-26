@@ -249,5 +249,23 @@
             }
         }
 
+        public readonly static string _Reports = "Reports";
+        public static string Reports
+        {
+            get
+            {
+                return _Reports;
+            }
+        }
+
+        public readonly static string _Directory = "Directory";
+        public static string Directory
+        {
+            get
+            {
+                return _Directory;
+            }
+        }
+
     }
 }

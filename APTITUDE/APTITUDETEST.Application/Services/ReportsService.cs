@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
 {
@@ -16,6 +17,20 @@ namespace AptitudeTest.Application.Services
         #endregion
 
         #region Methods
+        public async Task<JsonResult> GetScreenShots(int userId, int testId)
+        {
+            return await _repository.GetScreenShots(userId, testId);
+        }
+
+        public async Task<JsonResult> GetTests()
+        {
+            return await _repository.GetTests();
+        }
+
+        public async Task<JsonResult> GetUsers(int testId)
+        {
+            return await _repository.GetUsers(testId);
+        }
         #endregion
     }
 }
