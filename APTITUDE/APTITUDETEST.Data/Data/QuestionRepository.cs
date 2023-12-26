@@ -72,7 +72,7 @@ namespace AptitudeTest.Data.Data
                         questionVM.OptionType = question.OptionType;
                         questionVM.QuestionType = question.QuestionType;
                         questionVM.Status = question.Status;
-                        questionVM.QuestionText = HttpUtility.HtmlEncode(question.QuestionText);
+                        questionVM.QuestionText = HttpUtility.HtmlDecode(question.QuestionText);
                         questionVM.ParentId = question.ParentId;
                     }
                     foreach (var item in data)
@@ -81,7 +81,7 @@ namespace AptitudeTest.Data.Data
                         {
                             OptionId = item.OptionId,
                             IsAnswer = item.IsAnswer,
-                            OptionValue = item.OptionData
+                            OptionValue = question.OptionType == (int)OptionType.TextType ? HttpUtility.HtmlDecode(item.OptionData) : item.OptionData
                         };
                         questionVM.Options.Add(optionVM);
                     }
@@ -416,7 +416,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                question.QuestionText = questionVM.QuestionText.Trim();
+                question.QuestionText = HttpUtility.HtmlEncode(questionVM.QuestionText.Trim());
                 question.Status = questionVM.Status;
                 question.Difficulty = questionVM.Difficulty;
                 question.QuestionType = questionVM.QuestionType;
@@ -441,7 +441,7 @@ namespace AptitudeTest.Data.Data
                     questionOptions.IsAnswer = optionVM.IsAnswer;
                     if (questionVM.OptionType == (int)Enums.OptionType.TextType)
                     {
-                        questionOptions.OptionData = optionVM.OptionValue;
+                        questionOptions.OptionData = HttpUtility.HtmlEncode(optionVM.OptionValue);
                     }
                     else
                     {
@@ -588,11 +588,11 @@ namespace AptitudeTest.Data.Data
                 {
                     correctoption = x.correctoption,
                     difficulty = x.difficulty,
-                    optiondata1 = x.optiondata1,
-                    optiondata2 = x.optiondata2,
-                    optiondata3 = x.optiondata3,
-                    optiondata4 = x.optiondata4,
-                    questiontext = x.questiontext,
+                    optiondata1 = HttpUtility.HtmlEncode(x.optiondata1),
+                    optiondata2 = HttpUtility.HtmlEncode(x.optiondata2),
+                    optiondata3 = HttpUtility.HtmlEncode(x.optiondata3),
+                    optiondata4 = HttpUtility.HtmlEncode(x.optiondata4),
+                    questiontext = HttpUtility.HtmlEncode(x.questiontext),
                     quetionnumber = x.quetionnumber,
                     version = x.version,
                     topic = x.topic,
