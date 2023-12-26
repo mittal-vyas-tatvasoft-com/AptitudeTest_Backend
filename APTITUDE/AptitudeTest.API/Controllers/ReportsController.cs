@@ -1,11 +1,12 @@
 ﻿using AptitudeTest.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ReportsController : ControllerBase
     {
         #region Properties
