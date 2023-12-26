@@ -28,7 +28,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"GroupRepository.Create");
                 MasterGroup group = new MasterGroup();
                 MasterGroup? existingGroup = _context.MasterGroup.Where(g => g.Name.Trim().ToLower().Equals(groupToBeAdded.Name.ToLower()) && g.IsDeleted != true).FirstOrDefault();
                 if (existingGroup != null)
@@ -76,7 +75,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"GroupRepository.Delete for Id:{id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -133,7 +131,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"GroupRepository.GetActiveGroups");
                 var collegeList = await Task.FromResult(_context.MasterGroup
                                             .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
                                             .Select(x => new { Id = x.Id, Name = x.Name, IsDefault = x.IsDefault })
@@ -176,7 +173,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"GroupRepository.GetGroups");
                 List<MasterGroup> existingGroups = GetExistingGroups();
                 existingGroups = GetSearchedGroupFromExistingGroups(existingGroups, searchGroup);
 
@@ -238,7 +234,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"GroupRepository.Update for id:{updatedGroup.Id}");
                 MasterGroup? existingGroup = _context.MasterGroup.Where(group => group.Name.Equals(updatedGroup.Name) && group.Id != updatedGroup.Id && group.IsDeleted != true).FirstOrDefault();
                 if (existingGroup != null)
                 {

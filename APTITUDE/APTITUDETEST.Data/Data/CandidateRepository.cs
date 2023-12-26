@@ -44,7 +44,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"CandidateRepository.CreateUserTest");
                 if (userTest != null)
                 {
                     UserTest? userTestAlreadyExists = _appDbContext.UserTests.Where(x => x.UserId == userTest.UserId && x.TestId == userTest.TestId && x.IsDeleted == false).FirstOrDefault();
@@ -125,7 +124,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                _logger.LogInfo($"CandidateRepository.CreateTempUserTest for userId: {userId}");
                 Test? test = _userActiveTestHelper.GetTestOfUser(userId);
                 if (test == null)
                 {
@@ -233,7 +231,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"CandidateRepository.CreateUserTestResult");
                 if (userTestResult != null)
                 {
                     UserTestResult? userTestResultAlreadyExists = _appDbContext.UserTestResult.Where(x => x.UserTestId == userTestResult.UserTestId && x.IsDeleted == false).FirstOrDefault();
@@ -304,7 +301,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"CandidateRepository.SaveTestQuestionAnswer");
                 if (userTestQuestionAnswer == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -436,7 +432,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                _logger.LogInfo($"CandidateRepository.GetCandidateTestQuestion");
                 using (DbConnection connection = new DbConnection())
                 {
                     Test? test = _userActiveTestHelper.GetTestOfUser(userId);
@@ -567,7 +562,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                _logger.LogInfo($"CandidateRepository.GetQuestionsStatus for userId:{userId}");
                 using (DbConnection connection = new DbConnection())
                 {
                     Test? test = _userActiveTestHelper.GetTestOfUser(userId);
@@ -677,7 +671,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"CandidateRepository.EndTest for userId:{userId}");
                 if (userId != 0)
                 {
 
@@ -716,7 +709,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"CandidateRepository.GetInstructionsOfTheTestForUser for userId:{userId}");
                 if (userId != 0)
                 {
                     Test? userTest = _userActiveTestHelper.GetTestOfUser(userId);

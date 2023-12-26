@@ -52,7 +52,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserRepository.GetAllUsers");
                 if (!string.IsNullOrEmpty(searchQuery))
                 {
                     using (var connection = new NpgsqlConnection(connectionString))
@@ -107,7 +106,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserRepository.GetUserById");
                 UserDetailsVM userDetails = new UserDetailsVM();
                 using (var dbConnection = new DbConnection())
                 {
@@ -160,7 +158,6 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                _logger.LogInfo($"UserRepository.GetAllStates");
                 var stateList = await Task.FromResult(_appDbContext.States
                 .Where(x => (x.IsDeleted == null || x.IsDeleted == false))
                 .Select(x => new { Id = x.Id, Name = x.name })
@@ -206,7 +203,6 @@ namespace AptitudeTest.Data.Data
             var password = RandomPasswordGenerator.GenerateRandomPassword(8);
             try
             {
-                _logger.LogInfo($"UserRepository.Create");
                 if (user == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -287,7 +283,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserRepository.Update");
                 if (user == null)
                 {
                     return new JsonResult(new ApiResponse<List<string>>
@@ -351,7 +346,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"Error occurred in UserRepository.Update:{ex}");
+                _logger.LogError($"Error occurred in UserRepository.Update:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
@@ -368,7 +363,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserRepository.RegisterUser");
                 if (registerUserVM == null)
                 {
                     return new JsonResult(new ApiResponse<int>
@@ -474,7 +468,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserRepository.ActiveInActiveUsers");
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     var procedure = "activeinactive_users";
@@ -513,7 +506,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserRepository.DeleteUsers");
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     var procedure = "delete_users";
@@ -551,7 +543,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserRepository.ImportUsers");
                 using (var reader = new StreamReader(importUsers.file.OpenReadStream()))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
@@ -680,7 +671,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserRepository.ChangeUserPasswordByAdmin");
                 if (string.IsNullOrEmpty(Password) || Regex.Match(Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!^#%*?&])[A-Za-z\\d@$!^#%*?&]{8,}$") == null)
                 {
                     return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.InvalidCredentials, Result = false, StatusCode = ResponseStatusCode.NotAcceptable });

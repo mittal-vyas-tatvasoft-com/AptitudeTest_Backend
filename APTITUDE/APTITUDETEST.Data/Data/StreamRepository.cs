@@ -30,7 +30,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"StreamRepository.GetAllActiveStreams");
                 var distinctStreams = await Task.FromResult(_context.MasterStream
                 .Join(_context.MasterDegree, ms => ms.DegreeId, md => md.Id, (ms, md) => new { ms, md })
                 .Where(x => (x.ms.IsDeleted == null || x.ms.IsDeleted == false) && x.ms.Status == true
@@ -86,7 +85,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"StreamRepository.GetStreams");
                 List<MasterStream> streamlist = await Task.FromResult(_context.MasterStream.Where(s => s.IsDeleted == null || s.IsDeleted == false).Include(s => s.MasterDegrees).ToList());
 
                 if (searchQuery != null)
@@ -149,7 +147,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"StreamRepository.Create");
                 MasterStream? streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.IsDeleted != true).FirstOrDefault();
                 if (streams != null)
                 {
@@ -204,7 +201,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"StreamRepository.Update");
                 MasterStream? streams = _context.MasterStream.Where(s => s.Name.ToLower() == stream.Name.ToLower() && s.DegreeId == stream.DegreeId && s.Id != stream.Id && s.IsDeleted != true).FirstOrDefault();
                 if (streams != null)
                 {
@@ -269,7 +265,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"StreamRepository.CheckUncheckAll");
                 int rowsEffected = _context.MasterStream.Where(stream => stream.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(stream => stream.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
@@ -305,7 +300,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                _logger.LogInfo($"StreamRepository.Delete for Id: {id}");
                 MasterStream? stream = await Task.FromResult(_context.MasterStream.Where(s => s.Id == id && s.IsDeleted == false).FirstOrDefault());
                 if (stream != null)
                 {

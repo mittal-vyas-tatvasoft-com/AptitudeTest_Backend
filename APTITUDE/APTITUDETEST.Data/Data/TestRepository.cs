@@ -35,7 +35,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.GetTests");
                 searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
                 var dateParameter = new NpgsqlParameter("datefilter", NpgsqlDbType.Date);
                 dateParameter.Value = Date;
@@ -73,7 +72,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.CreateTest");
                 Test? testAlreadyExists = _context.Tests.Where(t => t.Name.Trim().ToLower() == testVM.Name.Trim().ToLower() && t.IsDeleted == false).FirstOrDefault();
                 if (testAlreadyExists == null)
                 {
@@ -137,7 +135,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.UpdateTest for Id:{testVM.Id}");
                 Test? test = _context.Tests.Where(t => t.Id == testVM.Id && t.IsDeleted == false).FirstOrDefault();
 
                 if (test != null && test.Status == (int)TestStatus.Active && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test.StartTime) <= DateTime.Now)
@@ -227,7 +224,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.UpdateTestGroup");
                 Test? testAlreadyExists = _context.Tests.Where(t => t.Id == updateTest.TestId && t.IsDeleted == false).FirstOrDefault();
 
 
@@ -286,7 +282,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.AddTestQuestions");
                 if (addTestQuestion == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -399,7 +394,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.UpdateTestQuestions");
                 Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == updateTestQuestion.TestId && t.IsDeleted == false).FirstOrDefault());
 
                 if (test == null)
@@ -500,7 +494,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.DeleteTopicWiseTestQuestions");
                 Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == testId && t.IsDeleted == false).FirstOrDefault());
 
                 if (test != null && test.Status == (int)TestStatus.Active && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test.StartTime) <= DateTime.Now)
@@ -595,7 +588,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.DeleteAllTestQuestions");
                 Test? test = await Task.FromResult(_context.Tests.Where(t => t.Id == testId && t.IsDeleted == false).FirstOrDefault());
 
                 if (test != null && test.Status == (int)TestStatus.Active && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test.StartTime) <= DateTime.Now)
@@ -669,7 +661,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.DeleteTest");
                 if (testId != 0)
                 {
                     Test? testToBeDeleted = await Task.FromResult(_context.Tests.Where(t => t.Id == testId && t.IsDeleted == false).FirstOrDefault());
@@ -735,7 +726,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.GetAllTestCandidates");
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     var parameter = new
@@ -776,7 +766,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.GetQuestionsMarksCount");
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
@@ -866,7 +855,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.GetTopicWiseQuestionsCount");
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     List<TestTopicWiseCountVM> data = connection.Query<TestTopicWiseCountVM>("Select * from gettopicwisequestionscount()").ToList();
@@ -910,7 +898,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.GetTestById");
                 if (testId != 0)
                 {
                     Test? test = _context.Tests.Where(x => x.Id == testId && x.IsDeleted == false).FirstOrDefault();
@@ -960,7 +947,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.CheckTestName");
                 if (!String.IsNullOrEmpty(testName))
                 {
                     bool doesTestExists = _context.Tests.Any(test => test.Name.ToLower().Equals(testName.ToLower()));
@@ -1007,7 +993,6 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                _logger.LogInfo($"TestRepository.GetTestsForDropdown");
                 var testList = await Task.FromResult(_context.Tests
                 .Where(x => x.IsDeleted != true)
                 .Select(x => new { Id = x.Id, Name = x.Name }).OrderBy(x => x.Id)
@@ -1050,7 +1035,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"TestRepository.UpdateTestStatus");
                 Test? testStatusToBeUpdated = _context.Tests.Where(t => t.Id == status.Id).FirstOrDefault();
                 if (testStatusToBeUpdated != null && testStatusToBeUpdated.Status == (int)TestStatus.Active && Convert.ToDateTime(testStatusToBeUpdated?.EndTime) >= DateTime.Now && Convert.ToDateTime(testStatusToBeUpdated.StartTime) <= DateTime.Now)
                 {

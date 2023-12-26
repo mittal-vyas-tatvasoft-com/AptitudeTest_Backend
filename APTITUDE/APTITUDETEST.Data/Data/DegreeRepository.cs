@@ -29,7 +29,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"DegreeRepository.GetDegrees");
                 List<MasterDegree> degreelist = await Task.FromResult(_context.MasterDegree.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(degree => degree.CreatedDate).ToList());
                 List<MasterStream> masterStreams = await Task.FromResult(_context.MasterStream.ToList());
                 List<DegreeVM> degreeData = degreelist.Select(degree => new DegreeVM()
@@ -99,7 +98,6 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                _logger.LogInfo($"DegreeRepository.GetActiveDegrees");
                 var DegreeList = await Task.FromResult(_context.MasterDegree
                 .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
                 .Select(x => new { Id = x.Id, Name = x.Name, Level = x.Level })
@@ -144,7 +142,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"DegreeRepository.Get for Id: {id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -202,7 +199,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"DegreeRepository.Create");
                 MasterDegree? degrees = _context.MasterDegree.Where(d => d.Name.Trim().ToLower() == degree.Name.Trim().ToLower() && d.IsDeleted != true).FirstOrDefault();
                 if (degrees != null)
                 {
@@ -251,7 +247,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"DegreeRepository.Update for DegreeId:{degree.Id}");
                 MasterDegree? degrees = _context.MasterDegree.Where(d => d.Name.ToLower().Trim() == degree.Name.ToLower().Trim() && d.Id != degree.Id && d.IsDeleted != true).FirstOrDefault();
                 if (degrees != null)
                 {
@@ -320,7 +315,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"DegreeRepository.UpdateStatus");
                 MasterDegree? degree = await Task.FromResult(_context.MasterDegree.Where(degree => degree.IsDeleted != true && degree.Id == status.Id).FirstOrDefault());
                 if (degree == null)
                 {
@@ -360,7 +354,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"DegreeRepository.CheckUncheckAll");
                 int rowsEffected = _context.MasterDegree.Where(degree => degree.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(degree => degree.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
@@ -387,7 +380,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"DegreeRepository.Delete for Id:{id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>

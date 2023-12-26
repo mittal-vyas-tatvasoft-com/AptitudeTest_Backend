@@ -27,7 +27,6 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                _logger.LogInfo($"CollegeRepository.GetColleges");
                 List<MasterCollege> collegeList = await Task.FromResult(_context.MasterCollege.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(x => x.CreatedDate).ToList());
 
                 switch (sortField)
@@ -87,7 +86,6 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                _logger.LogInfo($"CollegeRepository.GetActiveColleges");
                 var collegeList = await Task.FromResult(_context.MasterCollege
                 .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
                 .Select(x => new { Id = x.Id, Name = x.Name })
@@ -130,7 +128,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"CollegeRepository.Get for id: {id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -186,7 +183,6 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                _logger.LogInfo($"CollegeRepository.Create");
                 MasterCollege college = new MasterCollege();
                 MasterCollege? masterCollege = _context.MasterCollege.Where(c => c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() && c.IsDeleted != true).FirstOrDefault();
                 if (masterCollege != null)
@@ -241,7 +237,6 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                _logger.LogInfo($"CollegeRepository.Update for Id: {collegeToUpsert.Id}");
                 MasterCollege? masterCollege = _context.MasterCollege.Where(c => c.Name.Trim().ToLower() == collegeToUpsert.Name.Trim().ToLower() && c.Id != collegeToUpsert.Id && c.IsDeleted != true).FirstOrDefault();
                 if (masterCollege != null)
                 {
@@ -310,7 +305,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"CollegeRepository.UpdateStatus");
                 MasterCollege? college = await Task.FromResult(_context.MasterCollege.Where(college => college.IsDeleted != true && college.Id == status.Id).FirstOrDefault());
                 if (college == null)
                 {
@@ -350,7 +344,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"CollegeRepository.Delete for Id: {id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -400,7 +393,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"CollegeRepository.CheckUncheckAll");
                 int rowsEffected = _context.MasterStream.Where(college => college.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(college => college.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {

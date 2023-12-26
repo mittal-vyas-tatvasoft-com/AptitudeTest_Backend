@@ -27,7 +27,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"SettingsRepository.Get");
                 SettingConfigurations? settingConfigurations = await Task.FromResult(_context.SettingConfigurations.FirstOrDefault());
                 return new JsonResult(new ApiResponse<SettingConfigurations>
                 {
@@ -54,7 +53,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"SettingsRepository.Update");
                 SettingConfigurations? settingConfigurations = await Task.FromResult(_context.SettingConfigurations.FirstOrDefault());
                 if (settingConfigurations == null)
                 {

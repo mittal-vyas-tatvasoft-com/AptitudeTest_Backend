@@ -27,7 +27,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionMarksRepository.GetAllQuestionMarks");
                 List<QuestionMarks> questionMarks;
                 if (!string.IsNullOrEmpty(searchQuery))
                 {
@@ -63,7 +62,6 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                _logger.LogInfo($"QuestionMarksRepository.Create");
                 if (newMark != null)
                 {
                     QuestionMarks? markAlreadyExist = await Task.FromResult(_context.QuestionMarks.Where(qm => qm.Marks == newMark.Marks).FirstOrDefault());
@@ -115,7 +113,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionMarksRepository.Update");
                 QuestionMarks? questionMark = _context.QuestionMarks.Where(qm => qm.Marks == updatedMark.Marks && qm.Id != updatedMark.Id && qm.IsDeleted != true).FirstOrDefault();
                 if (questionMark != null)
                 {
@@ -169,7 +166,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionMarksRepository.Delete : {id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>

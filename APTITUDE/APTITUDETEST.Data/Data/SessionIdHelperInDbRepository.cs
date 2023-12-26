@@ -28,7 +28,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"SessionIdHelperInDbRepository.CheckSessionId");
                 User? user = _context.Users.Where(u => u.Email == email.Trim() && u.SessionId == sessionId.Trim() && u.IsDeleted == false)?.FirstOrDefault();
                 if (user == null)
                 {

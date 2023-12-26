@@ -28,7 +28,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"ProfileRepository.GetProfiles");
                 List<MasterTechnology> profilelist = await Task.FromResult(_context.MasterTechnology.Where(x => x.IsDeleted == null || x.IsDeleted == false).OrderByDescending(x => x.CreatedDate).ToList());
 
                 List<ProfileVM> profileData = profilelist.Select(profile => new ProfileVM()
@@ -74,7 +73,6 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                _logger.LogInfo($"ProfileRepository.GetActiveProfiles");
                 var ProfileList = await Task.FromResult(_context.MasterTechnology
                 .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
                 .Select(x => new { Id = x.Id, Name = x.Name })
@@ -117,7 +115,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"ProfileRepository.Create");
                 MasterTechnology? profiles = _context.MasterTechnology.Where(t => t.Name.Trim().ToLower() == profile.Name.Trim().ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
                 if (profiles != null)
                 {
@@ -160,7 +157,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"ProfileRepository.Update for Id:{profile.Id}");
                 MasterTechnology? profiles = _context.MasterTechnology.Where(t => t.Name.Trim().ToLower() == profile.Name.Trim().ToLower() && t.Id != profile.Id && t.IsDeleted != true).FirstOrDefault();
                 if (profiles != null)
                 {
@@ -215,7 +211,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"ProfileRepository.CheckUncheckAll");
                 int rowsEffected = _context.MasterStream.Where(profile => profile.IsDeleted == false).ExecuteUpdate(setters => setters.SetProperty(profile => profile.Status, check));
                 return new JsonResult(new ApiResponse<int>
                 {
@@ -242,7 +237,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"ProfileRepository.Delete for id: {id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -290,7 +284,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"ProfileRepository.GetProfileById");
                 MasterTechnology? Technology = _context.MasterTechnology.Where(mt => mt.Id == id).FirstOrDefault();
 
                 if (Technology != null)
@@ -318,7 +311,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"ProfileRepository.UpdateStatus");
                 MasterTechnology? profile = await Task.FromResult(_context.MasterTechnology.Where(mt => mt.IsDeleted == false && mt.Id == status.Id).FirstOrDefault());
                 if (profile == null)
                 {

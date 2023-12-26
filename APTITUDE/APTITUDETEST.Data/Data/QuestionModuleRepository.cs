@@ -28,7 +28,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionModuleRepository.GetQuestionModules");
                 List<QuestionModule> questionModuleslist = await Task.FromResult(_context.QuestionModule.Where(s => s.IsDeleted == null || s.IsDeleted == false).ToList());
                 if (questionModuleslist.Count == 0)
                 {
@@ -92,7 +91,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionModuleRepository.Create");
                 QuestionModule? questionModules = _context.QuestionModule.Where(m => m.Name.ToLower() == questionModuleVM.Name.ToLower() && m.IsDeleted != true).FirstOrDefault();
                 if (questionModules != null)
                 {
@@ -140,7 +138,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionModuleRepository.Update for questionModuleId:{questionModuleVM.Id}");
                 QuestionModule? questionModule = _context.QuestionModule.Where(s => s.Name.ToLower() == questionModuleVM.Name.ToLower() && s.Id != questionModuleVM.Id && s.IsDeleted != true).FirstOrDefault();
                 if (questionModule != null)
                 {
@@ -194,7 +191,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionModuleRepository.Get for Id:{id}");
                 QuestionModule? questionModule = await Task.FromResult(_context.QuestionModule.Where(s => s.IsDeleted != true && s.Id == id).FirstOrDefault());
 
                 if (questionModule == null)
@@ -233,7 +229,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionModuleRepository.Delete for Id:{id}");
                 if (id == 0)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -281,7 +276,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionModuleRepository.GetAllQuestionMarks");
                 List<QuestionMarks> questionMarks;
                 if (!string.IsNullOrEmpty(searchQuery))
                 {
@@ -316,7 +310,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionModuleRepository.AddQuestionMarks");
                 if (newMark != null)
                 {
                     QuestionMarks? markAlreadyExist = await Task.FromResult(_context.QuestionMarks.Where(qm => qm.Marks == newMark.Marks).FirstOrDefault());

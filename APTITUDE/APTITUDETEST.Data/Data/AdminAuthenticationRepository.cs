@@ -41,7 +41,6 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
-                _logger.LogInfo($"AdminAuthenticationRepository.Login for email :{loginVm.Email}");
 
                 var jwtHelper = new JwtHelper(_appSettingConfiguration);
                 Admin? admin = _context.Admins.FirstOrDefault(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false);
@@ -89,7 +88,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"AdminAuthenticationRepository.ForgetPassword for: {email}");
                 Admin? admin = _context.Admins.Where(u => u.Email == email).FirstOrDefault();
 
                 if (admin == null)
@@ -125,7 +123,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"AdminAuthenticationRepository.ResetPassword");
                 if (string.IsNullOrEmpty(resetPassword.EncryptedEmail) || string.IsNullOrEmpty(resetPassword.NewPassword))
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
@@ -164,7 +161,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"AdminAuthenticationRepository.ChangePassword");
                 Admin? admin = await Task.FromResult(_context.Admins.Where(x => x.Email.Equals(changePassword.Email) && x.Password.Equals(changePassword.CurrentPassword)).FirstOrDefault());
                 if (admin == null)
                 {
@@ -204,7 +200,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"AdminAuthenticationRepository.RefreshToken");
                 if (tokens is null)
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });

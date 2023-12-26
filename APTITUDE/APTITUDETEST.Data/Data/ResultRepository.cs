@@ -43,7 +43,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                _logger.LogInfo($"ResultRepository.Get for userId:{userId}");
                 using (DbConnection connection = new DbConnection())
                 {
                     var data = await connection.Connection.QueryAsync<UserTestResultDataVM>("select * from getUserResults(@userId,@testId)", new { userId = userId, testId = testId });
@@ -136,7 +135,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"ResultRepository.GetResults");
                 searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
@@ -169,7 +167,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"ResultRepository.GetResultStatistics");
                 searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
@@ -200,7 +197,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"ResultRepository.GetResultExportData");
                 searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
@@ -303,8 +299,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ResultRepository.ApproveResumeTest:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -366,8 +363,9 @@ namespace AptitudeTest.Data.Data
                     StatusCode = ResponseStatusCode.NotFound
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

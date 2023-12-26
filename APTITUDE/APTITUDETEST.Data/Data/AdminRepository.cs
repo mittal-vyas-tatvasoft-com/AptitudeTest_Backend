@@ -39,7 +39,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"AdminRepository.GetAllAdmin");
                 if (!string.IsNullOrEmpty(searchQuery))
                 {
                     using (var connection = new NpgsqlConnection(connectionString))
@@ -109,7 +108,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"AdminRepository.GetAdminById");
                 if (id != 0)
                 {
                     Admin? admin = _appDbContext.Admins.Where(ad => ad.Id == id && ad.IsSuperAdmin == false).FirstOrDefault();
@@ -160,7 +158,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"AdminRepository.Create");
                 if (admin != null)
                 {
                     var pass = RandomPasswordGenerator.GenerateRandomPassword(8);
@@ -246,7 +243,6 @@ namespace AptitudeTest.Data.Data
             {
                 if (admin != null)
                 {
-                    _logger.LogInfo($"AdminRepository.Update for Id: {admin.Id}");
                     Admin? adminAlreadyExists = _appDbContext.Admins.Where(ad => ad.Email == admin.Email && ad.Id != admin.Id).FirstOrDefault();
 
                     if (adminAlreadyExists == null)
@@ -353,7 +349,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"AdminRepository.ActiveInActiveAdmin");
                 if (adminStatusVM != null)
                 {
                     Admin? adminStatusToBeUpdated = _appDbContext.Admins.Where(ad => ad.Id == adminStatusVM.Id && ad.IsSuperAdmin == false).FirstOrDefault();
@@ -419,7 +414,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"AdminRepository.Delete for Id : {id}");
                 if (id != 0)
                 {
                     Admin? adminToBeDeleted = _appDbContext.Admins.Where(ad => ad.Id == id && ad.IsSuperAdmin == false).FirstOrDefault();

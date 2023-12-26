@@ -40,7 +40,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionRepository.Get");
                 if (id < 1)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -115,7 +114,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionRepository.GetQuestions");
                 using (DbConnection connection = new DbConnection())
                 {
                     if (pageSize < 1)
@@ -225,7 +223,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo("QuestionRepository.GetQuestionCount");
                 QuestionCountVM questionCount = new QuestionCountVM();
                 if (status == null)
                 {
@@ -268,7 +265,6 @@ namespace AptitudeTest.Data.Data
 
             try
             {
-                _logger.LogInfo($"QuestionRepository.Create");
                 if (CheckOptions(questionVM.Options))
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -406,7 +402,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                _logger.LogInfo($"QuestionRepository.Update for Id:{questionVM.Id}");
                 Question? question = await Task.FromResult(_context.Questions.Where(question => question.Id == questionVM.Id).FirstOrDefault());
                 if (question == null)
                 {
@@ -495,7 +490,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionRepository.UpdateStatus");
                 Question? question = await Task.FromResult(_context.Questions.Where(question => question.IsDeleted != true && question.Id == status.Id).FirstOrDefault());
                 if (question == null)
                 {
@@ -544,7 +538,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                _logger.LogInfo($"QuestionRepository.Delete for Id:{id}");
                 Question? question = await Task.FromResult(_context.Questions.Where(d => d.Id == id && d.IsDeleted != true).FirstOrDefault());
                 if (question != null)
                 {
@@ -586,7 +579,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"QuestionRepository.ImportQuestions");
                 List<ImportQuestionCsvVM> data = ReadCsvFile(importQuestionVM.File);
                 if (data == null || !data.Any())
                 {

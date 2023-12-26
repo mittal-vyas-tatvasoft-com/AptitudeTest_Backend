@@ -52,7 +52,6 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
-                _logger.LogInfo($"UserAuthenticationRepository.Login for Email:{loginVm.Email}");
                 var jwtHelper = new JwtHelper(_appSettingConfiguration);
                 User? user = _context.Users.Where(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == true)?.FirstOrDefault();
                 if (user != null)
@@ -147,7 +146,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserAuthenticationRepository.ForgetPassword for email:{email}");
                 User? user = _context.Users.Where(u => u.Email == email).FirstOrDefault();
                 if (user == null)
                 {
@@ -179,7 +177,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserAuthenticationRepository.ResetPassword");
                 if (string.IsNullOrEmpty(resetPassword.EncryptedEmail) || string.IsNullOrEmpty(resetPassword.NewPassword))
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
@@ -213,7 +210,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserAuthenticationRepository.ChangePassword");
                 User? user = await Task.FromResult(_context.Users.Where(x => x.Email.Equals(changePassword.Email) && x.Password.Equals(changePassword.CurrentPassword)).FirstOrDefault());
                 if (user == null)
                 {
@@ -248,7 +244,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"UserAuthenticationRepository.RefreshToken");
                 if (tokens is null)
                 {
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });

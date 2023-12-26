@@ -31,7 +31,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                _logger.LogInfo($"ScreenCaptureRepository.CameraCapture");
                 if (data.file != null)
                 {
                     using (var image = Image.FromStream(data.file.OpenReadStream()))
