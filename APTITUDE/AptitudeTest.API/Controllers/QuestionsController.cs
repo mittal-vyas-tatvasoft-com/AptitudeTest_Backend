@@ -132,6 +132,16 @@ namespace AptitudeTest.Controllers
             return await _service.ImportQuestions(importQuestionVM);
         }
 
+        /// <summary>
+        /// This method updates Status of list of questions 
+        /// </summary>
+        /// <param name="bulkStatusUpdateVM"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> UpdateBulkStatus(BulkStatusUpdateVM bulkStatusUpdateVM)
+        {
+            return await _service.UpdateBulkStatus(bulkStatusUpdateVM);
+        }
         #endregion
     }
 }

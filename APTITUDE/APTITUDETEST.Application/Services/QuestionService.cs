@@ -57,6 +57,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.ImportQuestions(importQuestionVM);
         }
+
+        public async Task<JsonResult> UpdateBulkStatus(BulkStatusUpdateVM bulkStatusUpdateVM)
+        {
+            return await _repository.UpdateBulkStatus(bulkStatusUpdateVM);
+        }
         #endregion
     }
 }

@@ -709,6 +709,42 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> UpdateBulkStatus(BulkStatusUpdateVM bulkStatusUpdateVM) {
+            try
+            {
+                if (bulkStatusUpdateVM.IdList == null || bulkStatusUpdateVM.IdList.Length == 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                List<Question> questions = _context.Questions.Where(q => bulkStatusUpdateVM.IdList.Contains(q.Id)).ToList();
+                questions.ForEach(questions=> questions.Status=bulkStatusUpdateVM.Status);
+                _context.UpdateRange(questions);
+                _context.SaveChanges();
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.StatusUpdateSuccess,ModuleNames.Question) ,
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in QuestionRepository.UpdateBulkStatus:{ex}");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
         #endregion
 
         #region Helper Method
