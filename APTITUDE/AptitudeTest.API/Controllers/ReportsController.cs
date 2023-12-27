@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.Interfaces;
+using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,6 +44,12 @@ namespace AptitudeTest.Controllers
         public async Task<JsonResult> GetUserDirectories(int userId, int testId)
         {
             return await _service.GetUserDirectories(userId, testId);
+        }
+
+        [HttpDelete("[action]")]
+        public async Task<JsonResult> DeleteDirectory(DeleteScreenShotsVM deleteScreenShotsVM)
+        {
+            return await _service.DeleteDirectory(deleteScreenShotsVM);
         }
         #endregion
     }

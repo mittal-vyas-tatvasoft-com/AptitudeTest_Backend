@@ -59,5 +59,12 @@
             FaceCam = 2
         }
 
+        public enum DirectoryLevel
+        {
+            Test = 1,
+            User = 2,
+            Folder = 3,
+            Image = 4
+        }
     }
 }

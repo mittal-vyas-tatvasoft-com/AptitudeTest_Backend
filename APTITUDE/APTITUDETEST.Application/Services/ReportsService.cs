@@ -1,4 +1,5 @@
 ﻿using AptitudeTest.Core.Interfaces;
+using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Application.Services
@@ -35,6 +36,11 @@ namespace AptitudeTest.Application.Services
         public async Task<JsonResult> GetUserDirectories(int userId, int testId)
         {
             return await _repository.GetUserDirectories(userId, testId);
+        }
+
+        public async Task<JsonResult> DeleteDirectory(DeleteScreenShotsVM deleteScreenShotsVM)
+        {
+            return await _repository.DeleteDirectory(deleteScreenShotsVM);
         }
         #endregion
     }

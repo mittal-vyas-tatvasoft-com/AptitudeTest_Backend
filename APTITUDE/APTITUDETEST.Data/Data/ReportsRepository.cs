@@ -204,7 +204,122 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> DeleteDirectory(DeleteScreenShotsVM deleteScreenShotsVM)
+        {
+            try
+            {
+                if (!ValidateDeleteModel(deleteScreenShotsVM))
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                string path = Path.Combine(root, parent);
+                string folderName;
+                switch (deleteScreenShotsVM.Level)
+                {
+                    case (int)DirectoryLevel.Test:
+                        path = Path.Combine(path, deleteScreenShotsVM.TestId.ToString());
+                        break;
+                    case (int)DirectoryLevel.User:
+                        path = Path.Combine(path, deleteScreenShotsVM.TestId.ToString(), deleteScreenShotsVM.UserId.ToString());
+                        break;
+                    case (int)DirectoryLevel.Folder:
+                        folderName = deleteScreenShotsVM.Folder == (int)ImageType.ScreenShot ? screenshot : faceCam;
+                        path = Path.Combine(path, deleteScreenShotsVM.TestId.ToString(), deleteScreenShotsVM.UserId.ToString(), folderName);
+                        break;
+                    case (int)DirectoryLevel.Image:
+                        folderName = deleteScreenShotsVM.Folder == (int)ImageType.ScreenShot ? screenshot : faceCam;
+                        path = Path.Combine(path, deleteScreenShotsVM.TestId.ToString(), deleteScreenShotsVM.UserId.ToString(), folderName, deleteScreenShotsVM.FileName);
+                        break;
+                }
 
+                if (deleteScreenShotsVM.Level == (int)DirectoryLevel.Image)
+                {
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                        return await GetScreenShots((int)deleteScreenShotsVM.UserId, deleteScreenShotsVM.TestId, (int)deleteScreenShotsVM.Folder);
+                    }
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Directory),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                else
+                {
+                    if (Directory.Exists(path))
+                    {
+                        Directory.Delete(path, true);
+                        switch (deleteScreenShotsVM.Level)
+                        {
+                            case (int)DirectoryLevel.Test:
+                                return await GetTests();
+                            case (int)DirectoryLevel.User:
+                                return await GetUsers(deleteScreenShotsVM.TestId);
+                            case (int)DirectoryLevel.Folder:
+                                return await GetUserDirectories((int)deleteScreenShotsVM.UserId, deleteScreenShotsVM.TestId);
+                            default:
+                                return new JsonResult(new ApiResponse<string>
+                                {
+                                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Directory),
+                                    Result = false,
+                                    StatusCode = ResponseStatusCode.NotFound
+                                });
+                        }
+                    }
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Directory),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+
+                }
+            }
+
+            catch
+            {
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+        #endregion
+
+        #region Helper Methods
+        private bool ValidateDeleteModel(DeleteScreenShotsVM deleteScreenShotsVM)
+        {
+            if (deleteScreenShotsVM.TestId < 1)
+            {
+                return false;
+            }
+            else if (deleteScreenShotsVM.Level == (int)DirectoryLevel.User && deleteScreenShotsVM.UserId == null)
+            {
+                return false;
+            }
+            else if (deleteScreenShotsVM.Level == (int)DirectoryLevel.Folder && (deleteScreenShotsVM.UserId == null || deleteScreenShotsVM.Folder == null))
+            {
+                return false;
+            }
+            else if (deleteScreenShotsVM.Level == (int)DirectoryLevel.Image && (deleteScreenShotsVM.UserId == null || deleteScreenShotsVM.Folder == null || deleteScreenShotsVM.FileName == null || deleteScreenShotsVM.FileName == ""))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
         #endregion
     }
 }
