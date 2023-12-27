@@ -800,7 +800,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 var subject = "Password change request for Aptitude Test Portal";
-                var body = $"<h3>Hello {firstName} {lastName},</h3>We have received Password change request from you,<br/>Here are your new credentials!!<br /><h4>User name: {email}</h4><h4>Password: {password}</h4>Click on below button to login.<a href = {userLoginUrl}><button btn-primary>Login</button></a>";
+                var body = $"<h3>Hello {firstName} {lastName},</h3>We have received Password change request from you,<br/>Here are your new credentials!!<br /><h4>User name: {email}</h4><h4>Password: {password}</h4>Click on below button to login.<br/><a href = {userLoginUrl}><button btn-primary>Login</button></a>";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
@@ -816,7 +816,7 @@ namespace AptitudeTest.Data.Data
             try
             {
                 var subject = "Confirm new user sign-up in Tatvasoft Aptitude Test Portal";
-                var body = $"<h3>Welcome {firstName} {lastName},</h3>We have received registration request for you,<br/>Here are your credentials to login!!<br /><h4>User name: {email}</h4><h4>Password: {password}</h4><a href = {userLoginUrl}><button btn-primary>Login</button></a>";
+                var body = $"<h3>Welcome {firstName} {lastName},</h3>We have received registration request for you,<br/>Here are your credentials to login!!<br /><h4>User name: {email}</h4><h4>Password: {password}</h4>Click on below button to login.<br/><a href = {userLoginUrl}><button btn-primary>Login</button></a>";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
