@@ -13,5 +13,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> Update(QuestionVM questionVM);
         public Task<JsonResult> Delete(int id);
         public Task<JsonResult> ImportQuestions(ImportQuestionVM importQuestionVM);
+        public Task<JsonResult> UpdateBulkStatus(BulkStatusUpdateVM bulkStatusUpdateVM);
     }
 }
