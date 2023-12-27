@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AptitudeTest.Core.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AptitudeTest.Core.Interfaces
 {
@@ -8,5 +9,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> GetTests();
         public Task<JsonResult> GetUsers(int testId);
         public Task<JsonResult> GetUserDirectories(int userId, int testId);
+        public Task<JsonResult> DeleteDirectory(DeleteScreenShotsVM deleteScreenShotsVM);
     }
 }
