@@ -113,6 +113,12 @@ namespace AptitudeTest.Controllers
         {
             return await _service.GetApproveTestData(userId, testId);
         }
+
+        [HttpGet("[action]/{testId:int}")]
+        public async Task<JsonResult> GetGroupOfTest(int testId)
+        {
+            return await _service.GetGroupOfTest(testId);
+        }
         #endregion
     }
 }

@@ -131,16 +131,16 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                var collegeList = await Task.FromResult(_context.MasterGroup
+                var groupList = await Task.FromResult(_context.MasterGroup
                                             .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
                                             .Select(x => new { Id = x.Id, Name = x.Name, IsDefault = x.IsDefault })
-                                            .ToList());
+                                            .ToList().OrderByDescending(x=>x.Id));
 
-                if (collegeList != null)
+                if (groupList != null)
                 {
                     return new JsonResult(new ApiResponse<IEnumerable<object>>
                     {
-                        Data = collegeList,
+                        Data = groupList,
                         Message = ResponseMessages.Success,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
