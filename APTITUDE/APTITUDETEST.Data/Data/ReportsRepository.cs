@@ -11,7 +11,6 @@ namespace AptitudeTest.Data.Data
     public class ReportsRepository : IReportsRepository
     {
         #region Properties
-        private readonly string? connectionString;
         private readonly string? root;
         private readonly string? parent;
         private readonly string? screenshot;
@@ -24,7 +23,6 @@ namespace AptitudeTest.Data.Data
         {
             IConfiguration _config;
             _config = config;
-            connectionString = _config["ConnectionStrings:AptitudeTest"];
             root = _config["FileSavePath:Root"];
             parent = _config["FileSavePath:ParentFolder"];
             screenshot = _config["FileSavePath:ScreenShot"];
@@ -38,7 +36,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<string> imagePaths = new List<string>();
+                List<UserImageVM> imagePaths = new List<UserImageVM>();
                 string path = Path.Combine(root, parent, testId.ToString(), userId.ToString());
                 if (Directory.Exists(path))
                 {
@@ -47,8 +45,8 @@ namespace AptitudeTest.Data.Data
                         string finalPath = Path.Combine(path, screenshot);
                         if (Directory.Exists(finalPath))
                         {
-                            imagePaths = Directory.GetFiles(finalPath).Select(d => Path.GetRelativePath(finalPath, d)).ToList();
-                            return new JsonResult(new ApiResponse<List<string>>() { Data = imagePaths, Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
+                            imagePaths = Directory.GetFiles(finalPath).Select(d => new UserImageVM() { Path = Path.GetRelativePath(finalPath, d) }).ToList();
+                            return new JsonResult(new ApiResponse<List<UserImageVM>>() { Data = imagePaths, Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
 
                         }
                         return new JsonResult(new ApiResponse<string>
@@ -64,8 +62,8 @@ namespace AptitudeTest.Data.Data
                         string finalPath = Path.Combine(path, faceCam);
                         if (Directory.Exists(finalPath))
                         {
-                            imagePaths = Directory.GetFiles(finalPath).Select(d => Path.GetRelativePath(finalPath, d)).ToList();
-                            return new JsonResult(new ApiResponse<List<string>>() { Data = imagePaths, Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
+                            imagePaths = Directory.GetFiles(finalPath).Select(d => new UserImageVM() { Path = Path.GetRelativePath(finalPath, d) }).ToList();
+                            return new JsonResult(new ApiResponse<List<UserImageVM>>() { Data = imagePaths, Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
                         }
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -173,13 +171,19 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                List<string> userDirectories = new List<string>();
+                List<UserDirectoryVM> userDirectories = new List<UserDirectoryVM>();
                 List<ScreenShotFolderVM> screenShotFolderVM = new List<ScreenShotFolderVM>();
                 string parentDirectory = Path.Combine(root, parent, testId.ToString(), userId.ToString());
                 if (Directory.Exists(parentDirectory))
                 {
-                    userDirectories = Directory.GetDirectories(parentDirectory).Select(d => Path.GetRelativePath(parentDirectory, d)).ToList();
-                    return new JsonResult(new ApiResponse<List<string>>() { Data = userDirectories, Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
+                    userDirectories = Directory.GetDirectories(parentDirectory).Select((d) =>
+                    {
+                        string name = Path.GetRelativePath(parentDirectory, d);
+                        int id = Path.GetRelativePath(parentDirectory, d).ToLower() == screenshot.ToLower() ? (int)ImageType.ScreenShot : (int)ImageType.FaceCam;
+                        return new UserDirectoryVM() { Name = name, Id = id };
+                    }).ToList();
+
+                    return new JsonResult(new ApiResponse<List<UserDirectoryVM>>() { Data = userDirectories, Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -199,6 +203,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
 
         #endregion
     }

@@ -8,13 +8,21 @@
 
   <ItemGroup>
     <Compile Remove="wwwroot\ScreenShots - Copy\**" />
+    <Compile Remove="wwwroot\ScreenShots\**" />
     <Compile Remove="wwwroot\UserFaceCamShots - Copy\**" />
+    <Compile Remove="wwwroot\UserFaceCamShots\**" />
     <Content Remove="wwwroot\ScreenShots - Copy\**" />
+    <Content Remove="wwwroot\ScreenShots\**" />
     <Content Remove="wwwroot\UserFaceCamShots - Copy\**" />
+    <Content Remove="wwwroot\UserFaceCamShots\**" />
     <EmbeddedResource Remove="wwwroot\ScreenShots - Copy\**" />
+    <EmbeddedResource Remove="wwwroot\ScreenShots\**" />
     <EmbeddedResource Remove="wwwroot\UserFaceCamShots - Copy\**" />
+    <EmbeddedResource Remove="wwwroot\UserFaceCamShots\**" />
     <None Remove="wwwroot\ScreenShots - Copy\**" />
+    <None Remove="wwwroot\ScreenShots\**" />
     <None Remove="wwwroot\UserFaceCamShots - Copy\**" />
+    <None Remove="wwwroot\UserFaceCamShots\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,7 +44,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Logs\" />
-    <Folder Include="wwwroot\ScreenShots\" />
-    <Folder Include="wwwroot\UserFaceCamShots\" />
+    <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 </Project>
