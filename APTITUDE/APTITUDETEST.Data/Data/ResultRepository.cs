@@ -374,6 +374,53 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+        public async Task<JsonResult> GetGroupOfTest(int testId)
+        {
+            try
+            {
+                if (testId <= 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                int? groupIdOfTest=_context.Tests.Where(x=>x.Id==testId && !(bool)x.IsDeleted).Select(x=>x.GroupId).FirstOrDefault();
+
+                if(groupIdOfTest != null)
+                {
+                    return new JsonResult(new ApiResponse<int?>
+                    {
+                        Data=groupIdOfTest,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                else{
+                    return new JsonResult(new ApiResponse<int?>
+                    {
+                        Data = 0,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData:{ex}");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
         #endregion
 
         #region Helper Methods

@@ -11,5 +11,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> GetResultExportData(string? searchQuery, int? TestId, int? GroupId, int? CollegeId, int? Year, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder);
         public Task<JsonResult> ApproveResumeTest(TestApproveVM testApproveVM);
         public Task<JsonResult> GetApproveTestData(int userId, int testId);
+        public Task<JsonResult> GetGroupOfTest(int testId);
     }
 }

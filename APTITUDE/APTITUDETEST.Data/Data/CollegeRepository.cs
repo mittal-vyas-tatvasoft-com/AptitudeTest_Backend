@@ -89,7 +89,7 @@ namespace AptitudeTest.Data.Data
                 var collegeList = await Task.FromResult(_context.MasterCollege
                 .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
                 .Select(x => new { Id = x.Id, Name = x.Name })
-                .ToList());
+                .ToList().OrderByDescending(x=>x.Id));
 
                 if (collegeList != null)
                 {

@@ -44,6 +44,10 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.GetApproveTestData(userId, testId);
         }
+        public async Task<JsonResult> GetGroupOfTest(int testId)
+        {
+            return await _repository.GetGroupOfTest(testId);
+        }
         #endregion
     }
 }
