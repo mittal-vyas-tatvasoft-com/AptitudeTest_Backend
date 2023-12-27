@@ -179,8 +179,8 @@ namespace AptitudeTest.Data.Data
                     userDirectories = Directory.GetDirectories(parentDirectory).Select((d) =>
                     {
                         string name = Path.GetRelativePath(parentDirectory, d);
-                        int type = Path.GetRelativePath(parentDirectory, d).ToLower() == screenshot.ToLower() ? (int)ImageType.ScreenShot : (int)ImageType.FaceCam;
-                        return new UserDirectoryVM() { Name = name, Type = type };
+                        int id = Path.GetRelativePath(parentDirectory, d).ToLower() == screenshot.ToLower() ? (int)ImageType.ScreenShot : (int)ImageType.FaceCam;
+                        return new UserDirectoryVM() { Name = name, Id = id };
                     }).ToList();
 
                     return new JsonResult(new ApiResponse<List<UserDirectoryVM>>() { Data = userDirectories, Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
@@ -203,6 +203,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
 
         #endregion
     }
