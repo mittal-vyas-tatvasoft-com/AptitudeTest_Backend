@@ -134,7 +134,7 @@ namespace AptitudeTest.Data.Data
                 var groupList = await Task.FromResult(_context.MasterGroup
                                             .Where(x => (x.IsDeleted == null || x.IsDeleted == false) && x.Status == true)
                                             .Select(x => new { Id = x.Id, Name = x.Name, IsDefault = x.IsDefault })
-                                            .ToList().OrderByDescending(x=>x.Id));
+                                            .ToList().OrderByDescending(x => x.Id));
 
                 if (groupList != null)
                 {

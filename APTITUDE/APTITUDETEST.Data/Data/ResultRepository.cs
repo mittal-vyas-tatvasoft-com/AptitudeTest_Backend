@@ -388,19 +388,20 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.NotFound
                     });
                 }
-                int? groupIdOfTest=_context.Tests.Where(x=>x.Id==testId && !(bool)x.IsDeleted).Select(x=>x.GroupId).FirstOrDefault();
+                int? groupIdOfTest = _context.Tests.Where(x => x.Id == testId && !(bool)x.IsDeleted).Select(x => x.GroupId).FirstOrDefault();
 
-                if(groupIdOfTest != null)
+                if (groupIdOfTest != null)
                 {
                     return new JsonResult(new ApiResponse<int?>
                     {
-                        Data=groupIdOfTest,
+                        Data = groupIdOfTest,
                         Message = ResponseMessages.Success,
                         Result = true,
                         StatusCode = ResponseStatusCode.Success
                     });
                 }
-                else{
+                else
+                {
                     return new JsonResult(new ApiResponse<int?>
                     {
                         Data = 0,

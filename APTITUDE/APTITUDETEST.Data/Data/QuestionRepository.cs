@@ -709,7 +709,8 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> UpdateBulkStatus(BulkStatusUpdateVM bulkStatusUpdateVM) {
+        public async Task<JsonResult> UpdateBulkStatus(BulkStatusUpdateVM bulkStatusUpdateVM)
+        {
             try
             {
                 if (bulkStatusUpdateVM.IdList == null || bulkStatusUpdateVM.IdList.Length == 0)
@@ -722,12 +723,12 @@ namespace AptitudeTest.Data.Data
                     });
                 }
                 List<Question> questions = _context.Questions.Where(q => bulkStatusUpdateVM.IdList.Contains(q.Id)).ToList();
-                questions.ForEach(questions=> questions.Status=bulkStatusUpdateVM.Status);
+                questions.ForEach(questions => questions.Status = bulkStatusUpdateVM.Status);
                 _context.UpdateRange(questions);
                 _context.SaveChanges();
                 return new JsonResult(new ApiResponse<string>
                 {
-                    Message = string.Format(ResponseMessages.StatusUpdateSuccess,ModuleNames.Question) ,
+                    Message = string.Format(ResponseMessages.StatusUpdateSuccess, ModuleNames.Question),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
                 });
