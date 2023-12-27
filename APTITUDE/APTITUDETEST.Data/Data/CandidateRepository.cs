@@ -547,8 +547,6 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-
-
         public async Task<JsonResult> GetQuestionsStatus(int userId)
         {
             try
@@ -664,8 +662,6 @@ namespace AptitudeTest.Data.Data
             }
 
         }
-
-
 
         public async Task<JsonResult> EndTest(int userId)
         {
