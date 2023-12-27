@@ -182,7 +182,7 @@ namespace AptitudeTest.Data.Data
                         int count = _appDbContext.SaveChanges();
                         if (count == 1)
                         {
-                            isEmailSent = SendMailForPassword(admin.FirstName, pass, admin.Email);
+                            isEmailSent = SendMailForPassword(admin.FirstName, admin.LastName, pass, admin.Email);
                             if (isEmailSent)
                             {
                                 return new JsonResult(new ApiResponse<string>
@@ -479,12 +479,12 @@ namespace AptitudeTest.Data.Data
         #region helpingMethods
 
         #region SendEmailForPassword
-        private bool SendMailForPassword(string firstName, string password, string email)
+        private bool SendMailForPassword(string firstName, string lastName, string password, string email)
         {
             try
             {
-                var subject = "Password reset request";
-                var body = $"<h3>Hello {firstName}, </h3><br />We have received admin registration request for you.<br /><br />Here is your credentials to login!!<br /><br /><h2>User name: {email}</h2><br /><h2>Password: {password}</h2><br/>You can login using the following link:<br/><a href={adminLoginUrl}>{adminLoginUrl}</a><br/><br/>Regards<br/>Tatvasoft";
+                var subject = "Admin registration succesful for Aptitude Test portal";
+                var body = $"<h3>Welcome {firstName} {lastName}, </h3>We have received admin registration request for you.<br />Here are your credentials to login!!<br /><h4>User name: {email}</h4><h4>Password: {password}</h4><You can login using the following link:<br/><a href={adminLoginUrl}>{adminLoginUrl}</a><br/><br/>Regards<br/>Tatvasoft";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
