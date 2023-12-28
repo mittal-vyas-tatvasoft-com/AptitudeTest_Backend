@@ -62,6 +62,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.UpdateBulkStatus(bulkStatusUpdateVM);
         }
+
+        public async Task<JsonResult> DeleteMultipleQuestions(int[] questionIdList)
+        {
+            return await _repository.DeleteMultipleQuestions(questionIdList);
+        }
         #endregion
     }
 }
