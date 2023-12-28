@@ -142,6 +142,17 @@ namespace AptitudeTest.Controllers
         {
             return await _service.UpdateBulkStatus(bulkStatusUpdateVM);
         }
+
+        /// <summary>
+        /// This method deletes questions in bulk
+        /// </summary>
+        /// <param name="questionIdList"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> DeleteMultipleQuestions(int[] questionIdList)
+        {
+            return await _service.DeleteMultipleQuestions(questionIdList);
+        }
         #endregion
     }
 }
