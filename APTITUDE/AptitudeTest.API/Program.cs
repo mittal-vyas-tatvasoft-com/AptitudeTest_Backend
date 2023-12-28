@@ -1,4 +1,5 @@
 using AptitudeTest.Application.Services;
+using AptitudeTest.Background_Services;
 using AptitudeTest.Common.Data;
 using AptitudeTest.Common.Helpers;
 using AptitudeTest.Core.Interfaces;
@@ -30,7 +31,7 @@ dataSourceBuilder.MapComposite<DapperUserFamilyVM>();
 dataSourceBuilder.MapComposite<DapperUserFamilyVM>();
 var dataSource = dataSourceBuilder.Build();
 
-
+builder.Services.AddHostedService<DeleteImagesJob>();
 builder.Services.AddDbContext<AppDbContext>(item => item.UseNpgsql(connectionString));
 builder.Services.AddDbContext<DapperAppDbContext>(item =>
 {
