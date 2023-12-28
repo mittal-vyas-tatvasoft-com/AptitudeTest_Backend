@@ -16,11 +16,13 @@ namespace AptitudeTest.Data.Data
         private readonly string? screenshot;
         private readonly string? faceCam;
         private AppDbContext _context;
+        private readonly ILoggerManager _logger;
         #endregion
 
         #region Constructor
-        public ReportsRepository(AppDbContext context, IConfiguration config)
+        public ReportsRepository(AppDbContext context, IConfiguration config, ILoggerManager logger)
         {
+            _logger = logger;
             IConfiguration _config;
             _config = config;
             root = _config["FileSavePath:Root"];
@@ -92,8 +94,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ReportsRepository.GetScreenShots:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -124,8 +127,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ReportsRepository.GetTests:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -156,8 +160,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ReportsRepository.GetUsers:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -193,8 +198,9 @@ namespace AptitudeTest.Data.Data
                 });
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ReportsRepository.GetUserDirectories:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -283,8 +289,9 @@ namespace AptitudeTest.Data.Data
                 }
             }
 
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"Error occurred in ReportsRepository.DeleteDirectory:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
