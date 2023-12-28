@@ -80,8 +80,8 @@ namespace AptitudeTest.Data.Data
                         Name = testVM.Name.Trim(),
                         Description = testVM.Description.Trim(),
                         Date = testVM.Date,
-                        StartTime = testVM.StartTime.AddDays(1),
-                        EndTime = testVM.EndTime.AddDays(1),
+                        StartTime = testVM.StartTime,
+                        EndTime = testVM.EndTime,
                         TestDuration = testVM.TestDuration,
                         Status = testVM.Status,
                         NegativeMarkingPercentage = testVM.NegativeMarkingPercentage,
@@ -949,7 +949,7 @@ namespace AptitudeTest.Data.Data
             {
                 if (!String.IsNullOrEmpty(testName))
                 {
-                    bool doesTestExists = _context.Tests.Any(test => test.Name.ToLower().Equals(testName.ToLower()));
+                    bool doesTestExists = _context.Tests.Any(test => test.Name.Trim().ToLower().Equals(testName.Trim().ToLower()) && !(bool)test.IsDeleted);
                     if (doesTestExists)
                     {
                         return new JsonResult(new ApiResponse<Admin>
