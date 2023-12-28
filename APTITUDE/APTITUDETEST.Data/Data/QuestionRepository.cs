@@ -777,7 +777,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in QuestionRepository.UpdateBulkStatus:{ex}");
+                _logger.LogError($"Error occurred in QuestionRepository.DeleteMultipleQuestions:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
