@@ -1,5 +1,4 @@
-﻿using AptitudeTest.Common.Helpers;
-using AptitudeTest.Core.Entities.Admin;
+﻿using AptitudeTest.Core.Entities.Admin;
 using AptitudeTest.Core.Entities.Test;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
@@ -243,7 +242,7 @@ namespace AptitudeTest.Data.Data
                     testAlreadyExists.UpdatedBy = updateTest.UpdatedBy;
                     testAlreadyExists.UpdatedDate = DateTime.UtcNow;
                     _context.SaveChanges();
-                    SendTestMailToCandidates(testAlreadyExists.GroupId, testAlreadyExists);
+                    //SendTestMailToCandidates(testAlreadyExists.GroupId, testAlreadyExists);
                     return new JsonResult(new ApiResponse<string>
                     {
                         Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Group),
@@ -1167,20 +1166,20 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        private void SendTestMailToCandidates(int? groupId, Test test)
-        {
-            var candidates = _context.Users.Where(user => user.GroupId == groupId && !(bool)user.IsDeleted).ToList();
-            var emailHelper = new EmailHelper(_config);
-            string subject = "Test Details";
-            if (candidates.Count > 0)
-            {
-                foreach (var candidate in candidates)
-                {
-                    string body = $"<h3>Hello {candidate.FirstName} {candidate.LastName}, </h3>Your test has been generated successfully.<br/>You have to appear for the test on {test.Date} at {test.StartTime}.<br/>Your test will end at {test.EndTime}.<br/>Kindly login from below link to appear for the test<a href={userLoginUrl}>{userLoginUrl}</a><br/><br/>Regards<br/>Tatvasoft";
-                    emailHelper.SendEmail(candidate.Email, subject, body);
-                }
-            }
-        }
+        //private void SendTestMailToCandidates(int? groupId, Test test)
+        //{
+        //    var candidates = _context.Users.Where(user => user.GroupId == groupId && !(bool)user.IsDeleted).ToList();
+        //    var emailHelper = new EmailHelper(_config);
+        //    string subject = "Test Details";
+        //    if (candidates.Count > 0)
+        //    {
+        //        foreach (var candidate in candidates)
+        //        {
+        //            string body = $"<h3>Hello {candidate.FirstName} {candidate.LastName}, </h3>Your test has been generated successfully.<br/>You have to appear for the test on {test.Date} at {test.StartTime}.<br/>Your test will end at {test.EndTime}.<br/>Kindly login from below link to appear for the test<a href={userLoginUrl}>{userLoginUrl}</a><br/><br/>Regards<br/>Tatvasoft";
+        //            emailHelper.SendEmail(candidate.Email, subject, body);
+        //        }
+        //    }
+        //}
 
         #endregion
     }
