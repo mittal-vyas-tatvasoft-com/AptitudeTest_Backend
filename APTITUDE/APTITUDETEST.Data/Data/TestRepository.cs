@@ -993,8 +993,8 @@ namespace AptitudeTest.Data.Data
             try
             {
                 var testList = await Task.FromResult(_context.Tests
-                .Where(x => x.IsDeleted != true)
-                .Select(x => new { Id = x.Id, Name = x.Name }).OrderBy(x => x.Id)
+                .Where(x => x.IsDeleted != true).OrderByDescending(x => x.CreatedDate)
+                .Select(x => new { Id = x.Id, Name = x.Name })
                 .ToList());
 
                 if (testList != null)
