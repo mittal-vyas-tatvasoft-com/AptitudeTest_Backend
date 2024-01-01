@@ -7,6 +7,8 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
+using System.Web;
+
 namespace AptitudeTest.Data.Data
 {
     public class ResultRepository : IResultRepository
@@ -69,7 +71,7 @@ namespace AptitudeTest.Data.Data
                             Difficulty = temp.Difficulty,
                             Id = temp.QuestionId,
                             OptionType = temp.OptionType,
-                            QuestionText = temp.QuestionText,
+                            QuestionText =HttpUtility.HtmlDecode(temp.QuestionText),
                             Options = x.Select(k =>
                             {
                                 return new UserResultOptionVM() { OptionId = k.OptionId, IsAnswer = k.IsAnswer, OptionValue = k.OptionData, IsUserAnswer = k.UserAnswers != null ? k.UserAnswers.Contains(k.OptionId) : false };
