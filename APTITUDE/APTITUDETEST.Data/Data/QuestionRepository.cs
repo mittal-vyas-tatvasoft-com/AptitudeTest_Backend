@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
+using System.Text;
 using System.Web;
 using static AptitudeTest.Data.Common.Enums;
 
@@ -795,10 +796,19 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                using (var reader = new StreamReader(file.OpenReadStream()))
+                using (var reader = new StreamReader(file.OpenReadStream(), Encoding.UTF8))
                 using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
                 {
-                    return csv.GetRecords<ImportQuestionCsvVM>().ToList();
+                    List<ImportQuestionCsvVM> data = csv.GetRecords<ImportQuestionCsvVM>().ToList();
+                    foreach (var item in data)
+                    {
+                        item.questiontext = item.questiontext.Replace("�", " ");
+                        item.optiondata1 = item.optiondata1.Replace("�", " ");
+                        item.optiondata2 = item.optiondata2.Replace("�", " ");
+                        item.optiondata3 = item.optiondata3.Replace("�", " ");
+                        item.optiondata4 = item.optiondata4.Replace("�", " ");
+                    }
+                    return data;
                 }
             }
 

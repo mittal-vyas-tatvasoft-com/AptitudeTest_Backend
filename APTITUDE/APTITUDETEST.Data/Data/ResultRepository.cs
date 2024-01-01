@@ -71,7 +71,7 @@ namespace AptitudeTest.Data.Data
                             Difficulty = temp.Difficulty,
                             Id = temp.QuestionId,
                             OptionType = temp.OptionType,
-                            QuestionText =HttpUtility.HtmlDecode(temp.QuestionText),
+                            QuestionText = HttpUtility.HtmlDecode(temp.QuestionText),
                             Options = x.Select(k =>
                             {
                                 return new UserResultOptionVM() { OptionId = k.OptionId, IsAnswer = k.IsAnswer, OptionValue = k.OptionData, IsUserAnswer = k.UserAnswers != null ? k.UserAnswers.Contains(k.OptionId) : false };
