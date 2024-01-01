@@ -8,6 +8,7 @@ namespace AptitudeTest.Background_Services
         private readonly string? root;
         private readonly string? parent;
         private Timer? _timer;
+        private int deleteDurationInDays;
 
         public DeleteImagesJob(ILoggerManager logger, IConfiguration config)
         {
@@ -16,6 +17,7 @@ namespace AptitudeTest.Background_Services
             _config = config;
             root = _config["FileSavePath:Root"];
             parent = _config["FileSavePath:ParentFolder"];
+            deleteDurationInDays = Int32.Parse(_config["DeleteImages:DurationInDays"]);
             SetTimer();
         }
 
@@ -44,7 +46,7 @@ namespace AptitudeTest.Background_Services
                 foreach (string file in allFiles)
                 {
                     FileInfo fileInfo = new FileInfo(file);
-                    if (fileInfo.CreationTime < DateTime.Now.AddDays(-10))
+                    if (fileInfo.CreationTime < DateTime.Now.AddDays(deleteDurationInDays*-1))
                     {
                         fileInfo.Delete();
                     }
