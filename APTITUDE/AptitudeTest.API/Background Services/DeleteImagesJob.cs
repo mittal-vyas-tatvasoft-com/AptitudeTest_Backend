@@ -46,7 +46,7 @@ namespace AptitudeTest.Background_Services
                 foreach (string file in allFiles)
                 {
                     FileInfo fileInfo = new FileInfo(file);
-                    if (fileInfo.CreationTime < DateTime.Now.AddDays(deleteDurationInDays*-1))
+                    if (fileInfo.CreationTime < DateTime.Now.AddDays(deleteDurationInDays * -1))
                     {
                         fileInfo.Delete();
                     }

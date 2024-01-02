@@ -16,7 +16,6 @@ namespace AptitudeTest.Core.ViewModels
         [Required]
         public bool Status { get; set; }
         [Required]
-        [MaxLength(500)]
         public string QuestionText { get; set; }
         [Required]
         [Range(1, 2)]
