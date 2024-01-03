@@ -169,7 +169,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     List<ResultStatisticsVM> data = connection.Query<ResultStatisticsVM>("Select * from getstatisticsresult(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
