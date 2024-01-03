@@ -6,6 +6,7 @@
         public int Difficulty { get; set; }
         public string? QuestionText { get; set; }
         public int QuestionType { get; set; }
+        public int Topic { get; set; }
         public int OptionType { get; set; }
         public int NextQuestionId { get; set; }
         public int QuestionNumber { get; set; }
