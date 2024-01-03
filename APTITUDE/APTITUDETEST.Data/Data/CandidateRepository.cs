@@ -492,7 +492,8 @@ namespace AptitudeTest.Data.Data
                         QuestionText = HttpUtility.HtmlDecode(question.QuestionText),
                         NextQuestionId = nextQuestionId,
                         QuestionNumber = questionNumber,
-                        TotalQuestions = questions.Length
+                        TotalQuestions = questions.Length,
+                        Topic = _appDbContext.Questions.FirstOrDefault(que => que.Id == question.QuestionId).Topic
                     };
 
                     foreach (var item in data)
