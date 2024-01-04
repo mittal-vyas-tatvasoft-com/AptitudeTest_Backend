@@ -48,6 +48,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.GetGroupOfTest(testId);
         }
+
+        public async Task<JsonResult> UpdateTestRemainingTime(List<UserTestVM> userTests, int timeToBeAdded)
+        {
+            return await _repository.UpdateTestRemainingTime(userTests, timeToBeAdded);
+        }
         #endregion
     }
 }
