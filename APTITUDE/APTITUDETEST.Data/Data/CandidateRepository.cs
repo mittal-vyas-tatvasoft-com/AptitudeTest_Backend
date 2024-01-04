@@ -387,12 +387,11 @@ namespace AptitudeTest.Data.Data
             List<RandomQuestionsVM> allQuestions = new();
             List<TestWiseQuestionsCountVM> testWiseQuestionsCount = new();
             Random rand = new Random();
-            bool isParent = rand.NextDouble() >= 0.5;
 
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
-                allQuestions = connection.Query<RandomQuestionsVM>("Select * from GetRandomQuestions(@IsParent)", new { IsParent = isParent }).ToList();
+                allQuestions = connection.Query<RandomQuestionsVM>("Select * from GetRandomQuestions()").ToList();
                 testWiseQuestionsCount = connection.Query<TestWiseQuestionsCountVM>("Select * from GetTestQuestionsConfig(@Id)", new { Id = testId }).ToList();
                 connection.Close();
             }
