@@ -243,7 +243,7 @@ namespace AptitudeTest.Data.Data
             {
                 if (admin != null)
                 {
-                    Admin? adminAlreadyExists = _appDbContext.Admins.Where(ad => ad.Email == admin.Email && ad.Id != admin.Id).FirstOrDefault();
+                    Admin? adminAlreadyExists = _appDbContext.Admins.Where(ad =>( ad.Email == admin.Email || ad.PhoneNumber == admin.PhoneNumber) && ad.Id != admin.Id).FirstOrDefault();
 
                     if (adminAlreadyExists == null)
                     {
