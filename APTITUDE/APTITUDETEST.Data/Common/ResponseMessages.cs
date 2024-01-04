@@ -66,6 +66,9 @@
         public readonly static string ResumeTest = "Test resumed successfully";
         public readonly static string ContactAdmin = "Please contact admin to resume test";
         public readonly static string TestSubmitted = "Test Already Submitted";
+        public readonly static string TestSubmittedSuccess = "your test submitted successfully";
+        public readonly static string NoTestFound = "No active test found for you";
+
         public readonly static string TestTimeUpdated = "Test Time successfully updated for {0} candidates";
         public readonly static string TestTimeNotUpdated = "Failed to update test time of all the candidates";
         #endregion

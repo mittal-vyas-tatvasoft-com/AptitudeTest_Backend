@@ -6,8 +6,10 @@ using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
+using APTITUDETEST.Core.Entities.Users;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Npgsql;
@@ -707,6 +709,7 @@ namespace AptitudeTest.Data.Data
             {
                 if (userId != 0)
                 {
+
                     Test? userTest = _userActiveTestHelper.GetTestOfUser(userId);
                     if (userTest != null)
                     {
@@ -731,23 +734,13 @@ namespace AptitudeTest.Data.Data
                                 StatusCode = ResponseStatusCode.Success
                             });
                         }
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Data = userTest.MessaageAtEndOfTheTest,
-                            Message = ResponseMessages.Success,
-                            Result = true,
-                            StatusCode = ResponseStatusCode.Success
-                        });
+
+                        return getEndTestMessage(userId);
 
                     }
                     else
                     {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.NotFound
-                        });
+                        return getEndTestMessage(userId);
                     }
                 }
                 else
@@ -975,7 +968,35 @@ namespace AptitudeTest.Data.Data
             return 0;
         }
 
-
+        private JsonResult getEndTestMessage(int userId)
+        {
+            int? groupId = _appDbContext.Users.Where(x => x.Id == userId && x.IsDeleted == false).Select(x => x.GroupId).FirstOrDefault();
+            if (groupId != null)
+            {
+                Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.IsDeleted == false).FirstOrDefault();
+                if (test == null || test.Status != (int)TestStatus.Active || !(Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now))
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.NoTestFound,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.TestSubmittedSuccess,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
+            }
+            return new JsonResult(new ApiResponse<string>
+            {
+                Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                Result = false,
+                StatusCode = ResponseStatusCode.NotFound
+            });
+        }
 
         #endregion
     }
