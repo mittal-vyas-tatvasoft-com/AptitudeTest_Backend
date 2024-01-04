@@ -91,6 +91,22 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
+        /// This methods adds the given minutes to the remaining time of user's test
+        /// </summary>
+        /// <param name="userTests"></param>
+        /// <param name="timeToBeAdded"></param>
+        /// <returns></returns>
+        [HttpPut("[action]/{timeToBeAdded}")]
+        public async Task<JsonResult> UpdateTestRemainingTime(List<UserTestVM> userTests, int timeToBeAdded)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _candidateService.UpdateTestRemainingTime(userTests, timeToBeAdded);
+            }
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+
+        /// <summary>
         /// GetInstructions For theTest for user
         /// </summary>
         /// <param name="userId"></param>

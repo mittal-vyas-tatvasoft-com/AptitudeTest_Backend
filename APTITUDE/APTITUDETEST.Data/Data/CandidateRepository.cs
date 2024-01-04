@@ -774,6 +774,63 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> UpdateTestRemainingTime(List<UserTestVM> userTests, int timeToBeAdded)
+        {
+            try
+            {
+                if (userTests != null && userTests.Count > 0 && timeToBeAdded >= 0)
+                {
+                    int testTimeUpdated = 0;
+                    foreach (var userTest in userTests)
+                    {
+                        TempUserTest? testOfUser = _appDbContext.TempUserTests.FirstOrDefault(test => test.TestId == userTest.TestId && test.UserId == userTest.UserId && !(bool)test.IsDeleted);
+                        if (testOfUser != null && !testOfUser.IsFinished)
+                        {
+                            testOfUser.TimeRemaining = testOfUser.TimeRemaining + timeToBeAdded;
+                            testOfUser.IsAdminApproved = true;
+                            await _appDbContext.SaveChangesAsync();
+                            testTimeUpdated++;
+                        }
+                    }
+                    if (testTimeUpdated > 0)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.TestTimeUpdated, testTimeUpdated),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.Success
+                        });
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.TestTimeNotUpdated,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.RequestFailed
+                        });
+                    }
+
+                }
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.BadRequest,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.BadRequest
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in CandidateRepository.UpdateTestRemainingTime:{ex}");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
         #endregion
 
         #region Helper Method
@@ -918,6 +975,8 @@ namespace AptitudeTest.Data.Data
             }
             return 0;
         }
+
+
 
         #endregion
     }
