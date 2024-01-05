@@ -595,36 +595,36 @@ namespace AptitudeTest.Data.Data
                     int answered = 0;
                     int unAnswered = 0;
                     bool isQuestionsMenu = (bool)test?.IsQuestionsMenu;
-                        var questions = _appDbContext.TempUserTestResult.Where(t => t.UserTestId == userTestId).OrderBy(X => X.Id).Select((x) => new TempQuestionStatusVM()
-                        {
-                            QuestionId = x.QuestionId,
-                            IsAttended = x.IsAttended,
-                            UserAnswers = x.UserAnswers
-                        }).ToList();
+                    var questions = _appDbContext.TempUserTestResult.Where(t => t.UserTestId == userTestId).OrderBy(X => X.Id).Select((x) => new TempQuestionStatusVM()
+                    {
+                        QuestionId = x.QuestionId,
+                        IsAttended = x.IsAttended,
+                        UserAnswers = x.UserAnswers
+                    }).ToList();
 
-                        if (questions.Count == 0)
+                    if (questions.Count == 0)
+                    {
+                        return new JsonResult(new ApiResponse<string>
                         {
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = ResponseMessages.NoRecordsFound,
-                                Result = false,
-                                StatusCode = ResponseStatusCode.BadRequest
-                            });
-                        }
+                            Message = ResponseMessages.NoRecordsFound,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
 
-                        foreach (var item in questions)
+                    foreach (var item in questions)
+                    {
+                        totalCount++;
+                        int status = 0;
+                        unAnswered = unAnswered + IsQuestionUnanswered(item);
+                        answered = answered + IsQuestionAnswered(item);
+                        status = GetStatusOfQuestion(item);
+                        data.Add(new QuestionStatusVM()
                         {
-                            totalCount++;
-                            int status = 0;
-                            unAnswered = unAnswered + IsQuestionUnanswered(item);
-                            answered = answered + IsQuestionAnswered(item);
-                            status = GetStatusOfQuestion(item);
-                            data.Add(new QuestionStatusVM()
-                            {
-                                QuestionId = item.QuestionId,
-                                Status = status,
-                            });
-                        }
+                            QuestionId = item.QuestionId,
+                            Status = status,
+                        });
+                    }
                     CandidateQuestionsStatusVM candidateQuestionsStatusVM = new CandidateQuestionsStatusVM()
                     {
                         questionStatusVMs = data,
