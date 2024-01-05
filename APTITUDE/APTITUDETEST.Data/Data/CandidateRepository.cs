@@ -595,9 +595,6 @@ namespace AptitudeTest.Data.Data
                     int answered = 0;
                     int unAnswered = 0;
                     bool isQuestionsMenu = (bool)test?.IsQuestionsMenu;
-                    if (isQuestionsMenu)
-                    {
-
                         var questions = _appDbContext.TempUserTestResult.Where(t => t.UserTestId == userTestId).OrderBy(X => X.Id).Select((x) => new TempQuestionStatusVM()
                         {
                             QuestionId = x.QuestionId,
@@ -628,8 +625,6 @@ namespace AptitudeTest.Data.Data
                                 Status = status,
                             });
                         }
-
-                    }
                     CandidateQuestionsStatusVM candidateQuestionsStatusVM = new CandidateQuestionsStatusVM()
                     {
                         questionStatusVMs = data,
