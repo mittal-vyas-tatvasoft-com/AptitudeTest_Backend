@@ -12,5 +12,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> ApproveResumeTest(TestApproveVM testApproveVM);
         public Task<JsonResult> GetApproveTestData(int userId, int testId);
         public Task<JsonResult> GetGroupOfTest(int testId);
+        public Task<JsonResult> UpdateTestRemainingTime(List<UserTestVM> userTests, int timeToBeAdded);
     }
 }

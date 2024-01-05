@@ -1,5 +1,6 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
+using AptitudeTest.Data.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -71,6 +72,21 @@ namespace AptitudeTest.Controllers
             return await _service.GetResultStatistics(searchQuery, testId, groupId, collegeId, year, currentPageIndex, sortField, sortOrder);
         }
 
+        /// <summary>
+        /// This methods adds the given minutes to the remaining time of user's test
+        /// </summary>
+        /// <param name="userTests"></param>
+        /// <param name="timeToBeAdded"></param>
+        /// <returns></returns>
+        [HttpPut("[action]/{timeToBeAdded}")]
+        public async Task<JsonResult> UpdateTestRemainingTime(List<UserTestVM> userTestIds, int timeToBeAdded)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _service.UpdateTestRemainingTime(userTestIds, timeToBeAdded);
+            }
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
 
         /// <summary>
         /// Get Test Results Data For Export

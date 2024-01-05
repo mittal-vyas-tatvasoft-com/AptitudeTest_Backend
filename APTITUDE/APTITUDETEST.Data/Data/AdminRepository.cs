@@ -243,7 +243,7 @@ namespace AptitudeTest.Data.Data
             {
                 if (admin != null)
                 {
-                    Admin? adminAlreadyExists = _appDbContext.Admins.Where(ad =>( ad.Email == admin.Email || ad.PhoneNumber == admin.PhoneNumber) && ad.Id != admin.Id).FirstOrDefault();
+                    Admin? adminAlreadyExists = _appDbContext.Admins.Where(ad => (ad.Email == admin.Email || ad.PhoneNumber == admin.PhoneNumber) && ad.Id != admin.Id).FirstOrDefault();
 
                     if (adminAlreadyExists == null)
                     {
@@ -483,7 +483,7 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                var subject = "Admin registration succesful for Aptitude Test portal";
+                var subject = "Admin registration succesful for Tatvasoft - Aptitude Test portal";
                 var body = $"<h3>Welcome {firstName} {lastName}, </h3>We have received admin registration request for you.<br />Here are your credentials to login!!<br /><h4>User name: {email}</h4><h4>Password: {password}</h4><You can login using the following link:<br/><a href={adminLoginUrl}>{adminLoginUrl}</a><br/><br/>Regards<br/>Tatvasoft";
                 var emailHelper = new EmailHelper(_config);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
