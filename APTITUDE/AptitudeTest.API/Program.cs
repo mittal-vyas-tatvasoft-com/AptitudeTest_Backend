@@ -32,6 +32,7 @@ dataSourceBuilder.MapComposite<DapperUserFamilyVM>();
 var dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddHostedService<DeleteImagesJob>();
+builder.Services.AddHostedService<TestStatusUpdateJob>();
 builder.Services.AddDbContext<AppDbContext>(item => item.UseNpgsql(connectionString));
 builder.Services.AddDbContext<DapperAppDbContext>(item =>
 {
