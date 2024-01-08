@@ -9,6 +9,7 @@ namespace AptitudeTest.Background_Services
     public class TestStatusUpdateJob : BackgroundService
     {
         #region Properties
+        private string connectionString;
         private AppDbContext _context;
         private readonly ILoggerManager _logger;
         private Timer? _timer;
@@ -19,12 +20,16 @@ namespace AptitudeTest.Background_Services
         #region Constructor
         public TestStatusUpdateJob(ILoggerManager logger, IConfiguration config)
         {
-            _context = new AppDbContext(new DbContextOptions<AppDbContext>());
-            _logger = logger;
+
             IConfiguration _config;
             _config = config;
             jobRunTime = Int32.Parse(_config["TestStatusUpdate:JobRunTime"]);
             extraTime = Int32.Parse(_config["TestStatusUpdate:TimeBeforeStartTimetoUpdateStatus"]);
+            connectionString = _config.GetConnectionString("AptitudeTest");
+            var optionBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionBuilder.UseNpgsql(connectionString);
+            _context = new AppDbContext(optionBuilder.Options);
+            _logger = logger;
             SetMainTimer();
         }
         #endregion
