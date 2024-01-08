@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using static AptitudeTest.Common.Helpers.UserActiveTestHelper;
 
 namespace AptitudeTest.Data.Data
 {
@@ -107,7 +108,23 @@ namespace AptitudeTest.Data.Data
                 bool isSubmitted;
                 if (tempUserTest == null)
                 {
-                    isSubmitted = false;
+                    int? groupId = _context.Users.Where(x => x.Id == user.Id && x.IsDeleted == false).Select(x => x.GroupId).FirstOrDefault();
+                    if (groupId != null)
+                    {
+                        Test? tempTest = _context.Tests.Where(x => x.GroupId == groupId && x.IsDeleted == false).FirstOrDefault();
+                        if (test == null || test.Status != (int)TestStatus.Active || !(Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now))
+                        {
+                            isSubmitted = true;
+                        }
+                        else
+                        {
+                            isSubmitted = false;
+                        }
+                    }
+                    else
+                    {
+                        isSubmitted = true;
+                    }
                 }
                 else
                 {
