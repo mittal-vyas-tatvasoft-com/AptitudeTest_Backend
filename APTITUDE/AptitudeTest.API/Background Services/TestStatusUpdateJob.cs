@@ -1,7 +1,9 @@
 ﻿using AptitudeTest.Core.Entities.Test;
 using AptitudeTest.Core.Interfaces;
 using APTITUDETEST.Common.Data;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using static AptitudeTest.Data.Common.Enums;
 
 namespace AptitudeTest.Background_Services
@@ -64,6 +66,7 @@ namespace AptitudeTest.Background_Services
                     foreach (var test in tests)
                     {
                         Task.Delay((int)CalculateDelay(test.StartTime)).ContinueWith(task => UpdateStatus(test.Id));
+                        Task.Delay((int)(test.EndTime - DateTime.Now).TotalMilliseconds).ContinueWith(task => EndTest(test.Id));
                     }
                 }
             }
@@ -97,6 +100,30 @@ namespace AptitudeTest.Background_Services
             DateTime now = DateTime.Now;
             TimeSpan timeSpan = dateTime - now;
             return timeSpan.TotalMilliseconds - extraTime * 60 * 1000;
+        }
+
+        private void EndTest(int testId)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    List<int> userIds = new List<int>();
+                    userIds = _context.TempUserTests.Where(t => t.TestId == testId &&  t.IsDeleted == false && (t.IsFinished == false || t.TimeRemaining == 0) ).Select(t => t.UserId).ToList();
+                    connection.Open();
+                    foreach (int id in userIds)
+                    {
+                        var result = connection.Query("Select * from endtest(@user_id)", new { user_id = id }).FirstOrDefault();
+                    }
+                    connection.Close();
+                }
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in TestStatusUpdateJob.EndTest:{ex} at: {DateTime.Now}");
+            }
+
         }
         #endregion
     }
