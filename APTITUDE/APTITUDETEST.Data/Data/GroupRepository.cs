@@ -248,7 +248,10 @@ namespace AptitudeTest.Data.Data
                 if (groupToBeUpdated != null)
                 {
                     groupToBeUpdated.Name = updatedGroup.Name.Trim();
-                    groupToBeUpdated.IsDefault = updatedGroup.IsDefault;
+                    if (!groupToBeUpdated.IsDefault)
+                    {
+                        groupToBeUpdated.IsDefault = updatedGroup.IsDefault;
+                    }
                     _context.Update(groupToBeUpdated);
 
                     if ((bool)groupToBeUpdated.IsDefault)
