@@ -109,7 +109,7 @@ namespace AptitudeTest.Background_Services
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     List<int> userIds = new List<int>();
-                    userIds = _context.TempUserTests.Where(t => t.TestId == testId &&  t.IsDeleted == false && (t.IsFinished == false || t.TimeRemaining == 0) ).Select(t => t.UserId).ToList();
+                    userIds = _context.TempUserTests.Where(t => t.TestId == testId && t.IsDeleted == false && (t.IsFinished == false || t.TimeRemaining == 0)).Select(t => t.UserId).ToList();
                     connection.Open();
                     foreach (int id in userIds)
                     {
