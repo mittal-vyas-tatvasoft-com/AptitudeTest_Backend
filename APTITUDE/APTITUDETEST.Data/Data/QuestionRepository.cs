@@ -433,7 +433,7 @@ namespace AptitudeTest.Data.Data
                 {
                     question.Topic = questionVM.TopicId;
                     List<Question> childQuestions = _context.Questions.Where(q => q.ParentId == question.Id).ToList();
-                    childQuestions.ForEach(q => q.Topic = questionVM.TopicId);
+                    childQuestions.ForEach(q => { q.Topic = questionVM.TopicId;q.Difficulty = questionVM.Difficulty;q.QuestionType = questionVM.QuestionType; }) ;
                     _context.UpdateRange(childQuestions);
                 }
                 _context.Update(question);
