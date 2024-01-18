@@ -1076,6 +1076,77 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+        public async Task<JsonResult> UpdateBasicPoints(int testId)
+        {
+            try
+            {
+                if (testId < 1)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                Test? test = _context.Tests.Where(t => t.Id == testId).FirstOrDefault();
+                if (test == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+                int totalMarks = 0;
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+                    List<TestQuestionCountMarksDataVM> data = connection.Query<TestQuestionCountMarksDataVM>("Select * from getTestQuestionsCount(@test_id)", new { test_id = testId }).ToList();
+                    connection.Close();
+                    if (data.Count != 0)
+                    {
+                        var firstRow = data.FirstOrDefault();
+                        if (firstRow != null)
+                        {
+                            totalMarks = firstRow.TotalMarks;
+                        }
+                    }
+                }
+                if (totalMarks != 0)
+                {
+                    test.BasicPoint = totalMarks;
+                    _context.Update(test);
+                    _context.SaveChanges();
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.Test),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in TestRepository.UpdateBasicPoints:{ex}");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
         #endregion
 
         #region Helper Method
