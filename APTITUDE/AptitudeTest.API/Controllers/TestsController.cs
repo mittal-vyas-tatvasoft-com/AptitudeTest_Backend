@@ -198,6 +198,17 @@ namespace AptitudeTest.Controllers
             return await _service.UpdateTestStatus(status);
         }
 
+        /// <summary>
+        /// This method update the BasicPoints of test
+        /// </summary>
+        /// <param name="testId"></param>
+        /// <returns></returns>
+        [HttpPut("[action]/{testId:int}")]
+        public async Task<JsonResult> UpdateBasicPoints(int testId)
+        {
+            return await _service.UpdateBasicPoints(testId);
+        }
+
         #endregion
     }
 }

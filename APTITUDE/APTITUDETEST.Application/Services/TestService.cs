@@ -87,6 +87,11 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.UpdateTestStatus(status);
         }
+
+        public Task<JsonResult> UpdateBasicPoints(int testId)
+        {
+            return _repository.UpdateBasicPoints(testId);
+        }
         #endregion 
     }
 }
