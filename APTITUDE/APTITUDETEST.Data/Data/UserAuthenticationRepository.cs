@@ -72,7 +72,7 @@ namespace AptitudeTest.Data.Data
 
                 Test? test = _userActiveTestHelper.GetTestOfUser(user.Id);
                 UserTest? userTest = new UserTest();
-                TempUserTest? tempUserTest = new TempUserTest();
+                TempUserTest tempUserTest = null;
                 if (test != null)
                 {
                     userTest = _context.UserTests.Where(x => x.TestId == test.Id && x.UserId == user.Id).FirstOrDefault();
@@ -111,14 +111,22 @@ namespace AptitudeTest.Data.Data
                     int? groupId = _context.Users.Where(x => x.Id == user.Id && x.IsDeleted == false).Select(x => x.GroupId).FirstOrDefault();
                     if (groupId != null)
                     {
-                        Test? tempTest = _context.Tests.Where(x => x.GroupId == groupId && x.IsDeleted == false).FirstOrDefault();
-                        if (test == null || test.Status != (int)TestStatus.Active || !(Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now))
+                        Test? tempTest = _context.Tests.Where(x => x.GroupId == groupId && x.IsDeleted == false && x.Date==DateTime.Today).FirstOrDefault();
+                        if (tempTest == null)
                         {
                             isSubmitted = true;
                         }
                         else
                         {
-                            isSubmitted = false;
+                            if (Convert.ToDateTime(tempTest?.EndTime) <= DateTime.Now )
+                            {
+                                isSubmitted = true;
+                            }
+                            else
+                            {
+                                isSubmitted = false;
+                            }
+                            
                         }
                     }
                     else

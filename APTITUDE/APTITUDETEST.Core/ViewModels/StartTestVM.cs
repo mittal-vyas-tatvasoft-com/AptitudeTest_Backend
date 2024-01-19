@@ -10,5 +10,6 @@
         public int TestDurationInMinutes { get; set; }
         public int BasicPoints { get; set; }
         public int NegativeMarkingPoints { get; set; }
+        public int TimeToStartTest { get; set; }
     }
 }

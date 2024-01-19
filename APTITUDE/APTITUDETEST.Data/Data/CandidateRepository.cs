@@ -8,6 +8,7 @@ using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Npgsql;
@@ -702,9 +703,19 @@ namespace AptitudeTest.Data.Data
             {
                 if (userId != 0)
                 {
+                    int? groupId = _appDbContext.Users.Where(x => x.Id == userId && x.IsDeleted == false).Select(x => x.GroupId).FirstOrDefault();
+                    if (groupId == null)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.BadRequest,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.BadRequest
+                        });
+                    }
 
-                    Test? userTest = _userActiveTestHelper.GetTestOfUser(userId);
-                    if (userTest != null)
+                    Test? userTest = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.IsDeleted == false).FirstOrDefault();
+                    if (userTest != null && Convert.ToDateTime(userTest.EndTime) >= DateTime.Now)
                     {
                         if (testStatus == ModuleNames.StartTest)
                         {
@@ -717,7 +728,8 @@ namespace AptitudeTest.Data.Data
                                 TestDate = userTest.Date,
                                 TestDurationInMinutes = userTest.TestDuration,
                                 NegativeMarkingPoints = userTest.NegativeMarkingPercentage,
-                                BasicPoints = userTest.BasicPoint
+                                BasicPoints = userTest.BasicPoint,
+                                TimeToStartTest = (int)((userTest.StartTime - DateTime.Now).TotalSeconds >= 0 ? (userTest.StartTime - DateTime.Now).TotalSeconds : 0)
                             };
                             return new JsonResult(new ApiResponse<StartTestVM>
                             {
@@ -729,7 +741,6 @@ namespace AptitudeTest.Data.Data
                         }
 
                         return getEndTestMessage(userId);
-
                     }
                     else
                     {
