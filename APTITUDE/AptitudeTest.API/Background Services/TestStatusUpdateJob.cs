@@ -45,8 +45,7 @@ namespace AptitudeTest.Background_Services
         private void SetMainTimer()
         {
             DateTime now = DateTime.Now;
-           //DateTime scheduledTime = new DateTime(now.Year, now.Month, now.Day, jobRunTime, 0, 0);
-           DateTime scheduledTime = new DateTime(now.Year, now.Month, now.Day, 14, 50, 0);
+           DateTime scheduledTime = new DateTime(now.Year, now.Month, now.Day, jobRunTime, 0, 0);
             if (now > scheduledTime)
             {
                 scheduledTime = scheduledTime.AddDays(1);
