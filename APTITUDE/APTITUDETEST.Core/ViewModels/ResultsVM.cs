@@ -7,7 +7,7 @@
         public string LastName { get; set; }
         public string CollegeName { get; set; }
         public DateTime StartTime { get; set; }
-        public int Points { get; set; }
+        public decimal Points { get; set; }
         public int CorrectMarks { get; set; }
         public int CorrectCount { get; set; }
         public int WrongMarks { get; set; }
