@@ -44,9 +44,9 @@ namespace AptitudeTest.Core.ViewModels
         public string? Brother_Sister1Occupation { get; set; }
         public string? Brother_Sister2Qualification { get; set; }
         public string? Brother_Sister2Occupation { get; set; }
-        public double OverallScore { get; set; }
-        public double PositiveMarks { get; set; }
-        public double NegativeMarks { get; set; }
+        public decimal OverallScore { get; set; }
+        public decimal PositiveMarks { get; set; }
+        public decimal NegativeMarks { get; set; }
         public double TotalCorrect { get; set; }
         public double TotalWrong { get; set; }
         public double TotalUnanswered { get; set; }
