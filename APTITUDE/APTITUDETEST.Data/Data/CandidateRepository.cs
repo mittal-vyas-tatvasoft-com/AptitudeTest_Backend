@@ -8,7 +8,6 @@ using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Npgsql;

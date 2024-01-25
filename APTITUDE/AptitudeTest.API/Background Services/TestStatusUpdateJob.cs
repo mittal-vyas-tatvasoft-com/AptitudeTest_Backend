@@ -45,7 +45,7 @@ namespace AptitudeTest.Background_Services
         private void SetMainTimer()
         {
             DateTime now = DateTime.Now;
-           DateTime scheduledTime = new DateTime(now.Year, now.Month, now.Day, jobRunTime, 0, 0);
+            DateTime scheduledTime = new DateTime(now.Year, now.Month, now.Day, jobRunTime, 0, 0);
             if (now > scheduledTime)
             {
                 scheduledTime = scheduledTime.AddDays(1);
@@ -65,13 +65,13 @@ namespace AptitudeTest.Background_Services
                 {
                     foreach (var test in tests)
                     {
-                        if ((int)CalculateDelay(test.StartTime)>=0)
+                        if ((int)CalculateDelay(test.StartTime) >= 0)
                         {
-                        Task.Delay((int)CalculateDelay(test.StartTime)).ContinueWith(task => UpdateStatus(test.Id));
+                            Task.Delay((int)CalculateDelay(test.StartTime)).ContinueWith(task => UpdateStatus(test.Id));
                         }
-                        if ((int)(test.EndTime - DateTime.Now).TotalMilliseconds>=0)
+                        if ((int)(test.EndTime - DateTime.Now).TotalMilliseconds >= 0)
                         {
-                        Task.Delay((int)(test.EndTime - DateTime.Now).TotalMilliseconds).ContinueWith(task => EndTest(test.Id));
+                            Task.Delay((int)(test.EndTime - DateTime.Now).TotalMilliseconds).ContinueWith(task => EndTest(test.Id));
                         }
                     }
                 }
