@@ -55,6 +55,10 @@ namespace AptitudeTest.Application.Services
             return await _candidateRepository.EndTest(userId);
         }
 
+        public async Task<JsonResult> UpdateRemainingTime(UpdateTestTimeVM updateTestTimeVM)
+        {
+            return await _candidateRepository.UpdateRemainingTime(updateTestTimeVM);
+        }
         #endregion
     }
 }

@@ -769,6 +769,51 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> UpdateRemainingTime(UpdateTestTimeVM updateTestTimeVM)
+        {
+            try
+            {
+                Test? test = _userActiveTestHelper.GetTestOfUser(updateTestTimeVM.UserId);
+                if (test == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                TempUserTest? tempUserTest = _appDbContext.TempUserTests.FirstOrDefault(x => x.UserId == updateTestTimeVM.UserId && x.TestId == test.Id && x.IsDeleted == false);
+                if (tempUserTest == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.UserTest),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                tempUserTest.TimeRemaining = updateTestTimeVM.RemainingTime;
+                _appDbContext.SaveChanges();
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TempUserTestResult),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in CandidateRepository.UpdateRemainingTime:{ex} for userId:{updateTestTimeVM.UserId}");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
         #endregion
 
         #region Helper Method
