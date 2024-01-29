@@ -18,9 +18,9 @@ namespace AptitudeTest.Application.Services
         #endregion
 
         #region Methods
-        public async Task<JsonResult> Get(int id, int testId, int marks, int pageSize, int pageIndex)
+        public async Task<JsonResult> Get(int id, int testId, int marks, int pageSize, int pageIndex, bool onlyCorrect)
         {
-            return await _repository.Get(id, testId, marks, pageSize, pageIndex);
+            return await _repository.Get(id, testId, marks, pageSize, pageIndex, onlyCorrect);
         }
 
         public Task<JsonResult> GetResults(string? searchQuery, int? TestId, int? GroupId, int? CollegeId, int? Year, int? currentPageIndex, int? pageSize, string? sortField, string? sortOrder)

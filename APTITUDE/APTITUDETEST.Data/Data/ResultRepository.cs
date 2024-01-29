@@ -31,7 +31,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Methods
-        public async Task<JsonResult> Get(int userId, int testId, int marks, int pageSize, int pageIndex)
+        public async Task<JsonResult> Get(int userId, int testId, int marks, int pageSize, int pageIndex, bool onlyCorrect)
         {
             try
             {
@@ -86,7 +86,10 @@ namespace AptitudeTest.Data.Data
                     {
                         userResultQuestionVMList = userResultQuestionVMList.Where(x => x.Difficulty == marks).ToList();
                     }
-
+                    if (onlyCorrect)
+                    {
+                        userResultQuestionVMList = userResultQuestionVMList.Where(x => isCorrect(x)).ToList();
+                    }
                     PaginationVM<UserResultQuestionVM> paginatedData = new PaginationVM<UserResultQuestionVM>()
                     {
                         EntityList = userResultQuestionVMList.Skip(pageIndex * pageSize).Take(pageSize).ToList(),
@@ -580,6 +583,12 @@ namespace AptitudeTest.Data.Data
                 }
             }
             return result;
+        }
+
+        private bool isCorrect(UserResultQuestionVM question)
+        {
+            List<int> correctAnswers = question.Options.Where(o => o.IsAnswer).Select(o => o.OptionId).ToList();
+            return CompareList(question.UserAnswers, correctAnswers);
         }
 
         #endregion
