@@ -111,5 +111,16 @@ namespace AptitudeTest.Controllers
             return await _candidateService.EndTest(userId);
         }
 
+        /// <summary>
+        /// This method updates remaining time in user test
+        /// </summary>
+        /// <param name="updateTestTimeVM"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> UpdateRemainingTime(UpdateTestTimeVM updateTestTimeVM)
+        {
+            return await _candidateService.UpdateRemainingTime(updateTestTimeVM);
+        }
+
     }
 }
