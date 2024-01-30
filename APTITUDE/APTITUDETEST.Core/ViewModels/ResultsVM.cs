@@ -10,7 +10,7 @@
         public decimal Points { get; set; }
         public int CorrectMarks { get; set; }
         public int CorrectCount { get; set; }
-        public int WrongMarks { get; set; }
+        public decimal WrongMarks { get; set; }
         public int WrongCount { get; set; }
         public int UnAnsweredCount { get; set; }
         public int UnDisplayedCount { get; set; }
