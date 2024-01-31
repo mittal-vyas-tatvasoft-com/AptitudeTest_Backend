@@ -6,6 +6,7 @@ using APTITUDETEST.Common.Data;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using System.Web;
 
@@ -140,10 +141,32 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                List<ResultsVM> sortedResults = new List<ResultsVM>();
                 //searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     List<ResultsVM> data = connection.Query<ResultsVM>("Select * from getallresults_3(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    if (!sortField.IsNullOrEmpty() && sortField.ToLower().Equals("status"))
+                    {
+                        List<ResultsVM> activeTestResults = data.Where(status => status.Status.ToLower().Equals("active")).ToList();
+                        List<ResultsVM> pendingTestResults = data.Where(status => status.Status.ToLower().Equals("pending")).ToList();
+                        List<ResultsVM> lockedTestResults = data.Where(status => status.Status.ToLower().Equals("locked")).ToList();
+
+                        if (!sortOrder.IsNullOrEmpty() && sortOrder.ToLower().Equals("asc"))
+                        {
+                            sortedResults.AddRange(activeTestResults);
+                            sortedResults.AddRange(pendingTestResults);
+                            sortedResults.AddRange(lockedTestResults);
+                            data = sortedResults;
+                        }
+                        else if (!sortOrder.IsNullOrEmpty() && sortOrder.ToLower().Equals("desc"))
+                        {
+                            sortedResults.AddRange(lockedTestResults);
+                            sortedResults.AddRange(pendingTestResults);
+                            sortedResults.AddRange(activeTestResults);
+                            data = sortedResults;
+                        }
+                    }
                     return new JsonResult(new ApiResponse<List<ResultsVM>>
                     {
                         Data = data,
