@@ -14,5 +14,6 @@
         public int? TotalRecords { get; set; }
         public int? TotalPages { get; set; }
         public int? NextPage { get; set; }
+        public bool IsImported { get; set; }
     }
 }

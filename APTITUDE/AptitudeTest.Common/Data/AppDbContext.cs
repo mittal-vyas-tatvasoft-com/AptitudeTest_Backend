@@ -55,6 +55,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Gender).IsRequired(false);
                 entity.Property(e => e.SessionId).IsRequired(false);
                 entity.Property(e => e.SessionId).HasMaxLength(255).IsUnicode(false);
+                entity.Property(e => e.IsImported).HasDefaultValue(false);
 
             });
 
