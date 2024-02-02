@@ -18,6 +18,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using static AptitudeTest.Data.Common.Enums;
 
 namespace AptitudeTest.Data.Data
 {
@@ -308,11 +309,21 @@ namespace AptitudeTest.Data.Data
                     dateParameter.Value = user.DateOfBirth;
                     if (user.OtherCollege != null && user.OtherCollege != "")
                     {
-                        if (!addOtherCollege(user))
+                        int collegeStatus = addOtherCollege(user);
+                        if (collegeStatus== (int)CollegeStatus.Exists)
                         {
                             return new JsonResult(new ApiResponse<string>
                             {
                                 Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.College),
+                                Result = false,
+                                StatusCode = ResponseStatusCode.AlreadyExist
+                            });
+                        }
+                        if (collegeStatus == (int)CollegeStatus.InActive)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.InActiveCollege,
                                 Result = false,
                                 StatusCode = ResponseStatusCode.AlreadyExist
                             });
@@ -413,11 +424,21 @@ namespace AptitudeTest.Data.Data
                     dateParameter.Value = registerUserVM.DateOfBirth;
                     if (registerUserVM.OtherCollege != null && registerUserVM.OtherCollege != "")
                     {
-                        if (!addOtherCollege(registerUserVM))
+                        int collegeStatus = addOtherCollege(registerUserVM);
+                        if (collegeStatus == (int)CollegeStatus.Exists)
                         {
                             return new JsonResult(new ApiResponse<string>
                             {
                                 Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.College),
+                                Result = false,
+                                StatusCode = ResponseStatusCode.AlreadyExist
+                            });
+                        }
+                        if (collegeStatus == (int)CollegeStatus.InActive)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.InActiveCollege,
                                 Result = false,
                                 StatusCode = ResponseStatusCode.AlreadyExist
                             });
@@ -944,18 +965,26 @@ namespace AptitudeTest.Data.Data
             return false;
         }
 
-        private bool addOtherCollege(UserVM user)
+        private int addOtherCollege(UserVM user)
         {
-            MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => x.Name.Trim().ToLower() == user.OtherCollege.Trim().ToLower()).FirstOrDefault();
+            string collegeName = user.OtherCollege + "(O)";
+            MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => (x.Name.Trim().ToLower() == collegeName.Trim().ToLower() || x.Name.Trim().ToLower() == user.OtherCollege.Trim().ToLower()) && x.IsDeleted !=true).FirstOrDefault();
             if (masterCollege != null)
             {
-                return false;
+                if ((bool)masterCollege.Status)
+                {
+                    return (int)CollegeStatus.Exists;
+                }
+                else
+                {
+                    return (int)CollegeStatus.InActive;
+                }
             }
-            MasterCollege college = new MasterCollege() { Abbreviation = user.OtherCollege[0].ToString() + user.OtherCollege[user.OtherCollege.Length - 1], Name = user.OtherCollege };
+            MasterCollege college = new MasterCollege() { Abbreviation = user.OtherCollege[0].ToString() + user.OtherCollege[user.OtherCollege.Length - 1], Name = collegeName };
             _appDbContext.MasterCollege.Add(college);
             _appDbContext.SaveChanges();
-            user.CollegeId = _appDbContext.MasterCollege.Where(x => x.Name == user.OtherCollege).FirstOrDefault().Id;
-            return true;
+            user.CollegeId = _appDbContext.MasterCollege.Where(x => x.Name == collegeName).FirstOrDefault().Id;
+            return (int)CollegeStatus.NotExists;
         }
 
         #endregion

@@ -66,5 +66,12 @@
             Folder = 3,
             Image = 4
         }
+
+        public enum CollegeStatus
+        {
+            InActive = 1,
+            Exists = 2,
+            NotExists = 3,
+        }
     }
 }

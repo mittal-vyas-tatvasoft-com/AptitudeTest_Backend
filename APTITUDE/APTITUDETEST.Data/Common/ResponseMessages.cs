@@ -26,6 +26,7 @@
         public readonly static string DeleteSuccess = "{0} deleted successfully";
         public readonly static string NotEditable = "{0} not editable";
         public readonly static string NoRecordsFound = "No Record Found";
+        public readonly static string InActiveCollege = "Your college is Inactive please contact admin";
         #endregion
 
         #region UserAuthentication
