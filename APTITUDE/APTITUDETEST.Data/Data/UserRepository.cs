@@ -18,6 +18,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using static AptitudeTest.Data.Common.Enums;
 
 namespace AptitudeTest.Data.Data
 {
@@ -308,8 +309,8 @@ namespace AptitudeTest.Data.Data
                     dateParameter.Value = user.DateOfBirth;
                     if (user.OtherCollege != null && user.OtherCollege != "")
                     {
-                        MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => x.Name.Trim().ToLower() == user.OtherCollege.Trim().ToLower()).FirstOrDefault();
-                        if (masterCollege != null)
+                        int collegeStatus = addOtherCollege(user);
+                        if (collegeStatus== (int)CollegeStatus.Exists)
                         {
                             return new JsonResult(new ApiResponse<string>
                             {
@@ -318,10 +319,15 @@ namespace AptitudeTest.Data.Data
                                 StatusCode = ResponseStatusCode.AlreadyExist
                             });
                         }
-                        MasterCollege college = new MasterCollege() { Abbreviation = user.OtherCollege[0].ToString() + user.OtherCollege[user.OtherCollege.Length - 1], Name = user.OtherCollege };
-                        _appDbContext.MasterCollege.Add(college);
-                        _appDbContext.SaveChanges();
-                        user.CollegeId = _appDbContext.MasterCollege.Where(x => x.Name == user.OtherCollege).FirstOrDefault().Id;
+                        if (collegeStatus == (int)CollegeStatus.InActive)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.InActiveCollege,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.AlreadyExist
+                            });
+                        }
                     }
                     var parameters = new DynamicParameters(
                     new
@@ -418,8 +424,8 @@ namespace AptitudeTest.Data.Data
                     dateParameter.Value = registerUserVM.DateOfBirth;
                     if (registerUserVM.OtherCollege != null && registerUserVM.OtherCollege != "")
                     {
-                        MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => x.Name.Trim().ToLower() == registerUserVM.OtherCollege.Trim().ToLower()).FirstOrDefault();
-                        if (masterCollege != null)
+                        int collegeStatus = addOtherCollege(registerUserVM);
+                        if (collegeStatus == (int)CollegeStatus.Exists)
                         {
                             return new JsonResult(new ApiResponse<string>
                             {
@@ -428,10 +434,15 @@ namespace AptitudeTest.Data.Data
                                 StatusCode = ResponseStatusCode.AlreadyExist
                             });
                         }
-                        MasterCollege college = new MasterCollege() { Abbreviation = registerUserVM.OtherCollege[0].ToString() + registerUserVM.OtherCollege[registerUserVM.OtherCollege.Length - 1].ToString(), Name = registerUserVM.OtherCollege };
-                        _appDbContext.MasterCollege.Add(college);
-                        _appDbContext.SaveChanges();
-                        registerUserVM.CollegeId = _appDbContext.MasterCollege.Where(x => x.Name == registerUserVM.OtherCollege).FirstOrDefault().Id;
+                        if (collegeStatus == (int)CollegeStatus.InActive)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.InActiveCollege,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.AlreadyExist
+                            });
+                        }
                     }
                     var parameters = new DynamicParameters(
                     new
@@ -952,6 +963,28 @@ namespace AptitudeTest.Data.Data
                 return true;
             }
             return false;
+        }
+
+        private int addOtherCollege(UserVM user)
+        {
+            string collegeName = user.OtherCollege + "(O)";
+            MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => (x.Name.Trim().ToLower() == collegeName.Trim().ToLower() || x.Name.Trim().ToLower() == user.OtherCollege.Trim().ToLower()) && x.IsDeleted !=true).FirstOrDefault();
+            if (masterCollege != null)
+            {
+                if ((bool)masterCollege.Status)
+                {
+                    return (int)CollegeStatus.Exists;
+                }
+                else
+                {
+                    return (int)CollegeStatus.InActive;
+                }
+            }
+            MasterCollege college = new MasterCollege() { Abbreviation = user.OtherCollege[0].ToString() + user.OtherCollege[user.OtherCollege.Length - 1], Name = collegeName };
+            _appDbContext.MasterCollege.Add(college);
+            _appDbContext.SaveChanges();
+            user.CollegeId = _appDbContext.MasterCollege.Where(x => x.Name == collegeName).FirstOrDefault().Id;
+            return (int)CollegeStatus.NotExists;
         }
 
         #endregion
