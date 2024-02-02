@@ -308,7 +308,7 @@ namespace AptitudeTest.Data.Data
                     dateParameter.Value = user.DateOfBirth;
                     if (user.OtherCollege != null && user.OtherCollege != "")
                     {
-                        MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => x.Name.ToLower() == user.OtherCollege.ToLower()).FirstOrDefault();
+                        MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => x.Name.Trim().ToLower() == user.OtherCollege.Trim().ToLower()).FirstOrDefault();
                         if (masterCollege != null)
                         {
                             return new JsonResult(new ApiResponse<string>
@@ -418,7 +418,7 @@ namespace AptitudeTest.Data.Data
                     dateParameter.Value = registerUserVM.DateOfBirth;
                     if (registerUserVM.OtherCollege != null && registerUserVM.OtherCollege != "")
                     {
-                        MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => x.Name.ToLower() == registerUserVM.OtherCollege.ToLower()).FirstOrDefault();
+                        MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => x.Name.Trim().ToLower() == registerUserVM.OtherCollege.Trim().ToLower()).FirstOrDefault();
                         if (masterCollege != null)
                         {
                             return new JsonResult(new ApiResponse<string>
