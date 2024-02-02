@@ -39,7 +39,7 @@ namespace AptitudeTest.Data.Data
                     level = x.md.Level,
                     id = x.ms.Id,
                     name = x.ms.Name,
-                    degreeId=x.md.Id
+                    degreeId = x.md.Id
                 })
                 .ToList());
 

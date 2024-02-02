@@ -359,7 +359,7 @@ namespace APTITUDETEST.Common.Data
                  .HasMaxLength(10)
                  .IsUnicode(false);
                 entity.Property(e => e.IsAdminApproved)
-                 .HasDefaultValue(false)
+                 .HasDefaultValue(true)
                  .IsUnicode(false);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1);

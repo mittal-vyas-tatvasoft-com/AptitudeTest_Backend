@@ -1,5 +1,6 @@
 ﻿using AptitudeTest.Common.Data;
 using AptitudeTest.Common.Helpers;
+using AptitudeTest.Core.Entities.Master;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
@@ -305,6 +306,23 @@ namespace AptitudeTest.Data.Data
                     var procedure = "udpate_user_transaction";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
                     dateParameter.Value = user.DateOfBirth;
+                    if (user.OtherCollege != null && user.OtherCollege != "")
+                    {
+                        MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => x.Name.ToLower() == user.OtherCollege.ToLower()).FirstOrDefault();
+                        if (masterCollege != null)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.College),
+                                Result = false,
+                                StatusCode = ResponseStatusCode.AlreadyExist
+                            });
+                        }
+                        MasterCollege college = new MasterCollege() { Abbreviation = user.OtherCollege[0].ToString() + user.OtherCollege[user.OtherCollege.Length - 1], Name = user.OtherCollege };
+                        _appDbContext.MasterCollege.Add(college);
+                        _appDbContext.SaveChanges();
+                        user.CollegeId = _appDbContext.MasterCollege.Where(x => x.Name == user.OtherCollege).FirstOrDefault().Id;
+                    }
                     var parameters = new DynamicParameters(
                     new
                     {
@@ -398,6 +416,23 @@ namespace AptitudeTest.Data.Data
                     var procedure = "register_user";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
                     dateParameter.Value = registerUserVM.DateOfBirth;
+                    if (registerUserVM.OtherCollege != null && registerUserVM.OtherCollege != "")
+                    {
+                        MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => x.Name.ToLower() == registerUserVM.OtherCollege.ToLower()).FirstOrDefault();
+                        if (masterCollege != null)
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.College),
+                                Result = false,
+                                StatusCode = ResponseStatusCode.AlreadyExist
+                            });
+                        }
+                        MasterCollege college = new MasterCollege() { Abbreviation = registerUserVM.OtherCollege[0].ToString() + registerUserVM.OtherCollege[registerUserVM.OtherCollege.Length - 1].ToString(), Name = registerUserVM.OtherCollege };
+                        _appDbContext.MasterCollege.Add(college);
+                        _appDbContext.SaveChanges();
+                        registerUserVM.CollegeId = _appDbContext.MasterCollege.Where(x => x.Name == registerUserVM.OtherCollege).FirstOrDefault().Id;
+                    }
                     var parameters = new DynamicParameters(
                     new
                     {
