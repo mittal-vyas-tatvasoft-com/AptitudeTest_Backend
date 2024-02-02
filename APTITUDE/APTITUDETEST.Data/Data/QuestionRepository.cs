@@ -378,8 +378,6 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-
-
         public async Task<JsonResult> Update(QuestionVM questionVM)
         {
             try

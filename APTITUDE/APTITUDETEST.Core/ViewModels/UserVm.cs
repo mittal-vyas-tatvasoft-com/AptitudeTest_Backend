@@ -45,5 +45,7 @@ namespace AptitudeTest.Core.ViewModels
         //[Required]
         public List<DapperUserFamilyVM>? UserFamilyVM { get; set; }
 
+        public string? OtherCollege { get; set; }
+
     }
 }
