@@ -307,7 +307,7 @@ namespace AptitudeTest.Data.Data
                     var procedure = "udpate_user_transaction";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
                     dateParameter.Value = user.DateOfBirth;
-                    if (user.OtherCollege != null && user.OtherCollege != "")
+                    if (user.OtherCollege != null && user.OtherCollege.Trim() != "")
                     {
                         int collegeStatus = addOtherCollege(user);
                         if (collegeStatus== (int)CollegeStatus.Exists)
@@ -967,7 +967,8 @@ namespace AptitudeTest.Data.Data
 
         private int addOtherCollege(UserVM user)
         {
-            string collegeName = user.OtherCollege + "(O)";
+            string collegeName = user.OtherCollege.Trim() + "(O)";
+            string trimmedCollegeName = user.OtherCollege.Trim();
             MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => (x.Name.Trim().ToLower() == collegeName.Trim().ToLower() || x.Name.Trim().ToLower() == user.OtherCollege.Trim().ToLower()) && x.IsDeleted !=true).FirstOrDefault();
             if (masterCollege != null)
             {
@@ -980,7 +981,7 @@ namespace AptitudeTest.Data.Data
                     return (int)CollegeStatus.InActive;
                 }
             }
-            MasterCollege college = new MasterCollege() { Abbreviation = user.OtherCollege[0].ToString() + user.OtherCollege[user.OtherCollege.Length - 1], Name = collegeName };
+            MasterCollege college = new MasterCollege() { Abbreviation = trimmedCollegeName[0].ToString() + trimmedCollegeName[trimmedCollegeName.Length - 1], Name = collegeName };
             _appDbContext.MasterCollege.Add(college);
             _appDbContext.SaveChanges();
             user.CollegeId = _appDbContext.MasterCollege.Where(x => x.Name == collegeName).FirstOrDefault().Id;

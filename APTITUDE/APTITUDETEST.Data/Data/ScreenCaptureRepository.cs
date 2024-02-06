@@ -77,7 +77,7 @@ namespace AptitudeTest.Data.Data
                     string path = Path.Combine(rootPath, screenshot);
                     Directory.CreateDirectory(path);
                     using (var image = Image.FromStream(data.screenShot.OpenReadStream()))
-                    using (var thumbnail = CreateThumbnail((Bitmap)image.Clone(), 500))
+                    using (var thumbnail = CreateThumbnail((Bitmap)image.Clone(), 5000))
                     {
                         string thumbnailFileName = Guid.NewGuid().ToString() + "---" + data.userId + "---" + DateTime.Now.ToString().Replace(' ', '_').Replace(':', '_').Replace('-', '_') + ".jpeg";
                         string thumbnailPath = Path.Combine(path, thumbnailFileName);
