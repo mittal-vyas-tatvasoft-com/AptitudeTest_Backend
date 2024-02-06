@@ -118,6 +118,18 @@ namespace AptitudeTest.Controllers
         }
 
         /// <summary>
+        /// Delete Multiple Tests
+        /// </summary>
+        /// <param name="testIds"></param>
+        /// <returns></returns>
+        [HttpPut("DeleteMultiple")]
+        public async Task<JsonResult> DeleteMultipleTests(List<int> testIds)
+        {
+            return await _service.DeleteMultipleTests(testIds);
+        }
+
+
+        /// <summary>
         /// GetAllTestCandidates
         /// </summary>
         /// <param name="searchQuery"></param>

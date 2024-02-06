@@ -293,6 +293,29 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+        public async Task<JsonResult> DeleteMultipleGroups(List<int> groupIds)
+        {
+            int deletedGroups = 0;
+            foreach (int id in groupIds)
+            {
+                MasterGroup? groupToBeDeleted = _context.MasterGroup.Where(group => group.Id == id && group.IsDeleted != true).FirstOrDefault();
+                if (groupToBeDeleted != null && groupToBeDeleted.IsDefault == false)
+                {
+                    groupToBeDeleted.IsDeleted = true;
+                    _context.Update(groupToBeDeleted);
+                    _context.SaveChanges();
+                    deletedGroups++;
+                }
+            }
+            return new JsonResult(new ApiResponse<string>
+            {
+                Message = string.Format(ResponseMessages.DeleteSuccessWithNumber, deletedGroups, ModuleNames.MultipleGroups),
+
+                Result = true,
+                StatusCode = ResponseStatusCode.Success
+            });
+        }
         #endregion
 
         #region Helper Methods
@@ -358,6 +381,8 @@ namespace AptitudeTest.Data.Data
             }
             return collegesUnderGivenGroup;
         }
+
+
         #endregion
     }
 }
