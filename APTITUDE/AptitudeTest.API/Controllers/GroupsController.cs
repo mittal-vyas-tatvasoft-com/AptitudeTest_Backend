@@ -84,6 +84,17 @@ namespace AptitudeTest.Controllers
         {
             return await _service.Delete(id);
         }
+
+        /// <summary>
+        /// Delete Multiple groups
+        /// </summary>
+        /// <param name="groupIds"></param>
+        /// <returns></returns>
+        [HttpPut("DeleteMultiple")]
+        public async Task<JsonResult> DeleteMultiple(List<int> groupIds)
+        {
+            return await _service.DeleteMultipleGroups(groupIds);
+        }
         #endregion
     }
 }

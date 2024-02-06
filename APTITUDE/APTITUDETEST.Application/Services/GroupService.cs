@@ -42,6 +42,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.Update(updatedGroup);
         }
+
+        public async Task<JsonResult> DeleteMultipleGroups(List<int> groupIds)
+        {
+            return await _repository.DeleteMultipleGroups(groupIds);
+        }
         #endregion
     }
 }

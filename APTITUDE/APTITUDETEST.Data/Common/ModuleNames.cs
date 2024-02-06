@@ -122,6 +122,15 @@
             }
         }
 
+        private readonly static string _MultipleGroups = "Groups";
+        public static string MultipleGroups
+        {
+            get
+            {
+                return _MultipleGroups;
+            }
+        }
+
         private readonly static string _Password = "Password";
         public static string Password
         {
@@ -172,6 +181,15 @@
             get
             {
                 return _Test;
+            }
+        }
+
+        private readonly static string _Tests = "Tests";
+        public static string Tests
+        {
+            get
+            {
+                return _Tests;
             }
         }
 

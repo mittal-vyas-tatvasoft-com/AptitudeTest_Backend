@@ -720,7 +720,68 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> DeleteMultipleTests(List<int> testIds)
+        {
+            int deletedTests = 0;
+            bool canTestBeDeleted = false;
+            try
+            {
+                foreach (int id in testIds)
+                {
+                    if (id != 0)
+                    {
+                        Test? testToBeDeleted = await Task.FromResult(_context.Tests.Where(t => t.Id == id && t.IsDeleted == false).FirstOrDefault());
 
+                        if (testToBeDeleted != null && testToBeDeleted.Status == (int)TestStatus.Active && Convert.ToDateTime(testToBeDeleted?.EndTime) >= DateTime.Now && Convert.ToDateTime(testToBeDeleted.StartTime) <= DateTime.Now)
+                        {
+                            canTestBeDeleted = false;
+                        }
+                        else
+                        {
+                            canTestBeDeleted = true;
+                        }
+
+                        if (canTestBeDeleted)
+                        {
+                            testToBeDeleted.IsDeleted = true;
+                            int count = _context.SaveChanges();
+
+                            if (count == 1)
+                            {
+                                await DeleteAllTestQuestions(id);
+                                deletedTests++;
+
+                            }
+                        }
+                    }
+                }
+                if (deletedTests == 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.DeleteSuccessWithNumber, deletedTests, ModuleNames.Tests),
+                    Result = true,
+                    StatusCode = ResponseStatusCode.OK
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in TestRepository.DeleteTest:{ex}");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
         public async Task<JsonResult> GetAllTestCandidates(string? searchQuery, int GroupId, int? CollegeId, string? SortField, string? SortOrder, int? currentPageIndex, int? pageSize)
         {
             try

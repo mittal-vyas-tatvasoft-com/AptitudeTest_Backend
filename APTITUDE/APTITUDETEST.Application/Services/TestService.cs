@@ -92,6 +92,11 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.UpdateBasicPoints(testId);
         }
-        #endregion 
+
+        public Task<JsonResult> DeleteMultipleTests(List<int> testIds)
+        {
+            return _repository.DeleteMultipleTests(testIds);
+        }
+        #endregion
     }
 }

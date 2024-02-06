@@ -10,5 +10,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> Create(GroupsQueryVM groupToBeAdded);
         public Task<JsonResult> Update(GroupsQueryVM updatedGroup);
         public Task<JsonResult> Delete(int id);
+        public Task<JsonResult> DeleteMultipleGroups(List<int> groupIds);
     }
 }
