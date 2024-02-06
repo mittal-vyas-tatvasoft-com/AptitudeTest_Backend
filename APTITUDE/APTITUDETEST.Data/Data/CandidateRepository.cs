@@ -976,6 +976,7 @@ namespace AptitudeTest.Data.Data
                 }
                 return new JsonResult(new ApiResponse<string>
                 {
+                    Data=test.MessaageAtEndOfTheTest,
                     Message = ResponseMessages.TestSubmittedSuccess,
                     Result = false,
                     StatusCode = ResponseStatusCode.NotFound
