@@ -46,6 +46,7 @@ namespace AptitudeTest.Core.ViewModels
         public List<DapperUserFamilyVM>? UserFamilyVM { get; set; }
 
         public string? OtherCollege { get; set; }
+        public bool? IsProfileEdited { get; set; } = false;
 
     }
 }

@@ -310,7 +310,7 @@ namespace AptitudeTest.Data.Data
                     if (user.OtherCollege != null && user.OtherCollege.Trim() != "")
                     {
                         int collegeStatus = addOtherCollege(user);
-                        if (collegeStatus== (int)CollegeStatus.Exists)
+                        if (collegeStatus == (int)CollegeStatus.Exists)
                         {
                             return new JsonResult(new ApiResponse<string>
                             {
@@ -355,7 +355,8 @@ namespace AptitudeTest.Data.Data
                         p_jeescore = user.JEEScore,
                         p_updatedby = user.UpdatedBy,
                         p_userfamilydata = user.UserFamilyVM.ToArray(),
-                        p_useracademicsdata = user.UserAcademicsVM.ToArray()
+                        p_useracademicsdata = user.UserAcademicsVM.ToArray(),
+                        p_isprofileedited = user.IsProfileEdited
                     });
 
                     connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure);
@@ -969,7 +970,7 @@ namespace AptitudeTest.Data.Data
         {
             string collegeName = user.OtherCollege.Trim() + "(O)";
             string trimmedCollegeName = user.OtherCollege.Trim();
-            MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => (x.Name.Trim().ToLower() == collegeName.Trim().ToLower() || x.Name.Trim().ToLower() == user.OtherCollege.Trim().ToLower()) && x.IsDeleted !=true).FirstOrDefault();
+            MasterCollege? masterCollege = _appDbContext.MasterCollege.Where(x => (x.Name.Trim().ToLower() == collegeName.Trim().ToLower() || x.Name.Trim().ToLower() == user.OtherCollege.Trim().ToLower()) && x.IsDeleted != true).FirstOrDefault();
             if (masterCollege != null)
             {
                 if ((bool)masterCollege.Status)
