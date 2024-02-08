@@ -7,5 +7,6 @@
         public DateTime? RefreshTokenExpiryTime { get; set; }
         public string? Sid { get; set; }
         public bool? IsSubmitted { get; set; }
+        public bool IsProfileEdited { get; set; }
     }
 }

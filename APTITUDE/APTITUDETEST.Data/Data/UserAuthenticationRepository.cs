@@ -150,7 +150,8 @@ namespace AptitudeTest.Data.Data
                     RefreshToken = tokenPayload.RefreshToken,
                     RefreshTokenExpiryTime = tokenPayload.RefreshTokenExpiryTime,
                     Sid = sessionId,
-                    IsSubmitted = isSubmitted
+                    IsSubmitted = isSubmitted,
+                    IsProfileEdited = user.IsProfileEdited
                 };
 
                 return new JsonResult(new ApiResponse<TokenWithSidVm> { Data = tokenWithSidVmPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
