@@ -36,7 +36,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.Email).HasMaxLength(500);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.Status).HasDefaultValue(true);
-                entity.Property(e => e.IsProfileEdited).HasDefaultValue(true);
+                entity.Property(e => e.IsProfileEdited).HasDefaultValue(false);
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
                 entity.Property(e => e.Password)
