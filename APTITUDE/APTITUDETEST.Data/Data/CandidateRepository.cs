@@ -347,6 +347,7 @@ namespace AptitudeTest.Data.Data
                 tempUserTestQuestion.IsAttended = userTestQuestionAnswer.IsAttended;
                 tempUserTestQuestion.UpdatedDate = DateTime.UtcNow;
                 tempUserTestQuestion.UpdatedBy = userTestQuestionAnswer.UserId;
+                tempUserTestQuestion.TimeSpent = Convert.ToInt32(tempUserTestQuestion.TimeSpent + userTestQuestionAnswer.TimeSpent);
 
                 int count = _appDbContext.SaveChanges();
                 if (count == 1)

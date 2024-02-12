@@ -13,6 +13,7 @@ namespace AptitudeTest.Core.ViewModels
         public int QuestionId { get; set; }
         [Required]
         public int TimeRemaining { get; set; }
+        public int TimeSpent { get; set; }
         public int[]? UserAnswers { get; set; }
         public bool IsAttended { get; set; }
     }

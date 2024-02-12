@@ -7,6 +7,7 @@
         public int[] UserAnswers { get; set; }
         public bool IsAttended { get; set; }
         public int Difficulty { get; set; }
+        public int TimeSpent { get; set; }
         public string? QuestionText { get; set; }
         public int QuestionType { get; set; }
         public int OptionType { get; set; }
