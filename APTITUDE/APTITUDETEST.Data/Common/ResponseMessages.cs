@@ -75,5 +75,17 @@
         public readonly static string TestTimeNotUpdated = "Failed to update test time of all the candidates";
         #endregion
 
+        #region TimeSpentPerQuestion
+
+        public readonly static string Seconds = "{0} seconds";
+        public readonly static string Minutes = "{0} minutes";
+        public readonly static string Hours = "{0} hours";
+        public readonly static string HoursMinutes = "{0} hours {1} minutes";
+        public readonly static string HoursSeconds = "{0} hours {1} seconds";
+        public readonly static string MinutesSeconds = "{0} minutes {1} seconds";
+        public readonly static string HourMinuteSecond = "{0} hours {1} minutes {2} seconds";
+
+        #endregion
+
     }
 }

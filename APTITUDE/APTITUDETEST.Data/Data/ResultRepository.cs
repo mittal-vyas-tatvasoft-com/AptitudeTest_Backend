@@ -70,6 +70,7 @@ namespace AptitudeTest.Data.Data
                         return new UserResultQuestionVM()
                         {
                             Difficulty = temp.Difficulty,
+                            TimeSpentInSeconds = temp.TimeSpent,
                             Id = temp.QuestionId,
                             OptionType = temp.OptionType,
                             QuestionText = HttpUtility.HtmlDecode(temp.QuestionText),
@@ -82,6 +83,41 @@ namespace AptitudeTest.Data.Data
 
                         };
                     }).ToList();
+
+                    foreach (var item in userResultQuestionVMList)
+                    {
+                        int hours = Convert.ToInt32(item.TimeSpentInSeconds / 3600);
+                        int minutes = Convert.ToInt32((item.TimeSpentInSeconds % 3600) / 60);
+                        int seconds = Convert.ToInt32(item.TimeSpentInSeconds % 60);
+                        if (hours == 0 && minutes == 0 && seconds > 0)
+                        {
+                            item.TimeSpent = string.Format(ResponseMessages.Seconds, seconds);
+                        }
+                        else if (hours == 0 && minutes > 0 && seconds == 0)
+                        {
+                            item.TimeSpent = string.Format(ResponseMessages.Minutes, minutes);
+                        }
+                        else if (hours > 0 && minutes == 0 && seconds == 0)
+                        {
+                            item.TimeSpent = string.Format(ResponseMessages.Hours, hours);
+                        }
+                        else if (hours > 0 && minutes > 0 && seconds == 0)
+                        {
+                            item.TimeSpent = string.Format(ResponseMessages.HoursMinutes, hours, minutes);
+                        }
+                        else if (hours > 0 && minutes == 0 && seconds > 0)
+                        {
+                            item.TimeSpent = string.Format(ResponseMessages.HoursSeconds, hours, seconds);
+                        }
+                        else if (hours == 0 && minutes > 0 && seconds > 0)
+                        {
+                            item.TimeSpent = string.Format(ResponseMessages.MinutesSeconds, minutes, seconds);
+                        }
+                        else if (hours > 0 && minutes > 0 && seconds > 0)
+                        {
+                            item.TimeSpent = string.Format(ResponseMessages.HourMinuteSecond, hours, minutes, seconds);
+                        }
+                    }
                     UserResultsVM tempData = getQuestionCount(userResultQuestionVMList);
                     if (marks != 0)
                     {
