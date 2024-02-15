@@ -9,14 +9,12 @@ using CsvHelper.Configuration;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
 using System.Text;
 using System.Web;
 using static AptitudeTest.Data.Common.Enums;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AptitudeTest.Data.Data
 {
@@ -230,9 +228,9 @@ namespace AptitudeTest.Data.Data
                 using (DbConnection connection = new DbConnection())
                 {
                     List<TestTopicWiseCountVM> data = connection.Connection.Query<TestTopicWiseCountVM>("Select * from gettopicwisequestionscountforquestionmodule(@filterStatus)", new { filterStatus = status }).ToList();
-                    questionCount.TotalCount = data.Sum(x =>x.CountOfQuestions);
-                    questionCount.MathsCount = data.Where(x => x.TopicId == (int)QuestionTopic.Maths).Select(x=>x.CountOfQuestions).FirstOrDefault();
-                    questionCount.ReasoningCount = data.Where(x=>x.TopicId==(int)QuestionTopic.Reasoning).Select(x => x.CountOfQuestions).FirstOrDefault();
+                    questionCount.TotalCount = data.Sum(x => x.CountOfQuestions);
+                    questionCount.MathsCount = data.Where(x => x.TopicId == (int)QuestionTopic.Maths).Select(x => x.CountOfQuestions).FirstOrDefault();
+                    questionCount.ReasoningCount = data.Where(x => x.TopicId == (int)QuestionTopic.Reasoning).Select(x => x.CountOfQuestions).FirstOrDefault();
                     questionCount.TechnicalCount = data.Where(x => x.TopicId == (int)QuestionTopic.Technical).Select(x => x.CountOfQuestions).FirstOrDefault();
                 }
                 return new JsonResult(new ApiResponse<QuestionCountVM>
