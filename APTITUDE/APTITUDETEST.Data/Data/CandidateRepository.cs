@@ -347,7 +347,7 @@ namespace AptitudeTest.Data.Data
                 tempUserTestQuestion.IsAttended = userTestQuestionAnswer.IsAttended;
                 tempUserTestQuestion.UpdatedDate = DateTime.UtcNow;
                 tempUserTestQuestion.UpdatedBy = userTestQuestionAnswer.UserId;
-                tempUserTestQuestion.TimeSpent = Convert.ToInt32(tempUserTestQuestion.TimeSpent + userTestQuestionAnswer.TimeSpent);
+                tempUserTestQuestion.TimeSpent = Convert.ToInt32(userTestQuestionAnswer.TimeSpent);
 
                 int count = _appDbContext.SaveChanges();
                 if (count == 1)
@@ -374,6 +374,91 @@ namespace AptitudeTest.Data.Data
             catch (Exception ex)
             {
                 _logger.LogError($"Error occurred in CandidateRepository.SaveTestQuestionAnswer:{ex}");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
+
+        public async Task<JsonResult> UpdateQuestionTimer(QuestionTimerVM questionTimerDetails)
+        {
+            try
+            {
+                if (questionTimerDetails == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                Test? test = _userActiveTestHelper.GetTestOfUser(questionTimerDetails.UserId);
+                if (test == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                TempUserTest? tempUserTest = _appDbContext.TempUserTests.FirstOrDefault(x => x.UserId == questionTimerDetails.UserId && x.TestId == test.Id && x.IsDeleted == false);
+                if (tempUserTest == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.UserTest),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+
+                TempUserTestResult? tempUserTestQuestion = _appDbContext.TempUserTestResult.Where(x => x.UserTestId == tempUserTest.Id && x.QuestionId == questionTimerDetails.QuestionId && x.IsDeleted == false).FirstOrDefault();
+                if (tempUserTestQuestion == null)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.UserTestResult),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+                tempUserTestQuestion.UpdatedDate = DateTime.UtcNow;
+                tempUserTestQuestion.UpdatedBy = questionTimerDetails.UserId;
+                tempUserTestQuestion.TimeSpent = Convert.ToInt32(questionTimerDetails.TimeSpent);
+
+                int count = _appDbContext.SaveChanges();
+                if (count == 1)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TempUserTestResult),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                else
+                {
+                    _logger.LogError($"Error occurred in CandidateRepository.SaveTestQuestionAnswer while adding test question answer");
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.InternalError,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.InternalServerError
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in CandidateRepository.UpdateQuestionTimer:{ex}");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
