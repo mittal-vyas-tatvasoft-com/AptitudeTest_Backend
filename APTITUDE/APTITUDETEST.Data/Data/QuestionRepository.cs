@@ -225,19 +225,13 @@ namespace AptitudeTest.Data.Data
             try
             {
                 QuestionCountVM questionCount = new QuestionCountVM();
-                if (status == null)
+                using (DbConnection connection = new DbConnection())
                 {
-                    questionCount.TotalCount = _context.Questions.Where(q => q.IsDeleted != true).Count();
-                    questionCount.MathsCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Maths).Count();
-                    questionCount.ReasoningCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Reasoning).Count();
-                    questionCount.TechnicalCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Technical).Count();
-                }
-                else
-                {
-                    questionCount.TotalCount = _context.Questions.Where(q => q.IsDeleted != true && q.Status == status).Count();
-                    questionCount.MathsCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Maths && q.Status == status).Count();
-                    questionCount.ReasoningCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Reasoning && q.Status == status).Count();
-                    questionCount.TechnicalCount = _context.Questions.Where(q => q.IsDeleted != true && q.Topic == (int)Enums.QuestionTopic.Technical && q.Status == status).Count();
+                    List<TestTopicWiseCountVM> data = connection.Connection.Query<TestTopicWiseCountVM>("Select * from gettopicwisequestionscountforquestionmodule(@filterStatus)", new { filterStatus = status }).ToList();
+                    questionCount.TotalCount = data.Sum(x => x.CountOfQuestions);
+                    questionCount.MathsCount = data.Where(x => x.TopicId == (int)QuestionTopic.Maths).Select(x => x.CountOfQuestions).FirstOrDefault();
+                    questionCount.ReasoningCount = data.Where(x => x.TopicId == (int)QuestionTopic.Reasoning).Select(x => x.CountOfQuestions).FirstOrDefault();
+                    questionCount.TechnicalCount = data.Where(x => x.TopicId == (int)QuestionTopic.Technical).Select(x => x.CountOfQuestions).FirstOrDefault();
                 }
                 return new JsonResult(new ApiResponse<QuestionCountVM>
                 {
