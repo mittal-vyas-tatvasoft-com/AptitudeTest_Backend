@@ -89,6 +89,18 @@ namespace AptitudeTest.Controllers
 
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
+
+        [HttpPut("[action]")]
+        public async Task<JsonResult> UpdateQuestionTimer(QuestionTimerVM questionTimerDetails)
+        {
+            if (ModelState.IsValid)
+            {
+                return await _candidateService.UpdateQuestionTimer(questionTimerDetails);
+            }
+
+            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
+        }
+
         /// <summary>
         /// GetInstructions For theTest for user
         /// </summary>
