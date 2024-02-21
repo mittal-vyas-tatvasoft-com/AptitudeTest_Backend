@@ -111,6 +111,8 @@ namespace AptitudeTest.Data.Data
             }
 
         }
+
+
         public async Task<JsonResult> CreateTempUserTest(int userId)
         {
             try
@@ -152,6 +154,9 @@ namespace AptitudeTest.Data.Data
                     {
                         if (tempUserTestAlreadyExists.IsAdminApproved)
                         {
+                            tempUserTestAlreadyExists.IsAdminApproved = false;
+                            _appDbContext.Update(tempUserTestAlreadyExists);
+                            _appDbContext.SaveChanges();
                             return new JsonResult(new ApiResponse<string>
                             {
                                 Message = ResponseMessages.ResumeTest,

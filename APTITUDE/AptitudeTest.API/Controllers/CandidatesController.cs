@@ -90,6 +90,11 @@ namespace AptitudeTest.Controllers
             return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
         }
 
+        /// <summary>
+        /// This method updates the time spent on question when question is changed
+        /// </summary>
+        /// <param name="questionTimerDetails"></param>
+        /// <returns></returns>
         [HttpPut("[action]")]
         public async Task<JsonResult> UpdateQuestionTimer(QuestionTimerVM questionTimerDetails)
         {
