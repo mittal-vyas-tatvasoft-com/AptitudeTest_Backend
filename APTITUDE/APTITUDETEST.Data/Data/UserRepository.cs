@@ -397,7 +397,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                User? users = await Task.FromResult(_appDbContext.Users.Where(x => x.Email.Trim().ToLower() == registerUserVM.Email.Trim().ToLower() && x.IsDeleted != true).FirstOrDefault());
+                User? users = await Task.FromResult(_appDbContext.Users.Where(t => (t.Email.Trim().ToLower() == registerUserVM.Email.Trim().ToLower() || t.PhoneNumber == registerUserVM.PhoneNumber) && t.IsDeleted != true).FirstOrDefault());
                 if (users != null)
                 {
                     return new JsonResult(new ApiResponse<string>
