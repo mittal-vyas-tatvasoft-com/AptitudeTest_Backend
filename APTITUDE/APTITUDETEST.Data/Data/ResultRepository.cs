@@ -335,7 +335,7 @@ namespace AptitudeTest.Data.Data
                     if (testApproveVM.RemainingTimeInMinutes <= duration)
                     {
                         tempUserTest.IsAdminApproved = true;
-                        tempUserTest.TimeRemaining = testApproveVM.RemainingTimeInMinutes;
+                        tempUserTest.TimeRemaining = testApproveVM.RemainingTimeInMinutes * 60;
                         _context.Update(tempUserTest);
                         _context.SaveChanges();
                         return new JsonResult(new ApiResponse<string>
@@ -447,10 +447,21 @@ namespace AptitudeTest.Data.Data
                     int testTimeUpdated = 0;
                     foreach (var userTest in userTests)
                     {
+                        var test = _context.Tests.FirstOrDefault(test => test.Id == userTest.TestId && !(bool)test.IsDeleted);
                         TempUserTest? testOfUser = _context.TempUserTests.FirstOrDefault(test => test.TestId == userTest.TestId && test.UserId == userTest.UserId && !(bool)test.IsDeleted);
+                        var remainingTimeToEnd = Convert.ToInt32((test.EndTime - DateTime.Now).TotalMinutes);
+                        int timeAfterAddition = (testOfUser.TimeRemaining + timeToBeAdded) / 60;
                         if (testOfUser != null && !testOfUser.IsFinished)
                         {
-                            testOfUser.TimeRemaining = testOfUser.TimeRemaining + timeToBeAdded;
+
+                            if (timeAfterAddition >= remainingTimeToEnd)
+                            {
+                                testOfUser.TimeRemaining = remainingTimeToEnd * 60;
+                            }
+                            else
+                            {
+                                testOfUser.TimeRemaining = timeAfterAddition * 60;
+                            }
                             testOfUser.IsAdminApproved = true;
                             await _context.SaveChangesAsync();
                             testTimeUpdated++;
