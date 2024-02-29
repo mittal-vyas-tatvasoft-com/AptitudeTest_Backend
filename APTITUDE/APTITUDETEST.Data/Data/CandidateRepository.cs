@@ -182,7 +182,7 @@ namespace AptitudeTest.Data.Data
                     UserId = userId,
                     TestId = test.Id,
                     Status = true,
-                    TimeRemaining = timeRemaining,
+                    TimeRemaining = timeRemaining * 60,
                     IsAdminApproved = false,
                     IsFinished = false,
                     CreatedBy = userId,
