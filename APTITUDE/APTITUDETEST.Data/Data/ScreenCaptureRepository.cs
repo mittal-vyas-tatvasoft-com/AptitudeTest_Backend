@@ -50,7 +50,8 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
                 }
-                Test? test = _userActiveTestHelper.GetTestOfUser(data.userId);
+                //Test? test = _userActiveTestHelper.GetTestOfUser(data.userId);
+                Test? test = _userActiveTestHelper.GetValidTestOfUser(data.userId);
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<string>() { Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test), Result = false, StatusCode = ResponseStatusCode.NotFound });
