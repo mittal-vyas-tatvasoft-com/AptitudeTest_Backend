@@ -126,7 +126,8 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                Test? test = _userActiveTestHelper.GetTestOfUser(userId);
+                Test? test = _userActiveTestHelper.GetValidTestOfUser(userId);
+
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<Admin>
@@ -315,7 +316,8 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                Test? test = _userActiveTestHelper.GetTestOfUser(userTestQuestionAnswer.UserId);
+                //Test? test = _userActiveTestHelper.GetTestOfUser(userTestQuestionAnswer.UserId);
+                Test test = _userActiveTestHelper.GetValidTestOfUser(userTestQuestionAnswer.UserId);
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -402,7 +404,8 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.BadRequest
                     });
                 }
-                Test? test = _userActiveTestHelper.GetTestOfUser(questionTimerDetails.UserId);
+                //Test? test = _userActiveTestHelper.GetTestOfUser(questionTimerDetails.UserId);
+                Test? test = _userActiveTestHelper.GetValidTestOfUser(questionTimerDetails.UserId);
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -524,7 +527,8 @@ namespace AptitudeTest.Data.Data
                 }
                 using (DbConnection connection = new DbConnection())
                 {
-                    Test? test = _userActiveTestHelper.GetTestOfUser(userId);
+                    //Test? test = _userActiveTestHelper.GetTestOfUser(userId);
+                    Test? test = _userActiveTestHelper.GetValidTestOfUser(userId);
                     int? testId = test.Id;
                     if (testId == null || testId < 1)
                     {
@@ -653,7 +657,8 @@ namespace AptitudeTest.Data.Data
                 }
                 using (DbConnection connection = new DbConnection())
                 {
-                    Test? test = _userActiveTestHelper.GetTestOfUser(userId);
+                    //Test? test = _userActiveTestHelper.GetTestOfUser(userId);
+                    Test? test = _userActiveTestHelper.GetValidTestOfUser(userId);
                     int? testId = test?.Id;
                     if (testId == null || testId < 1)
                     {
@@ -803,8 +808,9 @@ namespace AptitudeTest.Data.Data
                             StatusCode = ResponseStatusCode.BadRequest
                         });
                     }
-
-                    Test? userTest = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.IsDeleted == false).FirstOrDefault();
+                    DateTime today = DateTime.Today;
+                    Test? userTest = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.IsDeleted == false && x.StartTime.Date == today.Date).FirstOrDefault();
+                    //Test? userTest = _userActiveTestHelper.GetValidTestOfUser(userId);
                     if (userTest != null && Convert.ToDateTime(userTest.EndTime) >= DateTime.Now)
                     {
                         if (testStatus == ModuleNames.StartTest)
@@ -864,7 +870,8 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                Test? test = _userActiveTestHelper.GetTestOfUser(updateTestTimeVM.UserId);
+                //Test? test = _userActiveTestHelper.GetTestOfUser(updateTestTimeVM.UserId);
+                Test? test = _userActiveTestHelper.GetValidTestOfUser(updateTestTimeVM.UserId);
                 if (test == null)
                 {
                     return new JsonResult(new ApiResponse<string>
@@ -913,7 +920,6 @@ namespace AptitudeTest.Data.Data
             int? groupId = _appDbContext.Users.Where(x => x.Id == userId).Select(x => x.GroupId).FirstOrDefault();
             if (groupId != null)
             {
-
                 Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.Status == (int)TestStatus.Active && x.IsDeleted == false).FirstOrDefault();
                 if (test != null && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now)
                 {

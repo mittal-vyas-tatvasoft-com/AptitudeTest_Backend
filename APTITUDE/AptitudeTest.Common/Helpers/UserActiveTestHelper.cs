@@ -39,6 +39,21 @@ namespace AptitudeTest.Common.Helpers
             }
             return null;
         }
+
+        public Test? GetValidTestOfUser(int userId)
+        {
+            int? groupId = _context.Users.Where(x => x.Id == userId && x.IsDeleted == false).Select(x => x.GroupId).FirstOrDefault();
+            if (groupId != null)
+            {
+                DateTime today = DateTime.Today;
+                Test? test = _context.Tests.Where(x => x.GroupId == groupId && x.Status == (int)TestStatus.Active && x.IsDeleted == false && x.StartTime.Date == today).FirstOrDefault();
+                if (test != null && Convert.ToDateTime(test?.EndTime) >= DateTime.Now && Convert.ToDateTime(test?.StartTime) <= DateTime.Now)
+                {
+                    return test;
+                }
+            }
+            return null;
+        }
         #endregion
     }
 }

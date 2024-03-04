@@ -329,13 +329,22 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.RequestFailed
                     });
                 }
-                int duration = _context.Tests.Where(t => t.Id == testApproveVM.TestId).Select(t => t.TestDuration).FirstOrDefault();
-                if (duration != 0)
+                //int duration = _context.Tests.Where(t => t.Id == testApproveVM.TestId).Select(t => t.TestDuration).FirstOrDefault();
+                var test = _context.Tests.Where(t => t.Id == testApproveVM.TestId).FirstOrDefault();
+                if (test.TestDuration != 0)
                 {
-                    if (testApproveVM.RemainingTimeInMinutes <= duration)
+                    if (testApproveVM.RemainingTimeInMinutes <= test.TestDuration)
                     {
                         tempUserTest.IsAdminApproved = true;
-                        tempUserTest.TimeRemaining = testApproveVM.RemainingTimeInMinutes * 60;
+                        var remainingTimeOfTest = Convert.ToInt32((test.EndTime - DateTime.Now).TotalMinutes);
+                        if (testApproveVM.RemainingTimeInMinutes > remainingTimeOfTest)
+                        {
+                            tempUserTest.TimeRemaining = remainingTimeOfTest * 60;
+                        }
+                        else if (testApproveVM.RemainingTimeInMinutes <= remainingTimeOfTest)
+                        {
+                            tempUserTest.TimeRemaining = testApproveVM.RemainingTimeInMinutes * 60;
+                        }
                         _context.Update(tempUserTest);
                         _context.SaveChanges();
                         return new JsonResult(new ApiResponse<string>

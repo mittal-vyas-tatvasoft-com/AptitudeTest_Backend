@@ -69,7 +69,8 @@ namespace AptitudeTest.Data.Data
                 string newAccessToken = jwtHelper.GenerateJwtToken(user, null);
                 string newRefreshToken = jwtHelper.CreateRefreshToken(user.Email, RefreshTokens);
 
-                Test? test = _userActiveTestHelper.GetTestOfUser(user.Id);
+                //Test? test = _userActiveTestHelper.GetTestOfUser(user.Id);
+                Test? test = _userActiveTestHelper.GetValidTestOfUser(user.Id);
                 UserTest? userTest = new UserTest();
                 TempUserTest tempUserTest = null;
                 if (test != null)
@@ -111,6 +112,7 @@ namespace AptitudeTest.Data.Data
                     if (groupId != null)
                     {
                         Test? tempTest = _context.Tests.Where(x => x.GroupId == groupId && x.IsDeleted == false && x.Date == DateTime.Today).FirstOrDefault();
+                        //Test? tempTest = _userActiveTestHelper.GetValidTestOfUser(user.Id);
                         if (tempTest == null)
                         {
                             isSubmitted = true;
