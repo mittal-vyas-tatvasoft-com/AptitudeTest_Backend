@@ -139,5 +139,15 @@ namespace AptitudeTest.Controllers
             return await _candidateService.UpdateRemainingTime(updateTestTimeVM);
         }
 
+        /// <summary>
+        /// This method updates user current status of test
+        /// </summary>
+        /// <param name="updateTestTimeVM"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> UpdateUserTestStatus(UpdateUserTestStatusVM updateUserTestStatusVM)
+        {
+            return await _candidateService.UpdateUserTestStatus(updateUserTestStatusVM);
+        }
     }
 }

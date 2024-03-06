@@ -15,5 +15,6 @@ namespace AptitudeTest.Core.Interfaces
         Task<JsonResult> EndTest(int userId);
         Task<JsonResult> UpdateRemainingTime(UpdateTestTimeVM updateTestTimeVM);
         Task<JsonResult> UpdateQuestionTimer(QuestionTimerVM questionTimerDetails);
+        Task<JsonResult> UpdateUserTestStatus(UpdateUserTestStatusVM updateUserTestStatusVM);
     }
 }
