@@ -529,7 +529,7 @@ namespace AptitudeTest.Data.Data
                 {
                     //Test? test = _userActiveTestHelper.GetTestOfUser(userId);
                     Test? test = _userActiveTestHelper.GetValidTestOfUser(userId);
-                    int? testId = test.Id;
+                    int? testId = test?.Id;
                     if (testId == null || testId < 1)
                     {
                         return new JsonResult(new ApiResponse<string>
@@ -912,6 +912,52 @@ namespace AptitudeTest.Data.Data
             }
         }
 
+        public async Task<JsonResult> UpdateUserTestStatus(UpdateUserTestStatusVM updateUserTestStatusVM)
+        {
+            try
+            {
+                Test? test = _userActiveTestHelper.GetValidTestOfUser(updateUserTestStatusVM.UserId);
+                if (test !=null)
+                {
+                TempUserTest tempUserTest=_appDbContext.TempUserTests.Where(t => t.UserId == updateUserTestStatusVM.UserId && t.TestId == test.Id).FirstOrDefault();
+                    if (tempUserTest != null)
+                    {
+                    tempUserTest.IsActive = updateUserTestStatusVM.IsActive;
+                    _appDbContext.TempUserTests.Update(tempUserTest);
+                    _appDbContext.SaveChanges();
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TempUserTestResult),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                    }
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                    Result = false,
+                    StatusCode = ResponseStatusCode.NotFound
+                });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in CandidateRepository.UpdateUserTestStatus:{ex} for userId:{updateUserTestStatusVM.UserId}");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
         #endregion
 
         #region Helper Method
