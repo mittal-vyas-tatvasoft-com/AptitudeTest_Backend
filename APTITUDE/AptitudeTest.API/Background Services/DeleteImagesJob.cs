@@ -57,7 +57,7 @@ namespace AptitudeTest.Background_Services
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in DeleteImagesJob.DeleteImages:{ex} at: {DateTime.Now}");
+                _logger.LogError($"Error occurred in DeleteImagesJob.DeleteImages \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n at: {DateTime.Now} \n");
             }
         }
 
@@ -83,7 +83,7 @@ namespace AptitudeTest.Background_Services
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in DeleteImagesJob.DeleteEmptyDirectory:{ex} at: {DateTime.Now}");
+                _logger.LogError($"Error occurred in DeleteImagesJob.DeleteEmptyDirectory \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n at: {DateTime.Now} \n");
             }
         }
     }

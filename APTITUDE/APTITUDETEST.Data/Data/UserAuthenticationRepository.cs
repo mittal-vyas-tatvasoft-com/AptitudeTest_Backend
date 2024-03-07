@@ -161,7 +161,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserAuthenticationRepository.Login:{ex} for Email:{loginVm.Email}");
+                _logger.LogError($"Error occurred for Email : {loginVm.Email} in UserAuthenticationRepository.Login \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -190,7 +190,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserAuthenticationRepository.ForgetPassword:{ex} for Email:{email}");
+                _logger.LogError($"Error occurred for Email : {email} in UserAuthenticationRepository.ForgetPassword \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
 
             }
@@ -225,7 +225,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserAuthenticationRepository.ResetPassword:{ex}");
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.ResetPassword \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -259,7 +259,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserAuthenticationRepository.ChangePassword:{ex}");
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.ChangePassword \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }
@@ -311,7 +311,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserAuthenticationRepository.RefreshToken:{ex}");
+                _logger.LogError($"Error occurred in UserAuthenticationRepository.RefreshToken \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string> { Data = null, Message = ResponseMessages.InternalError, StatusCode = ResponseStatusCode.InternalServerError, Result = false });
             }
         }

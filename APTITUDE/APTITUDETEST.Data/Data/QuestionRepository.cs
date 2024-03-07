@@ -101,7 +101,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in QuestionRepository.Get:{ex}");
+                _logger.LogError($"Error occurred in QuestionRepository.Get \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -210,7 +210,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in QuestionRepository.GetQuestions:{ex}");
+                _logger.LogError($"Error occurred in QuestionRepository.GetQuestions \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -244,7 +244,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in QuestionRepository.GetQUestionCount:{ex}");
+                _logger.LogError($"Error occurred in QuestionRepository.GetQUestionCount \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -362,7 +362,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in QuestionRepository.Create:{ex}");
+                _logger.LogError($"Error occurred in QuestionRepository.Create \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -469,7 +469,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in QuestionRepository.Update:{ex} for Id:{questionVM.Id}");
+                _logger.LogError($"Error occurred for Id : {questionVM.Id} in QuestionRepository.Update \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -508,7 +508,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in QuestionRepository.UpdateStatus:{ex}");
+                _logger.LogError($"Error occurred in QuestionRepository.UpdateStatus \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -557,7 +557,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in QuestionRepository.Delete:{ex} for Id:{id}");
+                _logger.LogError($"Error occurred for Id : {id} in QuestionRepository.Delete \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -692,7 +692,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in QuestionRepository.ImportQuestions:{ex}");
+                _logger.LogError($"Error occurred in QuestionRepository.ImportQuestions \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -729,7 +729,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in QuestionRepository.UpdateBulkStatus:{ex}");
+                _logger.LogError($"Error occurred in QuestionRepository.UpdateBulkStatus \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -770,7 +770,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in QuestionRepository.DeleteMultipleQuestions:{ex}");
+                _logger.LogError($"Error occurred in QuestionRepository.DeleteMultipleQuestions \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

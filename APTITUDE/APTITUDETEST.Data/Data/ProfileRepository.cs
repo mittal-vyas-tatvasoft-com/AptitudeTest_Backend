@@ -58,7 +58,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ProfileRepository.GetProfiles:{ex}");
+                _logger.LogError($"Error occurred in ProfileRepository.GetProfiles \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -101,7 +101,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ProfileRepository.GetActiveProfiles:{ex}");
+                _logger.LogError($"Error occurred in ProfileRepository.GetActiveProfiles \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -143,7 +143,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ProfileRepository.Create:{ex}");
+                _logger.LogError($"Error occurred in ProfileRepository.Create \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -197,7 +197,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ProfileRepository.Update:{ex} for Id:{profile.Id}");
+                _logger.LogError($"Error occurred for Id: {profile.Id} in ProfileRepository.Update \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -223,7 +223,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ProfileRepository.CheckUncheckAll: {ex}");
+                _logger.LogError($"Error occurred in ProfileRepository.CheckUncheckAll \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -270,7 +270,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ProfileRepository.Delete: {ex} for id: {id}");
+                _logger.LogError($"Error occurred for Id : {id} in ProfileRepository.Delete \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -297,7 +297,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ProfileRepository.GetProfileById: {ex}");
+                _logger.LogError($"Error occurred in ProfileRepository.GetProfileById \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -336,7 +336,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ProfileRepository.UpdateStatus:{ex}");
+                _logger.LogError($"Error occurred in ProfileRepository.UpdateStatus \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

@@ -61,7 +61,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in GroupRepository.Create: {ex}");
+                _logger.LogError($"Error occurred in GroupRepository.Create \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -117,7 +117,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in GroupRepository.Delete: {ex} for Id:{id}");
+                _logger.LogError($"Error occurred for id: {id} in GroupRepository.Delete \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -159,7 +159,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in GroupRepository.GetActiveGroups:{ex}");
+                _logger.LogError($"Error occurred in GroupRepository.GetActiveGroups \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -218,7 +218,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in GroupRepository.GetGroups:{ex}");
+                _logger.LogError($"Error occurred in GroupRepository.GetGroups \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -284,7 +284,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in GroupRepository.Update: {ex} for id:{updatedGroup.Id}");
+                _logger.LogError($"Error occurred for Id :{updatedGroup.Id} in GroupRepository.Update \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -296,25 +296,39 @@ namespace AptitudeTest.Data.Data
 
         public async Task<JsonResult> DeleteMultipleGroups(List<int> groupIds)
         {
-            int deletedGroups = 0;
-            foreach (int id in groupIds)
+            try
             {
-                MasterGroup? groupToBeDeleted = _context.MasterGroup.Where(group => group.Id == id && group.IsDeleted != true).FirstOrDefault();
-                if (groupToBeDeleted != null && groupToBeDeleted.IsDefault == false)
+                int deletedGroups = 0;
+                foreach (int id in groupIds)
                 {
-                    groupToBeDeleted.IsDeleted = true;
-                    _context.Update(groupToBeDeleted);
-                    _context.SaveChanges();
-                    deletedGroups++;
+                    MasterGroup? groupToBeDeleted = _context.MasterGroup.Where(group => group.Id == id && group.IsDeleted != true).FirstOrDefault();
+                    if (groupToBeDeleted != null && groupToBeDeleted.IsDefault == false)
+                    {
+                        groupToBeDeleted.IsDeleted = true;
+                        _context.Update(groupToBeDeleted);
+                        _context.SaveChanges();
+                        deletedGroups++;
+                    }
                 }
-            }
-            return new JsonResult(new ApiResponse<string>
-            {
-                Message = string.Format(ResponseMessages.DeleteSuccessWithNumber, deletedGroups, ModuleNames.MultipleGroups),
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = string.Format(ResponseMessages.DeleteSuccessWithNumber, deletedGroups, ModuleNames.MultipleGroups),
 
-                Result = true,
-                StatusCode = ResponseStatusCode.Success
-            });
+                    Result = true,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in GroupRepository.DeleteMultipleGroups \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
         }
         #endregion
 

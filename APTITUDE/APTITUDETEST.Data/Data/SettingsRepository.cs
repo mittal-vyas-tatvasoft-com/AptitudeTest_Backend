@@ -39,7 +39,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in SettingsRepository.Get:{ex}");
+                _logger.LogError($"Error occurred in SettingsRepository.Get \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -81,7 +81,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in SettingsRepository.Update:{ex}");
+                _logger.LogError($"Error occurred in SettingsRepository.Update \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

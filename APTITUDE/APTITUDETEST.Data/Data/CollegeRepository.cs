@@ -70,7 +70,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in CollegeRepository.GetColleges: {ex}");
+                _logger.LogError($"Error occurred in CollegeRepository.GetColleges \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -114,7 +114,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in CollegeRepository.GetActiveColleges: {ex}");
+                _logger.LogError($"Error occurred in CollegeRepository.GetActiveColleges \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -167,7 +167,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in CollegeRepository.Get :{ex} for id:{id}");
+                _logger.LogError($"Error occurred for Id : {id} in CollegeRepository.Get \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException}\n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -221,7 +221,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in CollegeRepository.Create: {ex}");
+                _logger.LogError($"Error occurred in CollegeRepository.Create \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -290,7 +290,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in CollegeRepository.Update:{ex} for Id: {collegeToUpsert.Id}");
+                _logger.LogError($"Error occurred for ID : {collegeToUpsert.Id} in CollegeRepository.Update \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -315,7 +315,6 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.NotFound
                     });
                 }
-
                 college.Status = status.Status;
                 _context.Update(college);
                 _context.SaveChanges();
@@ -330,7 +329,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in CollegeRepository.UpdateStatus : {ex}");
+                _logger.LogError($"Error occurred in CollegeRepository.UpdateStatus \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException}\n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -378,7 +377,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in CollegeRepository.Delete: {ex} for Id: {id}");
+                _logger.LogError($"Error occurred for Id: {id} in CollegeRepository.Delete \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -405,7 +404,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in CollegeRepository.CheckUncheckAll:{ex}");
+                _logger.LogError($"Error occurred in CollegeRepository.CheckUncheckAll \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

@@ -94,7 +94,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in AdminRepository.GetAllAdmin: {ex}");
+                _logger.LogError($"Error occurred in AdminRepository.GetAllAdmin \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -144,7 +144,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"AdminRepository.GetAdminById : {ex}");
+                _logger.LogError($"AdminRepository.GetAdminById \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -194,7 +194,7 @@ namespace AptitudeTest.Data.Data
                             }
                             else
                             {
-                                _logger.LogError($"Error occurred in AdminRepository.Create while adding admin");
+                                _logger.LogError($"Error occurred in AdminRepository.Create while adding admin \n");
                                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                                 {
                                     Message = ResponseMessages.InternalError,
@@ -226,7 +226,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in AdminRepository.Create : {ex}");
+                _logger.LogError($"Error occurred in AdminRepository.Create \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -289,7 +289,7 @@ namespace AptitudeTest.Data.Data
                             }
                             else
                             {
-                                _logger.LogError($"Error occurred in AdminRepository.Update for Id : {admin.Id}");
+                                _logger.LogError($"Error occurred in AdminRepository.Update for Id : {admin.Id}\n");
                                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                                 {
                                     Message = ResponseMessages.InternalError,
@@ -334,7 +334,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in AdminRepository.Update : {ex} for Id : {admin.Id}");
+                _logger.LogError($"Error occurred for id : {admin.Id} in AdminRepository.Update \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -369,7 +369,7 @@ namespace AptitudeTest.Data.Data
                         }
                         else
                         {
-                            _logger.LogError($"Error occurred in AdminRepository.ActiveInActiveAdmin");
+                            _logger.LogError($"Error occurred in AdminRepository.ActiveInActiveAdmin \n");
                             return new JsonResult(new ApiResponse<List<UserViewModel>>
                             {
                                 Message = ResponseMessages.InternalError,
@@ -400,7 +400,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in AdminRepository.ActiveInActiveAdmin: {ex}");
+                _logger.LogError($"Error occurred in AdminRepository.ActiveInActiveAdmin \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -434,7 +434,7 @@ namespace AptitudeTest.Data.Data
                         }
                         else
                         {
-                            _logger.LogError($"Error occurred in AdminRepository.Delete for Id: {id}");
+                            _logger.LogError($"Error occurred in AdminRepository.Delete for Id: {id} \n");
                             return new JsonResult(new ApiResponse<List<UserViewModel>>
                             {
                                 Message = ResponseMessages.InternalError,
@@ -465,7 +465,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in AdminRepository.Delete:{ex} for Id: {id}");
+                _logger.LogError($"Error occurred for id : {id} in AdminRepository.Delete \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
