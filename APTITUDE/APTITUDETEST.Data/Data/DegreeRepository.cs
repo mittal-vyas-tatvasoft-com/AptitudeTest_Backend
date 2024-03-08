@@ -82,7 +82,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in DegreeRepository.GetDegrees:{ex}");
+                _logger.LogError($"Error occurred in DegreeRepository.GetDegrees \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
 
                 return new JsonResult(new ApiResponse<string>
                 {
@@ -126,7 +126,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in DegreeRepository.GetActiveDegrees");
+                _logger.LogError($"Error occurred in DegreeRepository.GetActiveDegrees \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -186,7 +186,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in DegreeRepository.Get: {ex} for Id: {id}");
+                _logger.LogError($"Error occurred for Id: {id}Error occurred for in CollegeRepository.Delete \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -233,7 +233,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in DegreeRepository.Create:{ex}");
+                _logger.LogError($"Error occurred in DegreeRepository.Create \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -301,7 +301,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in DegreeRepository.Update:{ex} for DegreeId:{degree.Id}");
+                _logger.LogError($"Error occurred for DegreeId: {degree.Id} in DegreeRepository.Update \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -340,7 +340,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in DegreeRepository.UpdateStatus : {ex}");
+                _logger.LogError($"Error occurred in DegreeRepository.UpdateStatus \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -366,7 +366,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in DegreeRepository.CheckUncheckAll : {ex}");
+                _logger.LogError($"Error occurred in DegreeRepository.CheckUncheckAll \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -413,7 +413,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in DegreeRepository.Delete+: {ex} for Id:{id}");
+                _logger.LogError($"Error occurred for id: {id} in DegreeRepository.Delete \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

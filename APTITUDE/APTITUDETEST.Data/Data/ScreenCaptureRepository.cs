@@ -89,7 +89,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ScreenCaptureRepository.CameraCapture:{ex}");
+                _logger.LogError($"Error occurred in ScreenCaptureRepository.CameraCapture \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.InternalError, Result = false, StatusCode = ResponseStatusCode.InternalServerError });
             }
         }

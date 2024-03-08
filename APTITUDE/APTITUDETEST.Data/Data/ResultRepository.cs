@@ -6,9 +6,7 @@ using APTITUDETEST.Common.Data;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-using System.Collections.Generic;
 using System.Web;
 
 namespace AptitudeTest.Data.Data
@@ -164,7 +162,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.Get:{ex} for userId: {userId}");
+                _logger.LogError($"Error occurred for userId : {userId} in ResultRepository.Get \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -194,7 +192,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.GetResults:{ex}");
+                _logger.LogError($"Error occurred in ResultRepository.GetResults \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -223,7 +221,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"\nError occurred in ResultRepository.GetResultStatistics:{ex}");
+                _logger.LogError($"\nError occurred in ResultRepository.GetResultStatistics \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -264,7 +262,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.GetResultExportData:{ex}");
+                _logger.LogError($"Error occurred in ResultRepository.GetResultExportData \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -351,7 +349,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.ApproveResumeTest:{ex}");
+                _logger.LogError($"Error occurred in ResultRepository.ApproveResumeTest \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -415,7 +413,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData:{ex}");
+                _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -483,7 +481,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in CandidateRepository.UpdateTestRemainingTime:{ex}");
+                _logger.LogError($"Error occurred in CandidateRepository.UpdateTestRemainingTime \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -531,7 +529,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData:{ex}");
+                _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
