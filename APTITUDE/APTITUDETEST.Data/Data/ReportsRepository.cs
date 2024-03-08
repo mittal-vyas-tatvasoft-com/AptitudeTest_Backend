@@ -116,7 +116,7 @@ namespace AptitudeTest.Data.Data
                 if (Directory.Exists(parentDirectory))
                 {
                     testDirectories = Directory.GetDirectories(parentDirectory).Select(d => Int32.TryParse(Path.GetRelativePath(parentDirectory, d), out int id) ? id : 0).ToList();
-                    screenShotFolderVM = _context.Tests.Where(t => testDirectories.Contains(t.Id)).Select(t => new ScreenShotFolderVM() { Id = t.Id, Name = t.Name }).ToList();
+                    screenShotFolderVM = _context.Tests.Where(t => testDirectories.Contains(t.Id)).Select(t => new ScreenShotFolderVM() { Id = t.Id, Name = t.Name }).OrderBy( t => t.Name).ToList();
                     return new JsonResult(new ApiResponse<List<ScreenShotFolderVM>>() { Data = screenShotFolderVM, Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
                 }
                 return new JsonResult(new ApiResponse<string>
@@ -149,7 +149,7 @@ namespace AptitudeTest.Data.Data
                 if (Directory.Exists(parentDirectory))
                 {
                     userFolders = Directory.GetDirectories(parentDirectory).Select(d => Int32.TryParse(Path.GetRelativePath(parentDirectory, d), out int id) ? id : 0).ToList();
-                    screenShotFolderVM = _context.Users.Where(t => userFolders.Contains(t.Id)).Select(t => new ScreenShotFolderVM() { Id = t.Id, Name = t.FirstName + " " + t.LastName }).ToList();
+                    screenShotFolderVM = _context.Users.Where(t => userFolders.Contains(t.Id)).Select(t => new ScreenShotFolderVM() { Id = t.Id, Name = t.FirstName + " " + t.LastName }).OrderBy( t => t.Name).ToList();
                     return new JsonResult(new ApiResponse<List<ScreenShotFolderVM>>() { Data = screenShotFolderVM, Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
                 }
                 return new JsonResult(new ApiResponse<string>
@@ -186,7 +186,7 @@ namespace AptitudeTest.Data.Data
                         string name = Path.GetRelativePath(parentDirectory, d);
                         int id = Path.GetRelativePath(parentDirectory, d).ToLower() == screenshot.ToLower() ? (int)ImageType.ScreenShot : (int)ImageType.FaceCam;
                         return new UserDirectoryVM() { Name = name, Id = id };
-                    }).ToList();
+                    }).OrderBy(d => d.Name).ToList();
 
                     return new JsonResult(new ApiResponse<List<UserDirectoryVM>>() { Data = userDirectories, Message = ResponseMessages.Success, Result = true, StatusCode = ResponseStatusCode.Success });
                 }
