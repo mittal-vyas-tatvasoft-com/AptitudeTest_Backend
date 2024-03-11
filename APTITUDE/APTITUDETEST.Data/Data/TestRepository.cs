@@ -9,7 +9,9 @@ using APTITUDETEST.Common.Data;
 using APTITUDETEST.Core.Entities.Users;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using Npgsql;
 using NpgsqlTypes;
 using static AptitudeTest.Data.Common.Enums;
@@ -1243,7 +1245,7 @@ namespace AptitudeTest.Data.Data
                                 CreatedBy = candidate.Id,
                             };
 
-                            TempUserTest existingTempUserTest = _context.TempUserTests.FirstOrDefault(x => x.UserId == tempUserTestToBeAdded.UserId && !(bool)x.IsDeleted);
+                            TempUserTest existingTempUserTest = _context.TempUserTests.AsNoTracking().FirstOrDefault(x => x.UserId == tempUserTestToBeAdded.UserId && !(bool)x.IsDeleted);
                             int count = 0;
                             if (existingTempUserTest != null)
                             {
@@ -1263,17 +1265,31 @@ namespace AptitudeTest.Data.Data
                                 if (result)
                                 {
                                     candidate.IsTestGenerated = true;
+                                    _context.Update(candidate);
+                                    _context.SaveChanges();
                                     testGeneratedCandidates++;
                                 }
                             }
 
                         }
+                        if (testGeneratedCandidates !=0)
+                        {
                         return new JsonResult(new ApiResponse<string>
                         {
                             Message = string.Format(ResponseMessages.TestGeneratedForCandidates, testGeneratedCandidates),
                             Result = true,
                             StatusCode = ResponseStatusCode.OK
                         });
+                        }
+                        else
+                        {
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.TestAlreadyGenerated,
+                                Result = true,
+                                StatusCode = ResponseStatusCode.OK
+                            });
+                        }
 
                     }
                     else
