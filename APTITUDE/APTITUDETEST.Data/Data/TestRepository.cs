@@ -1,9 +1,12 @@
-﻿using AptitudeTest.Core.Entities.Admin;
+﻿using AptitudeTest.Common.Helpers;
+using AptitudeTest.Core.Entities.Admin;
+using AptitudeTest.Core.Entities.Candidate;
 using AptitudeTest.Core.Entities.Test;
 using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using AptitudeTest.Data.Common;
 using APTITUDETEST.Common.Data;
+using APTITUDETEST.Core.Entities.Users;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -19,14 +22,16 @@ namespace AptitudeTest.Data.Data
         private readonly string? connectionString;
         private readonly string? userLoginUrl;
         private readonly ILoggerManager _logger;
+        private readonly UserActiveTestHelper _userActiveTestHelper;
 
-        public TestRepository(AppDbContext context, IConfiguration config, ILoggerManager logger)
+        public TestRepository(AppDbContext context, IConfiguration config, ILoggerManager logger, UserActiveTestHelper userActiveTestHelper)
         {
             _context = context;
             _config = config;
             connectionString = _config["ConnectionStrings:AptitudeTest"];
             userLoginUrl = _config["EmailGeneration:UserUrlForBody"];
             _logger = logger;
+            _userActiveTestHelper = userActiveTestHelper;
         }
 
         #region Methods
@@ -1208,9 +1213,193 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+        public async Task<JsonResult> GenerateTestForCandidates(int testId)
+        {
+            try
+            {
+                Test? test = _context.Tests.FirstOrDefault(x => x.Id == testId && !(bool)x.IsDeleted);
+                int testGeneratedCandidates = 0;
+                if (test != null)
+                {
+                    List<User> candidates = _context.Users.Where(x => x.GroupId == test.GroupId && !x.IsTestGenerated && !(bool)x.IsDeleted).ToList();
+                    if (candidates != null || candidates.Count > 0)
+                    {
+                        foreach (var candidate in candidates)
+                        {
+
+                            TimeSpan difference = test.EndTime - DateTime.Now;
+                            int differenceInMinutes = (int)difference.TotalMinutes;
+                            int timeRemaining = differenceInMinutes < test.TestDuration ? differenceInMinutes : test.TestDuration;
+
+                            TempUserTest tempUserTestToBeAdded = new TempUserTest()
+                            {
+                                UserId = candidate.Id,
+                                TestId = test.Id,
+                                Status = true,
+                                TimeRemaining = timeRemaining * 60,
+                                IsAdminApproved = true,
+                                IsFinished = false,
+                                CreatedBy = candidate.Id,
+                            };
+
+                            TempUserTest existingTempUserTest = _context.TempUserTests.FirstOrDefault(x => x.UserId == tempUserTestToBeAdded.UserId && !(bool)x.IsDeleted);
+                            int count = 0;
+                            if (existingTempUserTest != null)
+                            {
+                                tempUserTestToBeAdded.Id = existingTempUserTest.Id;
+                                _context.Update(tempUserTestToBeAdded);
+                                count = _context.SaveChanges();
+                            }
+                            else
+                            {
+                                _context.Add(tempUserTestToBeAdded);
+                                count = _context.SaveChanges();
+                            }
+
+                            if (count == 1)
+                            {
+                                bool result = AddTestQuestionsToUser(candidate.Id, tempUserTestToBeAdded.Id, test.Id);
+                                if (result)
+                                {
+                                    candidate.IsTestGenerated = true;
+                                    testGeneratedCandidates++;
+                                }
+                            }
+
+                        }
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.TestGeneratedForCandidates, testGeneratedCandidates),
+                            Result = true,
+                            StatusCode = ResponseStatusCode.OK
+                        });
+
+                    }
+                    else
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = string.Format(ResponseMessages.NoCandidatesForTest),
+                            Result = false,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.InternalError,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.InternalServerError
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred for TestId: {testId} in CandidateRepository.GenerateTestForCandidates \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+
+        }
         #endregion
 
         #region Helper Method
+
+        public bool AddTestQuestionsToUser(int userId, int userTestId, int testId)
+        {
+            List<RandomQuestionsVM> allQuestions = new();
+            List<TestWiseQuestionsCountVM> testWiseQuestionsCount = new();
+            Random rand = new Random();
+
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                allQuestions = connection.Query<RandomQuestionsVM>("Select * from GetRandomQuestions()").ToList();
+                testWiseQuestionsCount = connection.Query<TestWiseQuestionsCountVM>("Select * from GetTestQuestionsConfig(@Id)", new { Id = testId }).ToList();
+                connection.Close();
+            }
+
+            Dictionary<(int, QuestionType, int), int> questionsPerMarkTypeTopicId = setQuestionsConfig(testWiseQuestionsCount);
+
+            // Randomly select questions for each mark, type, and topic Id
+            List<RandomQuestionsVM> selectedQuestions = SelectRandomQuestions(allQuestions, questionsPerMarkTypeTopicId);
+
+
+            if (selectedQuestions.Count != 0)
+            {
+                var tempUserTestResults = selectedQuestions.Select(ques => new TempUserTestResult()
+                {
+                    UserTestId = userTestId,
+                    QuestionId = ques.Id,
+                    CreatedBy = userId
+                });
+
+                _context.TempUserTestResult.AddRange(tempUserTestResults);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        private static Dictionary<(int, QuestionType, int), int> setQuestionsConfig(List<TestWiseQuestionsCountVM> testWiseQuestionsCount)
+        {
+            Dictionary<(int, QuestionType, int), int> questionsPerMarkTypeTopicId = new Dictionary<(int, QuestionType, int), int>();
+
+            foreach (var row in testWiseQuestionsCount)
+            {
+                if (row.OneMarks != 0)
+                {
+                    questionsPerMarkTypeTopicId.Add((1, (QuestionType)row.QuestionType, row.TopicId), row.OneMarks);
+                }
+                if (row.TwoMarks != 0)
+                {
+                    questionsPerMarkTypeTopicId.Add((2, (QuestionType)row.QuestionType, row.TopicId), row.TwoMarks);
+                }
+                if (row.ThreeMarks != 0)
+                {
+                    questionsPerMarkTypeTopicId.Add((3, (QuestionType)row.QuestionType, row.TopicId), row.ThreeMarks);
+                }
+                if (row.FourMarks != 0)
+                {
+                    questionsPerMarkTypeTopicId.Add((4, (QuestionType)row.QuestionType, row.TopicId), row.FourMarks);
+                }
+                if (row.FiveMarks != 0)
+                {
+                    questionsPerMarkTypeTopicId.Add((5, (QuestionType)row.QuestionType, row.TopicId), row.FiveMarks);
+                }
+            }
+            return questionsPerMarkTypeTopicId;
+        }
+
+        private static List<RandomQuestionsVM> SelectRandomQuestions(List<RandomQuestionsVM> allQuestions, Dictionary<(int, QuestionType, int), int> questionsPerMarkTypeTopicId)
+        {
+            // Group questions by their mark, type, and topic ID
+            var groupedQuestions = allQuestions.GroupBy(q => (q.Difficulty, q.QuestionType, q.Topic));
+
+            // Initialize a list to store the selected questions
+            List<RandomQuestionsVM> selectedQuestions = new List<RandomQuestionsVM>();
+
+            // Randomly select questions based on the specified counts for each mark, type, and topic ID
+            foreach (var entry in questionsPerMarkTypeTopicId)
+            {
+                var group = groupedQuestions.FirstOrDefault(q => q.Key.Difficulty == entry.Key.Item1 && q.Key.QuestionType == (int)entry.Key.Item2 && q.Key.Topic == entry.Key.Item3);
+
+                if (group != null)
+                {
+                    var randomQuestions = group.OrderBy(q => Guid.NewGuid()).Take(entry.Value);
+                    selectedQuestions.AddRange(randomQuestions);
+                }
+            }
+
+            return selectedQuestions;
+        }
         private (bool, int, string?) doesQuestionsAvailableInDB(TestQuestionsVM addTestQuestion)
         {
             var questions = _context.Questions.Where(t => t.Topic == addTestQuestion.TopicId && t.IsDeleted == false).ToList();

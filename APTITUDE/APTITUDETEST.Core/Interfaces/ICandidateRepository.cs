@@ -8,6 +8,7 @@ namespace AptitudeTest.Core.Interfaces
     {
         Task<JsonResult> CreateUserTest(CreateUserTestVM userTest);
         Task<JsonResult> CreateTempUserTest(int userId);
+        Task<JsonResult> GetTempUserTest(int userId);
         Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult);
         Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId);
         Task<JsonResult> GetQuestionsStatus(int userId);
@@ -17,6 +18,6 @@ namespace AptitudeTest.Core.Interfaces
         Task<JsonResult> UpdateRemainingTime(UpdateTestTimeVM updateTestTimeVM);
         Task<JsonResult> UpdateQuestionTimer(QuestionTimerVM questionTimerDetails);
         Task<JsonResult> UpdateUserTestStatus(UpdateUserTestStatusVM updateUserTestStatusVM);
-        
+
     }
 }

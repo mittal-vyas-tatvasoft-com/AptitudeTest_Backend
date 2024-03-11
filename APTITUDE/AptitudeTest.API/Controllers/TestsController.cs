@@ -221,6 +221,16 @@ namespace AptitudeTest.Controllers
             return await _service.UpdateBasicPoints(testId);
         }
 
+        /// <summary>
+        /// This method generates test for the candidates in the test group
+        /// </summary>
+        /// <param name="testId"></param>
+        /// <returns></returns>
+        [HttpPost("[action]/{testId:int}")]
+        public async Task<JsonResult> GenerateTestsForCandidates(int testId)
+        {
+            return await _service.GenerateTestForCandidates(testId);
+        }
         #endregion
     }
 }

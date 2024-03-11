@@ -56,6 +56,9 @@
         public readonly static string CanDeleteQuestionsBecauseActive = "Your can't delete questions of the test because it is currently active...!";
         public readonly static string CanDeleteTestBecauseActive = "Your can't delete test because it is currently active...!";
         public readonly static string DurationExceeds = "Time can not exceed test duration";
+        public readonly static string TestGeneratedForCandidates = "Test successfully generated for {0} candidates";
+        public readonly static string NoCandidatesForTest = "Sorry, No candidates found to generate the test";
+        public readonly static string TestNotGenerated = "Test is not generated for user. Please contact admin";
         #endregion
 
         #region AdminAuthentication
