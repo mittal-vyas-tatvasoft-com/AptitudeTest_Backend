@@ -97,6 +97,11 @@ namespace AptitudeTest.Application.Services
         {
             return _repository.DeleteMultipleTests(testIds);
         }
+
+        public Task<JsonResult> GenerateTestForCandidates(int testId)
+        {
+            return _repository.GenerateTestForCandidates(testId);
+        }
         #endregion
     }
 }

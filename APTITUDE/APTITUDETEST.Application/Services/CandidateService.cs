@@ -26,6 +26,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _candidateRepository.CreateTempUserTest(userId);
         }
+
+        public async Task<JsonResult> GetTempUserTest(int userId)
+        {
+            return await _candidateRepository.GetTempUserTest(userId);
+        }
         public async Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult)
         {
             return await _candidateRepository.CreateUserTestResult(userTestResult);

@@ -233,6 +233,92 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+        public async Task<JsonResult> GetTempUserTest(int userId)
+        {
+            try
+            {
+                if (userId <= 0)
+                {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.BadRequest,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.BadRequest
+                    });
+                }
+                int? groupId = _appDbContext.Users.Where(x => x.Id == userId && x.IsDeleted == false).Select(x => x.GroupId).FirstOrDefault();
+                DateTime today = DateTime.Today;
+                Test? test = _appDbContext.Tests.Where(x => x.GroupId == groupId && x.Status == (int)TestStatus.Active && x.IsDeleted == false && x.StartTime.Date == today).FirstOrDefault();
+
+                if (test == null)
+                {
+                    return new JsonResult(new ApiResponse<Admin>
+                    {
+                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+                TempUserTest? tempUserTestForUser = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id && !(bool)x.IsDeleted).FirstOrDefault();
+
+                if (tempUserTestForUser == null)
+                {
+                    return new JsonResult(new ApiResponse<Admin>
+                    {
+                        Message = string.Format(ResponseMessages.TestNotGenerated, ModuleNames.Test),
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotFound
+                    });
+                }
+
+                else
+                {
+                    if ((bool)tempUserTestForUser.IsDeleted)
+                    {
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.TestAlreadySubmitted,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.AlreadyExist
+                        });
+                    }
+                    else
+                    {
+                        if (tempUserTestForUser.IsAdminApproved)
+                        {
+                            tempUserTestForUser.IsAdminApproved = false;
+                            _appDbContext.Update(tempUserTestForUser);
+                            _appDbContext.SaveChanges();
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = ResponseMessages.ResumeTest,
+                                Result = true,
+                                StatusCode = ResponseStatusCode.OK
+                            });
+                        }
+                        return new JsonResult(new ApiResponse<string>
+                        {
+                            Message = ResponseMessages.TestAlreadySubmitted,
+                            Result = false,
+                            StatusCode = ResponseStatusCode.AlreadyExist
+                        });
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred for userId: {userId} in CandidateRepository.GettempuserTest \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
         public async Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult)
         {
             try
