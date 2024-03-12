@@ -60,6 +60,7 @@
         public readonly static string NoCandidatesForTest = "Sorry, No candidates found to generate the test";
         public readonly static string TestNotGenerated = "Test is not generated for user. Please contact admin";
         public readonly static string TestAlreadyGenerated = "Test is already generated";
+        public readonly static string NoActiveTestForGeneration = "Only Active tests can be generated";
         #endregion
 
         #region AdminAuthentication

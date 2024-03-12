@@ -11,7 +11,6 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic;
 using Npgsql;
 using NpgsqlTypes;
 using static AptitudeTest.Data.Common.Enums;
@@ -1221,11 +1220,22 @@ namespace AptitudeTest.Data.Data
             try
             {
                 Test? test = _context.Tests.FirstOrDefault(x => x.Id == testId && !(bool)x.IsDeleted);
-                int testGeneratedCandidates = 0;
-                if (test != null)
+                if (test != null && test.Status != (int)TestStatus.Active)
                 {
+                    return new JsonResult(new ApiResponse<string>
+                    {
+                        Message = ResponseMessages.NoActiveTestForGeneration,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotAcceptable
+                    });
+                }
+
+                else if (test != null && test.Status == (int)TestStatus.Active)
+                {
+                    int testGeneratedCandidates = 0;
+                    int? candidatesInGroup = _context.Users.Where(x => x.GroupId == test.GroupId && !(bool)x.IsDeleted).Count();
                     List<User> candidates = _context.Users.Where(x => x.GroupId == test.GroupId && !x.IsTestGenerated && !(bool)x.IsDeleted).ToList();
-                    if (candidates != null || candidates.Count > 0)
+                    if ((candidates != null || candidates.Count > 0) && candidatesInGroup > 0)
                     {
                         foreach (var candidate in candidates)
                         {
@@ -1272,14 +1282,14 @@ namespace AptitudeTest.Data.Data
                             }
 
                         }
-                        if (testGeneratedCandidates !=0)
+                        if (testGeneratedCandidates != 0)
                         {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = string.Format(ResponseMessages.TestGeneratedForCandidates, testGeneratedCandidates),
-                            Result = true,
-                            StatusCode = ResponseStatusCode.OK
-                        });
+                            return new JsonResult(new ApiResponse<string>
+                            {
+                                Message = string.Format(ResponseMessages.TestGeneratedForCandidates, testGeneratedCandidates),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.OK
+                            });
                         }
                         else
                         {
