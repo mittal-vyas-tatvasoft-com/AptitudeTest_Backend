@@ -8,5 +8,6 @@
         public string? Sid { get; set; }
         public bool? IsSubmitted { get; set; }
         public bool IsProfileEdited { get; set; }
+        public bool IsStarted { get; set; }
     }
 }
