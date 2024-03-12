@@ -57,6 +57,7 @@ namespace APTITUDETEST.Common.Data
                 entity.Property(e => e.SessionId).IsRequired(false);
                 entity.Property(e => e.SessionId).HasMaxLength(255).IsUnicode(false);
                 entity.Property(e => e.IsImported).HasDefaultValue(false);
+                entity.Property(e => e.IsTestGenerated).HasDefaultValue(false);
 
             });
 
@@ -360,12 +361,13 @@ namespace APTITUDETEST.Common.Data
                  .HasMaxLength(10)
                  .IsUnicode(false);
                 entity.Property(e => e.IsAdminApproved)
-                 .HasDefaultValue(false)
+                 .HasDefaultValue(true)
                  .IsUnicode(false);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
                 entity.Property(e => e.CreatedBy).HasDefaultValue(1);
                 entity.Property(e => e.IsDeleted).HasDefaultValue(false);
                 entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.IsStarted).HasDefaultValue(false);
             });
 
             modelBuilder.Entity<UserTest>(entity =>

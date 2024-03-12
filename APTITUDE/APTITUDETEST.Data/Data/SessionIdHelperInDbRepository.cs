@@ -38,7 +38,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in SessionIdHelperInDbRepository.CheckSessionId:{ex}");
+                _logger.LogError($"Error occurred in SessionIdHelperInDbRepository.CheckSessionId \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return false;
             }
         }

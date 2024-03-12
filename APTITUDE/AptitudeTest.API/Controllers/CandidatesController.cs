@@ -149,5 +149,16 @@ namespace AptitudeTest.Controllers
         {
             return await _candidateService.UpdateUserTestStatus(updateUserTestStatusVM);
         }
+
+        /// <summary>
+        /// This method fetches the generated test for candidate
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{userId:int}")]
+        public async Task<JsonResult> GetUserTest(int userId)
+        {
+            return await _candidateService.GetTempUserTest(userId);
+        }
     }
 }

@@ -79,7 +79,7 @@ namespace AptitudeTest.Background_Services
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in TestStatusUpdateJob.CalculateTime:{ex} at: {DateTime.Now}");
+                _logger.LogError($"Error occurred in TestStatusUpdateJob.CalculateTime \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n at: {DateTime.Now}  \n");
             }
 
         }
@@ -96,7 +96,7 @@ namespace AptitudeTest.Background_Services
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in TestStatusUpdateJob.UpdateStatus:{ex} at: {DateTime.Now}");
+                _logger.LogError($"Error occurred in TestStatusUpdateJob.UpdateStatus \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n at: {DateTime.Now} \n");
             }
 
         }
@@ -127,7 +127,7 @@ namespace AptitudeTest.Background_Services
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in TestStatusUpdateJob.EndTest:{ex} at: {DateTime.Now}");
+                _logger.LogError($"Error occurred in TestStatusUpdateJob.EndTest \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n at: {DateTime.Now} \n");
             }
 
         }

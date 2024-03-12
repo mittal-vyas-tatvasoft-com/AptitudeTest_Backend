@@ -6,9 +6,7 @@ using APTITUDETEST.Common.Data;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-using System.Collections.Generic;
 using System.Web;
 
 namespace AptitudeTest.Data.Data
@@ -164,7 +162,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.Get:{ex} for userId: {userId}");
+                _logger.LogError($"Error occurred for userId : {userId} in ResultRepository.Get \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -178,47 +176,9 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                    List<ResultsVM> sortedResults = new List<ResultsVM>();
-                //searchQuery = string.IsNullOrEmpty(searchQuery) ? string.Empty : searchQuery;
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
-                    List<ResultsVM> data = connection.Query<ResultsVM>("Select * from getallresults_3(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
-                    List<TempUserResultsVM> tempIds = data.Select(x => new TempUserResultsVM {TestId= x.UserTestId,UserId= x.UserId }).ToList();
-                    List<int> userIds = tempIds.Select(x => x.UserId ).ToList();
-                    List<int> testIds = tempIds.Select(x => x.TestId ).ToList();
-                    List<TempUserTest> tempTestData = _context.TempUserTests.Where(x => userIds.Contains(x.UserId) && testIds.Contains(x.TestId)).ToList();
-                    
-                    foreach (var item in data) {
-                        var tempStatus = tempTestData.Where(y => y.UserId == item.UserId && y.TestId==item.UserTestId).FirstOrDefault();
-                        if (item.Status.ToLower().Equals("active") && tempStatus != null && !tempStatus.IsActive)
-                        {
-                            item.Status = "LoggedOut";
-                        }
-                    }
-                    if (!sortField.IsNullOrEmpty() && sortField.ToLower().Equals("status"))
-                    {
-                        List<ResultsVM> activeTestResults = data.Where(status => status.Status.ToLower().Equals("active")).ToList();
-                        List<ResultsVM> pendingTestResults = data.Where(status => status.Status.ToLower().Equals("pending")).ToList();
-                        List<ResultsVM> lockedTestResults = data.Where(status => status.Status.ToLower().Equals("locked")).ToList();
-                        //List<ResultsVM> loggedOutTestResults = data.Where(status => status.Status.ToLower().Equals("loggedout")).ToList();
-
-                        if (!sortOrder.IsNullOrEmpty() && sortOrder.ToLower().Equals("asc"))
-                        {
-                            sortedResults.AddRange(activeTestResults);
-                            sortedResults.AddRange(pendingTestResults);
-                            sortedResults.AddRange(lockedTestResults);
-                            //sortedResults.AddRange(loggedOutTestResults);
-                            data = sortedResults;
-                        }
-                        else if (!sortOrder.IsNullOrEmpty() && sortOrder.ToLower().Equals("desc"))
-                        {
-                            //sortedResults.AddRange(loggedOutTestResults);
-                            sortedResults.AddRange(lockedTestResults);
-                            sortedResults.AddRange(pendingTestResults);
-                            sortedResults.AddRange(activeTestResults);
-                            data = sortedResults;
-                        }
-                    }
+                    List<ResultsVM> data = connection.Query<ResultsVM>("Select * from getallresults(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                     return new JsonResult(new ApiResponse<List<ResultsVM>>
                     {
                         Data = data,
@@ -232,7 +192,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.GetResults:{ex}");
+                _logger.LogError($"Error occurred in ResultRepository.GetResults \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -261,7 +221,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.GetResultStatistics:{ex}");
+                _logger.LogError($"\nError occurred in ResultRepository.GetResultStatistics \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -302,7 +262,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.GetResultExportData:{ex}");
+                _logger.LogError($"Error occurred in ResultRepository.GetResultExportData \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -389,7 +349,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.ApproveResumeTest:{ex}");
+                _logger.LogError($"Error occurred in ResultRepository.ApproveResumeTest \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -453,7 +413,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData:{ex}");
+                _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -521,7 +481,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in CandidateRepository.UpdateTestRemainingTime:{ex}");
+                _logger.LogError($"Error occurred in CandidateRepository.UpdateTestRemainingTime \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -569,7 +529,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData:{ex}");
+                _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

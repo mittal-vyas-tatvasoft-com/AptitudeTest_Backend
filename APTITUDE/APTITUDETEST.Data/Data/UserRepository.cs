@@ -91,7 +91,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserRepository.GetAllUsers:{ex}");
+                _logger.LogError($"Error occurred in UserRepository.GetAllUsers \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<List<UserViewModel>>
                 {
                     Message = ResponseMessages.InternalError,
@@ -143,7 +143,7 @@ namespace AptitudeTest.Data.Data
 
             catch (Exception ex)
             {
-                _logger.LogError($"UserRepository.GetUserById:{ex}");
+                _logger.LogError($"UserRepository.GetUserById \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -188,7 +188,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserRepository.GetAllStates:{ex}");
+                _logger.LogError($"Error occurred in UserRepository.GetAllStates \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -269,7 +269,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserRepository.Create:{ex}");
+                _logger.LogError($"Error occurred in UserRepository.Create \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
@@ -371,7 +371,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserRepository.Update:{ex}");
+                _logger.LogError($"Error occurred in UserRepository.Update \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
@@ -499,7 +499,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserRepository.RegisterUser:{ex}");
+                _logger.LogError($"Error occurred in UserRepository.RegisterUser \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = string.Format(ResponseMessages.InternalError, ModuleNames.User),
@@ -537,7 +537,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserRepository.ActiveInActiveUsers:{ex}");
+                _logger.LogError($"Error occurred in UserRepository.ActiveInActiveUsers \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
@@ -574,7 +574,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserRepository.DeleteUsers:{ex}");
+                _logger.LogError($"Error occurred in UserRepository.DeleteUsers \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = string.Format(ResponseMessages.InternalError, ModuleNames.Candidate),
@@ -700,7 +700,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserRepository.ImportUsers:{ex}");
+                _logger.LogError($"Error occurred in UserRepository.ImportUsers \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,
@@ -751,7 +751,7 @@ namespace AptitudeTest.Data.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error occurred in UserRepository.ChangeUserPasswordByAdmin:{ex}");
+                _logger.LogError($"Error occurred in UserRepository.ChangeUserPasswordByAdmin \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

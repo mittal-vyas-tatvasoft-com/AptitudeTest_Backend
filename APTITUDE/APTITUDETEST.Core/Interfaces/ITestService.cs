@@ -23,5 +23,6 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> CheckTestName(string testName);
         public Task<JsonResult> GetTestsForDropdown();
         public Task<JsonResult> UpdateBasicPoints(int testId);
+        public Task<JsonResult> GenerateTestForCandidates(int testId);
     }
 }

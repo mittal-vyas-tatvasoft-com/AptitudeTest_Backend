@@ -56,6 +56,7 @@ namespace APTITUDETEST.Core.Entities.Users
         public virtual MasterCollege MasterColleges { get; set; }
         public virtual State States { get; set; }
         public bool IsImported { get; set; } = false;
+        public bool IsTestGenerated { get; set; } = false;
 
     }
 }
