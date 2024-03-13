@@ -40,9 +40,9 @@ namespace AptitudeTest.Application.Services
             return await _candidateRepository.GetCandidateTestQuestion(questionId, userId);
         }
 
-        public async Task<JsonResult> GetQuestionsStatus(int userId)
+        public async Task<JsonResult> GetQuestionsStatus(int userId, bool isRefresh)
         {
-            return await _candidateRepository.GetQuestionsStatus(userId);
+            return await _candidateRepository.GetQuestionsStatus(userId,isRefresh);
         }
 
         public async Task<JsonResult> SaveTestQuestionAnswer(UpdateTestQuestionAnswerVM userTestQuestionAnswer)
