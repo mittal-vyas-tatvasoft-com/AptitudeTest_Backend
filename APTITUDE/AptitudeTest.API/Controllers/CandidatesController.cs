@@ -24,43 +24,7 @@ namespace AptitudeTest.Controllers
         }
         #endregion
 
-        [HttpPost("[action]")]
-        public async Task<JsonResult> CreateUserTest(CreateUserTestVM userTest)
-        {
-            if (ModelState.IsValid)
-            {
-                return await _candidateService.CreateUserTest(userTest);
-            }
 
-            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
-        }
-
-        /// <summary>
-        /// starts the test for user and random questions will be stored in DB
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        [HttpPost("[action]/{userId:int}")]
-        public async Task<JsonResult> StartUserTest(int userId)
-        {
-            if (ModelState.IsValid)
-            {
-                return await _candidateService.CreateTempUserTest(userId);
-            }
-
-            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
-        }
-
-        [HttpPost("[action]")]
-        public async Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult)
-        {
-            if (ModelState.IsValid)
-            {
-                return await _candidateService.CreateUserTestResult(userTestResult);
-            }
-
-            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.BadRequest, Result = false, StatusCode = ResponseStatusCode.BadRequest });
-        }
 
         [HttpGet("[action]/{questionId}/{userId}")]
         public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId)
@@ -71,7 +35,7 @@ namespace AptitudeTest.Controllers
         [HttpGet("[action]/{userId}/{isRefresh}")]
         public async Task<JsonResult> GetQuestionsStatus(int userId, bool isRefresh)
         {
-            return await _candidateService.GetQuestionsStatus(userId,isRefresh);
+            return await _candidateService.GetQuestionsStatus(userId, isRefresh);
         }
 
         /// <summary>

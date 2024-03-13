@@ -18,23 +18,13 @@ namespace AptitudeTest.Application.Services
         #endregion
 
         #region Methods
-        public async Task<JsonResult> CreateUserTest(CreateUserTestVM userTest)
-        {
-            return await _candidateRepository.CreateUserTest(userTest);
-        }
-        public async Task<JsonResult> CreateTempUserTest(int userId)
-        {
-            return await _candidateRepository.CreateTempUserTest(userId);
-        }
+
 
         public async Task<JsonResult> GetTempUserTest(int userId)
         {
             return await _candidateRepository.GetTempUserTest(userId);
         }
-        public async Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult)
-        {
-            return await _candidateRepository.CreateUserTestResult(userTestResult);
-        }
+
         public async Task<JsonResult> GetCandidateTestQuestion(int questionId, int userId)
         {
             return await _candidateRepository.GetCandidateTestQuestion(questionId, userId);
@@ -42,7 +32,7 @@ namespace AptitudeTest.Application.Services
 
         public async Task<JsonResult> GetQuestionsStatus(int userId, bool isRefresh)
         {
-            return await _candidateRepository.GetQuestionsStatus(userId,isRefresh);
+            return await _candidateRepository.GetQuestionsStatus(userId, isRefresh);
         }
 
         public async Task<JsonResult> SaveTestQuestionAnswer(UpdateTestQuestionAnswerVM userTestQuestionAnswer)
