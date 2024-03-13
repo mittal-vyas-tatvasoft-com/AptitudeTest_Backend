@@ -728,10 +728,14 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> GetQuestionsStatus(int userId)
+        public async Task<JsonResult> GetQuestionsStatus(int userId,bool isRefresh )
         {
             try
             {
+                if (isRefresh)
+                {
+                    Thread.Sleep(10);
+                }
                 if (userId < 1)
                 {
                     return new JsonResult(new ApiResponse<string>
