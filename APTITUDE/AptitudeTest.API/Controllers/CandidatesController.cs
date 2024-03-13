@@ -68,10 +68,10 @@ namespace AptitudeTest.Controllers
             return await _candidateService.GetCandidateTestQuestion(questionId, userId);
         }
 
-        [HttpGet("[action]/{userId}")]
-        public async Task<JsonResult> GetQuestionsStatus(int userId)
+        [HttpGet("[action]/{userId}/{isRefresh}")]
+        public async Task<JsonResult> GetQuestionsStatus(int userId, bool isRefresh)
         {
-            return await _candidateService.GetQuestionsStatus(userId);
+            return await _candidateService.GetQuestionsStatus(userId,isRefresh);
         }
 
         /// <summary>
