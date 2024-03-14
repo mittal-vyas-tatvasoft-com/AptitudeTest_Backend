@@ -40,199 +40,7 @@ namespace AptitudeTest.Data.Data
         #endregion
 
         #region Method
-        public async Task<JsonResult> CreateUserTest(CreateUserTestVM userTest)
-        {
-            try
-            {
-                if (userTest != null)
-                {
-                    UserTest? userTestAlreadyExists = _appDbContext.UserTests.Where(x => x.UserId == userTest.UserId && x.TestId == userTest.TestId && x.IsDeleted == false).FirstOrDefault();
-                    if (userTestAlreadyExists == null)
-                    {
-                        UserTest userTestToBeAdded = new UserTest()
-                        {
-                            UserId = userTest.UserId,
-                            TestId = userTest.TestId,
-                            Status = true,
-                            IsFinished = false,
-                            CreatedBy = userTest.UserId,
-                        };
 
-                        _appDbContext.Add(userTestToBeAdded);
-                        int count = _appDbContext.SaveChanges();
-                        if (count == 1)
-                        {
-
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.UserTest),
-                                Result = true,
-                                StatusCode = ResponseStatusCode.OK
-                            });
-                        }
-                        else
-                        {
-                            _logger.LogError($"Error occurred in CandidateRepository.CreateUserTest while adding user test \n");
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = ResponseMessages.InternalError,
-                                Result = false,
-                                StatusCode = ResponseStatusCode.InternalServerError
-                            });
-                        }
-                    }
-                    else
-                    {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.UserTest),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.AlreadyExist
-                        });
-                    }
-
-                }
-                return new JsonResult(new ApiResponse<string>
-                {
-                    Message = ResponseMessages.BadRequest,
-                    Result = false,
-                    StatusCode = ResponseStatusCode.BadRequest
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error occurred in CandidateRepository.CreateUserTest \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
-                return new JsonResult(new ApiResponse<string>
-                {
-                    Message = ResponseMessages.InternalError,
-                    Result = false,
-                    StatusCode = ResponseStatusCode.InternalServerError
-                });
-            }
-
-        }
-
-
-        public async Task<JsonResult> CreateTempUserTest(int userId)
-        {
-            try
-            {
-                if (userId <= 0)
-                {
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.BadRequest,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.BadRequest
-                    });
-                }
-                Test? test = _userActiveTestHelper.GetValidTestOfUser(userId);
-
-                if (test == null)
-                {
-                    return new JsonResult(new ApiResponse<Admin>
-                    {
-                        Message = string.Format(ResponseMessages.NotFound, ModuleNames.Test),
-                        Result = false,
-                        StatusCode = ResponseStatusCode.NotFound
-                    });
-                }
-
-                TempUserTest? tempUserTestAlreadyExists = _appDbContext.TempUserTests.Where(x => x.UserId == userId && x.TestId == test.Id).FirstOrDefault();
-
-                if (tempUserTestAlreadyExists != null)
-                {
-                    if ((bool)tempUserTestAlreadyExists.IsDeleted)
-                    {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = ResponseMessages.TestAlreadySubmitted,
-                            Result = false,
-                            StatusCode = ResponseStatusCode.AlreadyExist
-                        });
-                    }
-                    else
-                    {
-                        if (tempUserTestAlreadyExists.IsAdminApproved)
-                        {
-                            tempUserTestAlreadyExists.IsAdminApproved = false;
-                            _appDbContext.Update(tempUserTestAlreadyExists);
-                            _appDbContext.SaveChanges();
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = ResponseMessages.ResumeTest,
-                                Result = true,
-                                StatusCode = ResponseStatusCode.OK
-                            });
-                        }
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = ResponseMessages.TestAlreadySubmitted,
-                            Result = false,
-                            StatusCode = ResponseStatusCode.AlreadyExist
-                        });
-                    }
-                }
-
-                TimeSpan difference = test.EndTime - DateTime.Now;
-                int differenceInMinutes = (int)difference.TotalMinutes;
-                int timeRemaining = differenceInMinutes < test.TestDuration ? differenceInMinutes : test.TestDuration;
-
-                TempUserTest tempUserTestToBeAdded = new TempUserTest()
-                {
-                    UserId = userId,
-                    TestId = test.Id,
-                    Status = true,
-                    TimeRemaining = timeRemaining * 60,
-                    IsAdminApproved = false,
-                    IsFinished = false,
-                    CreatedBy = userId,
-                };
-
-                _appDbContext.Add(tempUserTestToBeAdded);
-                int count = _appDbContext.SaveChanges();
-                if (count == 1)
-                {
-                    bool result = AddTestQuestionsToUser(userId, tempUserTestToBeAdded.Id, test.Id);
-                    if (!result)
-                    {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.TempUserTest) + string.Format(ResponseMessages.InternalErrorForAddingQuestionsToTest),
-                            Result = true,
-                            StatusCode = ResponseStatusCode.OK
-                        });
-                    }
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.TempUserTest) + string.Format(ResponseMessages.AddSuccess, ModuleNames.TestQuestions),
-                        Result = true,
-                        StatusCode = ResponseStatusCode.OK
-                    });
-
-                }
-                else
-                {
-                    _logger.LogError($"Error occurred in CandidateRepository.CreateTempUserTest for userId:{userId} while adding temp user test \n");
-                    return new JsonResult(new ApiResponse<string>
-                    {
-                        Message = ResponseMessages.InternalError,
-                        Result = false,
-                        StatusCode = ResponseStatusCode.InternalServerError
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error occurred for userId: {userId} in CandidateRepository.CreateTempUserTest \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
-                return new JsonResult(new ApiResponse<string>
-                {
-                    Message = ResponseMessages.InternalError,
-                    Result = false,
-                    StatusCode = ResponseStatusCode.InternalServerError
-                });
-            }
-        }
 
         public async Task<JsonResult> GetTempUserTest(int userId)
         {
@@ -319,76 +127,7 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
-        public async Task<JsonResult> CreateUserTestResult(CreateUserTestResultVM userTestResult)
-        {
-            try
-            {
-                if (userTestResult != null)
-                {
-                    UserTestResult? userTestResultAlreadyExists = _appDbContext.UserTestResult.Where(x => x.UserTestId == userTestResult.UserTestId && x.IsDeleted == false).FirstOrDefault();
-                    if (userTestResultAlreadyExists == null)
-                    {
-                        UserTestResult userTestResultToBeAdded = new UserTestResult()
-                        {
-                            UserTestId = userTestResult.UserTestId,
-                            QuestionId = userTestResult.QuestionId,
-                            UserAnswers = userTestResult.UserAnswers,
-                            IsAttended = userTestResult.IsAttended,
-                            CreatedBy = userTestResult.CreatedBy,
-                        };
 
-                        _appDbContext.Add(userTestResultToBeAdded);
-                        int count = _appDbContext.SaveChanges();
-                        if (count == 1)
-                        {
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.UserTestResult),
-                                Result = true,
-                                StatusCode = ResponseStatusCode.OK
-                            });
-                        }
-                        else
-                        {
-                            _logger.LogError($"Error occurred in CandidateRepository.CreateUserTestResult while adding user test result\n");
-                            return new JsonResult(new ApiResponse<string>
-                            {
-                                Message = ResponseMessages.InternalError,
-                                Result = false,
-                                StatusCode = ResponseStatusCode.InternalServerError
-                            });
-                        }
-                    }
-                    else
-                    {
-                        return new JsonResult(new ApiResponse<string>
-                        {
-                            Message = string.Format(ResponseMessages.AlreadyExists, ModuleNames.UserTestResult),
-                            Result = false,
-                            StatusCode = ResponseStatusCode.AlreadyExist
-                        });
-                    }
-
-                }
-                return new JsonResult(new ApiResponse<string>
-                {
-                    Message = ResponseMessages.BadRequest,
-                    Result = false,
-                    StatusCode = ResponseStatusCode.BadRequest
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error occurred in CandidateRepository.CreateUserTestResult \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
-                return new JsonResult(new ApiResponse<string>
-                {
-                    Message = ResponseMessages.InternalError,
-                    Result = false,
-                    StatusCode = ResponseStatusCode.InternalServerError
-                });
-            }
-
-        }
         public async Task<JsonResult> SaveTestQuestionAnswer(UpdateTestQuestionAnswerVM userTestQuestionAnswer)
         {
             try
@@ -728,10 +467,14 @@ namespace AptitudeTest.Data.Data
             }
         }
 
-        public async Task<JsonResult> GetQuestionsStatus(int userId)
+        public async Task<JsonResult> GetQuestionsStatus(int userId, bool isRefresh)
         {
             try
             {
+                if (isRefresh)
+                {
+                    Thread.Sleep(10);
+                }
                 if (userId < 1)
                 {
                     return new JsonResult(new ApiResponse<string>
