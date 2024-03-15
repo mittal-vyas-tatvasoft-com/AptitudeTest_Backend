@@ -106,7 +106,7 @@ namespace AptitudeTest.Data.Data
                 }
 
                 bool isSubmitted;
-                bool isStarted= false;
+                bool isStarted = false;
                 if (tempUserTest == null)
                 {
                     int? groupId = _context.Users.Where(x => x.Id == user.Id && x.IsDeleted == false).Select(x => x.GroupId).FirstOrDefault();
@@ -155,7 +155,7 @@ namespace AptitudeTest.Data.Data
                     RefreshTokenExpiryTime = tokenPayload.RefreshTokenExpiryTime,
                     Sid = sessionId,
                     IsSubmitted = isSubmitted,
-                    IsStarted= isStarted,
+                    IsStarted = isStarted,
                     IsProfileEdited = user.IsProfileEdited
                 };
 
