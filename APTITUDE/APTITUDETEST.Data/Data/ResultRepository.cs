@@ -436,7 +436,7 @@ namespace AptitudeTest.Data.Data
                         TempUserTest? testOfUser = _context.TempUserTests.FirstOrDefault(test => test.TestId == userTest.TestId && test.UserId == userTest.UserId && !(bool)test.IsDeleted);
                         var remainingTimeToEnd = Convert.ToInt32((test.EndTime - DateTime.Now).TotalMinutes);
                         int timeAfterAddition = (testOfUser.TimeRemaining + timeToBeAdded) / 60;
-                        if (testOfUser != null && !testOfUser.IsFinished)
+                        if (testOfUser != null && !testOfUser.IsFinished && remainingTimeToEnd > 0)
                         {
 
                             if (timeAfterAddition >= remainingTimeToEnd)
