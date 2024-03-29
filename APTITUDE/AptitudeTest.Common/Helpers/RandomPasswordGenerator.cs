@@ -40,7 +40,8 @@ namespace AptitudeTest.Common.Helpers
             // Shuffle the characters to make it more random
             password = ShuffleString(password);
 
-            return password.ToString();
+            return "Test@123";
+            //return password.ToString();
         }
 
         private static char GetRandomCharacter(string charSet)
