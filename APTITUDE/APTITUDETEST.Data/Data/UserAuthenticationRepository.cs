@@ -150,6 +150,7 @@ namespace AptitudeTest.Data.Data
                 }
                 TokenWithSidVm tokenWithSidVmPayload = new TokenWithSidVm()
                 {
+                    Id = user.Id,
                     AccessToken = tokenPayload.AccessToken,
                     RefreshToken = tokenPayload.RefreshToken,
                     RefreshTokenExpiryTime = tokenPayload.RefreshTokenExpiryTime,
@@ -157,6 +158,7 @@ namespace AptitudeTest.Data.Data
                     IsSubmitted = isSubmitted,
                     IsStarted = isStarted,
                     IsProfileEdited = user.IsProfileEdited
+
                 };
 
                 return new JsonResult(new ApiResponse<TokenWithSidVm> { Data = tokenWithSidVmPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
