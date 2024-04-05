@@ -202,7 +202,8 @@ namespace AptitudeTest.Data.Data
         #region Create
         public async Task<JsonResult> Create(CreateUserVM user)
         {
-            var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+            //var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+            var password = "Test@123";
             try
             {
                 if (user == null)
@@ -407,7 +408,8 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-                var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+                //var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+                var password = "Test@123";
 
                 if (registerUserVM.UserAcademicsVM == null)
                 {
