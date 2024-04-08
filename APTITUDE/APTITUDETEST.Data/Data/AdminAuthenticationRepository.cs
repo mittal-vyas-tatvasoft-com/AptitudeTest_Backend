@@ -261,8 +261,8 @@ namespace AptitudeTest.Data.Data
                 var subject = "Password reset request";
                 var body = $"<h3>Hello {firstName}</h3>,<br />we received password reset request from your side,<br /><br />Please click on the following link to reset your password <br /><br /><a href='{resetLink}'><h3>Click here</h3></a>";
 
-                //var emailHelper = new EmailHelper(_appSettingConfiguration);
-                var emailHelper = new EmailService(_appSettingConfiguration);
+                var emailHelper = new EmailHelper(_appSettingConfiguration);
+                //var emailHelper = new EmailService(_appSettingConfiguration);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
             }
