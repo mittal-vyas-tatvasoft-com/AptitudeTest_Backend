@@ -65,7 +65,7 @@ namespace AptitudeTest.Common.Helpers
                 isMailSend = true;
                 return isMailSend;
             }
-            catch ()
+            catch
             {
                 return false;
             }
