@@ -1253,6 +1253,8 @@ namespace AptitudeTest.Data.Data
                                 IsAdminApproved = true,
                                 IsFinished = false,
                                 CreatedBy = candidate.Id,
+                                TestStartTime = test.StartTime,
+                                IsStartTimeUpdated = false
                             };
 
                             TempUserTest existingTempUserTest = _context.TempUserTests.AsNoTracking().FirstOrDefault(x => x.UserId == tempUserTestToBeAdded.UserId && !(bool)x.IsDeleted);
