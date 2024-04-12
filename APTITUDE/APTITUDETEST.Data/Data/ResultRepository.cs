@@ -538,6 +538,35 @@ namespace AptitudeTest.Data.Data
                 });
             }
         }
+
+        public async Task<JsonResult> ReverseLockedTests(ReverseLockedTestVM reverseLockedTestVM)
+        {
+            try
+            {
+                int count = 0;
+                using (DbConnection connection = new DbConnection())
+                {
+                    count = await connection.Connection.ExecuteScalarAsync<int>("select * from reverselockedtest(@user_ids,@test_id)", new { user_ids = reverseLockedTestVM.UserIds, test_id = reverseLockedTestVM.TestId });
+                }
+                return new JsonResult(new ApiResponse<int>
+                {
+                    Data = count,
+                    Message = string.Format(ResponseMessages.StatusUpdateSuccess, ModuleNames.Approval),
+                    Result = false,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in ResultRepository.ReverseLockedTests \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
         #endregion
 
         #region Helper Methods

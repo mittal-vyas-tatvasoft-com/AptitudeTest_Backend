@@ -155,6 +155,16 @@ namespace AptitudeTest.Controllers
 
         #endregion
 
+        #region GetUsersExportData
+
+        [HttpGet("[action]")]
+        public async Task<JsonResult> GetUsersExportData(string? searchQuery, int? groupId, int? collegeId, int? yearAdded, string? sortField, string? sortOrder, int? currentPageIndex = 0, int? pageSize = 10)
+        {
+            return await _userService.GetUsersExportData(searchQuery, groupId, collegeId, yearAdded, sortField, sortOrder, currentPageIndex, pageSize);
+        }
+
+        #endregion
+
         #endregion
     }
 }
