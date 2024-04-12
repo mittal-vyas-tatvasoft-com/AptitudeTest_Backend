@@ -73,5 +73,12 @@
             Exists = 2,
             NotExists = 3,
         }
+        public enum PreferredLocation
+        {
+            OnlyAhmedabad = 1,
+            PreferredRajkot = 2,
+            OnlyRajkot = 3
+        }
+
     }
 }

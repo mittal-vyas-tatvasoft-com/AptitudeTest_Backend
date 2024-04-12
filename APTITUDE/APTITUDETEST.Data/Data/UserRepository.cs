@@ -304,7 +304,7 @@ namespace AptitudeTest.Data.Data
                 }
                 using (var connection = _dapperContext.CreateConnection())
                 {
-                    var procedure = "udpate_user_transaction";
+                    var procedure = "udpate_user_transaction_2";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
                     dateParameter.Value = user.DateOfBirth;
                     if (user.OtherCollege != null && user.OtherCollege.Trim() != "")
@@ -345,6 +345,7 @@ namespace AptitudeTest.Data.Data
                         p_phonenumber = user.PhoneNumber,
                         p_appliedthrough = user.AppliedThrough,
                         p_technologyinterestedin = user.TechnologyInterestedIn,
+                        p_preferedlocation = user.PreferedLocation,
                         p_permanentaddress1 = user.PermanentAddress1,
                         p_permanentaddress2 = user.PermanentAddress2,
                         p_pincode = user.Pincode,
@@ -354,9 +355,9 @@ namespace AptitudeTest.Data.Data
                         p_gujcetscore = user.GUJCETScore,
                         p_jeescore = user.JEEScore,
                         p_updatedby = user.UpdatedBy,
+                        p_isprofileedited = user.IsProfileEdited,
                         p_userfamilydata = user.UserFamilyVM.ToArray(),
-                        p_useracademicsdata = user.UserAcademicsVM.ToArray(),
-                        p_isprofileedited = user.IsProfileEdited
+                        p_useracademicsdata = user.UserAcademicsVM.ToArray()
                     });
 
                     connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure);
@@ -420,7 +421,7 @@ namespace AptitudeTest.Data.Data
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     int DefaultGroupId = _appDbContext.MasterGroup.Where(g => g.IsDefault == true).Select(g => g.Id).FirstOrDefault();
-                    var procedure = "register_user";
+                    var procedure = "register_user_2";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
                     dateParameter.Value = registerUserVM.DateOfBirth;
                     if (registerUserVM.OtherCollege != null && registerUserVM.OtherCollege != "")
@@ -461,6 +462,7 @@ namespace AptitudeTest.Data.Data
                         p_phonenumber = registerUserVM.PhoneNumber,
                         p_appliedthrough = registerUserVM.AppliedThrough,
                         p_technologyinterestedin = registerUserVM.TechnologyInterestedIn,
+                        p_preferedlocation = registerUserVM.PreferedLocation,
                         p_permanentaddress1 = registerUserVM.PermanentAddress1,
                         p_permanentaddress2 = registerUserVM.PermanentAddress2,
                         p_pincode = registerUserVM.Pincode,
@@ -471,6 +473,7 @@ namespace AptitudeTest.Data.Data
                         p_jeescore = registerUserVM.JEEScore,
                         p_userfamilydata = registerUserVM.UserFamilyVM.ToArray(),
                         p_useracademicsdata = registerUserVM.UserAcademicsVM.ToArray(),
+
                         next_id = 0
                     });
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
@@ -795,6 +798,8 @@ namespace AptitudeTest.Data.Data
             userDetails.JEEScore = userData.jeescore ?? 0;
             userDetails.Status = userData.status ?? 0;
             userDetails.CreatedYear = userData.createdyear ?? 0;
+            userDetails.PreferedLocation = userData.preferedlocation ?? 0;
+
         }
 
         private static void FillAcademicAndFamilyData(dynamic data, UserDetailsVM userDetails, List<int> acadamicIds, List<int> familyIds)

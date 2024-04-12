@@ -36,9 +36,12 @@ namespace APTITUDETEST.Core.Entities.Users
         public int? AppliedThrough { get; set; }
         [ForeignKey("MasterTechnologies")]
         public int? TechnologyInterestedIn { get; set; }
-        public int? ACPCMeritRank { get; set; }
-        public float? GUJCETScore { get; set; }
-        public float? JEEScore { get; set; }
+        [Required]
+        public int ACPCMeritRank { get; set; }
+        [Required]
+        public float GUJCETScore { get; set; }
+        [Required]
+        public float JEEScore { get; set; }
         public int? Gender { get; set; }
         public int? PreferedLocation { get; set; }
         public string? RelationshipWithExistingEmployee { get; set; }
