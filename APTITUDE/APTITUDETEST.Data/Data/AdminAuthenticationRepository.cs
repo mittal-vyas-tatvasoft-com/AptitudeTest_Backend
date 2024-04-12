@@ -43,7 +43,7 @@ namespace AptitudeTest.Data.Data
                 }
 
                 var jwtHelper = new JwtHelper(_appSettingConfiguration);
-                Admin? admin = _context.Admins.FirstOrDefault(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false);
+                Admin? admin = _context.Admins.FirstOrDefault(u => u.Email.Trim().ToLower() == loginVm.Email.Trim().ToLower() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false);
                 if (admin == null)
                 {
                     return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredentials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
