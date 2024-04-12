@@ -97,6 +97,11 @@ namespace AptitudeTest.Data.Data
                         if (tempUserTestForUser.IsAdminApproved)
                         {
                             tempUserTestForUser.IsAdminApproved = false;
+                            if (!tempUserTestForUser.IsStartTimeUpdated)
+                            {
+                                tempUserTestForUser.TestStartTime = DateTime.Now;
+                                tempUserTestForUser.IsStartTimeUpdated = true;
+                            }
                             _appDbContext.Update(tempUserTestForUser);
                             _appDbContext.SaveChanges();
                             return new JsonResult(new ApiResponse<string>

@@ -26,6 +26,8 @@ namespace AptitudeTest.Core.Entities.Candidate
         public bool? IsDeleted { get; set; } = false;
         public bool IsActive { get; set; } = true;
         public bool IsStarted { get; set; } = false;
+        public DateTime TestStartTime { get; set; }
+        public bool IsStartTimeUpdated { get; set; } = false;
         public virtual User Users { get; set; }
         public virtual Test.Test Tests { get; set; }
     }
