@@ -69,6 +69,8 @@ namespace AptitudeTest.Data.Data
                 settingConfigurations.ScreenCapture = updateSettingsVM.ScreenCapture;
                 settingConfigurations.IntervalForScreenCapture = updateSettingsVM.IntervalForScreenCapture;
                 settingConfigurations.CutOff = updateSettingsVM.CutOff;
+                settingConfigurations.Email = updateSettingsVM.Email;
+                settingConfigurations.Password = updateSettingsVM.Password;
                 _context.Update(settingConfigurations);
                 _context.SaveChanges();
                 return new JsonResult(new ApiResponse<string>
