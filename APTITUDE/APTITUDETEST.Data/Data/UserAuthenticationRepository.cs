@@ -52,7 +52,7 @@ namespace AptitudeTest.Data.Data
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
                 var jwtHelper = new JwtHelper(_appSettingConfiguration);
-                User? user = _context.Users.Where(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == true)?.FirstOrDefault();
+                User? user = _context.Users.Where(u => u.Email.Trim().ToLower() == loginVm.Email.Trim().ToLower() && u.Password == loginVm.Password.Trim() && u.IsDeleted == true)?.FirstOrDefault();
                 if (user != null)
                 {
                     return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.UserDoesNotExist, StatusCode = ResponseStatusCode.Unauthorized, Result = false });

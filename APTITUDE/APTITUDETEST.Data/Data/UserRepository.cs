@@ -766,6 +766,50 @@ namespace AptitudeTest.Data.Data
         }
         #endregion
 
+        #region GetUsersExportData
+
+        public async Task<JsonResult> GetUsersExportData(string? searchQuery, int? groupId, int? collegeId, int? yearAdded, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    int? testId = null;
+                    List<UserExportDataVM> data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = groupId, CollegeId = collegeId, TestId = testId, YearAttended = yearAdded, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    if (!data.Any())
+                    {
+                        return new JsonResult(new ApiResponse<List<UserExportDataVM>>
+                        {
+                            Data = data,
+                            Message = ResponseMessages.NoRecordsFound,
+                            Result = true,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+
+                    return new JsonResult(new ApiResponse<List<UserExportDataVM>>
+                    {
+                        Data = data,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in UserRepository.GetUsersExportData \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.RequestFailed
+                });
+            }
+        }
+
+        #endregion
+
         #region HelpingMethods
 
         private static void FillUserData(UserDetailsVM userDetails, dynamic data)

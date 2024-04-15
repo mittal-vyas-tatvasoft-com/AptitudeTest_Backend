@@ -135,6 +135,17 @@ namespace AptitudeTest.Controllers
         {
             return await _service.GetGroupOfTest(testId);
         }
+
+
+        /// <summary>
+        /// This method allows admin to reactivate finished tests
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<JsonResult> ReverseLockedTests(ReverseLockedTestVM reverseLockedTestVM)
+        {
+            return await _service.ReverseLockedTests(reverseLockedTestVM);
+        }
         #endregion
     }
 }
