@@ -771,8 +771,7 @@ namespace AptitudeTest.Data.Data
             {
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
-                    int? testId = null;
-                    List<UserExportDataVM> data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = groupId, CollegeId = collegeId, TestId = testId, YearAttended = yearAdded, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    List<UserExportDataVM> data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = groupId, CollegeId = collegeId, YearAttended = yearAdded, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
                     if (!data.Any())
                     {
                         return new JsonResult(new ApiResponse<List<UserExportDataVM>>
