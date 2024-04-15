@@ -5,8 +5,10 @@
         public int TimeRemaining { get; set; }
         public int UserId { get; set; }
         public string FirstName { get; set; }
+        public string FatherName { get; set; }
         public string LastName { get; set; }
         public string CollegeName { get; set; }
+        public string ShortCollegeName { get; set; }
         public DateTime StartTime { get; set; }
         public decimal Points { get; set; }
         public int CorrectMarks { get; set; }
