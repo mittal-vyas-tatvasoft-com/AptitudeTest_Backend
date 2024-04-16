@@ -19,7 +19,7 @@ namespace AptitudeTest.Core.ViewModels
         public int GroupId { get; set; }
         [Required]
         public int CollegeId { get; set; }
-        public int PreferedLocation { get; set; }
+        public int PreferredLocation { get; set; }
         public int Gender { get; set; }
 
         public bool Status { get; set; }

@@ -24,7 +24,7 @@ namespace AptitudeTest.Core.ViewModels
         public string? CollegeName { get; set; }
         public int? AppliedThrough { get; set; }
         public int? TechnologyInterestedIn { get; set; }
-        public int PreferedLocation { get; set; }
+        public int PreferredLocation { get; set; }
         public string? TechnologyName { get; set; }
         [Required]
         public int ACPCMeritRank { get; set; }

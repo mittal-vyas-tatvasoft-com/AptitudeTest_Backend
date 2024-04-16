@@ -304,7 +304,7 @@ namespace AptitudeTest.Data.Data
                 }
                 using (var connection = _dapperContext.CreateConnection())
                 {
-                    var procedure = "udpate_user_transaction_2";
+                    var procedure = "udpate_user_detail";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
                     dateParameter.Value = user.DateOfBirth;
                     if (user.OtherCollege != null && user.OtherCollege.Trim() != "")
@@ -345,7 +345,7 @@ namespace AptitudeTest.Data.Data
                         p_phonenumber = user.PhoneNumber,
                         p_appliedthrough = user.AppliedThrough,
                         p_technologyinterestedin = user.TechnologyInterestedIn,
-                        p_preferedlocation = user.PreferedLocation,
+                        p_preferredlocation = user.PreferredLocation,
                         p_permanentaddress1 = user.PermanentAddress1,
                         p_permanentaddress2 = user.PermanentAddress2,
                         p_pincode = user.Pincode,
@@ -421,7 +421,7 @@ namespace AptitudeTest.Data.Data
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     int DefaultGroupId = _appDbContext.MasterGroup.Where(g => g.IsDefault == true).Select(g => g.Id).FirstOrDefault();
-                    var procedure = "register_user_2";
+                    var procedure = "register_user_detail";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
                     dateParameter.Value = registerUserVM.DateOfBirth;
                     if (registerUserVM.OtherCollege != null && registerUserVM.OtherCollege != "")
@@ -462,7 +462,7 @@ namespace AptitudeTest.Data.Data
                         p_phonenumber = registerUserVM.PhoneNumber,
                         p_appliedthrough = registerUserVM.AppliedThrough,
                         p_technologyinterestedin = registerUserVM.TechnologyInterestedIn,
-                        p_preferedlocation = registerUserVM.PreferedLocation,
+                        p_preferredlocation = registerUserVM.PreferredLocation,
                         p_permanentaddress1 = registerUserVM.PermanentAddress1,
                         p_permanentaddress2 = registerUserVM.PermanentAddress2,
                         p_pincode = registerUserVM.Pincode,
@@ -774,7 +774,8 @@ namespace AptitudeTest.Data.Data
             {
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
-                    List<UserExportDataVM> data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = groupId, CollegeId = collegeId, YearAttended = yearAdded, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    int? testId = null;
+                    List<UserExportDataVM> data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = groupId, CollegeId = collegeId, TestId = testId, YearAttended = yearAdded, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
                     if (!data.Any())
                     {
                         return new JsonResult(new ApiResponse<List<UserExportDataVM>>
@@ -841,7 +842,7 @@ namespace AptitudeTest.Data.Data
             userDetails.JEEScore = userData.jeescore ?? 0;
             userDetails.Status = userData.status ?? 0;
             userDetails.CreatedYear = userData.createdyear ?? 0;
-            userDetails.PreferedLocation = userData.preferedlocation ?? 0;
+            userDetails.PreferredLocation = userData.preferredlocation ?? 0;
 
         }
 

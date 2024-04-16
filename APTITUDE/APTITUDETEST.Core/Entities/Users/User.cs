@@ -43,7 +43,7 @@ namespace APTITUDETEST.Core.Entities.Users
         [Required]
         public float JEEScore { get; set; }
         public int? Gender { get; set; }
-        public int? PreferedLocation { get; set; }
+        public int? PreferredLocation { get; set; }
         public string? RelationshipWithExistingEmployee { get; set; }
         public bool? Status { get; set; }
         public bool IsProfileEdited { get; set; }
