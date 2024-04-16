@@ -124,7 +124,9 @@ builder.Services.AddCors(option =>
 {
     option.AddPolicy("MyPolicy", builder =>
     {
-        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        //builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        //builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200");
+        builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://aptitudetest.web2.anasource.com/");
     });
 });
 

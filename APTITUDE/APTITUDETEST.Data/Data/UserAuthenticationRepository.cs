@@ -57,7 +57,7 @@ namespace AptitudeTest.Data.Data
                 {
                     return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.UserDoesNotExist, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
                 }
-                user = _context.Users.Where(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false)?.FirstOrDefault();
+                user = _context.Users.Where(u => u.Email.Trim().ToLower() == loginVm.Email.Trim().ToLower() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false)?.FirstOrDefault();
                 if (user == null)
                 {
                     return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredentials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
@@ -88,7 +88,7 @@ namespace AptitudeTest.Data.Data
                 user.SessionId = sessionId;
                 _context.Update(user);
                 _context.SaveChanges();
-                _sessionIdHelperInMemoryService.AddSessionId(sessionId, user.Email);
+                _sessionIdHelperInMemoryService.AddSessionId(sessionId, user.Email); 
 
                 TokenVm tokenPayload = new TokenVm()
                 {
