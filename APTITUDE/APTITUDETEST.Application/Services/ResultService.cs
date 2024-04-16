@@ -53,6 +53,11 @@ namespace AptitudeTest.Application.Services
         {
             return await _repository.UpdateTestRemainingTime(userTests, timeToBeAdded);
         }
+
+        public async Task<JsonResult> ReverseLockedTests(ReverseLockedTestVM reverseLockedTestVM)
+        {
+            return await _repository.ReverseLockedTests(reverseLockedTestVM);
+        }
         #endregion
     }
 }

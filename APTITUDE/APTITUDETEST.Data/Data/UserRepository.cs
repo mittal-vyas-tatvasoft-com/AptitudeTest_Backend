@@ -202,8 +202,7 @@ namespace AptitudeTest.Data.Data
         #region Create
         public async Task<JsonResult> Create(CreateUserVM user)
         {
-            //var password = RandomPasswordGenerator.GenerateRandomPassword(8);
-            var password = "Test@123";
+            var password = RandomPasswordGenerator.GenerateRandomPassword(8);
             try
             {
                 if (user == null)
@@ -305,7 +304,7 @@ namespace AptitudeTest.Data.Data
                 }
                 using (var connection = _dapperContext.CreateConnection())
                 {
-                    var procedure = "udpate_user_transaction";
+                    var procedure = "udpate_user_detail";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
                     dateParameter.Value = user.DateOfBirth;
                     if (user.OtherCollege != null && user.OtherCollege.Trim() != "")
@@ -346,6 +345,7 @@ namespace AptitudeTest.Data.Data
                         p_phonenumber = user.PhoneNumber,
                         p_appliedthrough = user.AppliedThrough,
                         p_technologyinterestedin = user.TechnologyInterestedIn,
+                        p_preferredlocation = user.PreferredLocation,
                         p_permanentaddress1 = user.PermanentAddress1,
                         p_permanentaddress2 = user.PermanentAddress2,
                         p_pincode = user.Pincode,
@@ -355,9 +355,9 @@ namespace AptitudeTest.Data.Data
                         p_gujcetscore = user.GUJCETScore,
                         p_jeescore = user.JEEScore,
                         p_updatedby = user.UpdatedBy,
+                        p_isprofileedited = user.IsProfileEdited,
                         p_userfamilydata = user.UserFamilyVM.ToArray(),
-                        p_useracademicsdata = user.UserAcademicsVM.ToArray(),
-                        p_isprofileedited = user.IsProfileEdited
+                        p_useracademicsdata = user.UserAcademicsVM.ToArray()
                     });
 
                     connection.Query(procedure, parameters, commandType: CommandType.StoredProcedure);
@@ -408,8 +408,7 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-                //var password = RandomPasswordGenerator.GenerateRandomPassword(8);
-                var password = "Test@123";
+                var password = RandomPasswordGenerator.GenerateRandomPassword(8);
 
                 if (registerUserVM.UserAcademicsVM == null)
                 {
@@ -422,7 +421,7 @@ namespace AptitudeTest.Data.Data
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     int DefaultGroupId = _appDbContext.MasterGroup.Where(g => g.IsDefault == true).Select(g => g.Id).FirstOrDefault();
-                    var procedure = "register_user";
+                    var procedure = "register_user_detail";
                     var dateParameter = new NpgsqlParameter("p_dateofbirth", NpgsqlDbType.Date);
                     dateParameter.Value = registerUserVM.DateOfBirth;
                     if (registerUserVM.OtherCollege != null && registerUserVM.OtherCollege != "")
@@ -463,6 +462,7 @@ namespace AptitudeTest.Data.Data
                         p_phonenumber = registerUserVM.PhoneNumber,
                         p_appliedthrough = registerUserVM.AppliedThrough,
                         p_technologyinterestedin = registerUserVM.TechnologyInterestedIn,
+                        p_preferredlocation = registerUserVM.PreferredLocation,
                         p_permanentaddress1 = registerUserVM.PermanentAddress1,
                         p_permanentaddress2 = registerUserVM.PermanentAddress2,
                         p_pincode = registerUserVM.Pincode,
@@ -473,6 +473,7 @@ namespace AptitudeTest.Data.Data
                         p_jeescore = registerUserVM.JEEScore,
                         p_userfamilydata = registerUserVM.UserFamilyVM.ToArray(),
                         p_useracademicsdata = registerUserVM.UserAcademicsVM.ToArray(),
+
                         next_id = 0
                     });
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
@@ -765,6 +766,50 @@ namespace AptitudeTest.Data.Data
         }
         #endregion
 
+        #region GetUsersExportData
+
+        public async Task<JsonResult> GetUsersExportData(string? searchQuery, int? groupId, int? collegeId, int? yearAdded, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    int? testId = null;
+                    List<UserExportDataVM> data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = groupId, CollegeId = collegeId, TestId = testId, YearAttended = yearAdded, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    if (!data.Any())
+                    {
+                        return new JsonResult(new ApiResponse<List<UserExportDataVM>>
+                        {
+                            Data = data,
+                            Message = ResponseMessages.NoRecordsFound,
+                            Result = true,
+                            StatusCode = ResponseStatusCode.NotFound
+                        });
+                    }
+
+                    return new JsonResult(new ApiResponse<List<UserExportDataVM>>
+                    {
+                        Data = data,
+                        Message = ResponseMessages.Success,
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in UserRepository.GetUsersExportData \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.RequestFailed
+                });
+            }
+        }
+
+        #endregion
+
         #region HelpingMethods
 
         private static void FillUserData(UserDetailsVM userDetails, dynamic data)
@@ -797,6 +842,8 @@ namespace AptitudeTest.Data.Data
             userDetails.JEEScore = userData.jeescore ?? 0;
             userDetails.Status = userData.status ?? 0;
             userDetails.CreatedYear = userData.createdyear ?? 0;
+            userDetails.PreferredLocation = userData.preferredlocation ?? 0;
+
         }
 
         private static void FillAcademicAndFamilyData(dynamic data, UserDetailsVM userDetails, List<int> acadamicIds, List<int> familyIds)
@@ -850,8 +897,7 @@ namespace AptitudeTest.Data.Data
             {
                 var subject = "Password change request for Tatvasoft - Aptitude Test Portal";
                 var body = $"<h3>Hello {firstName} {lastName},</h3>We have received Password change request from you,<br/>Here are your new credentials!!<br /><h4>User name: {email}</h4><h4>Password: {password}</h4>Click on below button to login.<br/><a href = {userLoginUrl}><button btn-primary>Login</button></a>";
-                var emailHelper = new EmailHelper(_config);
-                //var emailHelper = new EmailService(_config);
+                var emailHelper = new EmailHelper(_config, _appDbContext);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
             }
@@ -867,8 +913,7 @@ namespace AptitudeTest.Data.Data
             {
                 var subject = "Confirm new user sign-up in Tatvasoft - Aptitude Test Portal";
                 var body = $"<h3>Welcome {firstName} {lastName},</h3>We have received registration request for you,<br/>Here are your credentials to login!!<br /><h4>User name: {email}</h4><h4>Password: {password}</h4>Click on below button to login.<br/><a href = {userLoginUrl}><button btn-primary>Login</button></a>";
-                var emailHelper = new EmailHelper(_config);
-                //var emailHelper = new EmailService(_config);
+                var emailHelper = new EmailHelper(_config, _appDbContext);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
             }

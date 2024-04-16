@@ -16,6 +16,7 @@ namespace AptitudeTest.Core.Interfaces
         public Task<JsonResult> ImportUsers(ImportUserVM importUsers);
         public Task<JsonResult> RegisterUser(UserVM registerUserVM);
         public Task<JsonResult> ChangeUserPasswordByAdmin(string? Email, string? Password);
+        public Task<JsonResult> GetUsersExportData(string? searchQuery, int? groupId, int? collegeId, int? yearAdded, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize);
 
     }
 }

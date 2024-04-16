@@ -179,6 +179,18 @@ namespace AptitudeTest.Data.Data
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     List<ResultsVM> data = connection.Query<ResultsVM>("Select * from getallresults(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    var userTests = _context.TempUserTests.Select(x => new { x.UserId, x.TestStartTime, x.IsStartTimeUpdated }).ToList();
+                    int i = (int)currentPageIndex*(int)pageSize;
+                    foreach (var item in data)
+                    {
+                        var userTestData = userTests.FirstOrDefault(x => x.UserId == item.UserId);
+                        if (userTestData.IsStartTimeUpdated)
+                        {
+                            item.StartTime = userTestData.TestStartTime;
+                        }
+                        item.Index = i;
+                        i++;
+                    }
                     return new JsonResult(new ApiResponse<List<ResultsVM>>
                     {
                         Data = data,
@@ -530,6 +542,35 @@ namespace AptitudeTest.Data.Data
             catch (Exception ex)
             {
                 _logger.LogError($"Error occurred in ResultRepository.GetApproveTestData \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
+                return new JsonResult(new ApiResponse<string>
+                {
+                    Message = ResponseMessages.InternalError,
+                    Result = false,
+                    StatusCode = ResponseStatusCode.InternalServerError
+                });
+            }
+        }
+
+        public async Task<JsonResult> ReverseLockedTests(ReverseLockedTestVM reverseLockedTestVM)
+        {
+            try
+            {
+                int count = 0;
+                using (DbConnection connection = new DbConnection())
+                {
+                    count = await connection.Connection.ExecuteScalarAsync<int>("select * from reverselockedtest(@user_ids,@test_id)", new { user_ids = reverseLockedTestVM.UserIds, test_id = reverseLockedTestVM.TestId });
+                }
+                return new JsonResult(new ApiResponse<int>
+                {
+                    Data = count,
+                    Message = string.Format(ResponseMessages.StatusUpdateSuccess, ModuleNames.Approval),
+                    Result = false,
+                    StatusCode = ResponseStatusCode.Success
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred in ResultRepository.ReverseLockedTests \n MESSAGE : {ex.Message} \n INNER EXCEPTION : {ex.InnerException} \n");
                 return new JsonResult(new ApiResponse<string>
                 {
                     Message = ResponseMessages.InternalError,

@@ -18,7 +18,7 @@ namespace AptitudeTest.Data.Data
     public class UserAuthenticationRepository : IUserAuthenticationRepository
     {
         #region Properies
-        private readonly AppDbContext _context;
+        static AppDbContext _context;
         static IConfiguration? _appSettingConfiguration;
         private Dictionary<string, TokenVm> RefreshTokens = new Dictionary<string, TokenVm>();
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -52,12 +52,12 @@ namespace AptitudeTest.Data.Data
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.BadRequest, StatusCode = ResponseStatusCode.BadRequest, Result = false });
                 }
                 var jwtHelper = new JwtHelper(_appSettingConfiguration);
-                User? user = _context.Users.Where(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == true)?.FirstOrDefault();
+                User? user = _context.Users.Where(u => u.Email.Trim().ToLower() == loginVm.Email.Trim().ToLower() && u.Password == loginVm.Password.Trim() && u.IsDeleted == true)?.FirstOrDefault();
                 if (user != null)
                 {
                     return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.UserDoesNotExist, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
                 }
-                user = _context.Users.Where(u => u.Email == loginVm.Email.Trim() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false)?.FirstOrDefault();
+                user = _context.Users.Where(u => u.Email.Trim().ToLower() == loginVm.Email.Trim().ToLower() && u.Password == loginVm.Password.Trim() && u.IsDeleted == false)?.FirstOrDefault();
                 if (user == null)
                 {
                     return new JsonResult(new ApiResponse<User> { Message = ResponseMessages.InvalidCredentials, StatusCode = ResponseStatusCode.Unauthorized, Result = false });
@@ -88,7 +88,7 @@ namespace AptitudeTest.Data.Data
                 user.SessionId = sessionId;
                 _context.Update(user);
                 _context.SaveChanges();
-                _sessionIdHelperInMemoryService.AddSessionId(sessionId, user.Email);
+                _sessionIdHelperInMemoryService.AddSessionId(sessionId, user.Email); 
 
                 TokenVm tokenPayload = new TokenVm()
                 {
@@ -339,8 +339,7 @@ namespace AptitudeTest.Data.Data
                 var subject = "Password reset request";
                 var body = $"<h3>Hello {firstName} {lastName},</h3>We have received Password reset request from you,<br />Please click on the following link to reset your password.<br /><a href='{resetLink}'>Reset Password</a>";
 
-                var emailHelper = new EmailHelper(_appSettingConfiguration);
-                //var emailHelper = new EmailService(_appSettingConfiguration);
+                var emailHelper = new EmailHelper(_appSettingConfiguration, _context);
                 var isEmailSent = emailHelper.SendEmail(email, subject, body);
                 return isEmailSent;
             }

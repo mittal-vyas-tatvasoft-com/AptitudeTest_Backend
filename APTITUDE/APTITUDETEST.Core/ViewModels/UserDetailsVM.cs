@@ -1,4 +1,6 @@
-﻿namespace AptitudeTest.Core.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AptitudeTest.Core.ViewModels
 {
     public class UserDetailsVM
     {
@@ -22,10 +24,14 @@
         public string? CollegeName { get; set; }
         public int? AppliedThrough { get; set; }
         public int? TechnologyInterestedIn { get; set; }
+        public int PreferredLocation { get; set; }
         public string? TechnologyName { get; set; }
-        public int? ACPCMeritRank { get; set; }
-        public float? GUJCETScore { get; set; }
-        public float? JEEScore { get; set; }
+        [Required]
+        public int ACPCMeritRank { get; set; }
+        [Required]
+        public float GUJCETScore { get; set; }
+        [Required]
+        public float JEEScore { get; set; }
         public int? Gender { get; set; }
 
         public bool? Status { get; set; }
