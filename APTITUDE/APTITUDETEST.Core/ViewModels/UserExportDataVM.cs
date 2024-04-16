@@ -7,7 +7,7 @@
         public string? Gender { get; set; }
         public string? AbbreviationofCollege { get; set; }
         public string? Location { get; set; }
-        public string? PreferedProfile { get; set; }
+        public string? PreferredProfile { get; set; }
         public string? AppliedThrough { get; set; }
         public string? PermanentAddress { get; set; }
         public string? Mobile { get; set; }
