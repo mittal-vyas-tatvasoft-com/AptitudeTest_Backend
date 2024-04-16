@@ -126,7 +126,7 @@ builder.Services.AddCors(option =>
     {
         //builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
         //builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200");
-        builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://aptitudetest.web2.anasource.com/");
+        builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://aptitudetest-frontend-uat.web2.anasource.com");
     });
 });
 
