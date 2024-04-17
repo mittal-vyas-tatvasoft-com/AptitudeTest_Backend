@@ -256,6 +256,7 @@ namespace AptitudeTest.Data.Data
                     return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.passwordNotMatched, StatusCode = ResponseStatusCode.Forbidden, Result = false });
                 }
                 user.Password = changePassword.NewPassword;
+                user.IsFirstLoggedIn = true;
                 user.UpdatedDate = DateTime.Now.ToUniversalTime();
                 _context.Update(user);
                 _context.SaveChanges();

@@ -46,6 +46,7 @@ namespace APTITUDETEST.Core.Entities.Users
         public int? PreferredLocation { get; set; }
         public string? RelationshipWithExistingEmployee { get; set; }
         public bool? Status { get; set; }
+        public bool IsFirstLoggedIn { get; set; }
         public bool IsProfileEdited { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? CreatedDate { get; set; }

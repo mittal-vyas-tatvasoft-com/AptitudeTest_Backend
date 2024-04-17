@@ -160,7 +160,9 @@ namespace AptitudeTest.Data.Data
             {
                 if (admin != null)
                 {
-                    var pass = RandomPasswordGenerator.GenerateRandomPassword(8);
+                    //var pass = RandomPasswordGenerator.GenerateRandomPassword(8);
+                    var contactNumber = admin.PhoneNumber.ToString();
+                    var password = admin.FirstName.ToUpper() + contactNumber.Substring(contactNumber.Length - 4);
 
                     Admin adminToBeAdded = new Admin()
                     {
@@ -168,7 +170,7 @@ namespace AptitudeTest.Data.Data
                         LastName = admin.LastName.Trim(),
                         FatherName = admin.MiddleName.Trim(),
                         Email = admin.Email,
-                        Password = pass,
+                        Password = password,
                         Status = admin.Status,
                         PhoneNumber = admin.PhoneNumber,
                         CreatedBy = admin.CreatedBy,
@@ -177,31 +179,47 @@ namespace AptitudeTest.Data.Data
                     Admin? adminAlreadyExists = _appDbContext.Admins.Where(ad => (ad.Email.Trim() == admin.Email.Trim() || ad.PhoneNumber == admin.PhoneNumber) && ad.IsDeleted == false).FirstOrDefault();
                     if (adminAlreadyExists == null)
                     {
-                        bool isEmailSent;
+                        //bool isEmailSent;
                         _appDbContext.Add(adminToBeAdded);
                         int count = _appDbContext.SaveChanges();
                         if (count == 1)
                         {
-                            isEmailSent = SendMailForPassword(admin.FirstName, admin.LastName, pass, admin.Email);
-                            if (isEmailSent)
+                            return new JsonResult(new ApiResponse<string>
                             {
-                                return new JsonResult(new ApiResponse<string>
-                                {
-                                    Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Admin),
-                                    Result = true,
-                                    StatusCode = ResponseStatusCode.OK
-                                });
-                            }
-                            else
+                                Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Admin),
+                                Result = true,
+                                StatusCode = ResponseStatusCode.OK
+                            });
+                            //isEmailSent = SendMailForPassword(admin.FirstName, admin.LastName, pass, admin.Email);
+                            //if (isEmailSent)
+                            //{
+                            //    return new JsonResult(new ApiResponse<string>
+                            //    {
+                            //        Message = string.Format(ResponseMessages.AddSuccess, ModuleNames.Admin),
+                            //        Result = true,
+                            //        StatusCode = ResponseStatusCode.OK
+                            //    });
+                            //}
+                            //else
+                            //{
+                            //    _logger.LogError($"Error occurred in AdminRepository.Create while adding admin \n");
+                            //    return new JsonResult(new ApiResponse<List<UserViewModel>>
+                            //    {
+                            //        Message = ResponseMessages.InternalError,
+                            //        Result = false,
+                            //        StatusCode = ResponseStatusCode.InternalServerError
+                            //    });
+                            //}
+                        }
+                        else
+                        {
+                            _logger.LogError($"Error occurred in AdminRepository.Create while adding admin \n");
+                            return new JsonResult(new ApiResponse<List<UserViewModel>>
                             {
-                                _logger.LogError($"Error occurred in AdminRepository.Create while adding admin \n");
-                                return new JsonResult(new ApiResponse<List<UserViewModel>>
-                                {
-                                    Message = ResponseMessages.InternalError,
-                                    Result = false,
-                                    StatusCode = ResponseStatusCode.InternalServerError
-                                });
-                            }
+                                Message = ResponseMessages.InternalError,
+                                Result = false,
+                                StatusCode = ResponseStatusCode.InternalServerError
+                            });
                         }
 
 
