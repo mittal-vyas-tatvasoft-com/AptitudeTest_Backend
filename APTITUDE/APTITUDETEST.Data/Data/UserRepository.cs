@@ -202,7 +202,9 @@ namespace AptitudeTest.Data.Data
         #region Create
         public async Task<JsonResult> Create(CreateUserVM user)
         {
-            var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+            //var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+            var contactNumber = user.PhoneNumber.ToString();
+            var password = user.FirstName.ToUpper() + contactNumber.Substring(contactNumber.Length - 4);
             try
             {
                 if (user == null)
@@ -247,7 +249,7 @@ namespace AptitudeTest.Data.Data
                     var userId = connection.Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
                     if (userId > 0)
                     {
-                        SendMailForPassword(user.FirstName, user.LastName, user.Email, password);
+                        //SendMailForPassword(user.FirstName, user.LastName, user.Email, password);
 
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -408,7 +410,9 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.AlreadyExist
                     });
                 }
-                var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+                //var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+                var contactNumber = registerUserVM.PhoneNumber.ToString();
+                var password = registerUserVM.FirstName.ToUpper() + contactNumber.Substring(contactNumber.Length - 4);
 
                 if (registerUserVM.UserAcademicsVM == null)
                 {
@@ -480,7 +484,7 @@ namespace AptitudeTest.Data.Data
 
                     if (userId > 0)
                     {
-                        SendMailForPassword(registerUserVM.FirstName, registerUserVM.LastName, registerUserVM.Email, password);
+                        //SendMailForPassword(registerUserVM.FirstName, registerUserVM.LastName, registerUserVM.Email, password);
 
                         return new JsonResult(new ApiResponse<string>
                         {
@@ -677,18 +681,20 @@ namespace AptitudeTest.Data.Data
                         string[] insertedEmails = parameters.Get<string[]>("inserted_emails");
                         foreach (var email in insertedEmails)
                         {
-                            var password = RandomPasswordGenerator.GenerateRandomPassword(8);
+                            //var password = RandomPasswordGenerator.GenerateRandomPassword(8);
                             User? user = _appDbContext.Users.FirstOrDefault(u => u.Email == email);
+                            var contactNumber = user.PhoneNumber.ToString();
+                            var password = user.FirstName.ToUpper() + contactNumber.Substring(contactNumber.Length - 4);
                             if (user != null)
                             {
                                 user.Password = password;
                             }
                             _appDbContext.SaveChanges();
-                            var record = records.Find(r => r.email == email);
-                            if (record != null)
-                            {
-                                SendMailForPassword(record.firstname, record.lastname, email, password);
-                            }
+                            //var record = records.Find(r => r.email == email);
+                            //if (record != null)
+                            //{
+                            //    SendMailForPassword(record.firstname, record.lastname, email, password);
+                            //}
                         }
                     }
 
@@ -736,11 +742,21 @@ namespace AptitudeTest.Data.Data
                         int count = _appDbContext.SaveChanges();
                         if (count == 1)
                         {
-                            bool mailSent = SendMailAfterPasswordChangeByAdmin(user.Email, user.Password, user.FirstName, user.LastName);
-                            if (mailSent)
-                            {
-                                return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.PasswordUpdatedSuccess, Result = true, StatusCode = ResponseStatusCode.Success });
-                            }
+                            return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.PasswordUpdatedSuccess, Result = true, StatusCode = ResponseStatusCode.Success });
+                            //bool mailSent = SendMailAfterPasswordChangeByAdmin(user.Email, user.Password, user.FirstName, user.LastName);
+                            //if (mailSent)
+                            //{
+                            //    return new JsonResult(new ApiResponse<string>() { Message = ResponseMessages.PasswordUpdatedSuccess, Result = true, StatusCode = ResponseStatusCode.Success });
+                            //}
+                            //return new JsonResult(new ApiResponse<string>
+                            //{
+                            //    Message = ResponseMessages.InternalError,
+                            //    Result = false,
+                            //    StatusCode = ResponseStatusCode.RequestFailed
+                            //});
+                        }
+                        else
+                        {
                             return new JsonResult(new ApiResponse<string>
                             {
                                 Message = ResponseMessages.InternalError,
