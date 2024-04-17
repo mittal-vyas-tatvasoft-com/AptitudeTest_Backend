@@ -157,8 +157,8 @@ namespace AptitudeTest.Data.Data
                     Sid = sessionId,
                     IsSubmitted = isSubmitted,
                     IsStarted = isStarted,
-                    IsProfileEdited = user.IsProfileEdited
-
+                    IsProfileEdited = user.IsProfileEdited,
+                    IsFirstLoggedIn = user.IsFirstLoggedIn
                 };
 
                 return new JsonResult(new ApiResponse<TokenWithSidVm> { Data = tokenWithSidVmPayload, Message = ResponseMessages.LoginSuccess, StatusCode = ResponseStatusCode.OK, Result = true });
@@ -244,7 +244,7 @@ namespace AptitudeTest.Data.Data
                 User? user = await Task.FromResult(_context.Users.Where(x => x.Email.Equals(changePassword.Email) && x.Password.Equals(changePassword.CurrentPassword)).FirstOrDefault());
                 if (user == null)
                 {
-                    return new JsonResult(new ApiResponse<string> { Message = string.Format(ResponseMessages.NotFound, ModuleNames.User), StatusCode = ResponseStatusCode.NotFound, Result = false });
+                    return new JsonResult(new ApiResponse<string> { Message = ResponseMessages.WrongCurrentPassword, StatusCode = ResponseStatusCode.NotFound, Result = false });
                 }
                 if (user.Password.Equals(changePassword.NewPassword))
                 {

@@ -10,5 +10,6 @@
         public bool? IsSubmitted { get; set; }
         public bool IsProfileEdited { get; set; }
         public bool IsStarted { get; set; }
+        public bool IsFirstLoggedIn { get; set; }
     }
 }
