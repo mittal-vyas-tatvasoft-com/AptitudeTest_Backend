@@ -1,6 +1,7 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing.Printing;
 
 namespace AptitudeTest.Application.Services
 {
@@ -68,9 +69,9 @@ namespace AptitudeTest.Application.Services
             return await _userRepository.ChangeUserPasswordByAdmin(Email, Password);
         }
 
-        public async Task<JsonResult> GetUsersExportData(string? searchQuery, int? groupId, int? collegeId, int? yearAdded, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetUsersExportData(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
         {
-            return await _userRepository.GetUsersExportData(searchQuery, groupId, collegeId, yearAdded, sortField, sortOrder, currentPageIndex, pageSize);
+            return await _userRepository.GetUsersExportData(searchQuery, CollegeId, GroupId, Status, Year, sortField, sortOrder, currentPageIndex, pageSize);
         }
 
         #endregion
