@@ -784,14 +784,14 @@ namespace AptitudeTest.Data.Data
 
         #region GetUsersExportData
 
-        public async Task<JsonResult> GetUsersExportData(string? searchQuery, int? groupId, int? collegeId, bool? Status, int? Year, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetUsersExportData(string? searchQuery, int? CollegeId, int? GroupId,  bool? Status, int? Year, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
         {
             try
             {
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     int? testId = null;
-                    List<UserExportDataVM> data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)groupId, CollegeId = (object)collegeId, Status = Status, YearFilter = Year, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
+                    List<UserExportDataVM> data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId, CollegeId = (object)CollegeId, Status = Status, YearFilter = Year, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
                     if (!data.Any())
                     {
                         return new JsonResult(new ApiResponse<List<UserExportDataVM>>
