@@ -1,7 +1,6 @@
 ﻿using AptitudeTest.Core.Interfaces;
 using AptitudeTest.Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Drawing.Printing;
 
 namespace AptitudeTest.Application.Services
 {

@@ -784,7 +784,7 @@ namespace AptitudeTest.Data.Data
 
         #region GetUsersExportData
 
-        public async Task<JsonResult> GetUsersExportData(string? searchQuery, int? collegeId, int? groupId,  bool? status, int? year, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetUsersExportData(string? searchQuery, int? collegeId, int? groupId, bool? status, int? year, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
         {
             try
             {
@@ -793,13 +793,13 @@ namespace AptitudeTest.Data.Data
                     List<UserExportDataVM> data = new List<UserExportDataVM>();
                     if (!string.IsNullOrEmpty(searchQuery))
                     {
-                         data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)groupId, CollegeId = (object)collegeId, Status = status, YearFilter = year, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
+                        data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)groupId, CollegeId = (object)collegeId, Status = status, YearFilter = year, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
                     }
                     else
                     {
-                         data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = "", GroupId = (object)groupId, CollegeId = (object)collegeId, Status = status, YearFilter = year, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
+                        data = connection.Query<UserExportDataVM>("Select * from getallusersexport(@SearchQuery,@GroupId,@CollegeId,@Status,@YearFilter,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = "", GroupId = (object)groupId, CollegeId = (object)collegeId, Status = status, YearFilter = year, PageSize = pageSize, PageNumber = currentPageIndex, SortField = sortField, SortOrder = sortOrder }).ToList();
                     }
-                        
+
                     if (!data.Any())
                     {
                         return new JsonResult(new ApiResponse<List<UserExportDataVM>>

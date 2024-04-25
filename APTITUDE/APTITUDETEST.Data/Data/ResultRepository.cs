@@ -180,7 +180,7 @@ namespace AptitudeTest.Data.Data
                 {
                     List<ResultsVM> data = connection.Query<ResultsVM>("Select * from getallresults(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                     var userTests = _context.TempUserTests.Select(x => new { x.UserId, x.TestStartTime, x.IsStartTimeUpdated }).ToList();
-                    int i = (int)currentPageIndex*(int)pageSize;
+                    int i = (int)currentPageIndex * (int)pageSize;
                     foreach (var item in data)
                     {
                         var userTestData = userTests.FirstOrDefault(x => x.UserId == item.UserId);
