@@ -88,7 +88,7 @@ namespace AptitudeTest.Data.Data
                 user.SessionId = sessionId;
                 _context.Update(user);
                 _context.SaveChanges();
-                _sessionIdHelperInMemoryService.AddSessionId(sessionId, user.Email); 
+                _sessionIdHelperInMemoryService.AddSessionId(sessionId, user.Email);
 
                 TokenVm tokenPayload = new TokenVm()
                 {
