@@ -555,6 +555,19 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                var userTestId = _context.TempUserTests.FirstOrDefault(x => x.UserId == reverseLockedTestVM.UserIds[0])?.Id;
+                int unansweredQuestionsCount = _context.TempUserTestResult.Where(x => x.UserTestId == userTestId && !x.IsAttended).Count();
+                var isQuestionMenuEnabled = _context.Tests.FirstOrDefault(x => x.Id == reverseLockedTestVM.TestId)?.IsQuestionsMenu;
+                if (unansweredQuestionsCount == 0 && !(bool)isQuestionMenuEnabled)
+                {
+                    return new JsonResult(new ApiResponse<int>
+                    {
+                        Message = ResponseMessages.AllQuestionsAnswered,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotAcceptable
+                    });
+                }
+
                 int count = 0;
                 using (DbConnection connection = new DbConnection())
                 {
