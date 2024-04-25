@@ -18,7 +18,7 @@
         public readonly static string NotFound = "{0} does not exists";
         public readonly static string AlreadyExists = "{0} already exists";
         public readonly static string AddSuccess = "{0} Added successfully";
-        public readonly static string RegisterSuccess = "{0} Registerd successfully, Password has been sent to your registerd email";
+        public readonly static string RegisterSuccess = "{0} Registerd successfully";
         public readonly static string UpdateSuccess = "{0} updated successfully";
         public readonly static string StatusUpdateSuccess = "{0} status updated successfully";
         public readonly static string passwordNotMatched = "New Password and Confirm Password doesn't match";
@@ -28,6 +28,7 @@
         public readonly static string NotEditable = "{0} not editable";
         public readonly static string NoRecordsFound = "No Record Found";
         public readonly static string InActiveCollege = "Your college is Inactive please contact admin";
+
         #endregion
 
         #region UserAuthentication
@@ -79,6 +80,7 @@
 
         public readonly static string TestTimeUpdated = "Test Time successfully updated for {0} candidates";
         public readonly static string TestTimeNotUpdated = "Failed to update test time of all the candidates";
+        public readonly static string AllQuestionsAnswered = "Unable to unlock test, because all questions are answered";
         #endregion
 
         #region TimeSpentPerQuestion
