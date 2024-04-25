@@ -69,9 +69,9 @@ namespace AptitudeTest.Application.Services
             return await _userRepository.ChangeUserPasswordByAdmin(Email, Password);
         }
 
-        public async Task<JsonResult> GetUsersExportData(string? searchQuery, int? CollegeId, int? GroupId, bool? Status, int? Year, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
+        public async Task<JsonResult> GetUsersExportData(string? searchQuery, int? collegeId, int? groupId, bool? status, int? year, string? sortField, string? sortOrder, int? currentPageIndex, int? pageSize)
         {
-            return await _userRepository.GetUsersExportData(searchQuery, CollegeId, GroupId, Status, Year, sortField, sortOrder, currentPageIndex, pageSize);
+            return await _userRepository.GetUsersExportData(searchQuery, collegeId, groupId, status, year, sortField, sortOrder, currentPageIndex, pageSize);
         }
 
         #endregion
