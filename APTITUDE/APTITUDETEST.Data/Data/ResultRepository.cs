@@ -180,7 +180,7 @@ namespace AptitudeTest.Data.Data
                 {
                     List<ResultsVM> data = connection.Query<ResultsVM>("Select * from getallresults(@SearchQuery,@GroupId,@CollegeId,@TestId,@YearAttended,@PageNumber,@PageSize,@SortField,@SortOrder)", new { SearchQuery = searchQuery, GroupId = (object)GroupId!, CollegeId = (object)CollegeId!, TestId = (object)TestId!, YearAttended = Year, PageNumber = currentPageIndex, PageSize = pageSize, SortField = sortField, SortOrder = sortOrder }).ToList();
                     var userTests = _context.TempUserTests.Select(x => new { x.UserId, x.TestStartTime, x.IsStartTimeUpdated }).ToList();
-                    int i = (int)currentPageIndex*(int)pageSize;
+                    int i = (int)currentPageIndex * (int)pageSize;
                     foreach (var item in data)
                     {
                         var userTestData = userTests.FirstOrDefault(x => x.UserId == item.UserId);
@@ -555,6 +555,19 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
+                var userTestId = _context.TempUserTests.FirstOrDefault(x => x.UserId == reverseLockedTestVM.UserIds[0])?.Id;
+                int unansweredQuestionsCount = _context.TempUserTestResult.Where(x => x.UserTestId == userTestId && !x.IsAttended).Count();
+                var isQuestionMenuEnabled = _context.Tests.FirstOrDefault(x => x.Id == reverseLockedTestVM.TestId)?.IsQuestionsMenu;
+                if (unansweredQuestionsCount == 0 && !(bool)isQuestionMenuEnabled)
+                {
+                    return new JsonResult(new ApiResponse<int>
+                    {
+                        Message = ResponseMessages.AllQuestionsAnswered,
+                        Result = false,
+                        StatusCode = ResponseStatusCode.NotAcceptable
+                    });
+                }
+
                 int count = 0;
                 using (DbConnection connection = new DbConnection())
                 {
