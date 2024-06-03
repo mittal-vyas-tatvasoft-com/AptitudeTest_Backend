@@ -704,7 +704,6 @@ namespace AptitudeTest.Data.Data
         {
             try
             {
-                //Test? test = _userActiveTestHelper.GetTestOfUser(updateTestTimeVM.UserId);
                 Test? test = _userActiveTestHelper.GetValidTestOfUser(updateTestTimeVM.UserId);
                 if (test == null)
                 {
@@ -725,10 +724,35 @@ namespace AptitudeTest.Data.Data
                         StatusCode = ResponseStatusCode.NotFound
                     });
                 }
-                tempUserTest.TimeRemaining = updateTestTimeVM.RemainingTime;
-                _appDbContext.SaveChanges();
-                return new JsonResult(new ApiResponse<string>
+                if (tempUserTest.TimeRemaining < updateTestTimeVM.RemainingTime)
                 {
+                    RemainingTimeVM remainingTime = new RemainingTimeVM
+                    {
+                        IsTimeUpdatedByAdmin = true,
+                        TimeRemaining = tempUserTest.TimeRemaining
+                    };
+                    return new JsonResult(new ApiResponse<RemainingTimeVM>
+                    {
+                        Data = remainingTime,
+                        Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TempUserTestResult),
+                        Result = true,
+                        StatusCode = ResponseStatusCode.Success
+                    });
+                }
+                if (updateTestTimeVM.RemainingTime > 0)
+                {
+                    tempUserTest.TimeRemaining = updateTestTimeVM.RemainingTime;
+                    _appDbContext.SaveChanges();
+                }
+
+                RemainingTimeVM remainingTimeForTest = new RemainingTimeVM
+                {
+                    IsTimeUpdatedByAdmin = false,
+                    TimeRemaining = updateTestTimeVM.RemainingTime
+                };
+                return new JsonResult(new ApiResponse<RemainingTimeVM>
+                {
+                    Data = remainingTimeForTest,
                     Message = string.Format(ResponseMessages.UpdateSuccess, ModuleNames.TempUserTestResult),
                     Result = true,
                     StatusCode = ResponseStatusCode.Success
@@ -868,7 +892,7 @@ namespace AptitudeTest.Data.Data
             Random random = new Random();
 
             int n = list.Count;
-            for (int i = n - 1; i > 0; i--)
+            for (int i = n - 1;i > 0;i--)
             {
                 int j = random.Next(0, i + 1);
                 T temp = list[i];
